@@ -1042,6 +1042,11 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   border:1px solid rgba(201,162,39,.45);font-size:12px;line-height:1.5;color:var(--kitink)}
 .helped b{color:var(--gold)}
 .helped i{display:block;font-style:normal;opacity:.75;margin-top:3px}
+.rstate{margin:8px 0 2px;font-size:12px;line-height:1.5;padding:8px 11px;border-radius:8px}
+.rstate.go{background:rgba(242,230,200,.08);color:var(--kitink);opacity:.8}
+.rstate.ok{background:rgba(74,140,99,.18);border:1px solid rgba(74,140,99,.5);color:#BFE6CC}
+.rstate.wait{background:rgba(201,162,39,.14);border:1px solid rgba(201,162,39,.45);
+  color:var(--kitink)}
 </style>
 </head>
 <body>
@@ -2163,6 +2168,11 @@ function pullOnline(done) {
   ONL.busy = true; ONL.err = "";
   var base = dataBase();
   getJson(base + "index.json", function (ix) {
+    /* il cassetto: arriva con l'indice, e cambia quando lo cambia lui */
+    if (ix && ix.kind === "index") {
+      saveDrop(ix.drop && ix.drop.url && ix.drop.key ? ix.drop : null);
+      flushOutbox();
+    }
     if (!ix || ix.kind !== "index" || !ix.comps) {
       ONL.busy = false; ONL.err = "that is not a FootEFL index";
       return done && done(ONL.err);
@@ -2186,6 +2196,84 @@ function pullOnline(done) {
   }, function (e) {
     ONL.busy = false; ONL.err = e || "offline";
     done && done(ONL.err);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONSEGNARE SENZA MANDARE NIENTE
+   Finita la partita il referto va nel cassetto del professore da solo.
+   L'indirizzo e la chiave arrivano dall'indice pubblicato: questa chiave
+   sa soltanto depositare, non puo' rileggere quello che c'e' dentro.
+   Senza linea non si perde niente: resta in tasca e riparte alla prima
+   occasione buona.
+   ═══════════════════════════════════════════════════════════════════ */
+var DROP = null;                       /* {url, key, table} dall'indice */
+function dropKey() { return "footefl-drop-cfg"; }
+function outKey() { return "footefl-outbox"; }
+function loadDrop() {
+  try { DROP = JSON.parse(localStorage.getItem(dropKey()) || "null"); } catch (e) { DROP = null; }
+  return DROP;
+}
+function saveDrop(d) {
+  DROP = d || null;
+  try {
+    if (d) localStorage.setItem(dropKey(), JSON.stringify(d));
+    else localStorage.removeItem(dropKey());
+  } catch (e) {}
+}
+function outbox() {
+  try { return JSON.parse(localStorage.getItem(outKey()) || "[]") || []; }
+  catch (e) { return []; }
+}
+function saveOutbox(a) {
+  try { localStorage.setItem(outKey(), JSON.stringify(a.slice(-20))); } catch (e) {}
+}
+function queueReport(r) {
+  var a = outbox(), k = (r.club || "") + "|" + r.md;
+  a = a.filter(function (x) { return ((x.club || "") + "|" + x.md) !== k; });
+  a.push(r); saveOutbox(a);
+}
+
+/* un deposito: va bene anche se il professore non ha ancora il cassetto */
+function dropOne(r, done) {
+  if (!DROP || !DROP.url || !DROP.key) return done("nodrop");
+  var url = DROP.url.replace(/\/+$/, "") + "/rest/v1/" +
+            encodeURIComponent(DROP.table || "reports");
+  var row = { cls:r.cls || "", comp:r.comp || "", md:r.md, code:ME.code || "",
+              club:r.club || "", body:r };
+  fetch(url, { method:"POST",
+    headers:{ "apikey":DROP.key, "Authorization":"Bearer " + DROP.key,
+              "Content-Type":"application/json", "Prefer":"return=minimal" },
+    body:JSON.stringify(row) })
+    .then(function (res) { done(res.ok ? null : "http " + res.status); })
+    ["catch"](function (e) { done(String(e.message || e)); });
+}
+/* quello rimasto in tasca riparte: all'apertura e dopo ogni consegna */
+function flushOutbox(done) {
+  var a = outbox();
+  if (!a.length || !DROP) return done && done(0);
+  var left = a.slice(), sent = 0;
+  (function next() {
+    if (!left.length) {
+      saveOutbox(a.slice(sent));
+      return done && done(sent);
+    }
+    var r = left.shift();
+    dropOne(r, function (err) {
+      if (err) { saveOutbox(a.slice(sent)); return done && done(sent); }
+      sent++; setTimeout(next, 150);
+    });
+  })();
+}
+/* la consegna di fine partita: prova subito, e se non va tiene da parte */
+function deliverReport(md, done) {
+  var r = (typeof reportOf === "function") ? reportOf(md) : null;
+  if (!r) return done && done("nothing");
+  loadDrop();
+  if (!DROP) { queueReport(r); return done && done("nodrop"); }
+  dropOne(r, function (err) {
+    if (err) { queueReport(r); return done && done(err); }
+    done && done(null);
   });
 }
 
@@ -3853,7 +3941,10 @@ function reportOf(md) {
   var out = { v:1, kind:"report",
     cls:(BULL && BULL.cls) || "", comp:(BULL && BULL.comp) || "",
     md:md, club:ME.club ? ME.club.id : "", clubName:ME.club ? ME.club.name : "",
-    student:ME.student || "", level:ME.level || "",
+    /* col codice il nome non viaggia: chi lo riceve ce l'ha gia' nel registro,
+       e un cassetto in rete non deve contenere il nome di un ragazzo */
+    code:ME.code || "", student:ME.code ? "" : (ME.student || ""),
+    level:ME.level || "",
     made:new Date().toISOString(), halves:{},
     calls:{ side:null, taker:null, wonder:null, dive:null } };
   hs.forEach(function (h) {
@@ -3898,13 +3989,23 @@ function copyReport(md, after) {
   }
 }
 
-/* la riga da mettere dove serve: nel referto di fine partita e in My form */
+/* la riga da mettere dove serve: nel referto di fine partita e in My form.
+   Col cassetto configurato non c'e' niente da mandare: parte da solo, e
+   qui si vede soltanto se e' arrivato. I due pulsanti restano come via di
+   scampo per quando il cassetto non c'e' o la rete manca. */
 function reportBox(md, id) {
+  loadDrop();
+  var auto = !!DROP;
   return '<div class="repsend" id="' + id + '">' +
-    "<b>Send it to your teacher</b>" +
-    "<span>A small file with this matchday's work: your answers, the actions " +
-    "you opened and your calls. Your teacher turns it into the real result.</span>" +
-    '<div class="rsrow"><button class="btn" data-a="file">Save the file</button>' +
+    "<b>" + (auto ? "Your teacher gets this by himself" : "Send it to your teacher") +
+    "</b><span>" + (auto
+      ? "What you produced this matchday — your answers, the actions you opened and " +
+        "your calls — goes straight to him. Nothing for you to send."
+      : "A small file with this matchday's work. Your teacher turns it into the " +
+        "real result.") + "</span>" +
+    '<p class="rstate" data-state hidden></p>' +
+    '<div class="rsrow"' + (auto ? ' hidden data-fall' : "") + ">" +
+    '<button class="btn" data-a="file">Save the file</button>' +
     '<button class="btn ghost" data-a="copy">Copy it</button></div>' +
     '<p class="kok" data-ok hidden></p><p class="kerr" data-err hidden></p></div>';
 }
@@ -3912,6 +4013,28 @@ function wireReport(md, id) {
   var box = $(id);
   if (!box) return;
   var ok = box.querySelector("[data-ok]"), err = box.querySelector("[data-err]");
+  var st = box.querySelector("[data-state]"), fall = box.querySelector("[data-fall]");
+
+  /* la consegna automatica, se il professore ha messo il cassetto */
+  loadDrop();
+  if (DROP && st) {
+    st.hidden = false;
+    st.className = "rstate go";
+    st.textContent = "Sending it to your teacher…";
+    deliverReport(md, function (e) {
+      if (!e) {
+        st.className = "rstate ok";
+        st.textContent = "✓ Delivered. Your teacher has it.";
+        return;
+      }
+      st.className = "rstate wait";
+      st.textContent = e === "nothing"
+        ? "Nothing played on this phone for this matchday."
+        : "No line right now — it is kept here and goes by itself next time you " +
+          "open the app. You can also send it yourself:";
+      if (fall && e !== "nothing") fall.hidden = false;
+    });
+  }
   Array.prototype.forEach.call(box.querySelectorAll("button"), function (b) {
     b.onclick = function () {
       var done = function (msg) {
