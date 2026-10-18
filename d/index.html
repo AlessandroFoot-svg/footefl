@@ -2055,6 +2055,26 @@ function saveCode(c) {
 }
 function codeLooksRight(c) { return /^[A-Z]{3}-[A-Z0-9]{4}$/.test(String(c || "").toUpperCase()); }
 
+/* ───────── il codice nel link ─────────
+   Il professore gli manda un indirizzo suo, o gli da' una tesserina da
+   inquadrare: ...\/footefl\/?c=ALE-QM34. L'app lo legge, se lo tiene e
+   toglie la coda dall'indirizzo, cosi' una schermata girata in giro non
+   porta in dote il codice di nessuno. */
+function codeFromLink() {
+  var s = String(location.search || "") + "&" + String(location.hash || "").replace("#", "&");
+  var m = s.match(/[?&]c=([A-Za-z0-9-]{6,12})/);
+  if (!m) return "";
+  var code = m[1].toUpperCase();
+  if (!codeLooksRight(code)) return "";
+  saveCode(code);
+  try {
+    if (history.replaceState) {
+      history.replaceState(null, "", location.pathname);
+    }
+  } catch (e) {}
+  return code;
+}
+
 /* ───────── quale competizione sto giocando ─────────
    Tutto quello che l'alunno accumula — il foglio, le partite giocate, il
    bollettino — sta sotto questa chiave. Due competizioni non si pestano
@@ -7081,10 +7101,22 @@ VIEWS.wEnd = function () {
 /* ───────── avvio ───────── */
 loadMem();
 loadLevel();
+/* il codice puo' arrivare dal link: va letto prima di tutto il resto,
+   cosi' il primo disegno della home lo sa gia' */
+var fromLink = codeFromLink();
+loadCode(); loadComps(); loadDrop();
 loadBulletin();
 /* lo stesso link, con #coach in fondo, apre il registro del professore */
 if (String(location.hash || "").toLowerCase().indexOf("coach") > -1) reset("coach");
-else reset("home");
+else if (fromLink) {
+  /* arrivato dalla sua tesserina: si va dritti alle sue competizioni, e
+     intanto si guarda se il professore ha pubblicato qualcosa di nuovo */
+  reset("comps");
+  pullOnline(function () { if (HERE && HERE.name === "comps") reset("comps"); });
+} else {
+  reset("home");
+  flushOutbox();
+}
 
 </script>
 <script>

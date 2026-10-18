@@ -13,7 +13,7 @@
    vecchia viene buttata e il telefono riparte pulito.
    ═══════════════════════════════════════════════════════════════════ */
 
-var VER = "3";
+var VER = "4";
 var BOX = "footefl-" + VER;
 var SHELL = ["./", "./index.html", "./manifest.webmanifest",
              "./icon-192.png", "./icon-512.png"];
@@ -51,6 +51,20 @@ self.addEventListener("fetch", function (e) {
         return r;
       })["catch"](function () {
         return caches.match(req);
+      })
+    );
+    return;
+  }
+
+  /* un indirizzo con la coda — .../?c=ALE-QM34, la tesserina di un alunno —
+     non combacia con niente in dispensa. Senza rete deve aprirsi lo stesso:
+     si serve la pagina di partenza, che e' la stessa app. */
+  if (req.mode === "navigate") {
+    e.respondWith(
+      fetch(req)["catch"](function () {
+        return caches.match("./index.html").then(function (h) {
+          return h || caches.match("./");
+        });
       })
     );
     return;
