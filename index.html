@@ -1161,6 +1161,20 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .tg.tGK{background:#9FC7E8;color:#0B1620}
 .tg.tGEM{background:#CFE3D4;color:#10241A}
 .prow.used .rol,.prow.used .tg{opacity:.45}
+
+/* ═════════ l'entrata in casa ═════════
+   Le sezioni della home salgono una dopo l'altra, una volta sola, quando
+   l'alunno apre l'app. Serve a far capire l'ordine delle cose: prima chi
+   sei, poi la partita, poi il resto. Chi ha chiesto al telefono meno
+   animazioni non ne vede nessuna. */
+@keyframes popUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.pop { animation: popUp .5s cubic-bezier(.22,.7,.3,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .pop { animation: none; }
+}
 </style>
 </head>
 <body>
@@ -3844,6 +3858,7 @@ VIEWS.home = function () {
        '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p>');
 
   drawWho(); drawNextUp(); drawMyComps(); drawNumbers(); drawRooms(); drawOut();
+  popIn(["hwho", "hnext", "hcomps", "hnum", "hrooms", "hout"]);
 
   /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
   if (ME.code && !ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
@@ -3853,6 +3868,21 @@ VIEWS.home = function () {
     });
   }
 };
+
+/* ───────── l'entrata ─────────
+   Le sezioni salgono una dopo l'altra, settanta millesimi l'una dall'altra:
+   l'occhio segue l'ordine invece di trovarsi tutto addosso. Succede solo
+   al disegno della home, non quando una sezione si aggiorna da sola. */
+function popIn(ids) {
+  var n = 0;
+  ids.forEach(function (id) {
+    var el = $(id);
+    if (!el || !el.firstChild) return;
+    el.className = "pop";
+    el.style.animationDelay = (n * 70) + "ms";
+    n++;
+  });
+}
 
 /* ───────── come mi chiamo ─────────
    Nei file pubblicati non c'e' nessun nome in chiaro: accanto a ogni
