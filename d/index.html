@@ -3051,6 +3051,43 @@ function claimNotMine(c) {
   $("cnBk").onclick = back;
 }
 
+/* ───────── ha il codice, ma di lui non c'e' ancora niente ───────── */
+function claimWaiting(c) {
+  paintNeutral();
+  barFlow(c.name, "Code " + ME.code, 0);
+  html('<div class="pad">' + clubHead(c) +
+    '<p class="lede">Your code is <b>' + esc(ME.code) + "</b>, and so far your teacher " +
+    "has not published any competition with you in it. When he does, your club turns " +
+    "up here by itself — you do not choose it.</p>" +
+    '<button class="btn" id="cwGo">Look again</button>' +
+    '<p class="kerr" id="cwErr" hidden></p>' +
+    '<button class="btn ghost" id="cwCode">Use another code</button>' +
+    '<button class="btn ghost" id="cwFile">My teacher sent me a file</button>' +
+    '<button class="btn ghost" id="cwBk">Back</button></div>');
+  $("cwGo").onclick = function () {
+    $("cwErr").hidden = true;
+    $("cwGo").disabled = true; $("cwGo").textContent = "Looking…";
+    pullOnline(function (err) {
+      $("cwGo").disabled = false; $("cwGo").textContent = "Look again";
+      if (err === "nomatch") {
+        $("cwErr").hidden = false;
+        $("cwErr").textContent = "Still nothing with " + ME.code + " in it. Check the " +
+          "code with your teacher, or wait until he has published.";
+        return;
+      }
+      if (err) {
+        $("cwErr").hidden = false;
+        $("cwErr").textContent = "No answer from your teacher's page right now.";
+        return;
+      }
+      swap("claim", { id: c.id });
+    });
+  };
+  $("cwCode").onclick = function () { saveCode(""); swap("claim", { id: c.id }); };
+  $("cwFile").onclick = function () { go("bulletin"); };
+  $("cwBk").onclick = back;
+}
+
 /* ───────── non ha ancora il codice: e' l'unica cosa da chiedergli ───────── */
 function claimAskCode(c) {
   paintNeutral();
@@ -3112,12 +3149,17 @@ VIEWS.claim = function (d) {
      un doppione che confondeva. Adesso toccare una squadra e' solo il modo
      di entrare: chi sei lo dice il codice, e la squadra la dice il
      professore — anche quando non e' quella che hai toccato. */
-  if (ME.code && COMPS.length) {
-    var mine = COMPS.filter(function (m) { return m.club === c.id; })[0];
-    if (mine) return claimMine(c, mine);
-    return claimNotMine(c);
+  if (ME.code) {
+    if (COMPS.length) {
+      var mine = COMPS.filter(function (m) { return m.club === c.id; })[0];
+      return mine ? claimMine(c, mine) : claimNotMine(c);
+    }
+    /* ha il codice ma il professore non ha ancora pubblicato niente con lui
+       dentro: non va rispedito alla vecchia schermata del codice del club,
+       che con un codice alunno non c'entra piu' niente */
+    return claimWaiting(c);
   }
-  if (!ME.code && !bullNames(c.id)) return claimAskCode(c);
+  if (!bullNames(c.id)) return claimAskCode(c);
   return VIEWS.claimOld(d);
 };
 
