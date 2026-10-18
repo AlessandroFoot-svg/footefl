@@ -1146,6 +1146,21 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .gthin.out{color:var(--fog);border-top-color:var(--edge);margin-top:18px;
   padding-top:14px;font-size:11.5px}
 .mast .hmb{position:absolute;left:16px;top:50%;transform:translateY(-50%)}
+
+/* i gradi: ruolo in campo e fascia, sulle righe dove si sceglie un giocatore */
+.smid > span.sub2{display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+  font-size:10px;font-weight:600;color:var(--fog);margin-top:4px;line-height:1.3}
+.rol,.tg{font:800 8.5px/1 system-ui,sans-serif;letter-spacing:.1em;font-style:normal;
+  padding:3px 5px;border-radius:4px;flex:none}
+.rol{border:1px solid var(--edge);color:var(--fog)}
+.rol.rGK{color:#9FC7E8;border-color:rgba(159,199,232,.45)}
+.rol.rDF{color:#A8CBB0;border-color:rgba(168,203,176,.45)}
+.rol.rMF{color:#E0CF9A;border-color:rgba(224,207,154,.45)}
+.rol.rFW{color:#E8A89A;border-color:rgba(232,168,154,.45)}
+.tg{background:var(--gold);color:#17120A}
+.tg.tGK{background:#9FC7E8;color:#0B1620}
+.tg.tGEM{background:#CFE3D4;color:#10241A}
+.prow.used .rol,.prow.used .tg{opacity:.45}
 </style>
 </head>
 <body>
@@ -7224,7 +7239,9 @@ function saveSheet() { try { localStorage.setItem(shKey(), JSON.stringify(SHEET)
    il numero, non il nome. */
 function allPlayers() {
   var out = ME.squad.map(function (p) {
-    return { no:p.no, name:p.name, tag:p.tag, role:p.tag === "GK" ? "GK" : "",
+    /* il ruolo vero viaggia fin qui: serve a far vedere, quando si sceglie,
+       se si sta mettendo un difensore o un attaccante in quel momento */
+    return { no:p.no, name:p.name, tag:p.tag, role:p.role || (p.tag === "GK" ? "GK" : ""),
              bought:false, named:!!p.name };
   });
   ME.signings.forEach(function (s, i) {
@@ -7305,6 +7322,28 @@ function drawRoles() {
   });
 }
 
+/* ───────── i gradi di un giocatore ─────────
+   Due cose diverse, e vanno viste a colpo d'occhio quando si sceglie:
+   il ruolo in campo (portiere, difensore, centrocampista, attaccante) e
+   la fascia che porta nella rosa (il portiere designato, il capitano,
+   il gioiello). Le stesse sigle che l'alunno vede sulle maglie. */
+var TAG_WORD = { GK:"Goalkeeper", CAP:"Captain", GEM:"Gem" };
+var ROLE_WORD = { GK:"Goalkeeper", DF:"Defender", MF:"Midfielder", FW:"Forward" };
+function pTags(p) {
+  if (!p) return "";
+  var out = "";
+  /* il portiere designato porterebbe due volte la stessa sigla */
+  if (p.role && p.role !== p.tag) {
+    out += '<i class="rol r' + esc(p.role) + '" title="' +
+      esc(ROLE_WORD[p.role] || p.role) + '">' + esc(p.role) + "</i>";
+  }
+  if (p.tag) {
+    out += '<i class="tg t' + esc(p.tag) + '" title="' +
+      esc(TAG_WORD[p.tag] || p.tag) + '">' + esc(p.tag) + "</i>";
+  }
+  return out;
+}
+
 /* ───────── 1b. chi porta la fascia ───────── */
 VIEWS.prole = function (d) {
   var k = d.role, r = SHEET.roles;
@@ -7339,10 +7378,9 @@ VIEWS.prole = function (d) {
         '" data-no="' + p.no + '" type="button">' +
         '<span class="shirt2"><svg viewBox="0 0 100 100"><use href="#jersey"/></svg>' +
         '<span class="sno">' + p.no + "</span></span>" +
-        '<span class="smid"><b>' + esc(pName(p)) + "</b><span>" +
+        '<span class="smid"><b>' + esc(pName(p)) + '</b><span class="sub2">' + pTags(p) +
         (t ? "already your " + ROLE_NAME[t].toLowerCase()
            : p.bought ? "signed in the market"
-           : p.tag ? ({GK:"Goalkeeper",CAP:"Captain",GEM:"Gem"}[p.tag] || p.tag)
            : p.named ? "in the squad" : "no name yet") + "</span></span>" +
         (r[k] === p.no ? '<span class="sx">chosen</span>' : "") + "</button>";
     }).join("") : '<p class="empty2">No goalkeeper in this squad. Use The Wall.</p>') +
@@ -7375,9 +7413,8 @@ function drawGrid() {
         (p
           ? '<span class="shirt2"><svg viewBox="0 0 100 100"><use href="#jersey"/></svg>' +
             '<span class="sno">' + p.no + "</span></span>" +
-            '<span class="smid"><b>' + esc(pShort(p)) + "</b><span>" +
-            (p.bought ? "signed &middot; " : "") +
-            (p.tag ? ({GK:"Goalkeeper",CAP:"Captain",GEM:"Gem"}[p.tag] || p.tag) :
+            '<span class="smid"><b>' + esc(pShort(p)) + '</b><span class="sub2">' +
+            pTags(p) + (p.bought ? "signed in the market" :
              p.named ? "in the squad" : "no name yet") +
             "</span></span><span class='sx'>change</span>"
           : '<span class="smid empty3"><b>Empty</b><span>Tap to choose a player</span>' +
@@ -7518,7 +7555,6 @@ VIEWS.pslot = function (d) {
         ? ROLE_NAME[rk].toLowerCase() + " · " + used + " of " + max + " moments used"
         : used ? "already played moment " + whereIs(p.no)
         : p.bought ? "signed in the market"
-        : p.tag ? ({GK:"Goalkeeper",CAP:"Captain",GEM:"Gem"}[p.tag] || p.tag)
         : p.named ? "in the squad" : "no name yet";
       return '<button class="prow' + (room ? "" : " used") + (mine ? " cur" : "") +
         '" data-no="' + p.no + '"' + (room ? "" : " disabled") + ' type="button">' +
@@ -7526,8 +7562,8 @@ VIEWS.pslot = function (d) {
           ? '<span class="wallic">&#9632;&#9632;&#9632;</span>'
           : '<span class="shirt2"><svg viewBox="0 0 100 100"><use href="#jersey"/></svg>' +
             '<span class="sno">' + p.no + "</span></span>") +
-        '<span class="smid"><b>' + esc(pName(p)) + "</b><span>" + esc(why) +
-        "</span></span>" +
+        '<span class="smid"><b>' + esc(pName(p)) + '</b><span class="sub2">' + pTags(p) +
+        esc(why) + "</span></span>" +
         (mine ? '<span class="sx">here</span>'
               : rk ? '<span class="sx">' + (max - used) + " left</span>" : "") +
         "</button>";
