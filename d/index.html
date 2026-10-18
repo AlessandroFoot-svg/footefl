@@ -1047,6 +1047,93 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .rstate.ok{background:rgba(74,140,99,.18);border:1px solid rgba(74,140,99,.5);color:#BFE6CC}
 .rstate.wait{background:rgba(201,162,39,.14);border:1px solid rgba(201,162,39,.45);
   color:var(--kitink)}
+
+/* ═════════ la porta ═════════
+   Non e' una serratura: e' il banco all'ingresso dove si dice chi si e'.
+   Grande, una cosa sola da fare, e una via di servizio per chi la
+   tesserina l'ha lasciata a casa. */
+.gpad{padding-top:6px}
+.gpad h1{font:800 26px/1.15 var(--brand);letter-spacing:-.01em}
+.gpad .lock{margin-top:16px}
+.gpad .lock input{font:700 22px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.14em;text-align:center;text-transform:uppercase}
+.gside{margin-top:22px;padding:14px 15px;border-radius:12px;background:var(--deep);
+  border:1px solid var(--edge)}
+.gside b{display:block;font-size:12.5px;font-weight:800;color:var(--cream)}
+.gside span{display:block;margin-top:4px;font-size:11.5px;font-weight:600;line-height:1.55;
+  color:var(--fog)}
+.gthin{display:block;width:100%;margin-top:10px;padding:9px 0;background:none;border:0;
+  border-top:1px solid var(--edge);text-align:left;font:700 12px/1.3 inherit;
+  color:var(--gold);cursor:pointer}
+.gthin:active{opacity:.7}
+
+/* ═════════ il cruscotto ═════════ */
+.hband{position:relative;display:block;width:100%;text-align:left;margin-top:4px;
+  padding:13px 15px 13px 62px;border-radius:12px;background:var(--band);
+  border:1px solid var(--edge);color:var(--cream);cursor:pointer}
+.hband .hcr{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:36px;
+  height:36px;border-radius:50%;border:1px solid var(--edge);display:grid;place-items:center;
+  font:800 12.5px/1 system-ui,sans-serif;letter-spacing:.04em;color:var(--kitink);
+  background:var(--club)}
+.hband b{display:block;font:700 16px/1.2 var(--brand)}
+.hband span{display:block;margin-top:2px;font-size:11.5px;font-weight:600;color:var(--fog)}
+.hband em{display:block;margin-top:4px;font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,
+  monospace;letter-spacing:.12em;font-style:normal;color:var(--gold)}
+.hband.prac{padding-left:15px;cursor:default;border-style:dashed}
+.hband.prac span{margin-top:5px;line-height:1.55}
+
+.nxc{position:relative;display:block;width:100%;text-align:left;margin-top:9px;
+  padding:14px 15px;border-radius:14px;background:var(--deep);border:1px solid var(--edge);
+  color:var(--cream);cursor:pointer}
+.nxc:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.nxc.done2{opacity:.72}
+.nxk{display:block;font:700 9.5px/1 system-ui,sans-serif;letter-spacing:.14em;
+  color:var(--fog)}
+.nxnow{font:700 9px/1 system-ui,sans-serif;letter-spacing:.12em;font-style:normal;
+  border:1px solid var(--gold);color:var(--gold);padding:3px 6px;border-radius:5px;
+  margin-left:4px}
+.nxt{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:7px}
+.nxt b{font:800 19px/1.1 var(--brand);letter-spacing:-.01em}
+.nxt em{font:700 10px/1 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;
+  font-style:normal;color:var(--gold)}
+.nxw{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.nxw>span{padding:8px 10px;border-radius:9px;background:rgba(242,230,200,.05);
+  border:1px solid var(--edge)}
+.nxw i{display:block;font:700 9px/1 system-ui,sans-serif;letter-spacing:.14em;
+  text-transform:uppercase;font-style:normal;color:var(--fog)}
+.nxw b{display:block;margin-top:4px;font-size:12.5px;font-weight:800}
+.nxw u{display:block;text-decoration:none;margin-top:2px;font-size:10.5px;font-weight:700;
+  color:var(--gold)}
+.nxs{display:block;margin-top:10px;padding-top:9px;border-top:1px solid var(--edge);
+  font-size:11.5px;font-weight:700;color:var(--gold)}
+.nxc.done2 .nxs{color:var(--ok)}
+
+.numrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 9px}
+.numc{padding:12px 10px;border-radius:12px;background:var(--deep);border:1px solid var(--edge);
+  text-align:center}
+.numc b{display:block;font:800 22px/1 var(--brand);color:var(--gold);letter-spacing:-.02em}
+.numc span{display:block;margin-top:5px;font-size:10.5px;font-weight:700;line-height:1.3}
+.numc em{display:block;margin-top:3px;font-size:9.5px;font-weight:600;font-style:normal;
+  color:var(--fog)}
+.empty3{padding:14px 15px;font-size:12px;font-weight:600;line-height:1.55;color:var(--fog)}
+.empty3 b{color:var(--cream)}
+
+/* le competizioni in cifre, nella pagina dei numeri */
+.gcomp{display:flex;align-items:center;gap:11px;padding:12px 14px 4px}
+.gci{width:10px;height:26px;border-radius:3px;flex:0 0 auto}
+.gcn{flex:1 1 auto;min-width:0}
+.gcn b{display:block;font:700 14px/1.2 var(--brand)}
+.gcn em{display:block;margin-top:2px;font-size:10.5px;font-weight:600;font-style:normal;
+  color:var(--fog)}
+.gcv{text-align:right;flex:0 0 auto}
+.gcv b{display:block;font:800 19px/1 var(--brand);color:var(--gold)}
+.gcv em{font-size:9px;font-weight:700;font-style:normal;letter-spacing:.1em;color:var(--fog)}
+.gcr{padding:0 14px 12px 35px;font-size:10.5px;font-weight:600;color:var(--fog);
+  border-bottom:1px solid var(--edge)}
+.panel>.gcr:last-child{border-bottom:0}
+.lvrow{display:flex;align-items:center;gap:13px;padding:13px 15px}
+.lvrow b{font:800 20px/1 var(--brand);color:var(--gold);flex:0 0 auto}
+.lvrow span{font-size:11.5px;font-weight:600;line-height:1.5;color:var(--fog)}
 </style>
 </head>
 <body>
@@ -2054,6 +2141,25 @@ function saveCode(c) {
   try { localStorage.setItem(codeKey(), ME.code); } catch (e) {}
 }
 function codeLooksRight(c) { return /^[A-Z]{3}-[A-Z0-9]{4}$/.test(String(c || "").toUpperCase()); }
+
+/* ───────── questo telefono ─────────
+   Un numero casuale, scritto la prima volta che serve e poi sempre lo
+   stesso. Non dice niente di chi lo tiene e non esce da qui se non
+   dentro il referto: serve al professore per accorgersi quando un
+   codice arriva da due apparecchi diversi. Il codice identifica, non
+   protegge: e' una spia, non una serratura. */
+var DEV_AL = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+function devKey() { return "footefl-device"; }
+function devId() {
+  var v = "";
+  try { v = localStorage.getItem(devKey()) || ""; } catch (e) {}
+  if (v) return v;
+  for (var i = 0; i < 8; i++) {
+    v += DEV_AL.charAt(Math.floor(Math.random() * DEV_AL.length));
+  }
+  try { localStorage.setItem(devKey(), v); } catch (e) {}
+  return v;
+}
 
 /* ───────── il codice nel link ─────────
    Il professore gli manda un indirizzo suo, o gli da' una tesserina da
@@ -3475,6 +3581,576 @@ function drawPick() {
 }
 
 
+/* ───── 22-gate.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   LA PORTA E IL CRUSCOTTO
+   Prima di tutto: chi sei. L'app chiede il codice che il professore ha
+   dato all'alunno. Non e' una password e non protegge niente — sta
+   scritto su una tesserina — : dice chi sta giocando, come il nome sul
+   registro. Chi arriva dal suo link non la vede nemmeno.
+
+   Dietro la porta non c'e' piu' la vetrina dei club, che era l'ingresso
+   di quando la squadra se la scegliva lui. C'e' la sua stagione: la
+   prossima partita in ogni competizione, a che cosa e' iscritto, i suoi
+   numeri — la lingua e il gioco — e le stanze dove si lavora.
+
+   Chi la tesserina l'ha lasciata a casa non resta fuori: la porticina
+   apre la parte di esercizio, My words e il campo d'allenamento.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* il carosello dei club non e' piu' l'ingresso: diventa una stanza */
+VIEWS.clubs = VIEWS.home;
+
+/* ───────── chi vuole solo allenarsi ───────── */
+function practKey() { return "footefl-practice"; }
+function isPract() {
+  try { return localStorage.getItem(practKey()) === "1"; } catch (e) { return false; }
+}
+function setPract(on) {
+  try {
+    if (on) localStorage.setItem(practKey(), "1");
+    else localStorage.removeItem(practKey());
+  } catch (e) {}
+}
+
+/* ═══════════════ quello che il telefono sa di se' ═══════════════ */
+
+/* il bollettino di una competizione qualunque, non solo di quella aperta */
+function compBull(id) {
+  try { return JSON.parse(localStorage.getItem("footefl-bulletin-" + id)); }
+  catch (e) { return null; }
+}
+/* i tempi giocati in una competizione precisa */
+function formHalves(compId, clubId) {
+  try {
+    var s = JSON.parse(localStorage.getItem("footefl-form-" + compId + "-" + clubId));
+    return (s && s.halves) || [];
+  } catch (e) { return []; }
+}
+/* tutti i tempi giocati su questo telefono, in qualunque competizione */
+function allHalves() {
+  var out = [];
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (!k || k.indexOf("footefl-form-") !== 0) continue;
+      var s = JSON.parse(localStorage.getItem(k) || "null");
+      if (s && s.halves) out = out.concat(s.halves);
+    }
+  } catch (e) {}
+  return out;
+}
+
+/* ───────── i numeri della lingua ─────────
+   Le stesse voci di My form, ma su tutta la stagione e su tutte le
+   competizioni insieme: e' il totale che il professore vede nella
+   scheda, visto dalla parte dell'alunno. */
+function allStats() {
+  var s = { halves:0, grd:0, right:0, total:0, open:0, max:0, yellow:0, red:0,
+            hard:0, hardOk:0, help:0, kinds:{}, words:0, perfect:0,
+            punct:0, punctOk:0, lng:0, longOk:0, cap:0, capOk:0 };
+  allHalves().forEach(function (h) {
+    if (h.ph === "grd") s.grd++; else s.halves++;
+    s.right += h.right || 0; s.total += h.total || 0;
+    s.open += h.open || 0; s.max += h.max || 0;
+    s.yellow += h.yellow || 0; s.red += h.red || 0;
+    s.help += h.help || 0;
+    if (h.hard) { s.hard++; if (h.hardOk) s.hardOk++; }
+    (h.items || []).forEach(function (it) {
+      if (it.t === "ponct") { s.punct++; if (!it.k) s.punctOk++; }
+      else {
+        s.words++;
+        if (!it.k) s.perfect++;
+        if (String(it.w).length >= 7) { s.lng++; if (!it.k) s.longOk++; }
+        if (/^[A-Z]/.test(it.w)) { s.cap++; if (!it.k) s.capOk++; }
+      }
+      if (it.k) s.kinds[it.k] = (s.kinds[it.k] || 0) + 1;
+    });
+  });
+  s.acc = s.total ? Math.round((s.right / s.total) * 100) : 0;
+  return s;
+}
+
+/* ───────── i numeri del gioco ─────────
+   Questi non li decide il telefono: li decide il campionato del
+   professore, e arrivano dentro il bollettino di ogni competizione. */
+function gameStats() {
+  var g = { comps:0, p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0, rows:[] };
+  COMPS.forEach(function (m) {
+    var b = compBull(m.id);
+    if (!b || !m.club) return;
+    var r = (b.table || []).filter(function (x) { return x.id === m.club; })[0];
+    if (!r) return;
+    var t = (b.teams || []).filter(function (x) { return x.id === m.club; })[0] || {};
+    g.comps++;
+    g.p += r.p || 0; g.w += r.w || 0; g.d += r.d || 0; g.l += r.l || 0;
+    g.gf += r.gf || 0; g.ga += r.ga || 0; g.pts += r.pts || 0;
+    g.rows.push({ id:m.id, name:m.name, kind:m.kind,
+                  club:t.name || m.clubName || m.club, colour:t.colour || "#16233F",
+                  pos:r.pos || 0, of:(b.table || []).length,
+                  p:r.p || 0, w:r.w || 0, d:r.d || 0, l:r.l || 0,
+                  gf:r.gf || 0, ga:r.ga || 0, pts:r.pts || 0, form:r.form || [] });
+  });
+  g.rows.sort(function (a, b) { return (b.p - a.p) || a.pos - b.pos; });
+  return g;
+}
+
+/* ───────── le prossime partite ─────────
+   Una per competizione, quella che il professore ha messo in calendario.
+   Davanti vanno quelle non ancora giocate: sono le uniche che chiedono
+   qualcosa all'alunno. */
+function nextUp() {
+  var out = [];
+  COMPS.forEach(function (m) {
+    var b = compBull(m.id);
+    if (!b || !m.club) return;
+    var n = (b.next || {})[m.club];
+    if (!n) return;
+    var mine = (b.teams || []).filter(function (t) { return t.id === m.club; })[0] || {};
+    var foe  = (b.teams || []).filter(function (t) { return t.id === n.opp; })[0] || {};
+    var played = formHalves(m.id, m.club).filter(function (h) {
+      return h.md === n.md && (h.ph === "att" || h.ph === "def");
+    }).length;
+    out.push({ id:m.id, name:m.name, kind:m.kind, md:n.md, mdTotal:m.mdTotal || 1,
+               club:m.club, clubName:mine.name || m.clubName || m.club,
+               colour:mine.colour || "#16233F",
+               opp:foe.name || n.opp, atHome:!!n.atHome, cup:n.cup || null,
+               att:climateOf(n.attClim || "cloudy"),
+               def:climateOf(n.defClim || "rain"),
+               halves:played, active:m.id === scope() });
+  });
+  out.sort(function (a, b) {
+    return (a.halves - b.halves) || ((b.active ? 1 : 0) - (a.active ? 1 : 0)) || a.md - b.md;
+  });
+  return out;
+}
+
+/* ═══════════════ 1. LA PORTA ═══════════════ */
+VIEWS.gate = function (d) {
+  paintNeutral();
+  $("bar").innerHTML = '<div class="mast"><div class="mk">FOOT<em>EFL</em></div>' +
+    "<p>FOOTBALL LINGUISTIQUE</p></div>";
+  prog(0);
+
+  var hint = d && d.hint;
+  html('<div class="pad gpad">' +
+    "<h1>Who are you?</h1>" +
+    '<p class="lede">Your teacher gave you a <b>code</b>. Write it once and this phone ' +
+    "knows you: the competitions he has entered you in, the club he gave you in each " +
+    "one, and the words you have to fix.</p>" +
+    '<div class="lock"><span>YOUR CODE</span>' +
+    "<b>Three letters, a dash, four signs. Like <i>ALE-QM34</i>.</b>" +
+    '<input type="text" id="gin" maxlength="9" autocomplete="off" ' +
+    'autocapitalize="characters" autocorrect="off" spellcheck="false" ' +
+    'placeholder="XXX-0000" aria-label="Your code">' +
+    '<p class="kerr" id="gerr"' + (hint ? "" : " hidden") + ">" + esc(hint || "") +
+    "</p></div>" +
+    '<button class="btn" id="ggo" disabled>This is me</button>' +
+    '<div class="gside"><b>No code with you?</b>' +
+    "<span>The code is on the card your teacher gave you — it is also in the link " +
+    "he sent, so if you open that link you are in without typing anything. " +
+    "Meanwhile you can still work.</span>" +
+    '<button class="gthin" id="gpr" type="button">I only want to practise &#8250;</button>' +
+    '<button class="gthin" id="gfile" type="button">My teacher sent me a file &#8250;' +
+    "</button></div>" +
+    '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
+
+  var inp = $("gin");
+  inp.oninput = function () {
+    var v = inp.value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+    if (v.length > 3 && v.charAt(3) !== "-") {
+      v = v.slice(0, 3) + "-" + v.slice(3).replace(/-/g, "");
+    }
+    inp.value = v;
+    $("ggo").disabled = !codeLooksRight(v);
+    $("gerr").hidden = true;
+  };
+  inp.onkeydown = function (e) {
+    if (e.key === "Enter" && !$("ggo").disabled) $("ggo").click();
+  };
+  $("ggo").onclick = function () {
+    saveCode(inp.value);
+    setPract(false);
+    $("ggo").disabled = true; $("ggo").textContent = "Looking…";
+    pullOnline(function (err) {
+      $("ggo").textContent = "This is me"; $("ggo").disabled = false;
+      if (err === "nomatch") {
+        return bad("Nobody with this code in your teacher's competitions. Check the " +
+          "letters — or he may not have published yet.");
+      }
+      /* senza rete il codice resta buono: il cruscotto mostra quello che c'e' */
+      landFromCode();
+    });
+  };
+  $("gpr").onclick = function () { setPract(true); reset("home"); };
+  $("gfile").onclick = function () { setPract(true); go("bulletin"); };
+  function bad(m) { $("gerr").hidden = false; $("gerr").textContent = m; }
+  setTimeout(function () { try { inp.focus(); } catch (e) {} }, 90);
+};
+
+/* appena il codice e' buono: se c'e' una sola competizione la squadra e'
+   gia' decisa, non c'e' niente da scegliere e si entra dentro */
+function landFromCode() {
+  loadComps();
+  if (COMPS.length === 1 && !ME.club) {
+    return enterComp(COMPS[0].id, function () { reset("home"); });
+  }
+  reset("home");
+}
+
+/* ═══════════════ 2. IL CRUSCOTTO ═══════════════ */
+VIEWS.home = function () {
+  loadCode(); loadComps();
+  if (!ME.code && !isPract()) return swap("gate");
+  if (ME.club) paintClub(ME.club); else paintNeutral();
+  refreshStars(); loadLevel();
+
+  $("bar").innerHTML = '<div class="mast"><div class="mk">FOOT<em>EFL</em></div>' +
+    "<p>" + (ME.code ? "PLAYER " + esc(ME.code) : "PRACTICE &middot; NO CODE") + "</p>" +
+    '<button class="purse" id="purse" type="button" aria-label="My stars">&#9733;' +
+    "<b>" + starsLeft() + "</b></button></div>";
+  prog(0);
+  $("purse").onclick = function () { go("stars"); };
+
+  html('<div id="hwho"></div><div id="hnext"></div><div id="hcomps"></div>' +
+       '<div id="hnum"></div><div id="hrooms"></div>' +
+       '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p>');
+
+  drawWho(); drawNextUp(); drawMyComps(); drawNumbers(); drawRooms();
+
+  /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
+  if (ME.code && !ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
+    pullOnline(function (err, mine) {
+      if (err || !mine || !HERE || HERE.name !== "home") return;
+      drawNextUp(); drawMyComps(); drawNumbers();
+    });
+  }
+};
+
+/* ───────── come mi chiamo ─────────
+   Nei file pubblicati non c'e' nessun nome in chiaro: accanto a ogni
+   codice c'e' il suo nome mescolato, e si svela solo a chi ha il codice
+   che combacia. Qui si cerca il mio, per salutarlo per nome prima
+   ancora che sia entrato in una competizione. */
+function myName() {
+  var code = String(ME.code || "").toUpperCase();
+  if (!code) return ME.student || "";
+  var found = "";
+  COMPS.forEach(function (m) {
+    if (found) return;
+    var b = compBull(m.id);
+    if (!b) return;
+    (b.teams || []).forEach(function (t) {
+      (t.who || []).forEach(function (w) {
+        if (!found && String(w.c || "").toUpperCase() === code) found = unhide(w.n);
+      });
+    });
+  });
+  if (found) ME.student = found;
+  return found;
+}
+
+/* ───────── chi sono, e dove gioco adesso ───────── */
+function drawWho() {
+  var act = COMPS.filter(function (m) { return m.id === scope(); })[0];
+  var nm = myName();
+  if (!ME.code) {
+    $("hwho").innerHTML = '<div class="pad"><div class="hband prac">' +
+      "<b>You are practising</b><span>No code on this phone, so there are no " +
+      "competitions and nothing goes to your teacher. Everything you fix here stays " +
+      "yours, and the day you put your code in you keep it.</span>" +
+      (ME.club ? "" : '<button class="gthin" id="hpick" type="button">' +
+        "Choose a club to practise with &#8250;</button>") +
+      '<button class="gthin" id="hcode" type="button">I have my code now &#8250;</button>' +
+      "</div></div>";
+    if ($("hpick")) $("hpick").onclick = function () { go("clubs"); };
+    $("hcode").onclick = function () { setPract(false); reset("gate"); };
+    return;
+  }
+  $("hwho").innerHTML = '<div class="pad"><button class="hband" id="hme" type="button">' +
+    '<span class="hcr">' + (ME.club ? esc(initials(ME.club.name)) : "&#9733;") + "</span>" +
+    "<b>" + esc(nm || "You") + "</b>" +
+    "<span>" + (act
+      ? esc(act.clubName || "") + " &middot; " + kindLabel(act.kind) + " &middot; " +
+        esc(act.name)
+      : COMPS.length ? "Tap a competition to go in" : "Waiting for your teacher") +
+    "</span><em>" + esc(ME.code) + " &middot; level " + esc(ME.level) + "</em>" +
+    "</button></div>";
+  $("hme").onclick = function () { go("comps"); };
+}
+
+/* ───────── la prossima partita: la ragione per cui apre l'app ───────── */
+function drawNextUp() {
+  if (!ME.code) { $("hnext").innerHTML = ""; return; }
+  var list = nextUp();
+  if (!list.length) {
+    $("hnext").innerHTML = '<section class="pad"><h2 class="sec">Next match</h2>' +
+      '<div class="panel empty3">' + (COMPS.length
+        ? "Your teacher has not put the next matchday in yet. When he does, it turns " +
+          "up here with the weather of your two halves."
+        : "Nothing yet. The moment your teacher publishes a competition with your code " +
+          "in it, your next match appears here.") +
+      "</div></section>";
+    return;
+  }
+  $("hnext").innerHTML = '<section class="pad"><h2 class="sec">' +
+    (list.length === 1 ? "Next match" : "Your next matches") + "</h2>" +
+    list.slice(0, 3).map(function (n) {
+      /* lo stato del foglio si sa solo per la competizione aperta: le chiavi
+         del foglio vivono sotto scope(), e il meteo sotto ME.next */
+      var sheet = (n.active && ME.club && ME.next) ? sheetLabel() : "";
+      return '<button class="nxc' + (n.halves ? " done2" : "") + '" data-c="' + esc(n.id) +
+        '" type="button"><span class="nxk">' + kindLabel(n.kind).toUpperCase() +
+        " &middot; MATCHDAY " + n.md + (n.cup ? " &middot; " + esc(n.cup) : "") +
+        (n.active ? ' <i class="nxnow">PLAYING</i>' : "") + "</span>" +
+        /* la sua squadra sempre per prima: e' la sua partita, non la
+           riga di un calendario */
+        '<span class="nxt"><b>' + esc(n.clubName) + "</b><em>" +
+        (n.atHome ? "at home to" : "away at") + "</em><b>" + esc(n.opp) +
+        "</b></span>" +
+        '<span class="nxw"><span><i>Attack</i><b>' + esc(n.att.label) +
+        "<u>" + n.att.actions + " slots</u></b></span>" +
+        '<span><i>Defence</i><b>' + esc(n.def.label) +
+        "<u>" + n.def.actions + " slots</u></b></span></span>" +
+        '<span class="nxs">' + (n.halves >= 2
+          ? "&#10003; Both halves played. Your teacher has your report."
+          : n.halves === 1
+            ? "One half played &mdash; the other one is waiting."
+            : esc(sheet || "Tap to go in and prepare your team sheet")) +
+        "</span></button>";
+    }).join("") + "</section>";
+
+  Array.prototype.forEach.call($("hnext").querySelectorAll(".nxc"), function (b) {
+    b.onclick = function () {
+      enterComp(b.dataset.c, function (err) {
+        if (err) return;
+        reset("squad");
+      });
+    };
+  });
+}
+
+/* ───────── a che cosa sono iscritto ───────── */
+function drawMyComps() {
+  if (!ME.code) { $("hcomps").innerHTML = ""; return; }
+  var fresh = freshComps().map(function (m) { return m.id; });
+  if (!COMPS.length) {
+    $("hcomps").innerHTML = '<section class="pad"><h2 class="sec">Your competitions</h2>' +
+      '<div class="panel empty3">Nothing found for <b>' + esc(ME.code) + "</b> yet. " +
+      "It is not a mistake: your teacher publishes when the matchday is ready." +
+      '</div><button class="btn ghost" id="hlook">Look again</button></section>';
+    $("hlook").onclick = function () {
+      $("hlook").disabled = true; $("hlook").textContent = "Looking…";
+      pullOnline(function () { reset("home"); });
+    };
+    return;
+  }
+  $("hcomps").innerHTML = '<section class="pad"><h2 class="sec">Your competitions' +
+    '<em class="cnt">' + COMPS.length + "</em></h2>" +
+    '<div class="complist">' + COMPS.map(function (m) {
+      var on = m.id === scope();
+      return '<button class="compc' + (on ? " on" : "") +
+        (fresh.indexOf(m.id) >= 0 ? " fresh" : "") + '" data-c="' + esc(m.id) + '">' +
+        '<span class="ckind">' + kindLabel(m.kind) + "</span><b>" + esc(m.name) + "</b>" +
+        "<em>" + esc(m.clubName || "no club yet") +
+        (m.md ? " &middot; matchday " + m.md + " of " + m.mdTotal : "") + "</em>" +
+        (fresh.indexOf(m.id) >= 0 ? '<span class="cnew">NEW</span>' : "") +
+        (on ? '<span class="cnow">PLAYING</span>' : "") + "</button>";
+    }).join("") + "</div></section>";
+  Array.prototype.forEach.call($("hcomps").querySelectorAll(".compc"), function (b) {
+    b.onclick = function () {
+      enterComp(b.dataset.c, function (err) { if (!err) reset("squad"); });
+    };
+  });
+}
+
+/* ───────── i miei numeri, in tre caselle ───────── */
+function drawNumbers() {
+  var s = allStats(), g = gameStats();
+  var played = s.halves + s.grd;
+  /* i numeri del gioco arrivano dal campionato: ci sono anche quando su
+     questo telefono non e' ancora stata scritta una parola */
+  if (!played && !g.p) {
+    $("hnum").innerHTML = '<section class="pad"><h2 class="sec">Your numbers</h2>' +
+      '<div class="panel empty3">Nothing counted yet. Every word you write in a match ' +
+      "or at the training ground is counted from here on, and this is where you see it." +
+      "</div></section>";
+    return;
+  }
+  var cells = [
+    { k:s.total ? s.acc + "%" : "—", t:"of your words right",
+      s:s.total ? s.total + " words written" : "nothing written yet" },
+    { k:String(g.p || s.halves), t:g.p ? (g.p === 1 ? "match played" : "matches played")
+        : "halves played", s:g.p ? g.w + "W " + g.d + "D " + g.l + "L" : "on this phone" },
+    { k:String(g.gf), t:g.gf === 1 ? "goal scored" : "goals scored",
+      s:g.ga + " let in" }
+  ];
+  $("hnum").innerHTML = '<section class="pad"><h2 class="sec">Your numbers</h2>' +
+    '<div class="numrow">' + cells.map(function (c) {
+      return '<div class="numc"><b>' + esc(c.k) + "</b><span>" + esc(c.t) +
+        "</span><em>" + esc(c.s) + "</em></div>";
+    }).join("") + "</div>" +
+    '<button class="stbar" id="hall" type="button"><span class="stn">&#9783;</span>' +
+    '<span class="stt"><b>All my statistics</b><span>The language and the game, ' +
+    "competition by competition &mdash; and where you keep slipping.</span></span>" +
+    "<i>&#8250;</i></button></section>";
+  $("hall").onclick = function () { go("me"); };
+}
+
+/* ───────── le stanze ───────── */
+function drawRooms() {
+  var left = (ME.words || []).filter(function (x) { return !wordFixed(x.w); }).length;
+  var T = [];
+  if (ME.club) {
+    T.push({ id:"squad", name:"My squad", big:esc(initials(ME.club.name)),
+             sub:ME.club.name, go:"squad" });
+    T.push({ id:"form", name:"My form",
+             big:(function () { loadForm(); var s = season();
+                    return s.total ? s.acc + "%" : "—"; })(),
+             sub:"this competition", go:"form" });
+  }
+  T.push({ id:"words", name:"My words", big:String(left), sub:"words to fix", go:"words" });
+  if (ME.club) {
+    T.push({ id:"ground", name:"The ground", big:(function () {
+               loadGround(); return GROUND.funds + "k"; })(),
+             sub:"in the till", go:"ground" });
+    T.push({ id:"league", name:"The league", big:(function () {
+               var me = (ME.table || []).filter(function (r) { return r.me; })[0];
+               return me && me.pos ? me.pos + "º" : "—";
+             })(), sub:"where I stand", go:"league" });
+  }
+  T.push({ id:"clubs", name:"The clubs", big:String(CLUBS.filter(function (c) {
+             return clubUnlocked(c.id); }).length) + "/" + CLUBS.length,
+           sub:"open with stars", go:"clubs" });
+  $("hrooms").innerHTML = '<section class="pad"><h2 class="sec">Where I work</h2>' +
+    '<div class="tiles" id="htiles">' + T.map(function (t) {
+      return '<button class="tile" data-t="' + t.id + '" type="button"><b>' +
+        esc(t.name) + '</b><span class="big">' + t.big + '</span>' +
+        '<span class="sub">' + esc(t.sub) + "</span></button>";
+    }).join("") + "</div></section>";
+  Array.prototype.forEach.call($("htiles").querySelectorAll(".tile"), function (b) {
+    b.onclick = function () {
+      var t = T.filter(function (x) { return x.id === b.dataset.t; })[0];
+      if (t.id === "league") LG.team = null;
+      go(t.go);
+    };
+  });
+}
+
+/* ═══════════════ 3. TUTTI I MIEI NUMERI ═══════════════ */
+VIEWS.me = function () {
+  var s = allStats(), g = gameStats();
+  if (ME.club) paintClub(ME.club); else paintNeutral();
+  barFlow("My statistics", ME.code ? "Player " + ME.code : "Practice", 0);
+
+  var ups = topKinds(s.kinds, 6);
+  var good = [
+    ["Whole words with no mistake", s.perfect, s.words],
+    ["Punctuation", s.punctOk, s.punct],
+    ["Long words, seven letters or more", s.longOk, s.lng],
+    ["Capital letters", s.capOk, s.cap],
+    ["The hard word of the half", s.hardOk, s.hard]
+  ].filter(function (x) { return x[2] > 0; })
+   .map(function (x) { return { t:x[0], n:x[1], d:x[2], p:Math.round(x[1] / x[2] * 100) }; })
+   .sort(function (a, b) { return b.p - a.p; });
+
+  html('<div class="pad">' +
+    '<h2 class="sec">The language</h2>' +
+    (s.total
+      ? ringRow(s) +
+        '<p class="lede sm2">' + s.total + " words written in " + s.halves +
+        (s.halves === 1 ? " half" : " halves") +
+        (s.grd ? " and " + s.grd + (s.grd === 1 ? " session" : " sessions") +
+          " at the ground" : "") + "." +
+        (s.help ? " The phone put a word in for you <b>" + s.help +
+          (s.help === 1 ? " time" : " times") + "</b> — your teacher sees that too." : "") +
+        "</p>"
+      : '<div class="panel empty3">Nothing written yet.</div>') +
+
+    (ups.length
+      ? '<h2 class="sec top">Where you keep slipping</h2><div class="panel">' +
+        ups.map(function (x) {
+          var w = Math.round(x.v / ups[0].v * 100);
+          return '<div class="kr2"><span class="kn"><b>' + esc(x.k) + "</b><em>" +
+            esc(TIPS[x.k] || "") + '</em></span><span class="kb"><i style="width:' +
+            w + '%"></i></span><span class="kv">' + x.v + "</span></div>";
+        }).join("") + "</div>"
+      : "") +
+
+    (good.length
+      ? '<h2 class="sec top">What you get right</h2><div class="panel">' +
+        good.map(function (x) {
+          return '<div class="gr"><span class="gn">' + esc(x.t) + "</span>" +
+            '<span class="gb"><i style="width:' + x.p + '%"></i></span>' +
+            '<span class="gv">' + x.n + "/" + x.d + "</span></div>";
+        }).join("") + "</div>"
+      : "") +
+
+    '<h2 class="sec top">The game</h2>' +
+    (g.rows.length
+      ? '<div class="panel">' + g.rows.map(function (r) {
+          return '<div class="gcomp"><span class="gci" style="background:' +
+            esc(r.colour) + '"></span><span class="gcn"><b>' + esc(r.name) +
+            "</b><em>" + esc(r.club) + " &middot; " + kindLabel(r.kind) +
+            (r.pos ? " &middot; " + r.pos + "º of " + r.of : "") + "</em></span>" +
+            '<span class="gcv"><b>' + r.pts + '</b><em>pts</em></span></div>' +
+            '<div class="gcr">' + r.p + " played &middot; " + r.w + "W " + r.d + "D " +
+            r.l + "L &middot; " + r.gf + " scored, " + r.ga + " let in</div>";
+        }).join("") + "</div>" +
+        '<p class="lede sm2">' + g.p + (g.p === 1 ? " match" : " matches") +
+        " in all, " + g.gf + " scored and " + g.ga + " let in" +
+        (s.yellow || s.red ? ", " + s.yellow + " yellow and " + s.red + " red" : "") +
+        ". These come from your teacher's championship, not from this phone.</p>"
+      : '<div class="panel empty3">' + (ME.code
+          ? "The table arrives with the matchday your teacher publishes."
+          : "Without a code there is no competition, so there is nothing to count here.") +
+        "</div>") +
+
+    '<h2 class="sec top">Your level</h2>' +
+    '<div class="panel lvrow"><b>' + esc(ME.level) + "</b><span>" +
+    "Your tests ask questions at this level. Your teacher sets it, and moves it when " +
+    "you are ready.</span></div>" +
+    '<button class="btn ghost" id="mback">Back</button></div>');
+  $("mback").onclick = back;
+};
+
+/* ═══════════════ chi si allena senza codice ═══════════════
+   Nessuna competizione, quindi la squadra non gliela da' nessuno: se la
+   prende lui dal carosello, e gli serve solo un nome da mettere sulla
+   maglia. Niente codici: li ha gia' rifiutati alla porta. */
+var gatePrevClaim = VIEWS.claim;
+VIEWS.claim = function (d) {
+  if (ME.code || !isPract()) return gatePrevClaim(d);
+  var c = CLUBS.filter(function (x) { return x.id === (d && d.id); })[0];
+  if (!c) return back();
+  paintNeutral();
+  barFlow("Practice", c.name, 0);
+  html('<div class="pad"><h1>' + esc(c.name) + "</h1>" +
+    '<p class="lede">You are practising, so this club is yours for as long as you ' +
+    "want it. Put a name on the shirt and go in.</p>" +
+    '<div class="lock"><span>YOUR NAME</span>' +
+    "<b>Only this phone sees it. Nothing leaves here.</b>" +
+    '<input type="text" id="pnm" maxlength="24" autocomplete="off" ' +
+    'placeholder="your name" aria-label="Your name"></div>' +
+    '<button class="btn" id="pgo" disabled>Into ' + esc(c.name) + "</button>" +
+    '<button class="btn ghost" id="pbk">Back</button></div>');
+  var inp = $("pnm");
+  inp.oninput = function () { $("pgo").disabled = !inp.value.trim(); };
+  inp.onkeydown = function (e) {
+    if (e.key === "Enter" && inp.value.trim()) $("pgo").click();
+  };
+  $("pgo").onclick = function () {
+    ME.student = inp.value.trim();
+    saveMyClaim(c.id, ME.student);
+    joinClub(c.id);
+    paintClub(ME.club);
+    reset("squad");
+  };
+  $("pbk").onclick = back;
+  setTimeout(function () { try { inp.focus(); } catch (e) {} }, 90);
+};
+
+
 /* ───── 30-squad.js ───── */
 /* ═══════════════ la squadra: la pagina di casa ═══════════════ */
 
@@ -4007,6 +4683,9 @@ function reportOf(md) {
        e un cassetto in rete non deve contenere il nome di un ragazzo */
     code:ME.code || "", student:ME.code ? "" : (ME.student || ""),
     level:ME.level || "",
+    /* quale apparecchio l'ha mandato: due apparecchi sullo stesso codice
+       non sono vietati, ma il professore vuole saperlo */
+    dev:devId(),
     made:new Date().toISOString(), halves:{},
     calls:{ side:null, taker:null, wonder:null, dive:null } };
   hs.forEach(function (h) {
@@ -6969,7 +7648,8 @@ function markDiff(right, wrong) {
 VIEWS.words = function () {
   loadMem();
   var left = wordsLeft(), done = ME.words.length - left.length;
-  barFlow("My words", ME.club.name, 0);
+  /* chi si allena senza codice puo' non avere ancora una squadra */
+  barFlow("My words", ME.club ? ME.club.name : "Practice", 0);
   var byKind = {};
   left.forEach(function (x) { byKind[x.kind] = (byKind[x.kind] || 0) + 1; });
   var kinds = Object.keys(byKind).sort(function (a, b) { return byKind[b] - byKind[a]; });
@@ -7075,7 +7755,7 @@ VIEWS.wEnd = function () {
   var before = (loadStars(), starsEarned());
   noteFixedWords();
   var won = starsEarned() - before;
-  barFlow("Done for today", ME.club.name, 100, false);
+  barFlow("Done for today", ME.club ? ME.club.name : "Practice", 100, false);
   html('<div class="pad"><h1>' + (WR.fixedNow
     ? WR.fixedNow + (WR.fixedNow === 1 ? " word fixed." : " words fixed.")
     : "Good work.") + "</h1>" +
@@ -7093,9 +7773,10 @@ VIEWS.wEnd = function () {
       : "Your list is empty. Nothing left to fix until the next dictation.") +
     "</p></div>" +
     '<button class="btn" id="wb">Back to my words</button>' +
-    '<button class="btn ghost" id="wh">Back to my squad</button></div>');
+    '<button class="btn ghost" id="wh">' +
+    (ME.club ? "Back to my squad" : "Back to my home") + "</button></div>");
   $("wb").onclick = function () { swap("words"); };
-  $("wh").onclick = function () { reset("squad"); };
+  $("wh").onclick = function () { reset(ME.club ? "squad" : "home"); };
 };
 
 /* ───────── avvio ───────── */
@@ -7109,10 +7790,15 @@ loadBulletin();
 /* lo stesso link, con #coach in fondo, apre il registro del professore */
 if (String(location.hash || "").toLowerCase().indexOf("coach") > -1) reset("coach");
 else if (fromLink) {
-  /* arrivato dalla sua tesserina: si va dritti alle sue competizioni, e
-     intanto si guarda se il professore ha pubblicato qualcosa di nuovo */
-  reset("comps");
-  pullOnline(function () { if (HERE && HERE.name === "comps") reset("comps"); });
+  /* arrivato dalla sua tesserina: la porta l'ha aperta il link, quindi si
+     va dritti a casa e intanto si guarda se c'e' qualcosa di nuovo */
+  reset("home");
+  pullOnline(function () {
+    if (HERE && HERE.name === "home") landFromCode();
+  });
+} else if (!ME.code && !isPract()) {
+  /* la porta: senza codice e senza aver chiesto di allenarsi non si entra */
+  reset("gate");
 } else {
   reset("home");
   flushOutbox();
