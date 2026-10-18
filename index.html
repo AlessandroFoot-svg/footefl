@@ -2900,8 +2900,138 @@ function claimClub(id, name, code, cb) {
   })["catch"](function () { cb("offline"); });
 }
 
+/* il nome che il bollettino mette su una squadra, se ce n'e' uno */
+function bullNames(id) {
+  if (!BULL) return "";
+  var t = (BULL.teams || []).filter(function (x) { return x.id === id; })[0];
+  return (t && t.student) || "";
+}
+function clubHead(c) {
+  return '<div class="joinhead" style="background:' + c.colour + ";color:" + c.ink + '">' +
+    "<b>" + esc(c.name) + "</b><span>" + esc(c.city).toUpperCase() + "</span></div>";
+}
+
+/* ───────── e' la tua: entra ───────── */
+function claimMine(c, m) {
+  paintNeutral();
+  barFlow(c.name, "Your teacher put you here", 0);
+  html('<div class="pad">' + clubHead(c) +
+    '<div class="who2"><div><b>' + esc(m.clubName || c.name) + "</b>" +
+    "<span>" + kindLabel(m.kind) + " &middot; " + esc(m.name) + "</span></div></div>" +
+    '<p class="lede">Your code <b>' + esc(ME.code) + "</b> says this one is yours. " +
+    "Nothing to choose and nothing to type.</p>" +
+    '<button class="btn" id="cmGo">Play for ' + esc(c.name) + "</button>" +
+    '<button class="btn ghost" id="cmAll">See all my competitions</button>' +
+    '<button class="btn ghost" id="cmBk">Back</button></div>');
+  $("cmGo").onclick = function () {
+    enterComp(m.id, function () { reset(ME.club ? "squad" : "home"); });
+  };
+  $("cmAll").onclick = function () { go("comps"); };
+  $("cmBk").onclick = back;
+}
+
+/* ───────── non e' la tua: dillo, e portalo dove deve andare ───────── */
+function claimNotMine(c) {
+  paintNeutral();
+  barFlow(c.name, "Not yours", 0);
+  var list = COMPS.filter(function (m) { return !!m.club; });
+  html('<div class="pad">' + clubHead(c) +
+    '<p class="lede">This one is not yours. Your teacher decides the clubs, and with ' +
+    "your code <b>" + esc(ME.code) + "</b> he has given you " +
+    (list.length ? "<b>" + esc(list.map(function (m) { return m.clubName; })
+      .filter(function (v, i, a) { return a.indexOf(v) === i; }).join(", ")) + "</b>"
+      : "nothing yet") + ".</p>" +
+    (list.length
+      ? '<div class="complist">' + list.map(function (m) {
+          return '<button class="compc" data-c="' + esc(m.id) + '">' +
+            '<span class="ckind">' + kindLabel(m.kind) + "</span><b>" +
+            esc(m.clubName) + "</b><em>" + esc(m.name) + "</em></button>";
+        }).join("") + "</div>"
+      : "") +
+    '<button class="btn ghost" id="cnAll">All my competitions</button>' +
+    '<button class="btn ghost" id="cnBk">Back to the clubs</button></div>');
+  Array.prototype.forEach.call(document.querySelectorAll(".compc"), function (b) {
+    b.onclick = function () {
+      enterComp(b.dataset.c, function () { reset(ME.club ? "squad" : "home"); });
+    };
+  });
+  $("cnAll").onclick = function () { go("comps"); };
+  $("cnBk").onclick = back;
+}
+
+/* ───────── non ha ancora il codice: e' l'unica cosa da chiedergli ───────── */
+function claimAskCode(c) {
+  paintNeutral();
+  barFlow("Who are you?", "One code, once", 0);
+  html('<div class="pad">' + clubHead(c) +
+    '<p class="lede">You do not pick a club here: <b>your teacher gives you one</b>. ' +
+    "Write the code he gave you and this phone finds your club by itself — in this " +
+    "competition and in every other one he puts you in.</p>" +
+    '<div class="lock"><span>YOUR CODE</span>' +
+    "<b>Three letters, a dash, four signs. Like <i>LUI-3HSF</i>.</b>" +
+    '<input type="text" id="kin" maxlength="9" autocomplete="off" ' +
+    'autocapitalize="characters" autocorrect="off" spellcheck="false" ' +
+    'placeholder="XXX-0000" aria-label="Your code">' +
+    '<p class="kerr" id="kerr" hidden></p></div>' +
+    '<button class="btn" id="kgo" disabled>This is me</button>' +
+    '<button class="btn ghost" id="kold">I have no code, my teacher gave me a club code' +
+    "</button>" +
+    '<button class="btn ghost" id="kbk">Back</button></div>');
+  var inp = $("kin");
+  inp.oninput = function () {
+    var v = inp.value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+    if (v.length > 3 && v.charAt(3) !== "-") v = v.slice(0, 3) + "-" + v.slice(3).replace(/-/g, "");
+    inp.value = v;
+    $("kgo").disabled = !codeLooksRight(v);
+    $("kerr").hidden = true;
+  };
+  $("kgo").onclick = function () {
+    saveCode(inp.value);
+    $("kgo").disabled = true; $("kgo").textContent = "Looking…";
+    pullOnline(function (err) {
+      $("kgo").textContent = "This is me"; $("kgo").disabled = false;
+      if (err === "nomatch") return bad("Nobody with this code in your teacher's " +
+        "competitions. Check the letters, or ask him.");
+      if (err) return bad("No answer from your teacher's page. Try again in a moment, " +
+        "or load the file he sent you.");
+      swap("claim", { id: c.id });         /* adesso sa chi e': si riparte da qui */
+    });
+  };
+  $("kold").onclick = function () { claimOldWay(c); };
+  $("kbk").onclick = back;
+  function bad(m) { $("kerr").hidden = false; $("kerr").textContent = m; }
+  setTimeout(function () { try { inp.focus(); } catch (e) {} }, 90);
+}
+
+/* ───────── la vecchia strada: nome e codice del club ─────────
+   Resta per chi gioca senza il sito, col solo file del bollettino. */
+function claimOldWay(c) {
+  VIEWS.claimOld({ id: c.id });
+}
+
 /* ───────── la schermata: il nome, e il codice se serve ───────── */
 VIEWS.claim = function (d) {
+  var c = CLUBS.filter(function (x) { return x.id === d.id; })[0];
+  if (!c) return back();
+  loadCode(); loadComps();
+
+  /* ───────── col codice non si sceglie: si viene riconosciuti ─────────
+     Toccare una squadra e poi sentirsi chiedere nome e codice del club era
+     un doppione che confondeva. Adesso toccare una squadra e' solo il modo
+     di entrare: chi sei lo dice il codice, e la squadra la dice il
+     professore — anche quando non e' quella che hai toccato. */
+  if (ME.code && COMPS.length) {
+    var mine = COMPS.filter(function (m) { return m.club === c.id; })[0];
+    if (mine) return claimMine(c, mine);
+    return claimNotMine(c);
+  }
+  if (!ME.code && !bullNames(c.id)) return claimAskCode(c);
+  return VIEWS.claimOld(d);
+};
+
+/* la strada di prima: il nome dal bollettino, oppure nome + codice del club.
+   Serve ancora a chi gioca col solo file, senza sito. */
+VIEWS.claimOld = function (d) {
   var c = CLUBS.filter(function (x) { return x.id === d.id; })[0];
   if (!c) return back();
 
