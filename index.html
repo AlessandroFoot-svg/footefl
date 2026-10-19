@@ -1453,6 +1453,10 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .warm.off .wi{background:rgba(226,251,206,.16);color:var(--fog)}
 .entkey{margin:9px 0 0;text-align:center;font-size:11px;font-weight:600;color:var(--fog)}
 .entkey b{color:var(--cream);font-weight:800}
+
+/* la storia del club, sotto il motto */
+.cd .story{margin-top:9px;font-size:12px;font-weight:600;line-height:1.55;color:var(--fog)}
+.cd .motto + .story{margin-top:7px}
 </style>
 </head>
 <body>
@@ -1617,38 +1621,73 @@ var WORLDS = [
 var CLUBS = [
   { id:"RAV", name:"Ravens FC", nick:"The Keepers of the City", city:"London",
     colour:"#16233F", ink:"#F2E6C8", motto:"Watch. Wait. Strike.",
-    lex:["watch","tower","fog","keep","lamp"], open:true },
+    lex:["watch","tower","fog","keep","lamp"],
+    story:"Six ravens have lived at the Tower of London for centuries, and the " +
+          "old story says the city falls on the day they leave. The club took " +
+          "their name, and their habit: watch the whole night, move once.", open:true },
   { id:"SHE", name:"Sherwood Rovers", nick:"The Outlaws", city:"Nottinghamshire",
     colour:"#4A5D23", ink:"#F4EFDD", motto:"",
-    lex:["wood","oak","glade","thorn","fern"], open:true },
+    lex:["wood","oak","glade","thorn","fern"],
+    story:"The pitch sits at the edge of the old forest where Robin Hood is " +
+          "supposed to have hidden from the sheriff. The first players were " +
+          "foresters, and the oak on the badge is one of theirs. Nobody here " +
+          "minds being called an outlaw.", open:true },
   { id:"BRA", name:"Brass FC", nick:"", city:"Birmingham",
     colour:"#7A1B22", ink:"#F6E3C8", motto:"",
-    lex:["anvil","forge","brass","bridge","chimney"], open:true },
+    lex:["anvil","forge","brass","bridge","chimney"],
+    story:"Birmingham was once the city of a thousand trades, full of small " +
+          "workshops that cut, cast and polished metal. The men who made brass " +
+          "taps and buttons started this club in 1894, between a canal bridge and " +
+          "a factory chimney.", open:true },
   { id:"ROP", name:"Ropewalkers", nick:"The Rope", city:"Liverpool",
     colour:"#B8823A", ink:"#18120A", motto:"Twist, hold, never snap.",
-    lex:["rope","quay","knot","tide","dock"], open:true },
+    lex:["rope","quay","knot","tide","dock"],
+    story:"A ropewalk was a long narrow shed where men walked backwards for " +
+          "hours, twisting hemp into rope for the ships. Liverpool had dozens of " +
+          "them. The club kept the name and the rule that comes with it: twist, " +
+          "hold, never snap.", open:true },
 
   { id:"OXF", name:"Oxford FC", nick:"The Ford of the Oxen", city:"Oxford",
     colour:"#14110D", ink:"#E6D9B8", motto:"",
-    lex:["ink","spire","ford","page","vault"], open:false,
+    lex:["ink","spire","ford","page","vault"],
+    story:"Oxford means the ford of the oxen — the shallow crossing where cattle " +
+          "were driven over the river, long before anyone built a library there. " +
+          "The club grew up under the spires, and expects its players to think " +
+          "first and run second.", open:false,
     howlab:"PLAY A FULL SEASON", how:"Finish one season, wherever you come in the table." },
   { id:"CAV", name:"Cavendish Athletic", nick:"The Fancy", city:"London · West End",
     colour:"#6E2639", ink:"#F2E6C8", motto:"Composure before force.",
-    lex:["poise","glove","drill","bow","salute"], open:false,
+    lex:["poise","glove","drill","bow","salute"],
+    story:"In Victorian London the Fancy were the gentlemen who followed boxing " +
+          "in their best coats and never took them off. They founded this club " +
+          "beside the theatres, and decided that a waxed moustache was as good a " +
+          "badge as any crown.", open:false,
     howlab:"FIX 50 WORDS", how:"Clear fifty words in My words. Any words, your own pace." },
   { id:"WEA", name:"Weavers FC", nick:"The Looms", city:"Manchester",
     colour:"#9E3B2F", ink:"#F6E6D8", motto:"",
-    lex:["loom","thread","cotton","shuttle","mill"], open:false,
+    lex:["loom","thread","cotton","shuttle","mill"],
+    story:"Manchester was built on cotton, with thousands of looms turning day " +
+          "and night. The people who worked them took their one free afternoon " +
+          "together on this pitch. The club still thinks in threads: one break " +
+          "and the whole cloth is wrong.", open:false,
     howlab:"A CLEAN DICTATION",
     how:"Write one whole dictation without a single double-letter mistake." },
   { id:"BNK", name:"Bankside Athletic", nick:"The Players", city:"London · Southwark",
     colour:"#A8701C", ink:"#171206", motto:"We are all pretending.",
-    lex:["stage","mask","crowd","flag","part"], open:false,
+    lex:["stage","mask","crowd","flag","part"],
+    story:"Bankside is the stretch of the Thames where the theatres stood, the " +
+          "Globe among them, because plays were not allowed inside the city " +
+          "walls. The club plays a few hundred metres away and borrows the " +
+          "actors' line: we are all pretending.", open:false,
     howlab:"THE WHOLE CLASS",
     how:"Opens for everyone when every player in the class has emptied their word list." },
   { id:"TAB", name:"Tabard Road FC", nick:"The Pilgrims", city:"London · Southwark",
     colour:"#5C1F1F", ink:"#F4E6D2", motto:"Everyone has a tale.",
-    lex:["road","inn","tale","journey","company"], open:false,
+    lex:["road","inn","tale","journey","company"],
+    story:"The Tabard was the inn in Southwark where Chaucer's pilgrims met " +
+          "before riding to Canterbury, each of them with a tale to tell. The " +
+          "road is still there, and so is the club, with the same idea: everybody " +
+          "arrives from somewhere.", open:false,
     howlab:"YOUR TEACHER'S KEY", how:"Your teacher opens this one. Ask what it takes." }
 ];
 
@@ -1944,7 +1983,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "24";
+var APPVER = "25";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -3805,8 +3844,12 @@ function drawWorlds() {
   });
 }
 
+/* ───────── la carta di un club ─────────
+   Qui dentro non si compra e non si prenota niente: c'e' chi sono.
+   Stemma, maglia, motto, la storia da cui viene il nome e le cinque
+   parole che porta in campo. Quello che si puo' fare — entrarci,
+   allenarcisi — sta nel riquadro sotto, dove ci si aspetta un bottone. */
 function clubCard(c, i) {
-  var mineNow = clubUnlocked(c.id), pr = clubPrice(c.id);
   var kit = kitOf(c.id), crest = crestOf(c.id);
   var head = '<div class="field' + (kit ? " haskit" : "") + '" style="background:' +
     c.colour + ";color:" + c.ink + '">' +
@@ -3815,33 +3858,15 @@ function clubCard(c, i) {
       ? '<img class="ccr crs" src="' + crest + '" alt="">'
       : '<span class="ccr" style="border-color:' + c.ink + '55">' +
         initials(c.name) + "</span>") +
-    (mineNow ? "" : '<span class="lock">&#128274;</span>') +
     (c.nick ? '<span class="nick">' + esc(c.nick) + "</span>" : "") +
     '<span class="nm">' + esc(c.name) + "</span>" +
     '<span class="city">' + esc(c.city).toUpperCase() + "</span></div>";
   var body = '<div class="cbody">' +
-    (mineNow
-      ? (c.motto ? '<p class="motto">' + esc(c.motto) + "</p>" : "") +
-        '<div class="lex">' + c.lex.map(function (x) {
-          return "<span>" + esc(x) + "</span>"; }).join("") + "</div>" +
-        '<div class="cfoot ' + (takenBy(c.id) ? "taken" : "free") + '">' +
-        (takenBy(c.id)
-          ? (isMine(c.id) ? "YOURS" : "TAKEN BY " + esc(takenBy(c.id)).toUpperCase())
-          : "FREE TO JOIN") + "</div>"
-      : pr === undefined
-        ? '<div class="howlab">' + esc(c.howlab) + '</div><p class="how">' + esc(c.how) +
-          '</p><div class="cfoot taken">LOCKED</div>'
-        : '<div class="price' + (starsLeft() >= pr ? " can" : "") + '">' +
-          '<b>' + pr + "&#9733;</b><span>" +
-          (starsLeft() >= pr ? "you can open it"
-                             : (pr - starsLeft()) + " more to go") + "</span></div>" +
-          '<div class="lex dim">' + c.lex.map(function (x) {
-            return "<span>" + esc(x) + "</span>"; }).join("") + "</div>" +
-          '<div class="cfoot ' + (starsLeft() >= pr ? "free" : "taken") + '">' +
-          (starsLeft() >= pr ? "READY TO OPEN" : "LOCKED") + "</div>") +
-    "</div>";
-  return '<button class="cd' + (mineNow ? "" : " locked") + '" data-i="' + i +
-    '" type="button">' + head + body + "</button>";
+    (c.motto ? '<p class="motto">' + esc(c.motto) + "</p>" : "") +
+    (c.story ? '<p class="story">' + esc(c.story) + "</p>" : "") +
+    '<div class="lex">' + c.lex.map(function (x) {
+      return "<span>" + esc(x) + "</span>"; }).join("") + "</div></div>";
+  return '<button class="cd" data-i="' + i + '" type="button">' + head + body + "</button>";
 }
 
 function drawRail() {
@@ -3849,9 +3874,9 @@ function drawRail() {
   $("dots").innerHTML = CLUBS.map(function (c, i) {
     return '<i class="' + (i === homeAt ? "on" : "") + '"></i>';
   }).join("");
-  var open = CLUBS.filter(function (c) { return clubUnlocked(c.id); }).length;
-  $("clubh").textContent = "Choose your club · " + open + " open, " +
-    (CLUBS.length - open) + " to unlock";
+  /* non e' piu' una vetrina da sbloccare: e' la lega, e sono nove */
+  $("clubh").textContent = ME.code ? "The clubs of the league · " + CLUBS.length
+                                   : "Choose a club to practise with";
 
   Array.prototype.forEach.call($("rail").querySelectorAll(".cd"), function (b) {
     b.onclick = function () {
@@ -3882,62 +3907,41 @@ function drawDots() {
 }
 
 function drawPick() {
-  var c = CLUBS[homeAt], mine = ME.club && ME.club.id === c.id;
-  var got = clubUnlocked(c.id), pr = clubPrice(c.id);
+  var c = CLUBS[homeAt];
+  var mine = ME.club && ME.club.id === c.id;
   var who = takenBy(c.id), ours = isMine(c.id);
-  /* col bollettino la squadra assegnata non e' "occupata": e' di chi la prende */
-  var can = got && (!who || ours || !!BULL);
-  var buyable = !got && pr !== undefined && starsLeft() >= pr;
+  /* senza codice si sta solo provando, e la maglia se la sceglie lui.
+     Col codice il club lo assegna il professore: l'unica cosa che
+     l'alunno puo' dire qui e' "quello sono io". */
+  var prac = !ME.code;
+  var claim = !!(who && !ours && !mine);
 
-  $("pick").innerHTML = "<b>" + esc(c.name) + "</b><p>" +
-    (mine ? "This is your club this season."
-     : got
-        ? (who && !ours
-            ? (BULL
-                ? "Your teacher put <b>" + esc(who) + "</b> in this club. Tap it if " +
-                  "that is you."
-                : esc(who) + " is already playing this club. Pick another one — " +
-                  "one club, one player, all season.")
-            : ours
-              ? "You took this one. It is yours until the season ends."
-              : "Your squad, your colours, your words. " +
-                (CLAIMS.mode === "live"
-                  ? "Tap it and it is yours — first one in takes it."
-                  : "Your teacher has the code for it."))
-        : pr === undefined
-          ? "Locked for now. " + esc(c.how)
-          : buyable
-            ? "Yours for <b>" + pr + " stars</b>, for good. It is not a stronger club — " +
-              "another city, another set of words. You would have " + (starsLeft() - pr) +
-              " left."
-            : "<b>" + pr + " stars</b> to open it, and you have " + starsLeft() +
-              ". Fix words, play the training ground, finish the season.") + "</p>" +
-    '<button class="btn" id="join"' + (can || mine || buyable ? "" : " disabled") + ">" +
-    (mine ? "Back to my squad"
-     : buyable ? "Open it for " + pr + " ★"
-     : can ? (ours ? "Back into " + esc(c.name)
-              : (BULL && who ? "I am " + esc(who) : "Take " + esc(c.name)))
-     : got ? "Taken by " + esc(who)
-     : pr === undefined ? "Your teacher's key"
-     : "Not enough stars") + "</button>" +
-    (!got && pr !== undefined
-      ? '<button class="btn ghost" id="seest">Where stars come from</button>' : "");
+  var line = mine ? "This is your club this season."
+    : ours ? "You took this one. It is yours until the season ends."
+    : claim ? "Your teacher put <b>" + esc(who) + "</b> in this club. Tap it if that is you."
+    : prac ? "You are practising, so you can wear whatever you like."
+    : "";
+  var btn = mine ? "Back to my squad"
+    : ours ? "Back into " + esc(c.name)
+    : claim ? "I am " + esc(who)
+    : prac ? "Practise with " + esc(c.name)
+    : "";
 
-  if (buyable) {
-    $("join").onclick = function () {
-      if (!buyClub(c.id)) return;
-      drawRail(); drawPick();
-      $("bar").querySelector("#purse b").textContent = starsLeft();
-    };
-  } else if (can || mine) {
-    $("join").onclick = function () {
-      if (!mine && !ours) { go("claim", { id:c.id }); return; }
-      if (!mine) joinClub(c.id);
-      paintClub(ME.club);
-      reset("squad");
-    };
-  }
-  if ($("seest")) $("seest").onclick = function () { go("stars"); };
+  /* se non c'e' niente da fare il riquadro non si apre: il nome del club
+     sta gia' scritto grande sulla carta sopra */
+  if (!line && !btn) { $("pick").innerHTML = ""; return; }
+  $("pick").innerHTML = "<b>" + esc(c.name) + "</b>" +
+    (line ? "<p>" + line + "</p>" : "") +
+    (btn ? '<button class="btn" id="join">' + btn + "</button>" : "");
+
+  if (!btn) return;
+  $("join").onclick = function () {
+    if (claim) { go("claim", { id:c.id }); return; }
+    if (prac && !mine && !ours) { go("claim", { id:c.id }); return; }
+    if (!mine) joinClub(c.id);
+    paintClub(ME.club);
+    reset("squad");
+  };
 }
 
 
@@ -4524,10 +4528,9 @@ VIEWS.more = function () {
   var rows = [
     { t:"My form", s:"Every half you have played", go:"form", need:"club" },
     { t:"All my statistics", s:"The language and the game", go:"me" },
-    { t:"The clubs", s:"Open a new one with stars", go:"clubs" },
+    { t:"The clubs", s:"The nine of the league, and their stories", go:"clubs" },
     { t:"My stars", s:starsLeft() + " to spend", go:"stars" },
-    { t:"My level", s:"Your tests ask questions at " + esc(ME.level), go:"level" },
-    { t:"The matchday file", s:"Load one your teacher sent", go:"bulletin" }
+    { t:"My level", s:"Your tests ask questions at " + esc(ME.level), go:"level" }
   ].filter(function (r) { return r.need !== "club" || ME.club; });
   html('<div class="pad"><div class="panel">' + rows.map(function (r, i) {
     return '<button class="morerow" data-i="' + i + '" type="button"><span>' +
