@@ -2238,7 +2238,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "35";
+var APPVER = "37";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -6158,7 +6158,7 @@ VIEWS.squad = function () {
   barClub();
   setAction();
   openShirt = null;
-  html('<div id="band"></div>' +
+  html('<div id="sqpress"></div><div id="band"></div>' +
     '<section class="pad"><div class="sqc" id="sqc"></div></section>' +
     '<div id="stadbar"></div>' +
     '<section class="pad" id="signs" hidden><h2 class="sec">Signed in the market</h2>' +
@@ -6166,14 +6166,26 @@ VIEWS.squad = function () {
     '<section class="pad"><h2 class="sec">Where I stand</h2>' +
     '<div class="panel" id="lad"></div></section>' +
     '<section class="pad"><h2 class="sec">Next match</h2>' +
-    '<div class="panel next" id="next"></div></section>' +
+    '<div id="next"></div></section>' +
     '<section class="pad"><div id="starbar"></div></section>' +
     '<section class="pad"><h2 class="sec">More</h2>' +
     '<div class="tiles" id="tiles"></div></section>' +
     '<p class="foot" id="foot"></p>');
-  drawStadium(); drawBand(); drawSquadCard(); drawSignings(); drawTable(); drawNext();
+  drawSqPress(); drawStadium(); drawBand(); drawSquadCard(); drawSignings(); drawTable(); drawNext();
   drawStarBar(); drawTiles(); drawFoot();
 };
+
+/* ───────── la sala stampa, appena si entra ─────────
+   In home la carta c'e' gia', ma la home la si vede solo dopo essere
+   entrati e usciti. Chi arriva dalla competizione entra qui dentro: la
+   conferenza va messa davanti a tutto, prima del mercato — prima si
+   parla, poi si lavora. */
+function drawSqPress() {
+  var box = $("sqpress");
+  if (!box) return;
+  box.innerHTML = (typeof pressCard === "function") ? pressCard() : "";
+  if (typeof wirePress === "function") wirePress();
+}
 
 function drawBand() {
   var a = ME.action;
@@ -6310,16 +6322,51 @@ function drawTable() {
 }
 
 function drawNext() {
-  var n = ME.next;
-  $("next").innerHTML = '<div class="fix"><span class="side a">' + esc(n.home) +
-    '</span><span class="vs">VS</span><span class="side">' + esc(n.away) + "</span></div>" +
-    '<div class="wx"><div><span>Attack weather</span><b>' + esc(n.attack.word) +
-    "<i>" + n.attack.slots + " slots</i></b></div>" +
-    '<div><span>Defence weather</span><b>' + esc(n.defence.word) +
-    "<i>" + n.defence.slots + " slots</i></b></div></div>" +
-    '<button class="more" id="goPrep" type="button">' + sheetLabel() + "<i>&#8250;</i></button>";
+  var n = ME.next, id = ME.club ? ME.club.id : "";
+  var oppId = n.oppId || "";
+  var mine = crestOf(id), theirs = crestOf(oppId);
+  var meName = ME.club ? ME.club.name : n.home;
+  var foe = n.atHome ? n.away : n.home;
+  var ac = climateOf((n.attack || {}).clim || "cloudy");
+  var dc = climateOf((n.defence || {}).clim || "rain");
+
+  function flag(nm, cr, col) {
+    return cr ? '<img class="fbig" src="' + cr + '" alt="">'
+      : '<i class="nxbadge" style="background:' + esc(col || "#0E3B2C") + '">' +
+        esc(initials(nm)) + "</i>";
+  }
+  function side(nm, cr, col, tag) {
+    return '<span class="nxteam">' + flag(nm, cr, col) + "<b>" + esc(nm) + "</b>" +
+      (tag ? "<em>" + tag + "</em>" : "") + "</span>";
+  }
+  function sky(ph, cl) {
+    return '<span class="wx"><img src="' + skyOf(cl.id) + '" alt="">' +
+      '<span class="wv" aria-hidden="true"></span>' +
+      '<span class="win"><i>' + ph + "</i><b>" + esc(cl.label) +
+      " &middot; <u>" + cl.actions + "</u></b></span></span>";
+  }
+
+  /* la stessa carta della home: il campo dietro, gli stemmi, i due cieli
+     e il bottone grande. Prima erano due righe di testo e nessuno
+     capiva che li' dentro c'era la partita. */
+  $("next").outerHTML = '<div class="nxc" id="next">' +
+    '<img class="nxbg" src="' + imgOf("pitch") + '" alt="">' +
+    '<span class="nxveil" aria-hidden="true"></span>' +
+    '<div class="nxin"><div class="nxhead solo">' +
+      '<span class="nxk">' + (n.cup ? esc(n.cup).toUpperCase() + " &middot; " : "") +
+      "MATCHDAY " + n.md + "</span>" +
+      side(meName, mine, ME.club && ME.club.colour, n.atHome ? "AT HOME" : "AWAY") +
+      '<span class="nxvs">versus</span>' +
+      side(foe, theirs, "") +
+    "</div>" +
+    '<div class="nxbody"><span class="nxw">' + sky("ATTACK", ac) + sky("DEFENCE", dc) +
+    "</span>" +
+    '<button class="nxgo" id="goPrep" type="button">' + sheetLabel() + " &rsaquo;</button>" +
+    '<span class="nxs">' + ac.actions + " moments in attack, " + dc.actions +
+    " in defence.</span></div></div></div>";
   $("goPrep").onclick = function () { go(sheetDone() ? "lock" : "prep"); };
 }
+
 /* la stessa riga racconta a che punto e' il foglio */
 function sheetLabel() {
   loadSheet();
@@ -6381,13 +6428,11 @@ function drawStarBar() {
     "<b>" + GROUND.funds + "k</b><em>in the till</em></button></div>" +
     '<p class="wnote2">' + near + (near === 1 ? " more word" : " more words") +
     " fixed earns another star &middot; a session at the ground fills the till.</p>" +
-    '<button class="stbar lv" id="lvb" type="button">' +
-    '<span class="stn lvt">' + esc(ME.level) + "</span>" +
-    '<span class="stt"><b>My level</b><span>Your tests ask questions at ' +
-    esc(ME.level) + " &mdash; your teacher sets this</span></span><i>&#8250;</i></button>";
+    "";
+  /* il livello non sta piu' qui: non e' una cosa che l'alunno fa, e'
+     una cosa che il professore decide. Resta in More, dove si guarda. */
   $("wst").onclick = function () { go("stars"); };
   $("wmo").onclick = function () { go("ground"); };
-  $("lvb").onclick = function () { go("level"); };
 }
 
 function drawFoot() {
