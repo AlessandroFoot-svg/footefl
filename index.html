@@ -2238,7 +2238,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "37";
+var APPVER = "38";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -2543,9 +2543,17 @@ B2: [
 
 };
 
-/* una pescata: venti domande a caso, con le risposte rimescolate */
+/* una pescata: venti domande a caso, con le risposte rimescolate.
+   Prima si prova un pacchetto fresco (bk-a1…bk-b2): sono venti in tutto,
+   e la rotazione non ne ripete nessuno finché non li ha dati tutti. Se
+   servono più frasi di quante ne abbia il pacchetto, il resto arriva
+   dalla riserva di sempre. */
 function drawQuestions(level, n) {
-  var pool = (BANK[level] || BANK.A1).slice();
+  var lv = PACKS[level] ? level : (BANK[level] ? level : "A1");
+  var pool = packPick(lv) || [];
+  var old = (BANK[lv] || BANK.A1).slice();
+  if (pool.length < n) pool = pool.concat(old);
+  if (!pool.length) pool = old;
   var r = rng(level + "|" + Date.now() + "|" + Math.random());
   shuffle(pool, r);
   /* mai lo stesso punto di grammatica due volte di fila: se la prossima
@@ -2566,7 +2574,554 @@ function drawQuestions(level, n) {
     return { t:q.t, q:q.q, o:opts.map(function (o) { return o.text; }), c:right };
   });
 }
-function bankSize(level) { return (BANK[level] || []).length; }
+/* quante frasi esistono in tutto per un livello: riserva + pacchetti */
+function bankSize(level) {
+  return (BANK[level] || []).length + packSize(level);
+}
+
+
+/* ───── bk-a1.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   I PACCHETTI DI GRAMMATICA — A1
+   Cinque pacchetti da venti. Ognuno attraversa tutti i punti del
+   livello, cosi' una prova non diventa mai venti domande sulla stessa
+   cosa; cambia il contesto — il campo, la casa, la scuola, la tavola,
+   il tempo — e cambiano le frasi.
+   La risposta giusta sta sempre in prima posizione: il gioco rimescola
+   le quattro all'ultimo momento.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var PACKS = { A1:[], A2:[], B1:[], B2:[] };
+
+PACKS.A1.push([
+ {t:"to be",        q:"The ball ___ under the bench.",               o:["is","are","be","am"], c:0},
+ {t:"to be",        q:"We ___ not ready for the second half.",       o:["are","is","am","be"], c:0},
+ {t:"have got",     q:"Our goalkeeper ___ new gloves.",              o:["has got","have got","has get","is got"], c:0},
+ {t:"present",      q:"He ___ to the stadium every Saturday.",       o:["goes","go","going","gos"], c:0},
+ {t:"negative",     q:"They ___ play on Sunday mornings.",           o:["don't","doesn't","aren't","not"], c:0},
+ {t:"a / an",       q:"She is ___ excellent defender.",              o:["an","a","the","—"], c:0},
+ {t:"plural",       q:"There are two ___ on the bench.",             o:["coaches","coachs","coachies","coach"], c:0},
+ {t:"there is",     q:"___ eleven players in a team.",               o:["There are","There is","It are","Have"], c:0},
+ {t:"can",          q:"I ___ run fast, but I can't jump.",           o:["can","cans","am can","could to"], c:0},
+ {t:"prepositions", q:"My shirt is ___ the bag.",                    o:["in","on","at","of"], c:0},
+ {t:"prepositions", q:"The match starts ___ three o'clock.",         o:["at","in","on","to"], c:0},
+ {t:"possessive",   q:"This is ___ ball, not mine.",                 o:["Tom's","Toms","Tom","of Tom"], c:0},
+ {t:"question",     q:"___ is the captain? Forge is.",               o:["Who","What","Where","When"], c:0},
+ {t:"imperative",   q:"___ the ball to me!",                         o:["Pass","Passing","You pass","To pass"], c:0},
+ {t:"adjectives",   q:"It is a ___ day for football.",               o:["cold","coldly","colding","colds"], c:0},
+ {t:"this / that",  q:"___ boots over here are mine.",               o:["These","This","That","It"], c:0},
+ {t:"pronouns",     q:"The coach called ___ after the match.",       o:["us","we","our","ours"], c:0},
+ {t:"numbers",      q:"The second half starts at half ___ four.",    o:["past","to","over","after"], c:0},
+ {t:"like + ing",   q:"I like ___ with my friends.",                 o:["playing","play","to playing","played"], c:0},
+ {t:"continuous",   q:"Look! The keeper ___ the ball.",              o:["is holding","holds","hold","holding"], c:0}
+]);
+
+PACKS.A1.push([
+ {t:"to be",        q:"My parents ___ at home this evening.",        o:["are","is","am","be"], c:0},
+ {t:"to be",        q:"___ your sister eleven years old?",           o:["Is","Are","Am","Do"], c:0},
+ {t:"have got",     q:"___ you got a bicycle?",                      o:["Have","Has","Do","Are"], c:0},
+ {t:"present",      q:"My mother ___ coffee in the morning.",        o:["drinks","drink","drinking","is drink"], c:0},
+ {t:"negative",     q:"My brother ___ like cold milk.",              o:["doesn't","don't","isn't","not"], c:0},
+ {t:"a / an",       q:"We live in ___ old house.",                   o:["an","a","the","—"], c:0},
+ {t:"plural",       q:"There are three ___ in the kitchen.",         o:["knives","knifes","knife","knifs"], c:0},
+ {t:"there is",     q:"___ a lamp next to my bed.",                  o:["There is","There are","It has","Have"], c:0},
+ {t:"can",          q:"My little sister ___ swim yet.",              o:["can't","doesn't can","not can","isn't can"], c:0},
+ {t:"prepositions", q:"The cat sleeps ___ the sofa.",                o:["on","in","at","to"], c:0},
+ {t:"prepositions", q:"I go to bed ___ ten o'clock.",                o:["at","in","on","by"], c:0},
+ {t:"possessive",   q:"That bedroom is ___ .",                       o:["ours","our","us","of us"], c:0},
+ {t:"question",     q:"___ do you live? In Birmingham.",             o:["Where","When","Who","Why"], c:0},
+ {t:"imperative",   q:"___ the door, please. It is cold.",           o:["Close","Closing","You close","To close"], c:0},
+ {t:"adjectives",   q:"My room is very ___ in winter.",              o:["warm","warmly","warming","warms"], c:0},
+ {t:"this / that",  q:"___ house over there is my grandmother's.",   o:["That","These","This","Those"], c:0},
+ {t:"pronouns",     q:"My father reads the paper and I help ___ .",  o:["him","he","his","himself"], c:0},
+ {t:"frequency",    q:"We ___ have dinner at seven.",                o:["usually","usual","usualy","use"], c:0},
+ {t:"like + ing",   q:"She hates ___ the washing-up.",               o:["doing","do","to doing","did"], c:0},
+ {t:"continuous",   q:"Be quiet! The baby ___ .",                    o:["is sleeping","sleeps","sleep","sleeping"], c:0}
+]);
+
+PACKS.A1.push([
+ {t:"to be",        q:"Our classroom ___ on the first floor.",       o:["is","are","be","am"], c:0},
+ {t:"to be",        q:"The teachers ___ in the staff room.",         o:["are","is","am","be"], c:0},
+ {t:"have got",     q:"We ___ got a new English book.",              o:["have","has","are","do"], c:0},
+ {t:"present",      q:"The lesson ___ at nine every day.",           o:["begins","begin","beginning","begines"], c:0},
+ {t:"negative",     q:"I ___ understand this exercise.",             o:["don't","doesn't","am not","no"], c:0},
+ {t:"a / an",       q:"Can I borrow ___ pencil, please?",            o:["a","an","the","—"], c:0},
+ {t:"plural",       q:"Two ___ are absent today.",                   o:["children","childs","childrens","child"], c:0},
+ {t:"there is",     q:"___ any chalk in the box?",                   o:["Is there","Are there","There is","Have there"], c:0},
+ {t:"can",          q:"___ you repeat the question, please?",        o:["Can","Do","Are","Have"], c:0},
+ {t:"prepositions", q:"The map is ___ the wall.",                    o:["on","in","at","under"], c:0},
+ {t:"prepositions", q:"We have English ___ Monday and Thursday.",    o:["on","in","at","from"], c:0},
+ {t:"possessive",   q:"These are the ___ books.",                    o:["students'","students","student's s","of students"], c:0},
+ {t:"question",     q:"___ books do you need? Three.",               o:["How many","How much","How long","What many"], c:0},
+ {t:"imperative",   q:"___ talk during the test.",                   o:["Don't","No","Not","Doesn't"], c:0},
+ {t:"adjectives",   q:"English is an ___ language.",                 o:["interesting","interest","interestingly","interested"], c:0},
+ {t:"this / that",  q:"Give me ___ pens on your desk, please.",      o:["those","this","that","them"], c:0},
+ {t:"pronouns",     q:"The exercise is easy. I can do ___ alone.",   o:["it","its","him","he"], c:0},
+ {t:"frequency",    q:"She is ___ late for the first lesson.",       o:["never","not never","no","nothing"], c:0},
+ {t:"like + ing",   q:"We enjoy ___ stories in English.",            o:["reading","read","to reading","reads"], c:0},
+ {t:"continuous",   q:"The students ___ a test right now.",          o:["are doing","do","does","doing"], c:0}
+]);
+
+PACKS.A1.push([
+ {t:"to be",        q:"The soup ___ too hot for me.",                o:["is","are","be","am"], c:0},
+ {t:"to be",        q:"___ the apples fresh today?",                 o:["Are","Is","Am","Do"], c:0},
+ {t:"have got",     q:"The shop ___ got any bread left.",            o:["hasn't","haven't","doesn't","isn't"], c:0},
+ {t:"present",      q:"My father ___ the shopping on Fridays.",      o:["does","do","doing","dos"], c:0},
+ {t:"negative",     q:"We ___ eat meat in my family.",               o:["don't","doesn't","aren't","not"], c:0},
+ {t:"a / an",       q:"I would like ___ orange, please.",            o:["an","a","the","some"], c:0},
+ {t:"plural",       q:"She buys two ___ of milk every day.",         o:["bottles","bottle","bottls","bottlies"], c:0},
+ {t:"there is",     q:"___ some rice in the cupboard.",              o:["There is","There are","It is","Have"], c:0},
+ {t:"quantity",     q:"How ___ water do you drink?",                 o:["much","many","lot","few"], c:0},
+ {t:"prepositions", q:"The juice is ___ the fridge.",                o:["in","on","at","over"], c:0},
+ {t:"prepositions", q:"We have lunch ___ one o'clock.",              o:["at","in","on","from"], c:0},
+ {t:"possessive",   q:"Is this sandwich ___ or mine?",               o:["yours","your","you","of you"], c:0},
+ {t:"question",     q:"___ does a ticket cost? Two pounds.",         o:["How much","How many","What","Which much"], c:0},
+ {t:"imperative",   q:"___ the salt, please.",                       o:["Pass","Passing","You pass","To pass"], c:0},
+ {t:"adjectives",   q:"This pizza is ___ than that one.",            o:["better","gooder","more good","best"], c:0},
+ {t:"this / that",  q:"___ cake here looks delicious.",              o:["This","These","Those","Them"], c:0},
+ {t:"pronouns",     q:"I like apples but my sister doesn't like ___ .", o:["them","they","their","it"], c:0},
+ {t:"some / any",   q:"We haven't got ___ sugar.",                   o:["any","some","no any","a"], c:0},
+ {t:"like + ing",   q:"My cousin loves ___ cakes.",                  o:["making","make","to making","made"], c:0},
+ {t:"continuous",   q:"Wait a minute — I ___ dinner.",               o:["am cooking","cook","cooks","cooking"], c:0}
+]);
+
+PACKS.A1.push([
+ {t:"to be",        q:"It ___ very windy this morning.",             o:["is","are","be","am"], c:0},
+ {t:"to be",        q:"The days ___ short in December.",             o:["are","is","am","be"], c:0},
+ {t:"have got",     q:"___ your town got a swimming pool?",          o:["Has","Have","Is","Does"], c:0},
+ {t:"present",      q:"The train ___ at nine in the morning.",       o:["leaves","leave","leaving","leafs"], c:0},
+ {t:"negative",     q:"It ___ snow very often here.",                o:["doesn't","don't","isn't","not"], c:0},
+ {t:"a / an",       q:"We waited ___ hour at the station.",          o:["an","a","the","—"], c:0},
+ {t:"plural",       q:"There are three ___ in my family.",           o:["women","womans","womens","woman"], c:0},
+ {t:"there is",     q:"___ a lot of clouds today.",                  o:["There are","There is","It is","Have"], c:0},
+ {t:"can",          q:"You ___ see the sea from my window.",         o:["can","can to","are can","do can"], c:0},
+ {t:"prepositions", q:"My grandparents live ___ the sea.",           o:["near","in","on","to"], c:0},
+ {t:"prepositions", q:"My birthday is ___ July.",                    o:["in","on","at","from"], c:0},
+ {t:"possessive",   q:"That is the ___ umbrella.",                   o:["teacher's","teachers","teacher","of teacher"], c:0},
+ {t:"question",     q:"___ is the weather today? Rainy.",            o:["What","How many","Who","Which"], c:0},
+ {t:"imperative",   q:"___ your coat, it is cold outside.",          o:["Take","Taking","You take","To take"], c:0},
+ {t:"adjectives",   q:"Today is ___ than yesterday.",                o:["colder","more cold","coldest","cold"], c:0},
+ {t:"this / that",  q:"Look at ___ birds in the sky!",               o:["those","that","this","them"], c:0},
+ {t:"pronouns",     q:"The bus is late. We are waiting for ___ .",   o:["it","him","them","its"], c:0},
+ {t:"frequency",    q:"It ___ rains in the desert.",                 o:["rarely","rare","rarly","rareness"], c:0},
+ {t:"like + ing",   q:"I don't mind ___ in the rain.",               o:["walking","walk","to walking","walked"], c:0},
+ {t:"continuous",   q:"Take the umbrella — it ___ again.",           o:["is raining","rains","rain","raining"], c:0}
+]);
+
+
+/* ───── bk-a2.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   I PACCHETTI DI GRAMMATICA — A2
+   Passato semplice e progressivo, comparativi, futuro, present perfect,
+   modali, quantificatori. Cinque contesti: la partita di sabato, un
+   viaggio, l'anno di scuola, i soldi, lo sport e la salute.
+   ═══════════════════════════════════════════════════════════════════ */
+
+PACKS.A2.push([
+ {t:"past simple",  q:"We ___ the match two-nil last Saturday.",        o:["won","win","wonned","winned"], c:0},
+ {t:"past simple",  q:"The referee ___ not see the foul.",              o:["did","does","was","had"], c:0},
+ {t:"past simple",  q:"___ you watch the second half?",                 o:["Did","Do","Were","Have"], c:0},
+ {t:"past cont.",   q:"It ___ when the match began.",                   o:["was raining","rained","is raining","rains"], c:0},
+ {t:"past cont.",   q:"While we ___ , the coach was shouting.",         o:["were playing","played","are playing","play"], c:0},
+ {t:"comparative",  q:"Their keeper is ___ than ours.",                 o:["taller","more tall","tallest","tall"], c:0},
+ {t:"superlative",  q:"He is ___ player in the league.",                o:["the best","the better","the goodest","best"], c:0},
+ {t:"future",       q:"We ___ play Ravens FC next week.",               o:["are going to","go to","will to","are go to"], c:0},
+ {t:"future",       q:"Don't worry, I ___ help you with the team sheet.", o:["will","am","do","going"], c:0},
+ {t:"pres. perfect",q:"I ___ never scored a penalty.",                  o:["have","am","did","was"], c:0},
+ {t:"pres. perfect",q:"The coach hasn't arrived ___ .",                 o:["yet","already","just","ever"], c:0},
+ {t:"modals",       q:"You ___ wear shin pads. It is a rule.",          o:["must","can","should to","may"], c:0},
+ {t:"modals",       q:"You look tired. You ___ rest.",                  o:["should","must to","ought","will to"], c:0},
+ {t:"adverbs",      q:"Our striker runs very ___ .",                    o:["quickly","quick","quicker","quickest"], c:0},
+ {t:"quantifiers",  q:"There were only ___ people in the stands.",      o:["a few","a little","much","few of"], c:0},
+ {t:"infinitive",   q:"We decided ___ in the rain.",                    o:["to train","training","train","trained"], c:0},
+ {t:"gerund",       q:"He is good at ___ free kicks.",                  o:["taking","take","to take","took"], c:0},
+ {t:"possessive",   q:"That medal is ___ , not hers.",                  o:["mine","my","me","mines"], c:0},
+ {t:"relative",     q:"The boy ___ scored the goal is my cousin.",      o:["who","which","what","whose"], c:0},
+ {t:"prepositions", q:"The final is ___ the end of May.",               o:["at","in","on","to"], c:0}
+]);
+
+PACKS.A2.push([
+ {t:"past simple",  q:"Last summer we ___ to Liverpool by train.",      o:["went","go","goed","gone"], c:0},
+ {t:"past simple",  q:"They ___ the museum at five o'clock.",           o:["left","leaved","leave","leaves"], c:0},
+ {t:"past simple",  q:"Where ___ you stay in London?",                  o:["did","do","were","have"], c:0},
+ {t:"past cont.",   q:"I ___ my bag when the taxi arrived.",            o:["was packing","packed","am packing","pack"], c:0},
+ {t:"past cont.",   q:"The sun ___ when we reached the coast.",         o:["was shining","shined","shines","shine"], c:0},
+ {t:"comparative",  q:"The second hotel was ___ than the first.",       o:["more expensive","expensiver","most expensive","expensive"], c:0},
+ {t:"superlative",  q:"It was ___ day of our holiday.",                 o:["the hottest","the most hot","hottest","the hoter"], c:0},
+ {t:"future",       q:"We ___ visit my aunt in July.",                  o:["are going to","will to","go to","are go"], c:0},
+ {t:"future",       q:"I think it ___ be sunny tomorrow.",              o:["will","is going","does","shall to"], c:0},
+ {t:"pres. perfect",q:"___ you ever been to Scotland?",                 o:["Have","Did","Are","Do"], c:0},
+ {t:"pres. perfect",q:"We have ___ booked the tickets.",                o:["already","yet","still","ever"], c:0},
+ {t:"modals",       q:"You ___ show your passport at the border.",      o:["have to","have","must to","should to"], c:0},
+ {t:"modals",       q:"We ___ take a map — my phone has a map.",        o:["needn't","not need","don't need","mustn't to"], c:0},
+ {t:"adverbs",      q:"He drove ___ because of the fog.",               o:["carefully","careful","carefuly","more careful"], c:0},
+ {t:"quantifiers",  q:"We had ___ money left on the last day.",         o:["very little","very few","many","a few"], c:0},
+ {t:"infinitive",   q:"I went to the station ___ my ticket.",           o:["to buy","for buy","buying","buy"], c:0},
+ {t:"gerund",       q:"She loves ___ photos of old buildings.",         o:["taking","take","to taking","took"], c:0},
+ {t:"possessive",   q:"Our room was small; ___ was enormous.",          o:["theirs","their","them","theirs'"], c:0},
+ {t:"relative",     q:"This is the bus ___ goes to the airport.",       o:["which","who","whose","where"], c:0},
+ {t:"prepositions", q:"We arrived ___ Manchester on Monday.",           o:["in","to","at","for"], c:0}
+]);
+
+PACKS.A2.push([
+ {t:"past simple",  q:"The test ___ easier than I expected.",           o:["was","were","is","be"], c:0},
+ {t:"past simple",  q:"I ___ my homework before dinner.",               o:["did","done","do","maked"], c:0},
+ {t:"past simple",  q:"She ___ tell the teacher the truth.",            o:["didn't","doesn't","wasn't","hadn't"], c:0},
+ {t:"past cont.",   q:"We ___ about the exam when she came in.",        o:["were talking","talked","talk","are talking"], c:0},
+ {t:"past cont.",   q:"What ___ you doing at four o'clock?",            o:["were","was","did","are"], c:0},
+ {t:"comparative",  q:"History is ___ interesting than geography.",     o:["more","most","much","many"], c:0},
+ {t:"superlative",  q:"Maths is ___ subject for me.",                   o:["the hardest","the most hard","hardest","the harder"], c:0},
+ {t:"future",       q:"I ___ study languages at university.",           o:["am going to","will to","go to","am go to"], c:0},
+ {t:"future",       q:"Perhaps the teacher ___ give us extra time.",    o:["will","is","does","shall to"], c:0},
+ {t:"pres. perfect",q:"I have ___ finished the first page.",            o:["just","yet","ago","since"], c:0},
+ {t:"pres. perfect",q:"We have studied English ___ three years.",       o:["for","since","from","during"], c:0},
+ {t:"modals",       q:"Students ___ use their phones in class.",        o:["mustn't","don't must","aren't must","haven't to"], c:0},
+ {t:"modals",       q:"___ I open the window, please?",                 o:["May","Do","Am","Will to"], c:0},
+ {t:"adverbs",      q:"She speaks English ___ well.",                   o:["really","real","reality","realy"], c:0},
+ {t:"quantifiers",  q:"How ___ homework did you have?",                 o:["much","many","lot","few"], c:0},
+ {t:"infinitive",   q:"I forgot ___ my book to school.",                o:["to bring","bringing","bring","brought"], c:0},
+ {t:"gerund",       q:"I don't mind ___ early.",                        o:["getting up","get up","to getting up","got up"], c:0},
+ {t:"possessive",   q:"Is this pen ___ ?",                              o:["yours","your","you","your's"], c:0},
+ {t:"relative",     q:"The girl ___ bag is on my desk sits here.",      o:["whose","who","which","that's"], c:0},
+ {t:"connectors",   q:"I was late ___ the bus didn't come.",            o:["because","so","but","although"], c:0}
+]);
+
+PACKS.A2.push([
+ {t:"past simple",  q:"The club ___ a new striker in January.",         o:["bought","buyed","buy","buys"], c:0},
+ {t:"past simple",  q:"How much ___ the shirt cost?",                   o:["did","does","was","has"], c:0},
+ {t:"past simple",  q:"They ___ us a discount.",                        o:["gave","gived","give","given"], c:0},
+ {t:"past cont.",   q:"I ___ for my change when he closed the till.",   o:["was waiting","waited","wait","am waiting"], c:0},
+ {t:"past cont.",   q:"The shops ___ when we arrived.",                 o:["were closing","closed","close","are closing"], c:0},
+ {t:"comparative",  q:"This kit is ___ than the old one.",              o:["cheaper","more cheap","cheapest","cheap"], c:0},
+ {t:"superlative",  q:"That was ___ transfer of the season.",           o:["the most expensive","the expensivest","most expensive","the more expensive"], c:0},
+ {t:"future",       q:"The market ___ close on Friday evening.",        o:["is going to","will to","goes to","is go to"], c:0},
+ {t:"future",       q:"I ___ pay you back tomorrow, I promise.",        o:["will","am","do","going to"], c:0},
+ {t:"pres. perfect",q:"Prices have gone up ___ last year.",             o:["since","for","from","ago"], c:0},
+ {t:"pres. perfect",q:"She ___ spent all her pocket money.",            o:["has","have","is","did"], c:0},
+ {t:"modals",       q:"You ___ pay in cash here. Cards are fine too.",  o:["don't have to","mustn't","haven't to","not must"], c:0},
+ {t:"modals",       q:"That price ___ be a mistake.",                   o:["must","must to","has","is must"], c:0},
+ {t:"adverbs",      q:"He counted the money ___ .",                     o:["slowly","slow","slowier","more slow"], c:0},
+ {t:"quantifiers",  q:"There is ___ sugar in this drink.",              o:["too much","too many","too","very many"], c:0},
+ {t:"infinitive",   q:"I can't afford ___ those boots.",                o:["to buy","buying","buy","bought"], c:0},
+ {t:"gerund",       q:"We finished ___ at six o'clock.",                o:["shopping","to shop","shop","shopped"], c:0},
+ {t:"possessive",   q:"These seats are ___ — we booked them.",          o:["ours","our","us","ours'"], c:0},
+ {t:"relative",     q:"The shop ___ sells scarves is near the ground.", o:["that","who","whose","where"], c:0},
+ {t:"connectors",   q:"It was expensive, ___ I bought it.",             o:["but","because","so that","although it"], c:0}
+]);
+
+PACKS.A2.push([
+ {t:"past simple",  q:"He ___ his ankle in the first half.",            o:["hurt","hurted","hurts","hurting"], c:0},
+ {t:"past simple",  q:"The doctor ___ him three days of rest.",         o:["told","telled","say","said him"], c:0},
+ {t:"past simple",  q:"___ the physio come to the ground?",             o:["Did","Does","Was","Has"], c:0},
+ {t:"past cont.",   q:"He fell while he ___ .",                         o:["was running","ran","runs","is running"], c:0},
+ {t:"past cont.",   q:"They ___ in the gym all afternoon.",             o:["were training","trained","train","are training"], c:0},
+ {t:"comparative",  q:"Swimming is ___ for your back than running.",    o:["better","gooder","more good","best"], c:0},
+ {t:"superlative",  q:"Sleep is ___ important thing of all.",           o:["the most","the more","most","the much"], c:0},
+ {t:"future",       q:"He ___ miss the next two matches.",              o:["is going to","will to","goes to","is go to"], c:0},
+ {t:"future",       q:"If you eat well, you ___ feel stronger.",        o:["will","are","do","going"], c:0},
+ {t:"pres. perfect",q:"I ___ played since September.",                  o:["haven't","didn't","am not","wasn't"], c:0},
+ {t:"pres. perfect",q:"She has been ill ___ Monday.",                   o:["since","for","from","ago"], c:0},
+ {t:"modals",       q:"He ___ train today — the doctor said no.",       o:["can't","doesn't can","mustn't to","not can"], c:0},
+ {t:"modals",       q:"You ___ drink more water in summer.",            o:["should","must to","ought","will to"], c:0},
+ {t:"adverbs",      q:"Breathe ___ and count to ten.",                  o:["deeply","deep down","deeper","deepest"], c:0},
+ {t:"quantifiers",  q:"He eats ___ vegetables.",                        o:["hardly any","hardly no","any","no any"], c:0},
+ {t:"infinitive",   q:"The coach wants ___ before the match.",          o:["to warm up","warming up","warm up","warmed up"], c:0},
+ {t:"gerund",       q:"Stop ___ for a moment and drink.",               o:["running","to run","run","ran"], c:0},
+ {t:"possessive",   q:"My knee hurts; ___ is fine.",                    o:["his","he","him","his one"], c:0},
+ {t:"relative",     q:"The exercise ___ I like best is stretching.",    o:["which","who","whose","what"], c:0},
+ {t:"connectors",   q:"He trained hard, ___ he was tired.",             o:["although","because","so","but because"], c:0}
+]);
+
+
+/* ───── bk-b1.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   I PACCHETTI DI GRAMMATICA — B1
+   Perfect, trapassato, periodi ipotetici, passivo, discorso indiretto,
+   relative, modali di deduzione, verbi + infinito o gerundio.
+   Cinque contesti: il derby, la sala stampa, la citta', la tecnologia,
+   il viaggio che va storto.
+   ═══════════════════════════════════════════════════════════════════ */
+
+PACKS.B1.push([
+ {t:"perfect",      q:"I ___ this club since I was six years old.",         o:["have supported","support","supported","am supporting"], c:0},
+ {t:"past perfect", q:"When we arrived, the match ___ already started.",    o:["had","has","was","did"], c:0},
+ {t:"first cond.",  q:"If we win tonight, we ___ go top of the table.",     o:["will","would","are","did"], c:0},
+ {t:"second cond.", q:"If I ___ the manager, I would change the formation.",o:["were","am","will be","would be"], c:0},
+ {t:"passive",      q:"The derby ___ played every March.",                  o:["is","are","has","being"], c:0},
+ {t:"passive past", q:"The stadium ___ built in 1904.",                     o:["was","is","were","has"], c:0},
+ {t:"reported",     q:"He said he ___ tired after the first half.",         o:["was","is","has","were"], c:0},
+ {t:"relative",     q:"The fans, ___ travelled all night, sang for ninety minutes.", o:["who","which","whose","what"], c:0},
+ {t:"used to",      q:"We ___ to play on a muddy pitch behind the school.", o:["used","use","are used","were used"], c:0},
+ {t:"deduction",    q:"They ___ be winning — they are down to ten men.",    o:["can't","mustn't","don't must","couldn't to"], c:0},
+ {t:"gerund",       q:"They are looking forward to ___ the cup.",           o:["winning","win","to win","won"], c:0},
+ {t:"too / enough", q:"He isn't experienced ___ to play in a derby.",       o:["enough","too","so","much"], c:0},
+ {t:"question tag", q:"You watched the whole match, ___ ?",                 o:["didn't you","did you","don't you","weren't you"], c:0},
+ {t:"phrasal",      q:"The coach called ___ training because of the storm.",o:["off","out","in","above"], c:0},
+ {t:"so / such",    q:"It was ___ a tight match that nobody scored.",       o:["such","so","too","very"], c:0},
+ {t:"since / for",  q:"They haven't lost at home ___ 2019.",                o:["since","for","from","during"], c:0},
+ {t:"future cont.", q:"This time tomorrow we ___ to Liverpool.",            o:["will be travelling","will travel","are travel","travel"], c:0},
+ {t:"make / let",   q:"The coach ___ us run ten laps in the rain.",         o:["made","did","let to","forced"], c:0},
+ {t:"the more",     q:"The more we attacked, ___ they defended.",           o:["the harder","harder","the hardest","more hard"], c:0},
+ {t:"verb pattern", q:"He promised ___ late again.",                        o:["not to be","to not be","don't be","not being"], c:0}
+]);
+
+PACKS.B1.push([
+ {t:"perfect cont.",q:"I ___ as a reporter for ten years.",                 o:["have been working","am working","work","was working"], c:0},
+ {t:"past perfect", q:"By the time I got this job, I ___ written for three papers.", o:["had","have","was","did"], c:0},
+ {t:"first cond.",  q:"If you ask a fair question, he ___ answer it.",      o:["will","would","is","was"], c:0},
+ {t:"second cond.", q:"If I had more time, I ___ interview the keeper too.",o:["would","will","had","am"], c:0},
+ {t:"passive",      q:"The articles ___ checked before they appear.",       o:["are","is","have","being"], c:0},
+ {t:"passive past", q:"The interview ___ recorded yesterday evening.",      o:["was","is","were","has"], c:0},
+ {t:"reported",     q:"She asked me ___ I enjoyed the job.",                o:["whether","that","what","did"], c:0},
+ {t:"relative",     q:"The journalist ___ wrote the story is from Oxford.", o:["who","whom","whose","which"], c:0},
+ {t:"used to",      q:"I ___ to write all my notes by hand.",               o:["used","use","am used","was used"], c:0},
+ {t:"deduction",    q:"The press room ___ be empty — the match has just ended.", o:["can't","mustn't","doesn't can","couldn't to"], c:0},
+ {t:"gerund",       q:"I am used to ___ under pressure.",                   o:["working","work","to work","worked"], c:0},
+ {t:"too / enough", q:"The room was ___ small for all the cameras.",        o:["too","enough","so much","very too"], c:0},
+ {t:"question tag", q:"You are the new reporter, ___ ?",                    o:["aren't you","are you","don't you","isn't it"], c:0},
+ {t:"phrasal",      q:"Please fill ___ this form before the conference.",   o:["in","on","at","over"], c:0},
+ {t:"so / such",    q:"His answers were ___ short that I had nothing to write.", o:["so","such","too","very"], c:0},
+ {t:"since / for",  q:"I have known the manager ___ many years.",           o:["for","since","from","during"], c:0},
+ {t:"reporting",    q:"He ___ us that the player was injured.",             o:["told","said","spoke","explained"], c:0},
+ {t:"make / let",   q:"They didn't ___ me ask a second question.",          o:["let","allow","leave","permit"], c:0},
+ {t:"verb pattern", q:"She refused ___ about her contract.",                o:["to talk","talking","talk","talked"], c:0},
+ {t:"the more",     q:"The louder he spoke, ___ I understood.",             o:["the less","less","the fewer","lesser"], c:0}
+]);
+
+PACKS.B1.push([
+ {t:"perfect",      q:"Our city ___ a lot since the war.",                  o:["has changed","changed","is changing","change"], c:0},
+ {t:"past perfect", q:"The mill closed because the river ___ dry.",         o:["had run","has run","runs","was run"], c:0},
+ {t:"first cond.",  q:"If you visit Nottingham, you ___ see the castle.",   o:["will","would","are","did"], c:0},
+ {t:"second cond.", q:"If the factory ___ still open, people would work there.", o:["were","is","will be","would be"], c:0},
+ {t:"passive",      q:"The old market ___ used as a car park now.",         o:["is","are","has","being"], c:0},
+ {t:"passive past", q:"The bridge ___ destroyed in 1941.",                  o:["was","is","were","has"], c:0},
+ {t:"reported",     q:"The guide told us ___ touch the paintings.",         o:["not to","don't","to not","not touching"], c:0},
+ {t:"relative",     q:"This is the street ___ the writer lived.",           o:["where","which","who","whose"], c:0},
+ {t:"used to",      q:"There ___ to be a cinema on this corner.",           o:["used","use","was used","is used"], c:0},
+ {t:"deduction",    q:"That building ___ be the town hall — look at the clock.", o:["must","must to","has","should to"], c:0},
+ {t:"gerund",       q:"They succeeded in ___ the cathedral.",               o:["saving","save","to save","saved"], c:0},
+ {t:"too / enough", q:"There weren't ___ houses for all the workers.",      o:["enough","too much","too","so"], c:0},
+ {t:"question tag", q:"The castle is open on Sundays, ___ ?",               o:["isn't it","is it","doesn't it","not it"], c:0},
+ {t:"phrasal",      q:"They pulled ___ the old station in 1960.",           o:["down","off","away","in"], c:0},
+ {t:"so / such",    q:"It was ___ a poor district that children worked.",   o:["such","so","too","very"], c:0},
+ {t:"since / for",  q:"The cathedral has stood here ___ six centuries.",    o:["for","since","from","during"], c:0},
+ {t:"past cont.",   q:"While they ___ the tunnel, they found Roman coins.", o:["were digging","dug","digged","dig"], c:0},
+ {t:"make / let",   q:"The owners made the men ___ twelve hours a day.",    o:["work","to work","working","worked"], c:0},
+ {t:"verb pattern", q:"The council decided ___ the river.",                 o:["to clean","cleaning","clean","cleaned"], c:0},
+ {t:"quantifier",   q:"___ of the old walls are still standing.",           o:["Some","Any","Much","Every"], c:0}
+]);
+
+PACKS.B1.push([
+ {t:"perfect cont.",q:"My phone ___ charging for an hour.",                 o:["has been","is been","has","have been"], c:0},
+ {t:"past perfect", q:"The file was gone — someone ___ deleted it.",        o:["had","has","was","did"], c:0},
+ {t:"first cond.",  q:"If the battery dies, we ___ lose the data.",         o:["will","would","are","did"], c:0},
+ {t:"second cond.", q:"If I ___ you, I would back up those files.",         o:["were","am","will be","would be"], c:0},
+ {t:"passive",      q:"The scores ___ saved automatically.",                o:["are","is","have","being"], c:0},
+ {t:"passive past", q:"The app ___ written by two students.",               o:["was","is","were","has"], c:0},
+ {t:"reported",     q:"He asked me ___ the file again.",                    o:["to send","send","that send","sending"], c:0},
+ {t:"relative",     q:"The laptop ___ screen is broken belongs to me.",     o:["whose","which","who","that's"], c:0},
+ {t:"used to",      q:"We ___ to print every single page.",                 o:["used","use","are used","were used"], c:0},
+ {t:"deduction",    q:"The screen is black. The battery ___ be flat.",      o:["must","must to","mustn't","has"], c:0},
+ {t:"gerund",       q:"I am quite good at ___ problems like this.",         o:["solving","solve","to solve","solved"], c:0},
+ {t:"too / enough", q:"The signal here isn't strong ___ .",                 o:["enough","too","so","much"], c:0},
+ {t:"question tag", q:"You saved the file, ___ ?",                          o:["didn't you","did you","haven't you","don't you"], c:0},
+ {t:"phrasal",      q:"Please switch ___ the computer before you leave.",   o:["off","out","down","away"], c:0},
+ {t:"so / such",    q:"The update was ___ slow that I gave up.",            o:["so","such","too","very"], c:0},
+ {t:"since / for",  q:"I have used this app ___ January.",                  o:["since","for","from","during"], c:0},
+ {t:"future",       q:"By Friday the new version ___ ready.",               o:["will be","will","is being","would be"], c:0},
+ {t:"make / let",   q:"The system doesn't ___ you use the same password.",  o:["let","allow","leave","permit"], c:0},
+ {t:"verb pattern", q:"I managed ___ the photo in the end.",                o:["to recover","recovering","recover","recovered"], c:0},
+ {t:"quantifier",   q:"___ of the players has a different code.",           o:["Each","All","Both","Every"], c:0}
+]);
+
+PACKS.B1.push([
+ {t:"perfect",      q:"Our flight ___ been cancelled.",                     o:["has","have","is","had"], c:0},
+ {t:"past perfect", q:"By the time we reached the gate, the plane ___ .",   o:["had left","has left","leaves","was left"], c:0},
+ {t:"first cond.",  q:"If the fog lifts, we ___ take off at six.",          o:["will","would","are","did"], c:0},
+ {t:"second cond.", q:"If the weather ___ better, we would walk.",          o:["were","is","will be","would be"], c:0},
+ {t:"passive",      q:"Trains ___ delayed by snow every winter.",           o:["are","is","have","being"], c:0},
+ {t:"passive past", q:"The road ___ closed for two whole days.",            o:["was","is","were","has"], c:0},
+ {t:"reported",     q:"They told us that the bus ___ twenty minutes late.", o:["would be","will be","is being","be"], c:0},
+ {t:"relative",     q:"The hotel ___ we stayed was next to the station.",   o:["where","which","who","whose"], c:0},
+ {t:"used to",      q:"It ___ to snow much more when I was a child.",       o:["used","use","is used","was used"], c:0},
+ {t:"deduction",    q:"You ___ be freezing in that thin coat.",             o:["must","must to","have","should to"], c:0},
+ {t:"gerund",       q:"We gave up ___ for a taxi.",                         o:["waiting","wait","to wait","waited"], c:0},
+ {t:"too / enough", q:"The queue was ___ long to wait in.",                 o:["too","enough","so much","very too"], c:0},
+ {t:"question tag", q:"You haven't booked a seat, ___ ?",                   o:["have you","haven't you","did you","do you"], c:0},
+ {t:"phrasal",      q:"The plane finally took ___ at midnight.",            o:["off","up","out","away"], c:0},
+ {t:"so / such",    q:"There was ___ much ice that we stayed at home.",     o:["so","such","too","very"], c:0},
+ {t:"since / for",  q:"We waited at the airport ___ three hours.",          o:["for","since","from","during"], c:0},
+ {t:"past cont.",   q:"The wind ___ hard when the ferry left.",             o:["was blowing","blew","blows","blow"], c:0},
+ {t:"make / let",   q:"The storm made us ___ all our plans.",               o:["change","to change","changing","changed"], c:0},
+ {t:"verb pattern", q:"She offered ___ us to the station.",                 o:["to drive","driving","drive","drove"], c:0},
+ {t:"quantifier",   q:"___ road out of the village was blocked.",           o:["Every","All","Both","Each of"], c:0}
+]);
+
+
+/* ───── bk-b2.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   I PACCHETTI DI GRAMMATICA — B2
+   Terzo periodo ipotetico e misti, inversione, wish, causativo,
+   modali al passato, passivo composto, frasi participiali, cleft,
+   congiuntivo dopo suggest/insist, preposizioni rette dal verbo.
+   Cinque contesti: il bilancio della stagione, il consiglio direttivo,
+   l'ambiente, il teatro e i giornali, le scelte di vita.
+   ═══════════════════════════════════════════════════════════════════ */
+
+PACKS.B2.push([
+ {t:"third cond.",  q:"If we ___ that penalty, we would have won the league.", o:["had scored","scored","would score","have scored"], c:0},
+ {t:"mixed cond.",  q:"If he weren't injured, he ___ in the final last week.",  o:["would have played","would play","had played","will play"], c:0},
+ {t:"wish",         q:"I wish we ___ more young players last summer.",          o:["had signed","signed","would signed","have signed"], c:0},
+ {t:"modal perfect",q:"We ___ have won — we hit the bar three times.",          o:["should","should to","must to","would to"], c:0},
+ {t:"inversion",    q:"Never ___ such a comeback in forty years.",              o:["have I seen","I have seen","did I saw","I saw"], c:0},
+ {t:"passive modal",q:"The result ___ have been different with eleven men.",    o:["might","might to","may be","could to"], c:0},
+ {t:"future perfect",q:"By May we ___ played forty matches.",                   o:["will have","will","would have","have"], c:0},
+ {t:"causative",    q:"We had the pitch ___ before the final.",                 o:["relaid","relay","to relay","relaying"], c:0},
+ {t:"participle",   q:"___ beaten at home, the team dropped to fifth.",         o:["Having been","Being","Have been","After been"], c:0},
+ {t:"relative",     q:"The captain, ___ contract ends in June, is staying.",    o:["whose","who","which","that"], c:0},
+ {t:"concession",   q:"___ the heavy rain, the match went ahead.",              o:["Despite","Although","However","Even"], c:0},
+ {t:"cleft",        q:"It ___ the keeper who saved our season.",                o:["was","is being","had","did"], c:0},
+ {t:"subjunctive",  q:"The board suggested that he ___ captain.",               o:["be made","is made","was made","will be made"], c:0},
+ {t:"unreal past",  q:"It's time we ___ about next season.",                    o:["thought","think","will think","have thought"], c:0},
+ {t:"inversion",    q:"No sooner had we equalised ___ they scored again.",      o:["than","when","that","then"], c:0},
+ {t:"prepositions", q:"On their day they are capable ___ beating anyone.",      o:["of","to","for","in"], c:0},
+ {t:"reporting",    q:"He denied ___ the referee.",                             o:["insulting","to insult","insult","insulted"], c:0},
+ {t:"inversion",    q:"So badly ___ we play that the fans left early.",         o:["did","we did","had","were"], c:0},
+ {t:"passive perf.",q:"The trophy ___ been cleaned already.",                   o:["has","is","was","have"], c:0},
+ {t:"linkers",      q:"The squad is small; ___ , it is talented.",              o:["however","although","despite","whereas"], c:0}
+]);
+
+PACKS.B2.push([
+ {t:"third cond.",  q:"If the sponsor ___ , we would have built the new stand.",o:["had stayed","stayed","would stay","has stayed"], c:0},
+ {t:"mixed cond.",  q:"If I had taken that job, I ___ here now.",               o:["wouldn't be","wouldn't have been","won't be","hadn't been"], c:0},
+ {t:"wish",         q:"The chairman wishes he ___ that contract.",              o:["hadn't signed","didn't sign","wouldn't signed","hasn't signed"], c:0},
+ {t:"modal perfect",q:"They ___ have told us — we read it in the papers.",      o:["could","could to","must to","should to"], c:0},
+ {t:"inversion",    q:"Rarely ___ a club spend so much in one window.",         o:["does","a club does","did it","has"], c:0},
+ {t:"passive modal",q:"The accounts ___ be checked by an auditor.",             o:["must","must to","have","should to"], c:0},
+ {t:"future perfect",q:"By December they ___ repaid the loan.",                 o:["will have","will","would have","have"], c:0},
+ {t:"causative",    q:"We are getting the roof ___ next month.",                o:["repaired","repair","to repair","repairing"], c:0},
+ {t:"participle",   q:"The letter, ___ last week, arrived only today.",         o:["sent","sending","send","was sent"], c:0},
+ {t:"relative",     q:"The stadium, ___ was built in 1904, needs repairs.",     o:["which","that","what","who"], c:0},
+ {t:"concession",   q:"___ the costs are high, the plan is sound.",             o:["Although","Despite","However","In spite"], c:0},
+ {t:"cleft",        q:"What we need most ___ a new sponsor.",                   o:["is","are","has","being"], c:0},
+ {t:"subjunctive",  q:"It is essential that every member ___ present.",         o:["be","is","was","will be"], c:0},
+ {t:"unreal past",  q:"I'd rather we ___ the decision today.",                  o:["made","make","will make","have made"], c:0},
+ {t:"inversion",    q:"Not only ___ the shirts, they paid for the coach.",      o:["did they buy","they bought","bought they","they did buy"], c:0},
+ {t:"prepositions", q:"The club depends ___ its members.",                      o:["on","of","from","to"], c:0},
+ {t:"reporting",    q:"He accused the treasurer ___ hiding the figures.",       o:["of","to","for","with"], c:0},
+ {t:"inversion",    q:"Such ___ the debt that the club nearly closed.",         o:["was","it was","had","did"], c:0},
+ {t:"passive perf.",q:"The minutes ___ been signed by the chairman.",           o:["have","is","was","has"], c:0},
+ {t:"linkers",      q:"The offer is low; ___ , we must consider it.",           o:["nevertheless","although","despite","whereas"], c:0}
+]);
+
+PACKS.B2.push([
+ {t:"third cond.",  q:"If we ___ sooner, the river would still be clean.",     o:["had acted","acted","would act","have acted"], c:0},
+ {t:"mixed cond.",  q:"If the law were stricter, the mill ___ closed years ago.", o:["would have been","would be","had been","will be"], c:0},
+ {t:"wish",         q:"I wish people ___ less plastic.",                        o:["used","use","would used","had use"], c:0},
+ {t:"modal perfect",q:"The fish ___ have died from the heat.",                  o:["may","may to","might to","must to"], c:0},
+ {t:"inversion",    q:"Only then ___ the real danger.",                         o:["did we understand","we understood","we did understand","understood we"], c:0},
+ {t:"passive modal",q:"Waste ___ be burned near houses.",                       o:["shouldn't","shouldn't to","doesn't","hasn't"], c:0},
+ {t:"future perfect",q:"By 2050 many species ___ disappeared.",                 o:["will have","will","would have","have"], c:0},
+ {t:"causative",    q:"They have the water ___ twice a year.",                  o:["tested","test","to test","testing"], c:0},
+ {t:"participle",   q:"___ by the wind, the seeds travel for miles.",           o:["Carried","Carrying","Carry","To carry"], c:0},
+ {t:"relative",     q:"The Thames, ___ runs through London, is cleaner now.",   o:["which","that","who","what"], c:0},
+ {t:"concession",   q:"___ being warned twice, they went on fishing.",          o:["Despite","Although","However","Even"], c:0},
+ {t:"cleft",        q:"It ___ the cold winter that saved the crop.",            o:["was","is being","had","did"], c:0},
+ {t:"subjunctive",  q:"Scientists recommend that the lake ___ left alone.",     o:["be","is","was","will be"], c:0},
+ {t:"unreal past",  q:"It is high time we ___ the law.",                        o:["changed","change","will change","have changed"], c:0},
+ {t:"inversion",    q:"Hardly had the rain stopped ___ the river rose.",        o:["when","than","that","then"], c:0},
+ {t:"prepositions", q:"Everyone here is aware ___ the risk.",                   o:["of","to","for","about"], c:0},
+ {t:"reporting",    q:"The report warned ___ building near the coast.",         o:["against","to","for","of"], c:0},
+ {t:"inversion",    q:"So heavy ___ the rain that the match was called off.",   o:["was","it was","had","did"], c:0},
+ {t:"passive perf.",q:"The samples ___ been analysed in Oxford.",               o:["have","is","was","has"], c:0},
+ {t:"linkers",      q:"The plan is costly; ___ , it works.",                    o:["nonetheless","although","despite","whereas"], c:0}
+]);
+
+PACKS.B2.push([
+ {t:"third cond.",  q:"If Chaucer ___ at the Tabard, the tales would be different.", o:["hadn't stopped","didn't stop","wouldn't stop","hasn't stopped"], c:0},
+ {t:"mixed cond.",  q:"If she had studied acting, she ___ on that stage now.",  o:["would be","would have been","had been","will be"], c:0},
+ {t:"wish",         q:"I wish I ___ the first night at the Globe.",             o:["had seen","saw","would saw","have seen"], c:0},
+ {t:"modal perfect",q:"He ___ have forgotten his lines — he looked lost.",      o:["must","must to","should to","would to"], c:0},
+ {t:"inversion",    q:"Seldom ___ such an audience at Bankside.",               o:["have we seen","we have seen","did we saw","we saw"], c:0},
+ {t:"passive modal",q:"The play ___ be performed outdoors in summer.",          o:["can","can to","is can","has"], c:0},
+ {t:"future perfect",q:"By Sunday the film ___ taken a million pounds.",        o:["will have","will","would have","have"], c:0},
+ {t:"causative",    q:"The writer had the script ___ three times.",             o:["rewritten","rewrite","to rewrite","rewriting"], c:0},
+ {t:"participle",   q:"___ in 1599, the theatre burned down in 1613.",          o:["Built","Building","Build","To build"], c:0},
+ {t:"relative",     q:"Shakespeare, ___ company played at Bankside, wrote fast.", o:["whose","who","which","that"], c:0},
+ {t:"concession",   q:"___ the bad reviews, the play sold out.",                o:["In spite of","Although","However","Despite of"], c:0},
+ {t:"cleft",        q:"What surprised me most ___ the music.",                  o:["was","were","had","being"], c:0},
+ {t:"subjunctive",  q:"The director insisted that the scene ___ cut.",          o:["be","is","was","will be"], c:0},
+ {t:"unreal past",  q:"I'd rather you ___ me the ending.",                      o:["didn't tell","don't tell","won't tell","haven't told"], c:0},
+ {t:"inversion",    q:"Not until the second act ___ the plot.",                 o:["did I understand","I understood","understood I","I did understand"], c:0},
+ {t:"prepositions", q:"She is famous ___ her voice.",                           o:["for","of","to","with"], c:0},
+ {t:"reporting",    q:"He apologised ___ arriving so late.",                    o:["for","to","of","about"], c:0},
+ {t:"inversion",    q:"Such ___ the applause that they played the scene again.",o:["was","it was","had","did"], c:0},
+ {t:"passive perf.",q:"The painting ___ been sold twice this year.",            o:["has","have","is","was"], c:0},
+ {t:"linkers",      q:"The book is long; ___ , it is never boring.",            o:["yet","although","despite","whereas"], c:0}
+]);
+
+PACKS.B2.push([
+ {t:"third cond.",  q:"If I ___ harder, I would have passed the exam.",        o:["had worked","worked","would work","have worked"], c:0},
+ {t:"mixed cond.",  q:"If he weren't so shy, he ___ the job last week.",       o:["would have got","would get","had got","will get"], c:0},
+ {t:"wish",         q:"I wish I ___ speak three languages.",                   o:["could","can","could to","would can"], c:0},
+ {t:"modal perfect",q:"She ___ have left already — her coat is gone.",         o:["must","must to","should to","would to"], c:0},
+ {t:"inversion",    q:"Little ___ how hard it would be.",                      o:["did I know","I knew","I did know","knew I"], c:0},
+ {t:"passive modal",q:"Nothing ___ be done about it now.",                     o:["can","can to","is can","has"], c:0},
+ {t:"future perfect",q:"By June I ___ finished school.",                       o:["will have","will","would have","have"], c:0},
+ {t:"causative",    q:"I must get my hair ___ before the interview.",          o:["cut","to cut","cutting","cutted"], c:0},
+ {t:"participle",   q:"___ what to say, I stayed silent.",                     o:["Not knowing","Not know","Don't knowing","Not known"], c:0},
+ {t:"relative",     q:"My brother, ___ lives in Oxford, is a teacher.",        o:["who","which","whose","that"], c:0},
+ {t:"concession",   q:"___ he tried his best, he didn't win.",                 o:["Although","Despite","However","In spite"], c:0},
+ {t:"cleft",        q:"It was my mother ___ encouraged me to study.",          o:["who","which","what","whom"], c:0},
+ {t:"subjunctive",  q:"They demanded that she ___ given another chance.",      o:["be","is","was","will be"], c:0},
+ {t:"unreal past",  q:"It's time I ___ a decision.",                           o:["made","make","will make","have made"], c:0},
+ {t:"inversion",    q:"No sooner had I sat down ___ the phone rang.",          o:["than","when","that","then"], c:0},
+ {t:"prepositions", q:"I am quite good ___ remembering names.",                o:["at","in","of","for"], c:0},
+ {t:"reporting",    q:"He insisted ___ paying for dinner.",                    o:["on","to","for","of"], c:0},
+ {t:"inversion",    q:"So nervous ___ I that I forgot my own name.",           o:["was","I was","had","did"], c:0},
+ {t:"passive perf.",q:"The forms ___ been sent to the office.",                o:["have","is","was","has"], c:0},
+ {t:"linkers",      q:"The course is hard; ___ , it is worth it.",             o:["still","although","despite","whereas"], c:0}
+]);
+
+/* ═══ la rotazione ═══════════════════════════════════════════════════
+   Venti pacchetti in tutto, cinque per livello. L'app ricorda quali ha
+   già dato e non ne ripete nessuno finché non li ha usati tutti; poi
+   ricomincia da capo, in ordine diverso. Due entrate di fila nel
+   mercato non danno mai lo stesso esercizio.
+   ════════════════════════════════════════════════════════════════════ */
+
+var PACK_KEY = "footefl-packs";
+
+function packSeen() {
+  try { return JSON.parse(localStorage.getItem(PACK_KEY) || "{}") || {}; }
+  catch (e) { return {}; }
+}
+
+function packSave(level, used) {
+  var all = packSeen();
+  all[level] = used;
+  try { localStorage.setItem(PACK_KEY, JSON.stringify(all)); } catch (e) {}
+}
+
+/* un pacchetto fresco: fra quelli non ancora usati, a sorte */
+function packPick(level) {
+  var list = PACKS[level] || [];
+  if (!list.length) return null;
+  var used = packSeen()[level] || [];
+  var free = [], i;
+  for (i = 0; i < list.length; i++) if (used.indexOf(i) < 0) free.push(i);
+  if (!free.length) { used = []; for (i = 0; i < list.length; i++) free.push(i); }
+  var k = free[Math.floor(Math.random() * free.length)];
+  used.push(k);
+  packSave(level, used);
+  return list[k].slice();
+}
+
+function packSize(level) {
+  var list = PACKS[level] || [], n = 0;
+  for (var i = 0; i < list.length; i++) n += list[i].length;
+  return n;
+}
 
 
 /* ───── 16-bulletin.js ───── */
