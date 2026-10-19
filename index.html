@@ -23,6 +23,11 @@
   --club:#0E3B2C; --band:#08231A; --ink:#04170F; --deep:#0E3B2C; --kitink:#E2FBCE;
   --edge:#1C6B4F; --cream:#E2FBCE; --fog:#A8D4BE; --gold:#E3EF26;
   --ok:#5FA86E; --no:#E8A89A;
+  /* il carattere dei titoli. Mancava, e ventiquattro regole che scrivono
+     "font: 800 20px/1 var(--brand)" erano tutte invalide: il telefono le
+     buttava via intere e quei titoli restavano a 16px, la misura del
+     testo normale. Da qui in avanti le dimensioni sono quelle scritte. */
+  --brand:Montserrat,system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
@@ -1457,6 +1462,90 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 /* la storia del club, sotto il motto */
 .cd .story{margin-top:9px;font-size:12px;font-weight:600;line-height:1.55;color:var(--fog)}
 .cd .motto + .story{margin-top:7px}
+
+/* ═════════ la stanza dei club: griglia, poi rivista ═════════ */
+.gmine{position:relative;display:block;width:100%;margin-top:4px;padding:0;border:1.5px solid
+  var(--gold);border-radius:18px;overflow:hidden;cursor:pointer;text-align:left;
+  background:var(--cc);font:inherit;color:#FFFDEE}
+.gmk-kit{position:absolute;right:-22px;top:-12px;height:150px;opacity:.95;
+  filter:drop-shadow(0 8px 18px rgba(0,0,0,.5))}
+.gveil{position:absolute;inset:0;background:linear-gradient(90deg,
+  rgba(0,0,0,.55) 38%,rgba(0,0,0,.12) 92%)}
+.gin{position:relative;display:flex;align-items:center;gap:14px;padding:15px 14px}
+.gtx{flex:1;min-width:0}
+.gtx i{display:block;font-style:normal;font:800 9px/1 system-ui,sans-serif;
+  letter-spacing:.16em;color:var(--gold)}
+.gtx b{display:block;margin-top:4px;font:800 20px/1.1 var(--brand);
+  text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.gtx em{display:block;margin-top:3px;font-style:normal;font-size:11px;font-weight:600;
+  color:rgba(255,253,238,.82)}
+.gmk{display:block;flex:none;filter:drop-shadow(0 3px 8px rgba(0,0,0,.5))}
+.ini{display:grid;place-items:center;border-radius:50%;
+  font:800 15px/1 system-ui,sans-serif;letter-spacing:.03em}
+
+.glab,.glab2{display:block;margin:18px 0 10px;font:800 9.5px/1 system-ui,sans-serif;
+  letter-spacing:.18em;color:#6FA38D}
+.gwrap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.gtile{position:relative;border-radius:16px;padding:14px 8px 12px;text-align:center;
+  border:1px solid var(--edge);cursor:pointer;font:inherit;color:var(--cream);
+  background:linear-gradient(170deg,color-mix(in srgb,var(--cc) 72%,#04170F),
+    color-mix(in srgb,var(--cc) 34%,#04170F))}
+.gtile:active{transform:translateY(1px)}
+.gtile .gmk{margin:0 auto}
+.gtile b{display:block;margin-top:9px;font:800 12px/1.2 var(--brand);color:#FFFDEE}
+.gtile em{display:block;margin-top:3px;font-style:normal;font:800 8.5px/1 system-ui,sans-serif;
+  letter-spacing:.1em;color:rgba(226,251,206,.72)}
+.gwho{display:block;margin-top:6px;font:800 8.5px/1 system-ui,sans-serif;letter-spacing:.08em;
+  color:var(--gold)}
+.gnote{display:grid;place-items:center;border-radius:16px;border:1px dashed var(--edge);
+  padding:14px 8px;text-align:center}
+.gnote span{font-size:10px;font-weight:600;line-height:1.45;color:#6FA38D}
+
+/* la pagina del club */
+.clubpage{padding-bottom:4px}
+.chero{position:relative;height:300px;overflow:hidden;
+  background:linear-gradient(165deg,color-mix(in srgb,var(--cc) 86%,#FFFFFF 14%) 0%,
+    var(--cc) 50%,color-mix(in srgb,var(--cc) 55%,#04170F) 100%)}
+.chkit{position:absolute;right:-46px;top:26px;height:252px;
+  filter:drop-shadow(0 16px 30px rgba(0,0,0,.5))}
+.chveil{position:absolute;inset:0;background:linear-gradient(90deg,
+  rgba(0,0,0,.6) 0%,rgba(0,0,0,.25) 56%,rgba(0,0,0,0) 82%)}
+.chfade{position:absolute;left:0;right:0;bottom:0;height:110px;
+  background:linear-gradient(180deg,rgba(4,23,15,0),var(--ink))}
+.chin{position:relative;height:100%;box-sizing:border-box;padding:18px;display:flex;
+  flex-direction:column;justify-content:flex-end;gap:12px}
+.chnick{display:block;font-style:normal;font:800 10px/1 system-ui,sans-serif;
+  letter-spacing:.18em;color:var(--gold)}
+.chin b{display:block;margin-top:6px;font:800 32px/1 var(--brand);letter-spacing:-.02em;
+  color:#FFFDEE;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.chcity{display:block;margin-top:8px;font:800 11px/1 system-ui,sans-serif;
+  letter-spacing:.16em;color:var(--fog)}
+.cbody2{padding:0 18px}
+.cmotto{margin:18px 0 0;font:800 22px/1.24 var(--brand);letter-spacing:-.01em;color:var(--gold)}
+.cstory{margin:14px 0 0;font-size:14px;font-weight:500;line-height:1.68;color:#CFE8D8}
+.cwords{margin-top:18px;padding-top:15px;border-top:1px solid var(--edge)}
+.cwords .glab2{margin-top:0}
+.cwhorow{display:flex;align-items:center;gap:11px;margin-top:18px;padding:13px 14px;
+  border-radius:13px;background:var(--deep);border:1px solid var(--edge)}
+.cwhorow b{display:block;font-size:13px;font-weight:800;color:#FFFDEE}
+.cwhorow em{display:block;margin-top:2px;font-style:normal;font-size:11px;font-weight:600;
+  color:var(--fog)}
+.clede{margin:16px 0 0;font-size:12.5px;font-weight:600;line-height:1.55;color:var(--fog)}
+.clede b{color:var(--cream)}
+.cbody2 .btn{margin-top:14px}
+.cfeet{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:20px;padding:13px 16px;border-top:1px solid var(--edge);background:var(--band)}
+.cstep{display:inline-flex;align-items:center;gap:8px;border:0;background:none;cursor:pointer;
+  font:800 12px/1 var(--brand);color:var(--fog);padding:4px}
+.cstep.rt{flex-direction:row}
+.cnum{font:800 10px/1 system-ui,sans-serif;letter-spacing:.14em;color:#6FA38D}
+
+/* le parole del club, fuori dalla vecchia carta */
+.cwords .lex{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.cwords .lex span{font-size:11px;font-weight:700;padding:7px 12px;border-radius:999px;
+  border:1px solid rgba(226,251,206,.22);color:var(--fog)}
+.clubpage .chin b{font-family:var(--brand);font-size:32px;font-weight:800;line-height:1;
+  letter-spacing:-.02em;color:#FFFDEE}
 </style>
 </head>
 <body>
@@ -1983,7 +2072,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "25";
+var APPVER = "26";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -3799,21 +3888,18 @@ VIEWS.home = function () {
   prog(0);
   $("purse").onclick = function () { go("stars"); };
 
-  html('<section class="pad"><h2 class="sec">Choose your world</h2>' +
-    '<div class="worlds" id="worlds"></div><p class="wnote" id="wnote"></p></section>' +
-    '<section class="pad"><h2 class="sec" id="clubh"></h2>' +
-    '<div class="wrap"><div class="rail" id="rail"></div></div>' +
-    '<div class="dots" id="dots"></div></section>' +
-    '<div class="pick" id="pick"></div>' +
+  html('<section class="pad"><h2 class="sec" id="clubh"></h2>' +
+    '<div id="clmine"></div><div id="clgrid"></div></section>' +
     '<div class="pad" id="bullbar"></div>' +
+    '<section class="pad"><h2 class="sec">Choose your world</h2>' +
+    '<div class="worlds" id="worlds"></div><p class="wnote" id="wnote"></p></section>' +
     '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p>');
 
   drawWorlds();
-  drawRail();
-  drawPick();
+  drawClubGrid();
   drawComps();        /* col codice mostra le competizioni, se no il bollettino */
-  /* chi ha gia' preso cosa: si rilegge ogni volta che si apre la home */
-  loadClaims(function () { drawRail(); drawPick(); });
+  /* chi ha gia' preso cosa: si rilegge ogni volta che si apre la stanza */
+  loadClaims(function () { drawClubGrid(); });
 };
 
 function drawBull() {
@@ -3844,105 +3930,159 @@ function drawWorlds() {
   });
 }
 
-/* ───────── la carta di un club ─────────
-   Qui dentro non si compra e non si prenota niente: c'e' chi sono.
-   Stemma, maglia, motto, la storia da cui viene il nome e le cinque
-   parole che porta in campo. Quello che si puo' fare — entrarci,
-   allenarcisi — sta nel riquadro sotto, dove ci si aspetta un bottone. */
-function clubCard(c, i) {
-  var kit = kitOf(c.id), crest = crestOf(c.id);
-  var head = '<div class="field' + (kit ? " haskit" : "") + '" style="background:' +
-    c.colour + ";color:" + c.ink + '">' +
-    (kit ? '<img class="ckit" src="' + kit + '" alt="">' : "") +
-    (crest
-      ? '<img class="ccr crs" src="' + crest + '" alt="">'
-      : '<span class="ccr" style="border-color:' + c.ink + '55">' +
-        initials(c.name) + "</span>") +
-    (c.nick ? '<span class="nick">' + esc(c.nick) + "</span>" : "") +
-    '<span class="nm">' + esc(c.name) + "</span>" +
-    '<span class="city">' + esc(c.city).toUpperCase() + "</span></div>";
-  var body = '<div class="cbody">' +
-    (c.motto ? '<p class="motto">' + esc(c.motto) + "</p>" : "") +
-    (c.story ? '<p class="story">' + esc(c.story) + "</p>" : "") +
-    '<div class="lex">' + c.lex.map(function (x) {
-      return "<span>" + esc(x) + "</span>"; }).join("") + "</div></div>";
-  return '<button class="cd" data-i="' + i + '" type="button">' + head + body + "</button>";
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   LA STANZA DEI CLUB
+   Due passi, come li abbiamo disegnati: la griglia fa vedere la lega
+   tutta insieme — il tuo club grande in cima, gli altri otto in fila —
+   e il club che si tocca si apre come una pagina di rivista, con la
+   maglia a tutta testata, il motto, la storia e le sue parole.
+   Qui non si compra e non si prenota niente: il club lo da' il
+   campionato. L'unica cosa che l'alunno puo' dire e' "quello sono io".
+   ═══════════════════════════════════════════════════════════════════ */
+
+function ord(n) {
+  var s = ["th", "st", "nd", "rd"], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+/* chi gioca in questo club, e a che punto e' */
+function clubWho(id) {
+  var out = { who:takenBy(id) || "", line:"" };
+  var b = (typeof compBull === "function" && compBull(scope())) || BULL || null;
+  if (b) {
+    var r = (b.table || []).filter(function (x) { return x.id === id; })[0];
+    if (r && r.pos) {
+      out.line = (b.comp ? b.comp + " · " : "") + ord(r.pos) + " of " +
+                 (b.table || []).length;
+    }
+  }
+  return out;
+}
+/* lo stemma, o le due lettere finche' lo stemma non c'e' */
+function clubMark(c, px) {
+  var cr = crestOf(c.id);
+  if (cr) return '<img class="gmk" src="' + cr + '" alt="" style="width:' + px +
+    "px;height:" + px + 'px">';
+  return '<span class="gmk ini" style="width:' + px + "px;height:" + px +
+    "px;background:" + c.colour + ";color:" + c.ink + '">' +
+    esc(initials(c.name)) + "</span>";
 }
 
-function drawRail() {
-  $("rail").innerHTML = CLUBS.map(clubCard).join("");
-  $("dots").innerHTML = CLUBS.map(function (c, i) {
-    return '<i class="' + (i === homeAt ? "on" : "") + '"></i>';
-  }).join("");
-  /* non e' piu' una vetrina da sbloccare: e' la lega, e sono nove */
+function drawClubGrid() {
+  var meId = ME.club ? ME.club.id : "";
   $("clubh").textContent = ME.code ? "The clubs of the league · " + CLUBS.length
                                    : "Choose a club to practise with";
 
-  Array.prototype.forEach.call($("rail").querySelectorAll(".cd"), function (b) {
-    b.onclick = function () {
-      homeAt = parseInt(b.dataset.i, 10);
-      b.scrollIntoView({ behavior:"smooth", block:"nearest", inline:"center" });
-      drawDots(); drawPick();
-    };
-  });
-  var rail = $("rail");
-  rail.addEventListener("scroll", function () {
-    var mid = rail.scrollLeft + rail.clientWidth / 2, best = 0, bd = 1e9;
-    Array.prototype.forEach.call(rail.children, function (el, i) {
-      var c = el.offsetLeft + el.offsetWidth / 2, d = Math.abs(c - mid);
-      if (d < bd) { bd = d; best = i; }
-    });
-    if (best !== homeAt) { homeAt = best; drawDots(); drawPick(); }
-  }, { passive:true });
-  /* si riapre sul club di prima */
-  if (homeAt) {
-    var el = rail.children[homeAt];
-    rail.scrollLeft = el.offsetLeft - (rail.clientWidth - el.offsetWidth) / 2;
+  /* il mio, in cima e per intero: e' l'unico che mi riguarda davvero */
+  var mine = CLUBS.filter(function (c) { return c.id === meId; })[0];
+  if (mine) {
+    var w = clubWho(mine.id), kit = kitOf(mine.id);
+    $("clmine").innerHTML = '<button class="gmine" data-c="' + esc(mine.id) +
+      '" type="button" style="--cc:' + mine.colour + '">' +
+      (kit ? '<img class="gmk-kit" src="' + kit + '" alt="">' : "") +
+      '<span class="gveil" aria-hidden="true"></span>' +
+      '<span class="gin">' + clubMark(mine, 58) +
+      '<span class="gtx"><i>YOUR CLUB</i><b>' + esc(mine.name) + "</b><em>" +
+      esc(mine.city) + (w.line ? " · " + esc(w.line) : "") +
+      "</em></span></span></button>";
+  } else {
+    $("clmine").innerHTML = "";
   }
-}
-function drawDots() {
-  Array.prototype.forEach.call($("dots").children, function (d, i) {
-    d.className = i === homeAt ? "on" : "";
+
+  var rest = CLUBS.filter(function (c) { return c.id !== meId; });
+  $("clgrid").innerHTML = '<p class="glab">' +
+    (mine ? "THE OTHER " + rest.length : "THE " + rest.length) +
+    " · TAP ONE TO READ IT</p>" +
+    '<div class="gwrap">' + rest.map(function (c) {
+      var w = clubWho(c.id);
+      return '<button class="gtile" data-c="' + esc(c.id) + '" type="button" style="--cc:' +
+        c.colour + '">' + clubMark(c, 54) +
+        "<b>" + esc(c.name) + "</b><em>" + esc(c.city.split(" · ")[0]).toUpperCase() +
+        "</em>" + (w.who ? '<span class="gwho">' + esc(w.who) + "</span>" : "") +
+        "</button>";
+    }).join("") +
+    '<div class="gnote"><span>' + CLUBS.length + " clubs,<br>one league</span></div>" +
+    "</div>";
+
+  Array.prototype.forEach.call($("main").querySelectorAll("[data-c]"), function (b) {
+    b.onclick = function () { go("club", { id:b.dataset.c }); };
   });
 }
 
-function drawPick() {
-  var c = CLUBS[homeAt];
-  var mine = ME.club && ME.club.id === c.id;
-  var who = takenBy(c.id), ours = isMine(c.id);
-  /* senza codice si sta solo provando, e la maglia se la sceglie lui.
-     Col codice il club lo assegna il professore: l'unica cosa che
-     l'alunno puo' dire qui e' "quello sono io". */
+/* ═══════════════ il club, a tutta pagina ═══════════════ */
+VIEWS.club = function (d) {
+  var id = d && d.id;
+  var at = -1, i;
+  for (i = 0; i < CLUBS.length; i++) { if (CLUBS[i].id === id) at = i; }
+  if (at < 0) return back();
+  var c = CLUBS[at];
+  var prev = CLUBS[(at - 1 + CLUBS.length) % CLUBS.length];
+  var next = CLUBS[(at + 1) % CLUBS.length];
+  var w = clubWho(c.id), kit = kitOf(c.id);
+  var mine = ME.club && ME.club.id === c.id, ours = isMine(c.id);
+  var claim = !!(w.who && !ours && !mine);
   var prac = !ME.code;
-  var claim = !!(who && !ours && !mine);
 
-  var line = mine ? "This is your club this season."
-    : ours ? "You took this one. It is yours until the season ends."
-    : claim ? "Your teacher put <b>" + esc(who) + "</b> in this club. Tap it if that is you."
-    : prac ? "You are practising, so you can wear whatever you like."
-    : "";
-  var btn = mine ? "Back to my squad"
-    : ours ? "Back into " + esc(c.name)
-    : claim ? "I am " + esc(who)
-    : prac ? "Practise with " + esc(c.name)
-    : "";
+  paintNeutral();
+  barFlow(c.name, (at + 1) + " of " + CLUBS.length, 0);
 
-  /* se non c'e' niente da fare il riquadro non si apre: il nome del club
-     sta gia' scritto grande sulla carta sopra */
-  if (!line && !btn) { $("pick").innerHTML = ""; return; }
-  $("pick").innerHTML = "<b>" + esc(c.name) + "</b>" +
-    (line ? "<p>" + line + "</p>" : "") +
-    (btn ? '<button class="btn" id="join">' + btn + "</button>" : "");
+  html('<div class="clubpage" style="--cc:' + c.colour + ";--ci:" + c.ink + '">' +
+    '<div class="chero">' +
+      (kit ? '<img class="chkit" src="' + kit + '" alt="">' : "") +
+      '<span class="chveil" aria-hidden="true"></span>' +
+      '<span class="chfade" aria-hidden="true"></span>' +
+      '<div class="chin">' + clubMark(c, 70) +
+        "<div>" + (c.nick ? '<i class="chnick">' + esc(c.nick) + "</i>" : "") +
+        "<b>" + esc(c.name) + "</b>" +
+        '<span class="chcity">' + esc(c.city).toUpperCase() + "</span></div>" +
+      "</div>" +
+    "</div>" +
 
-  if (!btn) return;
-  $("join").onclick = function () {
-    if (claim) { go("claim", { id:c.id }); return; }
-    if (prac && !mine && !ours) { go("claim", { id:c.id }); return; }
-    if (!mine) joinClub(c.id);
-    paintClub(ME.club);
-    reset("squad");
-  };
-}
+    '<div class="cbody2">' +
+      (c.motto ? '<p class="cmotto">&ldquo;' + esc(c.motto) + "&rdquo;</p>" : "") +
+      (c.story ? '<p class="cstory">' + esc(c.story) + "</p>" : "") +
+      '<div class="cwords"><span class="glab2">THE WORDS THEY BRING</span>' +
+      '<div class="lex">' + c.lex.map(function (x) {
+        return "<span>" + esc(x) + "</span>"; }).join("") + "</div></div>" +
+
+      (w.who || mine
+        ? '<div class="cwhorow">' + clubMark(c, 34) +
+          '<span><b>' + (mine ? "This is your club this season"
+                              : esc(w.who) + " plays here this season") + "</b>" +
+          (w.line ? "<em>" + esc(w.line) + "</em>" : "") + "</span></div>"
+        : "") +
+
+      (mine ? '<button class="btn" id="cgo">Back to my squad</button>'
+       : ours ? '<button class="btn" id="cgo">Back into ' + esc(c.name) + "</button>"
+       : claim ? '<p class="clede">Your teacher put <b>' + esc(w.who) +
+                 "</b> in this club. Tap it if that is you.</p>" +
+                 '<button class="btn" id="cgo">I am ' + esc(w.who) + "</button>"
+       : prac ? '<button class="btn" id="cgo">Practise with ' + esc(c.name) + "</button>"
+       : "") +
+    "</div>" +
+
+    '<div class="cfeet">' +
+      '<button class="cstep" data-c="' + esc(prev.id) + '" type="button">' +
+      clubMark(prev, 20) + "<span>&lsaquo; " + esc(prev.name.split(" ")[0]) + "</span></button>" +
+      '<span class="cnum">' + (at + 1) + " OF " + CLUBS.length + "</span>" +
+      '<button class="cstep rt" data-c="' + esc(next.id) + '" type="button">' +
+      "<span>" + esc(next.name.split(" ")[0]) + " &rsaquo;</span>" + clubMark(next, 20) +
+      "</button>" +
+    "</div></div>");
+
+  if ($("cgo")) {
+    $("cgo").onclick = function () {
+      if (claim || (prac && !mine && !ours)) { go("claim", { id:c.id }); return; }
+      if (!mine) joinClub(c.id);
+      paintClub(ME.club);
+      reset("squad");
+    };
+  }
+  Array.prototype.forEach.call($("main").querySelectorAll(".cstep"), function (b) {
+    b.onclick = function () { swap("club", { id:b.dataset.c }); };
+  });
+};
 
 
 /* ───── 22-gate.js ───── */
