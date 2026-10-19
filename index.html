@@ -2203,7 +2203,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "32";
+var APPVER = "33";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -5875,7 +5875,76 @@ var PRESSQ = [
     q:function (f) { return "Ninety minutes done. " +
       "What will you work on before the next match?"; } }
 ];
-var PRESS_N = 2;          /* due domande, mai di piu': non e' un compito */
+var PRESS_N = 2;          /* due dopo la partita, mai di piu' */
+var PRESS_PRE = 1;        /* e una sola prima, che e' una conferenza, non un esame */
+
+/* ───────── che cosa si sa prima di giocare ─────────
+   L'avversario, la sua posizione, il campo, il cielo delle due meta' e
+   come e' finita l'ultima. Basta e avanza per una domanda vera. */
+function beforeFacts() {
+  var f = { md:ME.next ? ME.next.md : 0, home:!!(ME.next && ME.next.atHome),
+            opp:"", myPos:0, oppPos:0, of:0, last:"", att:null, def:null };
+  if (!ME.next) return f;
+  f.att = climateOf((ME.next.attack || {}).clim || "cloudy");
+  f.def = climateOf((ME.next.defence || {}).clim || "rain");
+  f.opp = (typeof oppName === "function") ? oppName(ME.next.oppId) : (ME.next.oppId || "");
+  var b = (typeof compBull === "function") ? compBull(scope()) : BULL;
+  if (b && b.table) {
+    f.of = b.table.length;
+    b.table.forEach(function (r) {
+      if (ME.club && r.id === ME.club.id) {
+        f.myPos = r.pos || 0;
+        var fm = r.form || [];
+        f.last = fm.length ? String(fm[fm.length - 1]).toUpperCase() : "";
+      }
+      if (r.id === ME.next.oppId) f.oppPos = r.pos || 0;
+    });
+  }
+  return f;
+}
+
+var PREQ = [
+  { id:"first", on:function (f) { return f.md === 1; },
+    q:function (f) { return "Your first match of the season, against " + f.opp +
+      ". What do you want from it?"; } },
+
+  { id:"sky", on:function (f) { return f.def && f.def.actions <= 7; },
+    q:function (f) { return f.def.label.toLowerCase() +
+      " when you defend, so the chances are few. Is that good news or bad?"; } },
+
+  { id:"few", on:function (f) { return f.att && f.att.actions <= 7; },
+    q:function (f) { return "The sky will only allow you " + f.att.actions +
+      " chances up front. How will you use them?"; } },
+
+  { id:"top", on:function (f) { return f.oppPos && f.myPos && f.oppPos < f.myPos - 1; },
+    q:function (f) { return f.opp + " are " + ord(f.oppPos) + " and you are " +
+      ord(f.myPos) + ". Where can you hurt them?"; } },
+
+  { id:"fav", on:function (f) { return f.oppPos && f.myPos && f.oppPos > f.myPos + 1; },
+    q:function (f) { return "On paper you are the stronger side today. " +
+      "Is that a danger?"; } },
+
+  { id:"lost", on:function (f) { return f.last === "L"; },
+    q:function (f) { return "You lost last time out. What have you changed this week?"; } },
+
+  { id:"won", on:function (f) { return f.last === "W"; },
+    q:function (f) { return "You won last week. Can you do it twice?"; } },
+
+  { id:"away", on:function (f) { return !f.home; },
+    q:function (f) { return "You are away at " + f.opp +
+      ". What is different when you play away from home?"; } },
+
+  { id:"any", on:function () { return true; },
+    q:function (f) { return "Matchday " + f.md + " against " + f.opp +
+      ". How do you see it?"; } }
+];
+function prePick() {
+  var f = beforeFacts(), out = [];
+  PREQ.forEach(function (p) {
+    if (out.length < PRESS_PRE && p.on(f)) out.push({ id:"pre-" + p.id, q:p.q(f) });
+  });
+  return out;
+}
 
 function pressPick(f) {
   var out = [];
@@ -5894,11 +5963,16 @@ function pressGet(md) {
 function pressSave(md, o) {
   try { localStorage.setItem(pressKey(md), JSON.stringify(o)); } catch (e) {}
 }
-/* aperta solo a partita finita, e una volta sola per giornata */
-function pressOpen() {
-  if (!ME.club || !ME.next) return false;
-  return matchFacts(ME.next.md).both;
+/* la sala stampa apre due volte: la vigilia e il dopo partita.
+   "pre" finche' non si e' giocato, "post" quando i due tempi sono
+   chiusi; poi tace fino alla giornata dopo. */
+function pressPhase() {
+  if (!ME.club || !ME.next) return "";
+  var md = ME.next.md, done = pressGet(md) || {};
+  if (matchFacts(md).both) return done.post ? "" : "post";
+  return done.pre ? "" : "pre";
 }
+function pressOpen() { return !!pressPhase(); }
 
 /* ═══════════════ la riga in home ═══════════════ */
 var MIC_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true">' +
@@ -5909,24 +5983,33 @@ var MIC_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true">' +
   'stroke-width="2" stroke-linecap="round"/></svg>';
 
 function pressCard() {
-  if (!pressOpen()) return "";
-  var md = ME.next.md, done = pressGet(md);
+  if (!ME.club || !ME.next) return "";
+  var md = ME.next.md, done = pressGet(md) || {}, ph = pressPhase();
   var paper = paperOf(ME.club.city);
-  if (done && done.said && done.said.length) {
+
+  /* quando non c'e' niente da chiedere, si vede che cosa ha gia' detto */
+  if (!ph) {
+    var said = (done.post || done.pre || []);
+    if (!said.length) return "";
     return '<section class="pad"><div class="prc done"><span class="prm">' + MIC_SVG +
       "</span>" +
       '<span class="prt"><i>' + esc(paper.toUpperCase()) + "</i>" +
-      "<b>You faced the press</b><em>" + done.said.length +
-      (done.said.length === 1 ? " answer" : " answers") +
+      "<b>You faced the press</b><em>" + said.length +
+      (said.length === 1 ? " answer" : " answers") +
       " on their way to your teacher.</em></span></div></section>";
   }
+
+  var pre = ph === "pre";
   return '<section class="pad"><button class="prc" id="prGo" type="button">' +
     '<span class="prm live">' + MIC_SVG + "</span>" +
     '<span class="prt"><i>' + esc(paper.toUpperCase()) +
-    ' <u class="prlive">WAITING</u></i>' +
-    "<b>The press room is open</b><em>Two questions after the match. " +
-    "Nobody marks your spelling here — say what you think.</em></span>" +
-    "<i class=\"prgo\">&#8250;</i></button></section>";
+    ' <u class="prlive">' + (pre ? "BEFORE THE MATCH" : "AFTER THE MATCH") + "</u></i>" +
+    "<b>" + (pre ? "They want a word before you play" : "The press room is open") +
+    "</b><em>" + (pre
+      ? "One question, on the match that is coming. Nobody marks your spelling here."
+      : "Two questions on the match you have just played. " +
+        "Nobody marks your spelling here — say what you think.") +
+    "</span></span><i class=\"prgo\">&#8250;</i></button></section>";
 }
 function wirePress() {
   var b = $("prGo");
@@ -5937,9 +6020,11 @@ function wirePress() {
 var PR = { list:[], i:0, said:[] };
 
 VIEWS.press = function () {
-  if (!pressOpen()) return back();
+  var ph = pressPhase();
+  if (!ph) return back();
   var md = ME.next.md;
-  PR = { list:pressPick(matchFacts(md)), i:0, said:[], md:md };
+  PR = { list:(ph === "pre") ? prePick() : pressPick(matchFacts(md)),
+         i:0, said:[], md:md, ph:ph };
   if (!PR.list.length) return back();
   swap("pressOne");
 };
@@ -5947,12 +6032,15 @@ VIEWS.press = function () {
 VIEWS.pressOne = function () {
   var q = PR.list[PR.i], paper = paperOf(ME.club.city);
   paintClub(ME.club);
-  barFlow("Press room", paper, Math.round(PR.i / PR.list.length * 100), false);
+  barFlow(PR.ph === "pre" ? "Before the match" : "Press room", paper,
+          Math.round(PR.i / PR.list.length * 100), false);
 
   html('<div class="pad prpad">' +
     '<div class="prhead"><span class="prm big">' + MIC_SVG + "</span>" +
-    '<span class="prwho"><b>' + esc(paper) + "</b><em>Question " + (PR.i + 1) +
-    " of " + PR.list.length + "</em></span></div>" +
+    '<span class="prwho"><b>' + esc(paper) + "</b><em>" +
+    (PR.list.length === 1 ? "One question before you play"
+                          : "Question " + (PR.i + 1) + " of " + PR.list.length) +
+    "</em></span></div>" +
 
     '<p class="prq">&ldquo;' + esc(q.q) + "&rdquo;</p>" +
 
@@ -5961,7 +6049,8 @@ VIEWS.pressOne = function () {
     '<p class="prfree">Spelling is not counted here. Your teacher reads what you ' +
     "wrote, not how you wrote it.</p>" +
     '<button class="btn" id="prnx">' +
-    (PR.i + 1 < PR.list.length ? "Next question" : "That is all, thank you") +
+    (PR.i + 1 < PR.list.length ? "Next question"
+      : PR.ph === "pre" ? "Said. Now let me play" : "That is all, thank you") +
     "</button>" +
     '<button class="btn ghost" id="prsk">Skip this one</button></div>');
 
@@ -5978,7 +6067,10 @@ VIEWS.pressOne = function () {
 
 VIEWS.pressEnd = function () {
   var said = PR.said.filter(function (x) { return x.a; });
-  pressSave(PR.md, { said:said, when:Date.now() });
+  var box = pressGet(PR.md) || {};
+  box[PR.ph === "pre" ? "pre" : "post"] = said;
+  box.when = Date.now();
+  pressSave(PR.md, box);
   paintClub(ME.club);
   barFlow("Press room", paperOf(ME.club.city), 100, false);
 
@@ -5986,7 +6078,8 @@ VIEWS.pressEnd = function () {
     "</span>" +
     '<span class="prwho"><b>' + (said.length ? "Thank you." : "No comment, then.") +
     "</b><em>" + (said.length
-      ? "It goes out with tomorrow's paper."
+      ? (PR.ph === "pre" ? "They will hold you to it after the match."
+                         : "It goes out with tomorrow's paper.")
       : "The paper will write it anyway.") + "</em></span></div>" +
 
     (said.length
@@ -5997,7 +6090,9 @@ VIEWS.pressEnd = function () {
         '<p class="prfree">Your teacher reads these with your match report. ' +
         "Nothing here changes the result.</p>"
       : "") +
-    '<button class="btn" id="prbk">Back to my home</button></div>');
+    '<button class="btn" id="prbk">' +
+    (PR.ph === "pre" ? "Back to my home \u2014 and good luck" : "Back to my home") +
+    "</button></div>");
   $("prbk").onclick = function () { reset("home"); };
 };
 
@@ -6578,7 +6673,12 @@ function reportOf(md) {
      risultato — e' per il professore, che legge come scrive quando
      nessuno gli detta le parole. */
   var pr = (typeof pressGet === "function") ? pressGet(md) : null;
-  if (pr && pr.said && pr.said.length) out.press = pr.said;
+  if (pr) {
+    /* la vigilia e il dopo partita arrivano insieme: il professore legge
+       quello che aveva promesso e quello che ha detto dopo */
+    var all = (pr.pre || []).concat(pr.post || []).concat(pr.said || []);
+    if (all.length) out.press = all;
+  }
   if (SHEET && SHEET.call) {
     out.calls = { side:SHEET.call.att.side, taker:SHEET.call.att.taker,
                   wonder:SHEET.call.att.wonder, dive:SHEET.call.def.dive };
