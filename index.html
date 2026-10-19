@@ -1672,6 +1672,11 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .dv em{font-style:normal;color:var(--gold)}
 .dr{flex:none;font:800 10px/1 system-ui,sans-serif;letter-spacing:.1em;color:var(--fog)}
 .duel.in .dr{color:var(--gold)}
+/* il minuto, accanto all'azione */
+.dmin{flex:none;width:32px;font:800 11px/1 system-ui,sans-serif;color:var(--gold);
+  letter-spacing:.02em}
+.duel .dn{width:16px}
+.shotrow .smin{flex:none;width:30px;font:800 10.5px/1 system-ui,sans-serif;color:var(--gold)}
 </style>
 </head>
 <body>
@@ -2198,7 +2203,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "30";
+var APPVER = "32";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -6688,7 +6693,11 @@ function wireReport(md, id) {
    al professore: quando pubblica, il suo bollettino vince.
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ───────── il motore, identico a quello del campionato ───────── */
+/* ───────── il motore, identico a quello del campionato ─────────
+   La qualita' di un'azione sta in centesimi, non in frazioni: 0, 25,
+   50, 75, 100 — nessun errore, uno, due, tre, quattro o piu'. Un segno
+   di punteggiatura che apre una soglia vale sempre 100. Si confrontano
+   cosi' come sono: il pareggio di qualita' lo vince il portiere. */
 function ftResolve(shotQ, saveQ, mode) {
   shotQ = shotQ || []; saveQ = saveQ || [];
   var duels = [], goals = 0, i;
@@ -6747,8 +6756,9 @@ function liveCard(md) {
   return {
     v:1, comp:scope(), md:md, club:ME.club.id, opp:ME.next.oppId || "",
     home:!!ME.next.atHome,
-    att:{ q:att.quals || [], w:!!att.hardOk },
-    def:{ q:def.quals || [], p:!!(def.hard && !def.hardOk) },
+    att:{ q:att.quals || [], m:att.mins || [], w:!!att.hardOk, hm:att.hardMin || null },
+    def:{ q:def.quals || [], m:def.mins || [], p:!!(def.hard && !def.hardOk),
+          hm:def.hardMin || null },
     sh:call.att.side || null, dv:call.def.dive || null
   };
 }
@@ -6761,6 +6771,12 @@ function liveScore(mine, theirs) {
   var b = ftHalf({ qualities:theirs.att.q, butDeOuf:theirs.att.w },
                  { qualities:mine.def.q, penaltyConceded:mine.def.p },
                  m, { shooter:theirs.sh, keeper:mine.dv });
+  /* i minuti: quelli dell'attacco di chi segna, e per il rigore quelli
+     della parola sbagliata in difesa dall'altro */
+  a.mins = mine.att.m || []; a.bdoMin = mine.att.hm || null;
+  a.penMin = (theirs.def && theirs.def.hm) || null;
+  b.mins = theirs.att.m || []; b.bdoMin = theirs.att.hm || null;
+  b.penMin = (mine.def && mine.def.hm) || null;
   return { me:a.goals, them:b.goals, mine:a, their:b, mode:m };
 }
 
@@ -6886,26 +6902,41 @@ VIEWS.live = function () {
   paintClub(ME.club);
   barFlow("Full time", ME.club.name + " v " + them, 100);
 
+  /* ───────── il tabellino di una squadra ─────────
+     Le righe si mettono in fila per minuto, come in un tabellino vero:
+     il rigore al 52' viene prima del wonder goal al 71', anche se nel
+     conto sono due cose diverse. */
   function side(h, who, foe) {
+    var rows = [];
+    h.duels.forEach(function (d) {
+      var mn = (h.mins || [])[d.n - 1] || null;
+      rows.push({ m:mn, html:'<div class="duel' + (d.goal ? " in" : "") + '">' +
+        '<span class="dmin">' + (mn ? mn + "\u2032" : "") + "</span>" +
+        '<span class="dn">' + d.n + "</span>" +
+        '<span class="dq">' + fmt(d.shot) + "</span>" +
+        '<span class="dv">' + (d.save == null
+          ? "<em>no keeper</em>"
+          : "v " + fmt(d.save)) + "</span>" +
+        '<span class="dr">' + (d.goal ? "GOAL" : "saved") + "</span></div>" });
+    });
+    if (h.sources.bdo) {
+      rows.push({ m:h.bdoMin || null, html:'<div class="duel in">' +
+        '<span class="dmin">' + (h.bdoMin ? h.bdoMin + "\u2032" : "") + "</span>" +
+        '<span class="dn">&#9733;</span>' +
+        '<span class="dq2">Wonder goal</span><span class="dr">GOAL</span></div>' });
+    }
+    if (h.penalty.conceded) {
+      rows.push({ m:h.penMin || null,
+        html:'<div class="duel' + (h.penalty.outcome === "goal" ? " in" : "") + '">' +
+        '<span class="dmin">' + (h.penMin ? h.penMin + "\u2032" : "") + "</span>" +
+        '<span class="dn">P</span><span class="dq2">Penalty &middot; ' +
+        esc(foe) + " conceded it</span><span class=\"dr\">" +
+        (h.penalty.outcome === "goal" ? "GOAL" : "saved") + "</span></div>" });
+    }
+    rows.sort(function (a, b) { return (a.m || 999) - (b.m || 999); });
     return '<h2 class="sec top">' + esc(who) + " &mdash; " + h.goals +
       (h.goals === 1 ? " goal" : " goals") + "</h2>" +
-      '<div class="panel">' + h.duels.map(function (d) {
-        return '<div class="duel' + (d.goal ? " in" : "") + '">' +
-          '<span class="dn">' + d.n + "</span>" +
-          '<span class="dq">' + fmt(Math.round(d.shot * 100)) + "</span>" +
-          '<span class="dv">' + (d.save == null
-            ? "<em>no keeper</em>"
-            : "v " + fmt(Math.round(d.save * 100))) + "</span>" +
-          '<span class="dr">' + (d.goal ? "GOAL" : "saved") + "</span></div>";
-      }).join("") +
-      (h.sources.bdo ? '<div class="duel in"><span class="dn">&#9733;</span>' +
-        '<span class="dq2">Wonder goal</span><span class="dr">GOAL</span></div>' : "") +
-      (h.penalty.conceded
-        ? '<div class="duel' + (h.penalty.outcome === "goal" ? " in" : "") + '">' +
-          '<span class="dn">P</span><span class="dq2">Penalty &middot; ' +
-          esc(foe) + " conceded it</span><span class=\"dr\">" +
-          (h.penalty.outcome === "goal" ? "GOAL" : "saved") + "</span></div>"
-        : "") +
+      '<div class="panel">' + rows.map(function (r) { return r.html; }).join("") +
       "</div>";
   }
 
@@ -8068,6 +8099,13 @@ function dkey(ph) {
          "-md" + (ME.next ? ME.next.md : 0) + "-" + ph;
 }
 
+/* il minuto di un'azione: la posizione nel dettato su novanta minuti */
+function matMinute(index, total) {
+  if (typeof index !== "number" || index < 0 || !total) return null;
+  return Math.max(1, Math.min(90, Math.round((index + 1) / total * 90)));
+}
+function fmtMin(m) { return m > 0 ? m + "\u2032" : ""; }
+
 /* ───────── la correzione a schermo ───────── */
 VIEWS.mEnd2 = function () {
   var ph = MT.ph, r = MT.res, c = r.clim;
@@ -8088,6 +8126,11 @@ VIEWS.mEnd2 = function () {
     /* la qualita' di ogni azione e chi l'ha presa: servono al campionato
        per risolvere la partita contro l'altro foglio */
     quals:r.shots.map(function (x) { return x.quality; }),
+    /* il minuto di ogni azione: dove cade la parola dentro il dettato,
+       riportato su novanta minuti. Stessa formula del campionato, cosi'
+       il tabellino del telefono e quello ufficiale dicono lo stesso. */
+    mins:r.shots.map(function (x) { return matMinute(x.at, r.els.length); }),
+    hardMin:matMinute(r.hardIndex, r.els.length),
     slots:(function () {
       var a = [];
       for (var k = 1; k <= r.open; k++) a.push(SHEET[ph][k] != null ? SHEET[ph][k] : null);
@@ -8102,7 +8145,10 @@ VIEWS.mEnd2 = function () {
   for (var k = 1; k <= r.open; k++) {
     var p = SHEET[ph][k] != null ? playerNo(SHEET[ph][k]) : null;
     var s = r.shots[k - 1];
+    var mn = (r.shots[k - 1] && typeof r.shots[k - 1].at === "number")
+      ? matMinute(r.shots[k - 1].at, r.els.length) : null;
     lines += '<div class="shotrow"><span class="bp">' + k + "</span>" +
+      '<span class="smin">' + (mn ? fmtMin(mn) : "") + "</span>" +
       '<span class="shirt2 sm"><svg viewBox="0 0 100 100"><use href="#jersey"/></svg>' +
       '<span class="sno">' + (p ? p.no : "?") + "</span></span>" +
       '<span class="bn"><b>' + (p ? esc(pName(p)) : "nobody on this action") +
