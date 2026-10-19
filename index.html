@@ -1301,6 +1301,25 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .cbody{flex:1;min-width:0}
 .cbody b{display:block;font:700 16px/1.25 var(--brand);margin:0 0 2px}
 .cbody em{display:block;font-style:normal;font-size:12px;opacity:.78}
+
+/* ═════════ le carte che si aprono e si chiudono ═════════ */
+.nxhead{position:relative;display:block;width:100%;padding:16px 46px 0 17px;border:0;
+  background:none;color:#06231D;text-align:left;cursor:pointer;font:inherit}
+.nxhead.solo{padding-right:17px;cursor:default}
+.nxc.shut .nxhead{padding-bottom:15px}
+.nxtog{position:absolute;top:13px;right:13px;width:30px;height:30px;border-radius:50%;
+  border:1px solid rgba(6,35,29,.3);background:rgba(6,35,29,.1);display:grid;
+  place-items:center;font:800 17px/1 system-ui,sans-serif;font-style:normal;color:#06231D}
+.nxbody{padding:0 17px 17px}
+.nxrow{display:flex;align-items:center;gap:7px;margin-top:9px}
+.nxrow b{flex:0 1 auto;min-width:0;font-size:14.5px;font-weight:800;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nxrow em{font:800 10px/1 system-ui,sans-serif;letter-spacing:.12em;font-style:normal;
+  color:rgba(6,35,29,.6);text-transform:uppercase}
+.fsm{width:22px;height:22px;flex:none}
+.fbig{width:38px;height:38px;flex:none}
+.nxbadge.sm{width:22px;height:22px;font-size:8.5px}
+.nxc .nxgo{width:100%;border:0;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
@@ -4112,7 +4131,23 @@ function drawWho() {
   $("hstar").onclick = function () { go("stars"); };
 }
 
-/* ───────── la prossima partita: la ragione per cui apre l'app ───────── */
+/* ───────── la prossima partita: la ragione per cui apre l'app ─────────
+   Una sola partita resta grande. Quando sono due o tre si chiudono a
+   una riga — i due nomi e basta — e si aprono con un tocco, senza
+   lasciare la home. Resta aperta quella della competizione che sta
+   giocando: e' quella dove e' gia' dentro con le mani. */
+var NXOPEN = null;
+function nxDefault(list) {
+  var o = {}, any = false;
+  if (list.length === 1) { o[list[0].id] = true; return o; }
+  list.forEach(function (n) {
+    if (n.active && n.halves < 2) { o[n.id] = true; any = true; }
+  });
+  /* appena arrivato non e' ancora dentro a nessuna competizione: si apre
+     la prima della fila, che e' la piu' urgente. Mai un muro di carte chiuse. */
+  if (!any) o[list[0].id] = true;
+  return o;
+}
 function drawNextUp() {
   if (!ME.code) { $("hnext").innerHTML = ""; return; }
   var list = nextUp();
@@ -4126,20 +4161,24 @@ function drawNextUp() {
       "</div></section>";
     return;
   }
+  if (!NXOPEN) NXOPEN = nxDefault(list);
+  var only = list.length === 1;
+
   $("hnext").innerHTML = '<section class="pad"><h2 class="sec">' +
-    (list.length === 1 ? "Next match" : "Your next matches") + "</h2>" +
-    list.slice(0, 3).map(function (n) {
-      /* lo stato del foglio si sa solo per la competizione aperta: le chiavi
-         del foglio vivono sotto scope(), e il meteo sotto ME.next */
+    (only ? "Next match" : "Your next matches") + "</h2>" +
+    list.slice(0, 4).map(function (n) {
+      var open = only || !!NXOPEN[n.id];
       var sheet = (n.active && ME.club && ME.next) ? sheetLabel() : "";
       var mine = crestOf(n.club), theirs = crestOf(n.oppId);
+      function flag(nm, cr, col, big) {
+        return cr
+          ? '<img class="' + (big ? "fbig" : "fsm") + '" src="' + cr + '" alt="">'
+          : '<i class="nxbadge' + (big ? "" : " sm") + '" style="background:' +
+            esc(col) + '">' + esc(initials(nm)) + "</i>";
+      }
       function side(nm, cr, col, tag) {
-        return '<span class="nxteam">' + (cr
-          ? '<img src="' + cr + '" alt="">'
-          : '<i class="nxbadge" style="background:' + esc(col) + '">' +
-            esc(initials(nm)) + "</i>") +
-          "<b>" + esc(nm) + "</b>" +
-          (tag ? '<em>' + tag + "</em>" : "") + "</span>";
+        return '<span class="nxteam">' + flag(nm, cr, col, true) +
+          "<b>" + esc(nm) + "</b>" + (tag ? "<em>" + tag + "</em>" : "") + "</span>";
       }
       function sky(ph, cl) {
         return '<span class="wx"><img src="' + skyOf(cl.id) + '" alt="">' +
@@ -4147,38 +4186,56 @@ function drawNextUp() {
           '<span class="win"><i>' + ph + "</i><b>" + esc(cl.label) +
           " &middot; <u>" + cl.actions + "</u></b></span></span>";
       }
-      return '<button class="nxc' + (n.halves ? " done2" : "") + '" data-c="' +
-        esc(n.id) + '" type="button">' +
-        '<img class="nxbg" src="' + imgOf("pitch") + '" alt="">' +
-        '<span class="nxveil" aria-hidden="true"></span>' +
-        '<span class="nxin">' +
-        '<span class="nxk">' + kindLabel(n.kind).toUpperCase() +
+      var head = '<span class="nxk">' + kindLabel(n.kind).toUpperCase() +
         " &middot; MATCHDAY " + n.md + (n.cup ? " &middot; " + esc(n.cup) : "") +
         (n.active ? ' <i class="nxnow">PLAYING</i>' : "") + "</span>" +
-        /* la sua squadra sempre per prima: e' la sua partita, non la
-           riga di un calendario */
-        side(n.clubName, mine, n.colour, n.atHome ? "AT HOME" : "AWAY") +
-        '<span class="nxvs">versus</span>' +
-        side(n.opp, theirs, n.oppColour, "") +
+        (open
+          ? side(n.clubName, mine, n.colour, n.atHome ? "AT HOME" : "AWAY") +
+            '<span class="nxvs">versus</span>' +
+            side(n.opp, theirs, n.oppColour, "")
+          : '<span class="nxrow">' + flag(n.clubName, mine, n.colour, false) +
+            "<b>" + esc(n.clubName) + "</b>" +
+            '<em>' + (n.atHome ? "vs" : "at") + "</em>" +
+            flag(n.opp, theirs, n.oppColour, false) +
+            "<b>" + esc(n.opp) + "</b></span>");
+
+      var body = !open ? "" : '<div class="nxbody">' +
         '<span class="nxw">' + sky("ATTACK", n.att) + sky("DEFENCE", n.def) + "</span>" +
-        '<span class="nxgo">' + (n.halves >= 2
+        '<button class="nxgo" data-c="' + esc(n.id) + '" type="button">' + (n.halves >= 2
           ? "&#10003; Both halves played"
           : n.halves === 1 ? "Play the other half"
-          : esc(sheet || "Prepare my team sheet")) + " &rsaquo;</span>" +
+          : esc(sheet || "Prepare my team sheet")) + " &rsaquo;</button>" +
         '<span class="nxs">' + (n.halves >= 2
           ? "Your teacher has your report."
-          : n.halves === 1
-            ? "One half done, one waiting."
-            : "Ten moments in attack, eight in defence.") +
-        "</span></span></button>";
+          : n.halves === 1 ? "One half done, one waiting."
+          : n.att.actions + " moments in attack, " + n.def.actions + " in defence.") +
+        "</span></div>";
+
+      return '<div class="nxc' + (open ? "" : " shut") + (n.halves ? " done2" : "") + '">' +
+        '<img class="nxbg" src="' + imgOf("pitch") + '" alt="">' +
+        '<span class="nxveil" aria-hidden="true"></span>' +
+        '<div class="nxin">' +
+        (only
+          ? '<div class="nxhead solo">' + head + "</div>"
+          : '<button class="nxhead" data-t="' + esc(n.id) + '" type="button" ' +
+            'aria-expanded="' + (open ? "true" : "false") + '">' + head +
+            '<i class="nxtog" aria-hidden="true">' + (open ? "&minus;" : "+") +
+            "</i></button>") +
+        body + "</div></div>";
     }).join("") + "</section>";
 
-  Array.prototype.forEach.call($("hnext").querySelectorAll(".nxc"), function (b) {
+  /* il capo apre e chiude, il pulsante dentro porta in campo */
+  Array.prototype.forEach.call($("hnext").querySelectorAll(".nxhead[data-t]"),
+    function (b) {
+      b.onclick = function () {
+        var id = b.dataset.t;
+        NXOPEN[id] = !NXOPEN[id];
+        drawNextUp();
+      };
+    });
+  Array.prototype.forEach.call($("hnext").querySelectorAll(".nxgo"), function (b) {
     b.onclick = function () {
-      enterComp(b.dataset.c, function (err) {
-        if (err) return;
-        reset("squad");
-      });
+      enterComp(b.dataset.c, function (err) { if (!err) reset("squad"); });
     };
   });
 }
