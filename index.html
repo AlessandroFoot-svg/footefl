@@ -1546,6 +1546,62 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   border:1px solid rgba(226,251,206,.22);color:var(--fog)}
 .clubpage .chin b{font-family:var(--brand);font-size:32px;font-weight:800;line-height:1;
   letter-spacing:-.02em;color:#FFFDEE}
+
+/* ═════════ la rosa che si apre ═════════ */
+.sqc{border-radius:18px;border:1px solid var(--edge);overflow:hidden;
+  background:linear-gradient(170deg,rgba(255,255,255,.05),rgba(0,0,0,.14));margin-top:4px}
+.sqhead{display:flex;align-items:center;gap:12px;width:100%;padding:15px 16px;border:0;
+  background:none;color:var(--cream);text-align:left;cursor:pointer;font:inherit}
+.sqt{flex:1;min-width:0}
+.sqt i{display:block;font-style:normal;font:800 9px/1 system-ui,sans-serif;
+  letter-spacing:.16em;color:var(--gold)}
+.sqt b{display:block;margin-top:5px;font:800 19px/1.1 var(--brand);color:#FFFDEE}
+.sqt em{display:block;margin-top:3px;font-style:normal;font-size:11.5px;font-weight:600;
+  color:var(--fog)}
+.sqtog{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--edge);
+  background:rgba(226,251,206,.06);display:grid;place-items:center;font-style:normal;
+  font:800 17px/1 system-ui,sans-serif;color:var(--gold)}
+.sqbody{padding:0 10px 10px}
+.sqbody .hint{padding:0 6px 8px;font-size:11px;font-weight:600;color:var(--fog)}
+
+/* ═════════ la carta del campo d'allenamento ═════════ */
+.tgc{position:relative;border-radius:20px;overflow:hidden;margin-top:12px;
+  box-shadow:0 14px 34px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,253,238,.5)}
+.tgbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 55%}
+.tgveil{position:absolute;inset:0;background:linear-gradient(135deg,
+  rgba(242,250,107,.94) 0%,rgba(227,239,38,.9) 40%,
+  rgba(183,227,58,.88) 74%,rgba(143,214,72,.92) 100%)}
+.tgin{position:relative;padding:16px 16px 17px;color:#06231D}
+.tgk{display:block;font:800 9.5px/1 system-ui,sans-serif;letter-spacing:.14em;
+  color:rgba(6,35,29,.72)}
+.tgt{display:block;margin-top:7px;font:800 25px/1.08 var(--brand);letter-spacing:-.02em}
+.tgnum{display:flex;gap:16px;margin-top:12px}
+.tgnum b{display:block;font:800 17px/1 var(--brand)}
+.tgnum em{display:block;margin-top:3px;font-style:normal;font:700 9px/1 system-ui,sans-serif;
+  letter-spacing:.1em;text-transform:uppercase;color:rgba(6,35,29,.7)}
+.tgrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+.tgd{position:relative;height:86px;border-radius:13px;overflow:hidden;border:1px solid
+  rgba(6,35,29,.35);background:#06231D;cursor:pointer;padding:0;font:inherit;display:block}
+.tgd img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6}
+.tgd img.fit{object-fit:contain;padding:14px 14px 26px;opacity:.9}
+.tgv{position:absolute;inset:0;background:linear-gradient(180deg,
+  rgba(6,35,29,.25) 0%,rgba(6,35,29,.72) 58%,rgba(6,35,29,.95) 100%)}
+.tgl{position:absolute;left:0;right:0;bottom:0;padding:8px 9px;text-align:left}
+.tgl i{display:block;font-style:normal;font:800 9px/1.15 system-ui,sans-serif;
+  letter-spacing:.08em;color:#FFFDEE}
+.tgl b{display:block;margin-top:3px;font:700 9.5px/1 system-ui,sans-serif;color:var(--gold)}
+.tgd:active{transform:translateY(1px)}
+
+/* le tre linguette dentro il campo */
+.gtabs{display:flex;gap:7px;margin:4px 0 14px}
+.gtab{flex:1;padding:10px 4px;border-radius:11px;border:1px solid var(--edge);
+  background:var(--deep);color:var(--fog);font:800 11.5px/1 var(--brand);cursor:pointer}
+.gtab.on{background:var(--gold);color:#06231D;border-color:var(--gold)}
+
+/* la maglia fotografata nella rosa */
+.shirt.ph{aspect-ratio:auto}
+.shirt.ph img{width:100%;display:block;filter:drop-shadow(0 4px 9px rgba(0,0,0,.45))}
+.shirt.ph .no{padding-top:34%;font-size:25px;text-shadow:0 2px 7px rgba(0,0,0,.45)}
 </style>
 </head>
 <body>
@@ -2072,7 +2128,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "26";
+var APPVER = "29";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -3946,9 +4002,12 @@ function ord(n) {
   var s = ["th", "st", "nd", "rd"], v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
-/* chi gioca in questo club, e a che punto e' */
+/* a che punto e' questo club. Il nome di chi ci gioca NON si mostra:
+   le squadre non si assegnano piu' cosi' — le da' il campionato col
+   codice — e il nome di un alunno su una pagina che sta in rete non ci
+   deve stare, qui come in nessun'altra schermata. */
 function clubWho(id) {
-  var out = { who:takenBy(id) || "", line:"" };
+  var out = { line:"" };
   var b = (typeof compBull === "function" && compBull(scope())) || BULL || null;
   if (b) {
     var r = (b.table || []).filter(function (x) { return x.id === id; })[0];
@@ -3999,7 +4058,8 @@ function drawClubGrid() {
       return '<button class="gtile" data-c="' + esc(c.id) + '" type="button" style="--cc:' +
         c.colour + '">' + clubMark(c, 54) +
         "<b>" + esc(c.name) + "</b><em>" + esc(c.city.split(" · ")[0]).toUpperCase() +
-        "</em>" + (w.who ? '<span class="gwho">' + esc(w.who) + "</span>" : "") +
+        "</em>" + (w.line ? '<span class="gwho">' +
+          esc(w.line.split(" · ").pop()) + "</span>" : "") +
         "</button>";
     }).join("") +
     '<div class="gnote"><span>' + CLUBS.length + " clubs,<br>one league</span></div>" +
@@ -4021,7 +4081,6 @@ VIEWS.club = function (d) {
   var next = CLUBS[(at + 1) % CLUBS.length];
   var w = clubWho(c.id), kit = kitOf(c.id);
   var mine = ME.club && ME.club.id === c.id, ours = isMine(c.id);
-  var claim = !!(w.who && !ours && !mine);
   var prac = !ME.code;
 
   paintNeutral();
@@ -4046,18 +4105,15 @@ VIEWS.club = function (d) {
       '<div class="lex">' + c.lex.map(function (x) {
         return "<span>" + esc(x) + "</span>"; }).join("") + "</div></div>" +
 
-      (w.who || mine
+      (mine || w.line
         ? '<div class="cwhorow">' + clubMark(c, 34) +
           '<span><b>' + (mine ? "This is your club this season"
-                              : esc(w.who) + " plays here this season") + "</b>" +
+                              : "In the league this season") + "</b>" +
           (w.line ? "<em>" + esc(w.line) + "</em>" : "") + "</span></div>"
         : "") +
 
       (mine ? '<button class="btn" id="cgo">Back to my squad</button>'
        : ours ? '<button class="btn" id="cgo">Back into ' + esc(c.name) + "</button>"
-       : claim ? '<p class="clede">Your teacher put <b>' + esc(w.who) +
-                 "</b> in this club. Tap it if that is you.</p>" +
-                 '<button class="btn" id="cgo">I am ' + esc(w.who) + "</button>"
        : prac ? '<button class="btn" id="cgo">Practise with ' + esc(c.name) + "</button>"
        : "") +
     "</div>" +
@@ -4073,7 +4129,7 @@ VIEWS.club = function (d) {
 
   if ($("cgo")) {
     $("cgo").onclick = function () {
-      if (claim || (prac && !mine && !ours)) { go("claim", { id:c.id }); return; }
+      if (prac && !mine && !ours) { go("claim", { id:c.id }); return; }
       if (!mine) joinClub(c.id);
       paintClub(ME.club);
       reset("squad");
@@ -4668,7 +4724,6 @@ VIEWS.more = function () {
   var rows = [
     { t:"My form", s:"Every half you have played", go:"form", need:"club" },
     { t:"All my statistics", s:"The language and the game", go:"me" },
-    { t:"The clubs", s:"The nine of the league, and their stories", go:"clubs" },
     { t:"My stars", s:starsLeft() + " to spend", go:"stars" },
     { t:"My level", s:"Your tests ask questions at " + esc(ME.level), go:"level" }
   ].filter(function (r) { return r.need !== "club" || ME.club; });
@@ -5620,9 +5675,9 @@ VIEWS.squad = function () {
   barClub();
   setAction();
   openShirt = null;
-  html('<div id="stadbar"></div><div id="band"></div>' +
-    '<div class="rail2"><p class="hint">Tap a shirt to see the player.</p>' +
-    '<div id="shirts"></div></div>' +
+  html('<div id="band"></div>' +
+    '<section class="pad"><div class="sqc" id="sqc"></div></section>' +
+    '<div id="stadbar"></div>' +
     '<section class="pad" id="signs" hidden><h2 class="sec">Signed in the market</h2>' +
     '<div class="panel" id="signbox"></div></section>' +
     '<section class="pad"><h2 class="sec">Where I stand</h2>' +
@@ -5633,7 +5688,7 @@ VIEWS.squad = function () {
     '<section class="pad"><h2 class="sec">More</h2>' +
     '<div class="tiles" id="tiles"></div></section>' +
     '<p class="foot" id="foot"></p>');
-  drawStadium(); drawBand(); drawShirts(); drawSignings(); drawTable(); drawNext();
+  drawStadium(); drawBand(); drawSquadCard(); drawSignings(); drawTable(); drawNext();
   drawStarBar(); drawTiles(); drawFoot();
 };
 
@@ -5652,7 +5707,10 @@ function pegHtml(p) {
   for (var i = 0; i < 2; i++) st += '<i class="' + (i < p.grown ? "up" : "") + '"></i>';
   return '<button class="peg" data-no="' + p.no + '" type="button" aria-expanded="false" ' +
     'aria-label="' + esc(p.name || ("Shirt " + p.no)) + '">' +
-    '<span class="shirt"><svg><use href="#jersey"/></svg>' +
+    '<span class="shirt' + (kitOf(ME.club ? ME.club.id : "") ? " ph" : "") + '">' +
+    (kitOf(ME.club ? ME.club.id : "")
+      ? '<img src="' + kitOf(ME.club.id) + '" alt="">'
+      : "<svg><use href=\"#jersey\"/></svg>") +
     '<span class="no">' + p.no + "</span>" +
     (p.tag ? '<span class="badge">' + p.tag + "</span>" : "") + "</span>" +
     '<span class="pname' + (p.name ? "" : " empty") + '">' +
@@ -5682,8 +5740,31 @@ function cardHtml(p) {
       return "<dt>" + r[0] + "</dt><dd>" + r[1] + "</dd>"; }).join("") +
     '</dl><p class="note">' + note + "</p></div>";
 }
+/* la rosa non sta piu' aperta per forza: e' una carta come quella della
+   prossima partita, si apre col piu' e si chiude col meno. Chiusa dice
+   quanti sono e quanti sono cresciuti, che e' quello che serve sapere
+   di sfuggita. */
+var SQOPEN = false;
+function drawSquadCard() {
+  var box = $("sqc");
+  if (!box) return;
+  var grown = ME.squad.filter(function (p) { return p.grown; }).length;
+  box.innerHTML = '<button class="sqhead" id="sqtog" type="button" aria-expanded="' +
+    (SQOPEN ? "true" : "false") + '"><span class="sqt"><i>MY SQUAD</i><b>' +
+    ME.squad.length + " players</b><em>" +
+    (grown ? grown + (grown === 1 ? " has grown" : " have grown") : "nobody has grown yet") +
+    "</em></span><i class=\"sqtog\">" + (SQOPEN ? "&minus;" : "+") + "</i></button>" +
+    (SQOPEN
+      ? '<div class="sqbody"><p class="hint">Tap a shirt to see the player.</p>' +
+        '<div id="shirts"></div></div>'
+      : "");
+  $("sqtog").onclick = function () { SQOPEN = !SQOPEN; drawSquadCard(); };
+  if (SQOPEN) drawShirts();
+}
+
 function drawShirts() {
   var box = $("shirts"), per = 3, out = "";
+  if (!box) return;
   for (var i = 0; i < ME.squad.length; i += per) {
     out += '<div class="row">' + ME.squad.slice(i, i + per).map(pegHtml).join("") + "</div>";
   }
@@ -7926,53 +8007,106 @@ function stadiumSvg(small) {
   return g + "</svg>";
 }
 
-/* ───────── la striscia in cima alla squadra ───────── */
+/* ───────── la carta del campo d'allenamento ─────────
+   Prima era una striscia sottile con uno stadietto disegnato, e nessuno
+   capiva che cosa fosse ne' dove portasse. Adesso e' una carta grande
+   come quella della prossima partita, dice in testa a che cosa serve —
+   migliorare la squadra — e si divide in tre porte: la rosa, lo stadio,
+   il club. Gli esercizi dietro si somigliano, ma almeno si sa dove si
+   sta andando. */
+function toBuild(groups) {
+  return BUILDS.filter(function (b) {
+    return groups.indexOf(b.g) > -1 && !built(b.id);
+  }).length;
+}
 function drawStadium() {
   loadGround();
   var box = $("stadbar");
   if (!box) return;
-  box.innerHTML = '<button class="stadbtn" id="stadb" type="button">' +
-    stadiumSvg(true) +
-    '<span class="stadfoot"><span class="sl"><b>' + fmtCap(capacity()) +
-    "</b><em>capacity</em></span>" +
-    '<span class="sl"><b>' + money(GROUND.funds) + "</b><em>in the till</em></span>" +
-    '<span class="sl gold2"><b>' + sessLeft() + "</b><em>" +
-    (sessLeft() === 1 ? "session left" : "sessions left") + "</em></span>" +
-    "<i>&#8250;</i></span></button>";
-  $("stadb").onclick = function () { go("ground"); };
+  var left = sessLeft();
+  var nStand = toBuild(["stand"]), nClub = toBuild(["club", "staff"]);
+
+  function door(id, img, lab, sub, fit) {
+    return '<button class="tgd" data-g="' + id + '" type="button">' +
+      '<img src="' + img + '" alt=""' + (fit ? ' class="fit"' : "") + ">" +
+      '<span class="tgv" aria-hidden="true"></span>' +
+      '<span class="tgl"><i>' + lab + "</i><b>" + sub + "</b></span></button>";
+  }
+
+  box.innerHTML = '<section class="pad"><div class="tgc">' +
+    '<img class="tgbg" src="' + imgOf("pitch") + '" alt="">' +
+    '<span class="tgveil" aria-hidden="true"></span>' +
+    '<div class="tgin">' +
+      '<span class="tgk">THE TRAINING GROUND &middot; MATCHDAY ' + mdNow() + "</span>" +
+      '<b class="tgt">Improve your team</b>' +
+      '<div class="tgnum"><span><b>' + fmtCap(capacity()) + "</b><em>capacity</em></span>" +
+        "<span><b>" + money(GROUND.funds) + "</b><em>in the till</em></span>" +
+        "<span><b>" + left + "</b><em>" +
+        (left === 1 ? "session left" : "sessions left") + "</em></span></div>" +
+      '<div class="tgrow">' +
+        door("squad", imgOf("pitch"), "MY SQUAD",
+             left ? left + (left === 1 ? " session" : " sessions") : "closed today") +
+        door("stand", imgOf("stadium"), "THE STADIUM",
+             nStand ? nStand + " to build" : "all built") +
+        door("club", crestOf(ME.club ? ME.club.id : "") || imgOf("ic-settings"),
+             "THE CLUB", nClub ? nClub + " to open" : "all done", true) +
+      "</div>" +
+    "</div></div></section>";
+
+  Array.prototype.forEach.call(box.querySelectorAll(".tgd"), function (b) {
+    b.onclick = function () { go("ground", { tab:b.dataset.g }); };
+  });
 }
 function fmtCap(n) { return n >= 1000 ? (n / 1000) + ",000" : String(n); }
 
 /* ───────── la schermata ───────── */
-VIEWS.ground = function () {
+var GTAB = "squad";
+var GTABS = [{ id:"squad", n:"My squad" }, { id:"stand", n:"The stadium" },
+             { id:"club",  n:"The club" }];
+VIEWS.ground = function (d) {
   loadGround(); loadLevel();
   paintClub(ME.club);
+  if (d && d.tab) GTAB = d.tab;
   var left = sessLeft();
-  barFlow("The ground", ME.club.name + " · matchday " + mdNow(), 0);
+  barFlow(GTABS.filter(function (t) { return t.id === GTAB; })[0].n,
+          ME.club.name + " · matchday " + mdNow(), 0);
 
+  var sq = GTAB === "squad";
   html('<div class="pad">' +
-    '<div class="stadbig">' + stadiumSvg(false) + "</div>" +
+    '<div class="gtabs">' + GTABS.map(function (t) {
+      return '<button class="gtab' + (t.id === GTAB ? " on" : "") + '" data-t="' +
+        t.id + '" type="button">' + t.n + "</button>";
+    }).join("") + "</div>" +
+
     '<div class="till"><div><span>IN THE TILL</span><b>' + money(GROUND.funds) +
     "</b></div><div><span>CAPACITY</span><b>" + fmtCap(capacity()) +
     "</b></div><div><span>EVERY GATE</span><b>" + money(gatePerMatch()) +
     "</b></div></div>" +
 
-    '<h2 class="sec top">Today at the ground</h2>' +
-    '<p class="lede sm2">' + (left
-      ? "<b>" + left + (left === 1 ? " session" : " sessions") + "</b> left before " +
-        "matchday " + mdNow() + ". Each one pays into the till, and a good one earns " +
-        "a player a step of <b>+0.10</b>."
-      : "Three sessions done. The ground closes until the next matchday — " +
-        "that is the whole point of a calendar.") + "</p>" +
-    '<div id="sessbox"></div>' +
+    (sq
+      ? '<h2 class="sec top">Today at the ground</h2>' +
+        '<p class="lede sm2">' + (left
+          ? "<b>" + left + (left === 1 ? " session" : " sessions") + "</b> left before " +
+            "matchday " + mdNow() + ". Each one pays into the till, and a good one earns " +
+            "a player a step of <b>+0.10</b>."
+          : "Three sessions done. The ground closes until the next matchday — " +
+            "that is the whole point of a calendar.") + "</p>" +
+        '<div id="sessbox"></div>'
+      : (GTAB === "stand" ? '<div class="stadbig">' + stadiumSvg(false) + "</div>" : "") +
+        '<h2 class="sec top">' + (GTAB === "stand" ? "The stand" : "The club") + "</h2>" +
+        '<p class="lede sm2">' + (GTAB === "stand"
+          ? "Nothing here makes you win a match. It makes the place yours, and it makes " +
+            "the gate bigger — more seats, more people, more money next time."
+          : "The shop, the pitch, your own badge, and the two people who read your " +
+            "mistakes before you do. None of them kicks a ball.") + "</p>" +
+        '<div id="yard"></div>') +
 
-    '<h2 class="sec top">The yard</h2>' +
-    '<p class="lede sm2">Nothing here makes you win a match. It makes the place yours, ' +
-    "it makes the gate bigger, and the staff tell you where you are going wrong.</p>" +
-    '<div id="yard"></div>' +
     '<button class="btn ghost" id="gbk">Back to my squad</button></div>');
 
-  drawSessions(); drawYard();
+  if (sq) drawSessions(); else drawYard(GTAB === "stand" ? ["stand"] : ["club", "staff"]);
+  Array.prototype.forEach.call($("main").querySelectorAll(".gtab"), function (b) {
+    b.onclick = function () { GTAB = b.dataset.t; swap("ground"); };
+  });
   $("gbk").onclick = function () { reset("squad"); };
 };
 
@@ -8005,8 +8139,8 @@ function drawSessions() {
   });
 }
 
-function drawYard() {
-  var groups = ["stand", "club", "staff"];
+function drawYard(groups) {
+  groups = groups || ["stand", "club", "staff"];
   $("yard").innerHTML = groups.map(function (gr) {
     var list = BUILDS.filter(function (b) { return b.g === gr; });
     return '<div class="ygroup"><h3>' + GROUP_NAME[gr] + "</h3>" +
@@ -8224,139 +8358,6 @@ function squadOf(no) {
 }
 
 
-/* ───── 60-coach.js ───── */
-/* ═══════════════════════════════════════════════════════════════════
-   LA LAVAGNA DEL PROFESSORE
-   Stesso file, stesso link, con #coach in fondo. Mostra chi ha firmato
-   chi, in tutta la classe, senza che nessuno legga un codice.
-   ═══════════════════════════════════════════════════════════════════ */
-
-function whenShort(iso) {
-  if (!iso) return "";
-  var d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  var p = function (n) { return (n < 10 ? "0" : "") + n; };
-  return p(d.getDate()) + "/" + p(d.getMonth() + 1) + " · " +
-         p(d.getHours()) + ":" + p(d.getMinutes());
-}
-
-/* il codice che sblocca la partita, giornata per giornata */
-function codeBoard() {
-  /* in beta i codici di partita e di livello sono spenti: non ha senso
-     mostrarli. Tornano accendendo CODES_ON. */
-  if (!CODES_ON) {
-    return '<section class="codes"><h3>Matches and levels</h3>' +
-      '<p class="bnote">Codes are <b>off</b> for now: a pupil starts the match ' +
-      "straight from their team sheet, and picks their own test level. When you want " +
-      "them back, set <b>CODES_ON</b> to true in the file and the code boxes and " +
-      "these lists come back.</p>" + clubBoard() + "</section>";
-  }
-  var md = LEAGUE.md + 1, out = "";
-  for (var i = md; i <= Math.min(LEAGUE.mdTotal, md + 2); i++) {
-    out += '<div class="cdr' + (i === md ? " now" : "") + '"><span>Matchday ' + i +
-      (i === md ? " · next" : "") + "</span><b>" + matchCode(i) + "</b></div>";
-  }
-  return '<section class="codes"><h3>Match codes</h3>' + out +
-    '<p class="bnote">Write the next one on the board when the class is in front of ' +
-    "you. Without it nobody can open the attack or the defence. The same code is what " +
-    "changes a pupil's level.</p>" +
-    '<h3 class="mt">Level codes</h3>' +
-    LEVELS.map(function (v) {
-      return '<div class="cdr"><span>' + v + " · " + esc(LEVEL_NAME[v] || "") +
-        " · " + bankSize(v) + " questions</span><b>" + levelCode(v) + "</b></div>";
-    }).join("") +
-    '<p class="bnote">Give a pupil the code of their level and the transfer test and ' +
-    "the training ground move to it. It stays on their phone until you change it.</p>" +
-    clubBoard() + "</section>";
-}
-
-/* ───────── chi si prende quale squadra ─────────
-   Con la tabella condivisa non serve niente: il primo che tocca se la
-   prende. Senza, ogni club ha un codice e lo dai a un alunno solo. */
-function clubBoard() {
-  var free = CLUBS.filter(function (c) { return c.open; });
-  var out = '<h3 class="mt">Clubs</h3>';
-  if (syncOn()) {
-    out += '<p class="bnote">The class shares one register, so they can just choose: ' +
-      "the first phone to take a club gets it and it goes grey on everyone else's. " +
-      "Who has what is in the list below.</p>";
-  } else {
-    out += free.map(function (c) {
-      var who = takenBy(c.id);
-      return '<div class="cdr"><span><i class="ldot" style="background:' +
-        dotOf(c.colour) + '"></i> ' + esc(c.name) +
-        (who ? " &middot; " + esc(who) : "") + "</span><b>" + clubCode(c.id) +
-        "</b></div>";
-    }).join("") +
-    '<p class="bnote">No shared table yet, so a club is taken with a code. Read one ' +
-    "code to one pupil and that club is theirs — nobody else can type their way in. " +
-    "Set up the register and the codes disappear: they just choose.</p>";
-  }
-  return out;
-}
-
-VIEWS.coach = function () {
-  paintNeutral();
-  loadClaims();
-  barFlow("The signing book", syncOn() ? "Season " + SYNC.season : "This phone only", 0, false);
-  html('<div class="pad">' + codeBoard() + '<div class="waiting" id="wait"><i></i>' +
-    "<b>Reading the book…</b><span>One moment.</span></div></div>");
-
-  pullAll(function (err, rows) {
-    if (err) {
-      html('<div class="pad">' + codeBoard() + '<h1>The book would not open.</h1>' +
-        '<p class="lede">The table did not answer: <b>' + esc(String(err.message || err)) +
-        "</b>. Check the project URL and the key at the top of the file, and that the " +
-        "table allows reading.</p>" +
-        '<button class="btn" id="rt">Try again</button></div>');
-      $("rt").onclick = function () { swap("coach"); };
-      return;
-    }
-    if (!rows.length) {
-      html('<div class="pad">' + codeBoard() + '<h1>Nobody has signed yet.</h1>' +
-        '<p class="lede">The moment a player signs on a phone, the name lands here.</p>' +
-        '<button class="btn" id="rt2">Refresh</button></div>');
-      $("rt2").onclick = function () { swap("coach"); };
-      return;
-    }
-
-    /* raggruppate per squadra, nell'ordine in cui hanno firmato */
-    var by = {}, order = [];
-    rows.forEach(function (r) {
-      var k = r.club_name || r.club || "—";
-      if (!by[k]) { by[k] = []; order.push(k); }
-      by[k].push(r);
-    });
-    order.sort();
-
-    html('<div class="pad">' + codeBoard() + '<div class="count"><b>' + rows.length + "</b><span>" +
-      (rows.length === 1 ? "signing" : "signings") + " in " + order.length +
-      (order.length === 1 ? " squad" : " squads") + "</span></div>" +
-      (syncOn() ? "" : '<p class="lede">No shared table is set up, so this is only ' +
-        "what was signed <b>on this phone</b>.</p>") +
-      order.map(function (k) {
-        var list = by[k];
-        return '<section class="bk"><h3>' + esc(k) +
-          (list[0].student ? ' <em>' + esc(list[0].student) + "</em>" : "") +
-          "</h3>" + list.map(function (r) {
-            return '<div class="bkr"><span class="bn">' + esc(r.card_name) +
-              "</span><span class=\"bm\">" + stars(r.stars || 0) + " &middot; " +
-              esc(r.role || "") + " &middot; " + esc(r.country || "") +
-              (r.cents ? " &middot; +" + fmt(r.cents) : "") + "</span>" +
-              (r.scout || r.made_at
-                ? '<span class="bw">' + esc(r.scout || "") +
-                  (r.continent ? " · " + esc(r.continent) : "") +
-                  (r.score != null ? " · " + r.score + "/20" : "") +
-                  (r.made_at ? " · " + whenShort(r.made_at) : "") + "</span>"
-                : "") + "</div>";
-          }).join("") + "</section>";
-      }).join("") +
-      '<button class="btn" id="rt3">Refresh</button></div>');
-    $("rt3").onclick = function () { swap("coach"); };
-  });
-};
-
-
 /* ───── 70-league.js ───── */
 /* ═══════════════════════════════════════════════════════════════════
    THE LEAGUE
@@ -8469,6 +8470,13 @@ function drawBoards() {
       }).join("") + "</div>" +
       '<div class="rf">' + formHtml(t.form) +
       (cup ? '<span class="rc">&#9733; ' + esc(cup) + "</span>" : "") + "</div></div>";
+
+    /* da qui si entra nella pagina del club: la classifica dice come va,
+       la pagina del club dice chi sono. E' l'unica porta che serve. */
+    if (CLUBS.filter(function (x) { return x.id === t.id; }).length) {
+      out += '<button class="gthin" data-club="' + esc(t.id) + '" type="button">' +
+        "Read about " + esc(t.name) + " &#8250;</button>";
+    }
   }
 
   out += BOARDS.map(function (bd) {
@@ -8497,6 +8505,9 @@ function drawBoards() {
   }).join("");
 
   $("boards").innerHTML = out;
+  Array.prototype.forEach.call($("boards").querySelectorAll("[data-club]"), function (b) {
+    b.onclick = function () { go("club", { id:b.dataset.club }); };
+  });
 }
 
 
@@ -9288,9 +9299,11 @@ loadLevel();
 var fromLink = codeFromLink();
 loadCode(); loadComps(); loadDrop();
 loadBulletin();
-/* lo stesso link, con #coach in fondo, apre il registro del professore */
-if (String(location.hash || "").toLowerCase().indexOf("coach") > -1) reset("coach");
-else if (fromLink) {
+/* la lavagna del professore non vive piu' qui: stava nella stessa app
+   che gira su un sito pubblico, e bastava indovinare #coach per leggere
+   l'elenco dei ragazzi. Quell'elenco sta nella piattaforma, che e' sul
+   computer del professore e non la vede nessun altro. */
+if (fromLink) {
   /* arrivato dalla sua tesserina: la porta l'ha aperta il link, quindi si
      va dritti a casa e intanto si guarda se c'e' qualcosa di nuovo */
   reset("home");
