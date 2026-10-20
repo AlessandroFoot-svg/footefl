@@ -2166,6 +2166,63 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .nxc.plain .nxteam b{color:#FFFDEE}
 .nxc.plain .nxteam em,.nxc.plain .nxvs{color:var(--fog)}
 .nxc.plain .nxbadge{color:#F2E6C8}
+
+/* ═════════ cartellini e squalifiche ═════════ */
+.disc{padding:2px 0}
+.dsr{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-bottom:1px solid var(--edge)}
+.dsr:last-child{border-bottom:0}
+.dsm{flex:none;width:26px;font:800 11px/1 var(--brand);color:var(--fog)}
+.dsc{flex:none;width:20px;display:grid;place-items:center}
+.dsar{font-style:normal;color:#7FD17F;font-weight:800}
+.dsn{flex:1;min-width:0}
+.dsn b{display:flex;align-items:baseline;gap:7px;font-size:13px;font-weight:800;
+  color:#FFFDEE}
+.dsn em{display:block;margin-top:2px;font-size:11px;font-weight:600;font-style:normal;
+  color:var(--fog)}
+.dst{flex:none;font:800 9.5px/1 var(--brand);letter-spacing:.08em;color:#E3C84A}
+.dsr.red .dst{color:#E8A89A}
+.dsr.sub .dst{color:#9FD5A8}
+.posbar{margin-top:9px;height:7px;border-radius:4px;background:rgba(201,85,63,.45);
+  overflow:hidden}
+.posbar i{display:block;height:100%;background:var(--gold);border-radius:4px}
+.qn.sm3{font-size:10.5px;color:#6FA38D}
+.prow.ban{opacity:.5}
+.prow.ban .smid b{text-decoration:line-through}
+.dsmore{padding:10px 12px;font-size:11px;font-weight:600;color:#6FA38D;text-align:center}
+
+/* ═════════ la classifica che scorre, con la colonna ferma ═════════ */
+.ltx{margin-top:4px;border-radius:16px;border:1px solid var(--edge);overflow-x:auto;
+  background:var(--band);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.ltx::-webkit-scrollbar{display:none;height:0}
+.ltr{display:flex;align-items:stretch;width:max-content;min-width:100%;border:0;
+  border-bottom:1px solid var(--edge);background:none;padding:0;cursor:pointer;
+  font-family:inherit;text-align:left}
+.ltr:last-child{border-bottom:0}
+.ltr.hd{cursor:default}
+.ltr.hd .lc,.ltr.hd .lcf i,.ltr.hd .lcf u{font:800 9px/1 var(--brand);letter-spacing:.14em;
+  color:#6FA38D}
+.lcf{position:sticky;left:0;z-index:2;flex:none;width:188px;display:flex;
+  align-items:center;gap:8px;padding:10px 11px;background:var(--band);
+  box-shadow:6px 0 10px -8px rgba(0,0,0,.9)}
+.ltr.me .lcf{background:#10402F}
+.ltr.sel .lcf{background:#153f2e}
+.lcf .lp{flex:none;width:18px;font:800 12px/1 var(--brand);font-style:normal;
+  color:var(--fog);text-align:center}
+.lcf .lp.cup{color:var(--gold)}
+.lcf .ldot{flex:none;width:9px;height:9px;border-radius:2px}
+.lcf b{flex:1;min-width:0;font-size:13px;font-weight:800;color:#FFFDEE;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lcf b em{font-style:normal}
+.lcf b>em:last-child{display:block;margin-top:2px;font-size:10px;font-weight:600;
+  color:var(--fog);overflow:hidden;text-overflow:ellipsis}
+.lcf u{flex:none;text-decoration:none;font:800 16px/1 var(--brand);color:var(--gold);
+  min-width:22px;text-align:right}
+.lc{flex:none;width:38px;display:grid;place-items:center;font:700 12.5px/1 var(--brand);
+  color:#D7F2C6}
+.lc.frm{width:auto;min-width:96px;padding:0 12px;justify-items:start}
+.ltr.me .lc{color:#FFFDEE}
+.lswipe{margin-top:8px;text-align:right;font-size:10.5px;font-weight:600;color:#6FA38D}
 </style>
 </head>
 <body>
@@ -2530,10 +2587,13 @@ var LEAGUE = {
    alunni chiudono una partita, pero', il risultato esiste prima che lui
    lo pubblichi: qui lo si aggiunge alla classifica, segnato come
    provvisorio, cosi' i tre punti si vedono subito. */
-function liveExtra() {
+function liveExtra(compId, clubId, fromMd) {
   var out = [];
-  if (!ME.club || typeof scope !== "function") return out;
-  var pre = "footefl-live-" + scope() + "-md", from = (LEAGUE.md || 1);
+  if (typeof scope !== "function") return out;
+  var club = clubId || (ME.club && ME.club.id);
+  if (!club) return out;
+  var pre = "footefl-live-" + (compId || scope()) + "-md";
+  var from = fromMd || (LEAGUE.md || 1);
   try {
     for (var i = 0; i < localStorage.length; i++) {
       var k = localStorage.key(i);
@@ -2542,7 +2602,7 @@ function liveExtra() {
       if (!md || md < from) continue;        /* gia' dentro quella ufficiale */
       var st = JSON.parse(localStorage.getItem(k) || "null");
       if (!st || !st.score || !st.score.opp) continue;
-      out.push({ md:md, a:ME.club.id, b:st.score.opp,
+      out.push({ md:md, a:club, b:st.score.opp,
                  gf:st.score.me, ga:st.score.them });
     }
   } catch (e) {}
@@ -2740,7 +2800,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "56";
+var APPVER = "58";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -5337,7 +5397,7 @@ VIEWS.club = function (d) {
    che cambia da una competizione all'altra.
    ═══════════════════════════════════════════════════════════════════ */
 
-var LAND = { open: "" };
+var LAND = { open: null };
 
 function hourWord() {
   var h = new Date().getHours();
@@ -5420,8 +5480,12 @@ function landComps() {
     };
     return;
   }
-  if (!LAND.open || !COMPS.filter(function (m) { return m.id === LAND.open; }).length) {
+  /* al primo disegno si apre quella attiva; dopo, il tocco comanda:
+     "" vuol dire chiusa dall'alunno, e deve restare chiusa */
+  if (LAND.open === null || LAND.open === undefined) {
     LAND.open = (COMPS.filter(function (m) { return m.id === scope(); })[0] || COMPS[0]).id;
+  } else if (LAND.open && !COMPS.filter(function (m) { return m.id === LAND.open; }).length) {
+    LAND.open = "";
   }
   var fresh = freshComps().map(function (m) { return m.id; });
 
@@ -5503,7 +5567,7 @@ function landPrev() {
   if (!m) { box.innerHTML = ""; return; }
   var b = compBull(m.id) || {};
   var n = nextUp().filter(function (x) { return x.id === m.id; })[0] || null;
-  var table = (b.table || []).slice().sort(function (p, q) { return (p.pos || 99) - (q.pos || 99); });
+  var table = landTable(m, b);
   var mineRow = table.filter(function (r) { return r.id === m.club; })[0] || null;
 
   var fix = n
@@ -5519,10 +5583,10 @@ function landPrev() {
       "The moment he does, it turns up here.</p>";
 
   var two = table.slice(0, 2).map(function (r) {
-    var t = ((b.teams || []).filter(function (x) { return x.id === r.id; })[0]) || {};
     var me = r.id === m.club;
     return '<div class="ldrow' + (me ? " me" : "") + '"><span class="p">' + (r.pos || "") +
-      '</span><span class="n">' + esc(t.name || r.id) + (me ? " &mdash; you" : "") +
+      '</span><span class="n">' + esc(r.name) + (me ? " &mdash; you" : "") +
+      (r.live ? ' <i class="prov">&bull;</i>' : "") +
       '</span><span class="v">' + (r.pts || 0) + " pts</span></div>";
   }).join("");
 
@@ -5544,6 +5608,36 @@ function landPrev() {
   $("ldgo").onclick = function () {
     enterComp(m.id, function (err) { if (!err) go("home"); });
   };
+}
+
+/* la classifica di una competizione qualunque, con dentro i risultati
+   che questo telefono conosce gia' e che il professore non ha ancora
+   pubblicato: gli stessi che si vedono nella tabella vera */
+function landTable(m, b) {
+  var rows = (b.table || []).map(function (r) {
+    var t = ((b.teams || []).filter(function (x) { return x.id === r.id; })[0]) || {};
+    return { id:r.id, name:t.name || r.id, p:r.p || 0, w:r.w || 0, d:r.d || 0,
+             l:r.l || 0, gf:r.gf || 0, ga:r.ga || 0, live:false };
+  });
+  var by = {};
+  rows.forEach(function (r) { by[r.id] = r; });
+  function add(r, gf, ga) {
+    if (!r) return;
+    r.p++; r.gf += gf; r.ga += ga;
+    if (gf > ga) r.w++; else if (gf === ga) r.d++; else r.l++;
+    r.live = true;
+  }
+  if (typeof liveExtra === "function") {
+    liveExtra(m.id, m.club, b.md || 1).forEach(function (x) {
+      add(by[x.a], x.gf, x.ga);
+      add(by[x.b], x.ga, x.gf);
+    });
+  }
+  return rows.map(function (r) {
+    r.gd = r.gf - r.ga; r.pts = r.w * 3 + r.d; return r;
+  }).sort(function (x, y) {
+    return y.pts - x.pts || y.gd - x.gd || y.gf - x.gf || (x.name < y.name ? -1 : 1);
+  }).map(function (r, i) { r.pos = i + 1; return r; });
 }
 
 /* ───────── i numeri ───────── */
@@ -8662,6 +8756,15 @@ function reportOf(md) {
       help:h.help || 0,
       /* uscite dalla finestra durante il dettato, e il loro costo */
       away:h.away || 0, awayCost:h.awayCost || 0,
+      /* la disciplina: ogni cartellino con il minuto, la parola e il
+         numero di maglia. In campo valgono i primi due rossi; qui ci
+         sono tutti, perche' questa e' la fotografia per il professore. */
+      wrong:h.wrong || 0,
+      cards:(h.cards || []).map(function (c) {
+        return { min:c.min || null, kind:c.kind, no:c.no != null ? c.no : null,
+                 w:c.word || "", second:!!c.second, off:!!c.off, noted:!!c.noted,
+                 forNo:c.forNo != null ? c.forNo : null };
+      }),
       d:answerSheet(h) };
   });
   /* la sala stampa: quello che ha detto dopo la partita. Non tocca il
@@ -8768,6 +8871,219 @@ function wireReport(md, id) {
 }
 
 
+/* ───── 51-cards.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   LA DISCIPLINA — chi prende il cartellino, e chi entra al suo posto
+
+   Il dettato apre i momenti a soglie: mentre si scrive, il totale cresce
+   e ogni volta che supera una soglia si apre un momento, che appartiene
+   al giocatore messo in quella casella. Quindi ogni parola cade dentro
+   un tratto di partita, e quel tratto ha un padrone: il cartellino va a
+   lui.
+
+     1,00  parola perfetta        niente
+     0,75  una lettera            fallo
+     0,50  due lettere            giallo
+     0,25  tre lettere            giallo
+     0,00  quattro o piu', o parola saltata   ROSSO
+     punteggiatura sbagliata      giallo
+     due gialli allo stesso       ROSSO
+
+   In campo valgono i primi DUE rossi della partita, doppi gialli
+   compresi: dal terzo in poi il cartellino resta scritto nel referto ma
+   la squadra non va in otto. L'espulso non si rimpiazza con uno di
+   fuori: le sue azioni rimaste passano a un compagno che era in campo e
+   non stava prendendo momenti. Se non c'e' piu' nessuno libero, quel
+   momento si perde.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var RED_MAX = 2;
+
+function discInit() {
+  /* niente loadSheet() qui dentro: ricaricava il foglio da capo e
+     buttava via le espulsioni appena segnate, cosi' lo stesso giocatore
+     veniva espulso due volte */
+  if (!SHEET || !SHEET.att) loadSheet();
+  if (!SHEET.disc) SHEET.disc = { y:{}, off:[], n:0, subs:[] };
+  if (!SHEET.disc.subs) SHEET.disc.subs = [];
+  return SHEET.disc;
+}
+function discOff(no) {
+  var D = discInit();
+  return D.off.filter(function (o) { return o.no === no; }).length > 0;
+}
+
+/* chi puo' entrare: un compagno in campo che non ha momenti suoi.
+   In attacco prima una punta, in difesa prima un difensore. */
+function discFree(ph) {
+  var D = discInit(), used = {}, k;
+  ["att", "def"].forEach(function (p) {
+    for (k = 1; k <= 12; k++) {
+      if (SHEET[p] && SHEET[p][k] != null) used[SHEET[p][k]] = 1;
+    }
+  });
+  D.off.forEach(function (o) { used[o.no] = 1; });
+  D.subs.forEach(function (n) { used[n] = 1; });
+  var rank = ph === "att" ? { FW:0, MF:1, DF:2 } : { DF:0, MF:1, FW:2 };
+  var pool = allPlayers().filter(function (p) {
+    return p.named && p.role !== "GK" && p.no !== SHEET.roles.gk && !used[p.no];
+  });
+  pool.sort(function (a, b) {
+    var ra = rank[a.role] != null ? rank[a.role] : 3;
+    var rb = rank[b.role] != null ? rank[b.role] : 3;
+    return ra - rb || a.no - b.no;
+  });
+  var pick = pool[0] || null;
+  if (pick) { D.subs.push(pick.no); saveSheet(); }
+  return pick;
+}
+
+/* i cartellini di un tempo, con i nomi e i subentri gia' applicati */
+function discHalf(ph, r) {
+  var D = discInit(), out = { events:[], slots:[], off:[] }, k;
+  var top = Math.max(r.open || 0, r.max || 0, 1);
+  for (k = 1; k <= top; k++) {
+    out.slots[k] = (SHEET[ph] && SHEET[ph][k] != null) ? SHEET[ph][k] : null;
+  }
+
+  /* chi e' stato espulso nel tempo prima non e' in campo adesso */
+  D.off.forEach(function (o) {
+    if (!hasSlot(o.no)) return;
+    var sub = swapFrom(o.no, 1);
+    if (sub) {
+      out.events.push({ min:null, kind:"sub", no:sub.no, name:pName(sub),
+                        role:sub.role || "", forNo:o.no, early:true,
+                        forName:nameOf(o.no) });
+    }
+  });
+
+  (r.cards || []).forEach(function (c) {
+    var seg = Math.max(1, Math.min(c.seg, top));
+    var no = out.slots[seg];
+    /* chi e' gia' fuori non prende altri cartellini: quella parola va
+       alla squadra, non a un uomo che non e' piu' in campo */
+    if (no != null && discOff(no)) no = null;
+    var p = no != null ? playerNo(no) : null;
+    var ev = { min:c.min, seg:seg, kind:c.kind, word:c.w,
+               no:no, name:p ? pName(p) : "", role:p ? (p.role || "") : "" };
+
+    if (ev.kind === "yellow" && no != null) {
+      D.y[no] = (D.y[no] || 0) + 1;
+      if (D.y[no] === 2 && !discOff(no)) { ev.kind = "red"; ev.second = true; }
+    }
+
+    if (ev.kind === "red" && no != null && !discOff(no)) {
+      if (D.n < RED_MAX) {
+        ev.off = true;
+        D.n++;
+        D.off.push({ no:no, min:c.min, ph:ph, name:ev.name });
+        out.off.push({ no:no, min:c.min, name:ev.name });
+        out.events.push(ev);
+        var sub = swapFrom(no, seg + 1);
+        if (sub) {
+          out.events.push({ min:c.min, kind:"sub", no:sub.no, name:pName(sub),
+                            role:sub.role || "", forNo:no, forName:ev.name });
+        } else {
+          out.events.push({ min:c.min, kind:"short", forName:ev.name });
+        }
+        saveSheet();
+        return;
+      }
+      ev.noted = true;        /* scritto, ma in campo non cambia niente */
+    }
+    out.events.push(ev);
+  });
+
+  saveSheet();
+  return out;
+
+  function nameOf(no) {
+    var q = playerNo(no);
+    return q ? pName(q) : "";
+  }
+  function hasSlot(no) {
+    for (var i = 1; i < out.slots.length; i++) if (out.slots[i] === no) return true;
+    return false;
+  }
+  /* il subentrato prende tutti i momenti rimasti dell'espulso */
+  function swapFrom(no, from) {
+    var sub = null, i;
+    for (i = from; i < out.slots.length; i++) {
+      if (out.slots[i] !== no) continue;
+      if (!sub) sub = discFree(ph);
+      out.slots[i] = sub ? sub.no : null;
+    }
+    return sub;
+  }
+}
+
+/* ───────── le squalifiche ─────────
+   L'app le calcola e le scrive nel referto; la parola definitiva resta
+   al professore, che le pubblica nel bollettino. Qui si tengono per
+   avvisare l'alunno e per sbarrare il nome nel foglio della giornata
+   dopo. Se la rosa non bastasse piu', l'ultimo squalificato rientra:
+   meglio una regola piegata che un foglio che non si puo' consegnare. */
+function suspKey() {
+  return "footefl-susp-" + scope() + "-" + (ME.club ? ME.club.id : "x");
+}
+function suspAll() {
+  try { return JSON.parse(localStorage.getItem(suspKey()) || "{}") || {}; }
+  catch (e) { return {}; }
+}
+function suspSave(o) {
+  try { localStorage.setItem(suspKey(), JSON.stringify(o)); } catch (e) {}
+}
+function suspAdd(md, no, why) {
+  var a = suspAll(), k = String(md);
+  a[k] = a[k] || [];
+  for (var i = 0; i < a[k].length; i++) if (a[k][i].no === no) return;
+  a[k].push({ no:no, why:why || "red" });
+  suspSave(a);
+}
+function suspFor(md) {
+  var a = suspAll()[String(md)] || [];
+  /* la valvola: se togliendoli non si riempie il foglio, l'ultimo rientra */
+  var need = phaseSlots("att") + phaseSlots("def");
+  var room = 0;
+  allPlayers().forEach(function (p) {
+    if (!p.named) return;
+    var out = a.filter(function (x) { return x.no === p.no; }).length;
+    if (out) return;
+    room += maxFor(p.no);
+  });
+  while (a.length && room < need) {
+    var back = a.pop();
+    room += maxFor(back.no);
+  }
+  return a;
+}
+function suspIs(no) {
+  if (!ME.next) return null;
+  var a = suspFor(ME.next.md);
+  return a.filter(function (x) { return x.no === no; })[0] || null;
+}
+
+/* una riga di cartellino, per il riepilogo del tempo */
+function discRow(x) {
+  var tag = x.kind === "red" ? (x.off ? "SENT OFF" : x.second ? "SECOND YELLOW" : "RED")
+          : x.kind === "yellow" ? "YELLOW"
+          : x.kind === "sub" ? "ON" : x.kind === "short" ? "TEN MEN" : "FOUL";
+  var note = x.kind === "sub" ? "in for " + esc(x.forName || "")
+    : x.kind === "short" ? "nobody left to take over from " + esc(x.forName || "")
+    : "on “" + esc(x.word || "") + "”" +
+      (x.second ? " &middot; second yellow" : "") +
+      (x.noted ? " &middot; written down, the eleven stay on" : "");
+  return '<div class="dsr ' + esc(x.kind) + '">' +
+    '<span class="dsm">' + (x.min ? x.min + "′" : "&mdash;") + "</span>" +
+    '<span class="dsc">' + (x.kind === "yellow" ? '<i class="cardbox y"></i>'
+      : x.kind === "red" ? '<i class="cardbox r"></i>'
+      : '<i class="dsar">&#8593;</i>') + "</span>" +
+    '<span class="dsn"><b>' + esc(x.name || "the team") +
+    (x.role ? '<u class="rl">' + esc(x.role) + "</u>" : "") + "</b><em>" + note +
+    "</em></span><span class=\"dst\">" + tag + "</span></div>";
+}
+
+
 /* ───── 38-live.js ───── */
 /* ═══════════════════════════════════════════════════════════════════
    IL RISULTATO DAL VIVO
@@ -8866,6 +9182,13 @@ function liveCard(md) {
   return {
     v:1, comp:liveComp(), md:md, club:ME.club.id, opp:ME.next.oppId || "",
     home:!!ME.next.atHome,
+    /* tre cifre in piu': falli, cartellini e parole giuste. Servono al
+       possesso e alla riga dei falli — niente testo, solo numeri. */
+    stat:{ w:(att.wrong || 0) + (def.wrong || 0),
+           y:(att.yellow || 0) + (def.yellow || 0),
+           r:(att.red || 0) + (def.red || 0),
+           ri:(att.right || 0) + (def.right || 0),
+           to:(att.total || 0) + (def.total || 0) },
     att:{ q:att.quals || [], m:att.mins || [], w:!!att.hardOk, hm:att.hardMin || null },
     def:{ q:def.quals || [], m:def.mins || [], p:!!(def.hard && !def.hardOk),
           hm:def.hardMin || null },
@@ -8887,6 +9210,7 @@ function liveScore(mine, theirs) {
   a.penMin = (theirs.def && theirs.def.hm) || null;
   b.mins = theirs.att.m || []; b.bdoMin = theirs.att.hm || null;
   b.penMin = (mine.def && mine.def.hm) || null;
+  a.stat = mine.stat || null; b.stat = theirs.stat || null;
   return { me:a.goals, them:b.goals, mine:a, their:b, mode:m };
 }
 
@@ -9269,6 +9593,33 @@ function ftEvents(md, s, them, o) {
   var hs = o.cards;
   if (!hs) { loadForm(); hs = halvesOf(md); }
   hs.forEach(function (h) {
+    /* i cartellini con il nome: dal tempo registrato, se ci sono */
+    if (h.cards && h.cards.length) {
+      /* in cronaca non entrano trenta cartellini: i rossi e i subentri
+         sempre, i gialli i primi quattro del tempo. Il resto sta nel
+         referto, che e' il posto giusto per contarli tutti. */
+      var yl = 0;
+      h.cards.forEach(function (c) {
+        if (c.kind === "foul") return;
+        if (c.kind === "yellow" && ++yl > 4) return;
+        if (c.kind === "red" && c.noted) return;
+        ev.push({ min:c.min || null, late:!c.min, crest:myC, ini:myI,
+          card:c.kind === "red" ? "r" : c.kind === "yellow" ? "y" : "",
+          name:c.name || myName, role:c.role || "",
+          note:c.kind === "sub"
+            ? "in for " + esc(c.forName || "")
+            : c.kind === "short"
+              ? "nobody left to take over from " + esc(c.forName || "")
+              : "on &ldquo;" + esc(c.word || "") + "&rdquo;" +
+                (c.second ? " &middot; second yellow" : "") +
+                (c.noted ? " &middot; written down, the eleven stay on" : ""),
+          tag:c.kind === "red" ? (c.off ? "SENT OFF" : "RED")
+            : c.kind === "yellow" ? "BOOKED"
+            : c.kind === "sub" ? "ON" : "TEN MEN",
+          cls:c.kind === "red" ? "crd out" : c.kind === "sub" ? "kp" : "crd" });
+      });
+      return;
+    }
     if (h.yellow) {
       ev.push({ min:null, late:true, crest:myC, ini:myI, card:"y",
         name:h.yellow + (h.yellow === 1 ? " yellow card" : " yellow cards"),
@@ -9469,6 +9820,30 @@ VIEWS.live = function () {
       '<span class="ql">' + lab + '</span><span class="qv">' + fmt(b.v) +
       "<u>" + b.n + (b.n === 1 ? " moment" : " moments") + "</u></span></div>";
   }
+  /* ── falli e possesso ──
+     Il possesso e' la quota di dettato tenuta in piedi: per ciascuno
+     giuste diviso totale, e poi il peso di uno sulla somma dei due.
+     Cosi' vale anche se i due testi non sono lunghi uguali. */
+  function pwrow() {
+    var A = s.mine.stat, B = s.their.stat;
+    if (!A || !B) {
+      return '<div class="qrw"><span class="qv">' + (A ? A.w : "&mdash;") +
+        '</span><span class="ql">fouls</span><span class="qv">&mdash;</span></div>' +
+        '<p class="qn sm3">The other phone is on an older version: its fouls and ' +
+        "possession do not travel yet.</p>";
+    }
+    var wa = A.to ? A.ri / A.to : 0, wb = B.to ? B.ri / B.to : 0;
+    var pa = (wa + wb) ? Math.round(wa / (wa + wb) * 100) : 50;
+    pa = Math.max(5, Math.min(95, pa));
+    var pb = 100 - pa;
+    return '<div class="qrw"><span class="qv">' + A.w +
+      "<u>" + A.y + "Y &middot; " + A.r + "R</u></span>" +
+      '<span class="ql">fouls</span><span class="qv">' + B.w +
+      "<u>" + B.y + "Y &middot; " + B.r + "R</u></span></div>" +
+      '<div class="qrw"><span class="qv">' + pa + "%</span>" +
+      '<span class="ql">possession</span><span class="qv">' + pb + "%</span></div>" +
+      '<div class="posbar"><i style="width:' + pa + '%"></i></div>';
+  }
 
   var pts = win ? 3 : draw ? 1 : 0;
   var mine = crestOf(ME.club.id), foe = crestOf(s.opp);
@@ -9514,6 +9889,7 @@ VIEWS.live = function () {
     '<div class="panel qbox"><div class="qhd"><span>' + esc(ME.club.name) +
       "</span><span>" + esc(them) + "</span></div>" +
       qrow("attack", myAtt, thAtt) + qrow("defence", myDef, thDef) +
+      pwrow() +
       '<p class="qn">The points each side put together: every moment is worth ' +
       "0, 0,25, 0,50, 0,75 or 1, and here they are added up. " +
       (s.mode === "rapide"
@@ -10463,16 +10839,26 @@ function correctHalf(ph, written, opt) {
   var cap = opt.cap || (typeof phaseCap === "function" ? phaseCap(ph) : c.actions);
   var tot = els.reduce(function (s, e) { return s + (e.t === "ponct" ? 50 : 100); }, 0);
   var step = Math.floor(tot / cap);
-  var run = 0, yellow = 0, red = 0, fouls = 0, shots = [], done = 0;
+  var run = 0, yellow = 0, red = 0, fouls = 0, shots = [], done = 0, cards = [];
 
   els.forEach(function (e, k) {
     var err = answers[k].errors, v = elValue(err, e.t);
     run += v;
-    /* i cartellini, come nel motore: 1 errore fallo, 2 giallo, 3+ o saltata rosso */
-    if (e.t === "ponct") { if (err !== 0) yellow++; }
-    else if (err === -1 || err >= 3) red++;
-    else if (err === 2) yellow++;
-    else if (err === 1) fouls++;
+    /* i cartellini: una lettera fallo, due o tre giallo, quattro o piu'
+       — o la parola saltata — rosso. La punteggiatura vale un giallo.
+       A chi vanno lo decide il momento che stava maturando: la parola
+       cade dentro un tratto di partita, e quel tratto ha un padrone. */
+    var kind = "";
+    if (e.t === "ponct") { if (err !== 0) kind = "yellow"; }
+    else if (err === -1 || err >= 4) kind = "red";
+    else if (err === 2 || err === 3) kind = "yellow";
+    else if (err === 1) kind = "foul";
+    if (kind) {
+      if (kind === "red") red++; else if (kind === "yellow") yellow++; else fouls++;
+      cards.push({ k:k, w:e.w, kind:kind,
+                   seg:Math.max(1, Math.min(cap, step > 0 ? Math.ceil(run / step) : 1)),
+                   min:matMinute(k, els.length) });
+    }
     var matured = step > 0 ? Math.min(cap, Math.floor(run / step)) : 0;
     while (matured > done) {
       done++;
@@ -10485,6 +10871,7 @@ function correctHalf(ph, written, opt) {
   var hardOk = hi >= 0 && answers[hi].errors === 0;
 
   return { els:els, answers:answers, clim:c, open:done, max:cap,
+           cards:cards, wrong:cards.length,
            run:run, step:step, total:els.length,
            right:answers.filter(function (a, k) {
              return a.errors === 0 && !a.extra; }).length,
@@ -10784,6 +11171,13 @@ VIEWS.mEnd2 = function () {
   SHEET.done[ph] = { open:r.open, run:r.run, yellow:r.yellow, red:r.red,
                      hardOk:r.hardOk };
   saveSheet();
+  /* chi ha preso il cartellino, chi e' uscito e chi e' entrato: da qui in
+     avanti le caselle sono quelle vere, subentri compresi */
+  var DSC = (typeof discHalf === "function") ? discHalf(ph, r)
+                                             : { events:[], slots:[], off:[] };
+  if (DSC.off.length && typeof suspAdd === "function") {
+    DSC.off.forEach(function (o) { suspAdd(ME.next.md + 1, o.no, "red"); });
+  }
   recordHalf({ md:ME.next.md, ph:ph, clim:c.label, climId:c.id, max:r.max, open:r.open,
     right:r.right, total:r.total, yellow:r.yellow, red:r.red, fouls:r.fouls,
     hard:r.hard, hardOk:r.hardOk, hardWord:r.hardWord, when:Date.now(),
@@ -10804,9 +11198,13 @@ VIEWS.mEnd2 = function () {
     hardMin:matMinute(r.hardIndex, r.els.length),
     slots:(function () {
       var a = [];
-      for (var k = 1; k <= r.open; k++) a.push(SHEET[ph][k] != null ? SHEET[ph][k] : null);
+      for (var k = 1; k <= r.open; k++) {
+        a.push(DSC.slots[k] != null ? DSC.slots[k] : null);
+      }
       return a;
     })(),
+    /* i cartellini con il nome e il minuto, e i subentri */
+    cards:DSC.events, wrong:r.wrong || 0,
     items:r.els.map(function (e, k) {
       return { w:e.w, g:r.answers[k].written, t:e.t,
                k:classify(e.w, r.answers[k].written, e.t) };
@@ -10818,7 +11216,7 @@ VIEWS.mEnd2 = function () {
 
   var lines = "";
   for (var k = 1; k <= r.open; k++) {
-    var p = SHEET[ph][k] != null ? playerNo(SHEET[ph][k]) : null;
+    var p = DSC.slots[k] != null ? playerNo(DSC.slots[k]) : null;
     var s = r.shots[k - 1];
     var mn = (r.shots[k - 1] && typeof r.shots[k - 1].at === "number")
       ? matMinute(r.shots[k - 1].at, r.els.length) : null;
@@ -10862,9 +11260,18 @@ VIEWS.mEnd2 = function () {
     '<h2 class="sec top">' + (ph === "att" ? "Your shots" : "Your saves") + "</h2>" +
     '<div class="shots">' + (lines ||
       '<p class="empty2">No action opened this half.</p>') + "</div>" +
-    (r.yellow || r.red || r.fouls
-      ? '<div class="cards2"><b>Cards</b>' + r.fouls + " fouls, " + r.yellow +
-        " yellow, " + r.red + " red</div>"
+    (function () {
+      var ce = DSC.events.filter(function (x) { return x.kind !== "foul"; });
+      if (!ce.length) return "";
+      var show = ce.slice(0, 8), rest = ce.length - show.length;
+      return '<h2 class="sec top">Cards</h2><div class="panel disc">' +
+        show.map(function (x) { return discRow(x); }).join("") +
+        (rest ? '<div class="dsmore">and ' + rest +
+          " more &mdash; they are all in your report</div>" : "") + "</div>";
+    })() +
+    (r.fouls || r.yellow || r.red
+      ? '<div class="cards2"><b>Fouls</b>' + (r.wrong || 0) +
+        " words went wrong &middot; " + r.yellow + " yellow, " + r.red + " red</div>"
       : "") +
     (MT.away
       ? '<div class="cards2 out2"><b>Out of the page ' + MT.away +
@@ -12495,7 +12902,8 @@ VIEWS.league = function () {
 
   barFlow("The league", "Matchday " + LEAGUE.md + " of " + LEAGUE.mdTotal, 0);
   html('<div class="pad">' +
-    '<h2 class="sec">The table</h2><div class="ltab" id="ltab"></div>' +
+    '<h2 class="sec">The table</h2><div class="ltx" id="ltab"></div>' +
+    '<p class="lswipe">Slide the table sideways for the rest &rsaquo;</p>' +
     (rows.filter(function (r) { return r.live; }).length
       ? '<p class="lprov">&#8226; <b>Provisional.</b> These points come from matches ' +
         "already finished on the phones. Your teacher publishes the official table " +
@@ -12515,26 +12923,43 @@ VIEWS.league = function () {
   drawBoards();
 };
 
-/* ───────── la classifica ───────── */
+/* ───────── la classifica ─────────
+   Sul telefono una tabella vera non ci sta in larghezza. Allora la
+   colonna con il posto, il nome e i punti resta ferma a sinistra e il
+   resto — giornate, gol fatti, subiti, differenza, andamento — scorre
+   sotto il dito. */
 function drawTable2(rows) {
-  $("ltab").innerHTML = rows.map(function (r) {
+  var cols = [
+    { k:"p",  t:"P"  }, { k:"w",  t:"W"  }, { k:"d",  t:"D"  },
+    { k:"l",  t:"L"  }, { k:"gf", t:"GF" }, { k:"ga", t:"GA" }
+  ];
+  var head = '<div class="ltr hd"><span class="lcf"><i>TEAM</i><u>PTS</u></span>' +
+    cols.map(function (c) { return '<span class="lc">' + c.t + "</span>"; }).join("") +
+    '<span class="lc">GD</span><span class="lc frm">FORM</span></div>';
+
+  $("ltab").innerHTML = head + rows.map(function (r) {
     var cup = cupOf(r.id), mine = ME.club && r.id === ME.club.id;
-    return '<button class="lrow' + (mine ? " me" : "") +
-      (LG.team === r.id ? " sel" : "") + '" data-t="' + r.id + '" type="button">' +
-      '<span class="lp' + (r.pos <= LEAGUE.cupPlaces ? " cup" : "") + '">' + r.pos +
+    return '<button class="ltr' + (mine ? " me" : "") +
+      (LG.team === r.id ? " sel" : "") + '" data-t="' + esc(r.id) + '" type="button">' +
+      '<span class="lcf">' +
+        '<i class="lp' + (r.pos <= LEAGUE.cupPlaces ? " cup" : "") + '">' + r.pos +
+        "</i>" +
+        '<span class="ldot" style="background:' + dotOf(r.colour) + '"></span>' +
+        "<b>" + esc(r.name) +
+        (cup ? '<em class="trophy" title="' + esc(cup) + '">&#9733;</em>' : "") +
+        (r.live ? '<em class="prov" title="Not published by your teacher yet">&bull;</em>'
+                : "") +
+        "<em>" + esc(mine ? ME.student : r.student) + "</em></b>" +
+        "<u>" + r.pts + "</u>" +
       "</span>" +
-      '<span class="ldot" style="background:' + dotOf(r.colour) + '"></span>' +
-      '<span class="lmid"><b>' + esc(r.name) +
-      (cup ? '<em class="trophy" title="' + esc(cup) + '">&#9733;</em>' : "") +
-      (r.live ? '<em class="prov" title="Not published by your teacher yet">&#8226;</em>'
-              : "") + "</b>" +
-      "<span>" + esc(mine ? ME.student : r.student) + " &middot; " +
-      r.w + "W " + r.d + "D " + r.l + "L &middot; " + r.gf + ":" + r.ga +
-      " (" + gdStr(r.gd) + ")</span></span>" +
-      formHtml(r.form) +
-      '<span class="lpts">' + r.pts + "<em>pts</em></span></button>";
+      cols.map(function (c) {
+        return '<span class="lc">' + (r[c.k] || 0) + "</span>";
+      }).join("") +
+      '<span class="lc">' + gdStr(r.gd) + "</span>" +
+      '<span class="lc frm">' + formHtml(r.form) + "</span></button>";
   }).join("");
-  Array.prototype.forEach.call($("ltab").querySelectorAll(".lrow"), function (b) {
+
+  Array.prototype.forEach.call($("ltab").querySelectorAll(".ltr[data-t]"), function (b) {
     b.onclick = function () { pickTeam(b.dataset.t === LG.team ? null : b.dataset.t); };
   });
 }
@@ -13073,14 +13498,19 @@ VIEWS.pslot = function (d) {
     "captain and gem come back until they have used their four.</p>" +
     '<div class="plist">' + pool.map(function (p) {
       var mine = cur === p.no, used = placedCount(p.no), max = maxFor(p.no);
-      var room = mine || used < max;
+      var ban = (typeof suspIs === "function") ? suspIs(p.no) : null;
+      var room = mine || (used < max && !ban);
       var rk = roleOf(p.no);
-      var why = rk
+      var why = ban
+        ? (ban.why === "red" ? "suspended · sent off last matchday"
+                             : "suspended · two yellows")
+        : rk
         ? ROLE_NAME[rk].toLowerCase() + " · " + used + " of " + max + " moments used"
         : used ? "already played moment " + whereIs(p.no)
         : p.bought ? "signed in the market"
         : p.named ? "in the squad" : "no name yet";
-      return '<button class="prow' + (room ? "" : " used") + (mine ? " cur" : "") +
+      return '<button class="prow' + (room ? "" : " used") + (ban ? " ban" : "") +
+        (mine ? " cur" : "") +
         '" data-no="' + p.no + '"' + (room ? "" : " disabled") + ' type="button">' +
         (p.wall
           ? '<span class="wallic">&#9632;&#9632;&#9632;</span>'
