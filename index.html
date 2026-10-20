@@ -2280,6 +2280,43 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .pgrow em{flex:1;text-align:right;font-size:11px;font-weight:600;font-style:normal;
   color:var(--fog)}
 .pgst.nil{background:rgba(226,251,206,.16);color:#8FC4AC}
+
+/* ═════════ il centro messaggi ═════════ */
+.stbar.mail .stn{font-size:17px}
+.stbar.mail.nw{border-color:var(--gold)}
+.mcn{display:inline-block;margin-left:7px;min-width:17px;padding:2px 5px;border-radius:6px;
+  background:var(--gold);color:#06231D;font:800 10px/1.3 var(--brand);font-style:normal;
+  text-align:center;vertical-align:middle}
+.mcx{margin-bottom:9px;border-radius:15px;border:1px solid var(--edge);overflow:hidden;
+  background:rgba(226,251,206,.05)}
+.mcx.nw{border-color:var(--gold)}
+.mcx.on{background:rgba(226,251,206,.08)}
+.mch{display:flex;align-items:center;gap:11px;width:100%;padding:13px 14px;border:0;
+  background:none;text-align:left;cursor:pointer;color:inherit;font-family:inherit}
+.mcf{flex:none;width:52px;font:800 8px/1.25 var(--brand);letter-spacing:.1em;color:#8FC4AC}
+.mcw{flex:1;min-width:0}
+.mcw b{display:block;font:800 14.5px/1.25 var(--brand);letter-spacing:-.01em;color:#FFFDEE}
+.mcw em{display:block;margin-top:4px;font-size:10.5px;font-weight:600;font-style:normal;
+  color:#8FC4AC}
+.mcdot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--gold)}
+.mcar{flex:none;font-style:normal;font-size:17px;color:#8FC4AC}
+.mcok{flex:none;font-style:normal;font-size:14px;color:var(--gold)}
+.mcb{padding:0 14px 14px}
+.mcb p{margin:0 0 9px;font-size:13.5px;line-height:1.55;color:var(--cream)}
+.mcq{margin-top:12px;padding:13px 14px;border-radius:13px;border:1px solid #14503C;
+  background:rgba(4,23,15,.45)}
+.mcqt{margin:0 0 10px;font:800 12.5px/1.4 var(--brand);color:var(--gold)}
+.mco{display:block;width:100%;margin-bottom:7px;padding:11px 13px;border-radius:11px;
+  border:1px solid var(--edge);background:rgba(226,251,206,.05);color:var(--cream);
+  font:600 13px/1.35 inherit;text-align:left;cursor:pointer}
+.mco.good{border-color:var(--gold);background:rgba(227,239,38,.16);color:#FFFDEE;font-weight:800}
+.mco.bad{border-color:rgba(201,85,63,.6);background:rgba(201,85,63,.14);color:#E8A89A}
+.mcsay{margin:8px 0 0;font-size:12px;font-weight:700}
+.mcsay.good{color:var(--gold)}
+.mcsay.bad{color:#E8A89A}
+.mcq.done{border-color:rgba(227,239,38,.35)}
+.mcgot{margin:0;font-size:12.5px;font-weight:700;color:var(--gold)}
+.mct{margin-top:14px}
 </style>
 </head>
 <body>
@@ -2857,7 +2894,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "61";
+var APPVER = "63";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -3858,8 +3895,8 @@ function refitNext() {
   ME.next = { md:n.md, oppId:n.opp, home:n.atHome ? ME.club.name : opp,
               away:n.atHome ? opp : ME.club.name, atHome:!!n.atHome,
               cup:n.cup || null,
-              attack:{ clim:n.attClim || "cloudy" },
-              defence:{ clim:n.defClim || "rain" } };
+              attack:{ clim:climFix(n.attClim || "cloudy", n.defClim || "rain").att },
+              defence:{ clim:climFix(n.attClim || "cloudy", n.defClim || "rain").def } };
   ["attack", "defence"].forEach(function (k) {
     var cl = climateOf(ME.next[k].clim);
     ME.next[k].word = cl.label; ME.next[k].slots = cl.actions;
@@ -6042,8 +6079,8 @@ function nextUp() {
                colour:mine.colour || "#16233F",
                oppId:n.opp, oppColour:foe.colour || "#0E3B2C",
                opp:foe.name || n.opp, atHome:!!n.atHome, cup:n.cup || null,
-               att:climateOf(n.attClim || "cloudy"),
-               def:climateOf(n.defClim || "rain"),
+               att:climateOf(climFix(n.attClim || "cloudy", n.defClim || "rain").att),
+               def:climateOf(climFix(n.attClim || "cloudy", n.defClim || "rain").def),
                halves:played, active:m.id === scope() });
   });
   out.sort(function (a, b) {
@@ -6159,6 +6196,7 @@ VIEWS.home = function () {
      prossima partita, il riscaldamento e i numeri di qui dentro. Le
      competizioni, le porte e il codice stanno nella pagina dell'alunno. */
   html('<div id="hwho"></div><div id="hlive"></div><div id="hpress"></div>' +
+       '<div id="hmail"></div>' +
        '<div id="hnext"></div>' +
        '<div id="htab"></div>' +
        '<section class="pad" id="hsq"><div class="sqc" id="sqc"></div></section>' +
@@ -6167,9 +6205,9 @@ VIEWS.home = function () {
        '<div id="hnum"></div>' +
        '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p>');
 
-  drawWho(); drawLive(); drawPress(); drawNextUp(); drawHomeTable();
+  drawWho(); drawLive(); drawPress(); drawHomeMail(); drawNextUp(); drawHomeTable();
   drawHomeSquad(); drawWarm(); drawHomeGround(); drawNumbers();
-  popIn(["hwho", "hlive", "hpress", "hnext", "htab", "hsq", "hwarm",
+  popIn(["hwho", "hlive", "hpress", "hmail", "hnext", "htab", "hsq", "hwarm",
          "stadbar", "hnum"]);
 
   /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
@@ -6513,6 +6551,16 @@ function drawPress() {
   if (!box) return;
   box.innerHTML = (typeof pressCard === "function") ? pressCard() : "";
   if (typeof wirePress === "function") wirePress();
+}
+
+/* ───────── il centro messaggi ─────────
+   Sotto la sala stampa: prima il giornale chiede, poi arriva la posta.
+   Una riga sola, con il numero di lettere ancora chiuse. */
+function drawHomeMail() {
+  var box = $("hmail");
+  if (!box) return;
+  box.innerHTML = (typeof mailCard === "function") ? mailCard() : "";
+  if (typeof wireMail === "function") wireMail();
 }
 
 /* ───────── la rosa, dentro la competizione ─────────
@@ -12989,9 +13037,10 @@ VIEWS.tlCall = function () {
   var g = tlMyGame(TL.md);
   if (!g) return swap("train");
   if (!TL.cur || TL.cur.md !== TL.md) {
+    /* anche qui il cielo segue la scala: una casella di scarto, mai di piu' */
+    var wx = climPair();
     TL.cur = { md:TL.md, opp:(g.a === TL.club ? g.b : g.a), home:g.a === TL.club,
-               attClim:CLIMATES[Math.floor(Math.random() * CLIMATES.length)].id,
-               defClim:CLIMATES[Math.floor(Math.random() * CLIMATES.length)].id,
+               attClim:wx.att, defClim:wx.def,
                shape:"442", plan:"nat", side:null, dive:null, att:null, def:null };
     tlSave();
   }
@@ -13279,6 +13328,492 @@ VIEWS.tlEnd = function () {
 };
 
 
+/* ───── 55-inbox.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   IL CENTRO MESSAGGI
+
+   Dentro ogni competizione arriva la posta: la lega che comunica la
+   giornata, il giudice sportivo che squalifica, il fisioterapista che
+   avvisa di un infortunio, il custode del campo che chiede che cosa
+   fare dei soldi in cassa, il club dei tifosi che scrive dopo una
+   vittoria. Non sono decorazioni: ogni lettera porta una domanda di
+   comprensione, tre risposte, e chi legge davvero si porta a casa
+   cinque mila sterline per la cassa del club.
+
+   Le lettere non si "ricevono": si ricostruiscono ogni volta dallo
+   stato della competizione (il bollettino, i risultati, le squalifiche,
+   gli infortuni, la cassa). Cosi' non c'e' una coda da tenere in piedi
+   e non si perde niente cambiando telefono. Sul telefono resta solo
+   quello che l'alunno ha fatto: che cosa ha aperto e a che cosa ha
+   gia' risposto.
+
+   La lingua segue il livello: A1 e A2 leggono frasi corte, B1 e B2 la
+   versione lunga. La domanda e' la stessa, cambia solo come e' scritta.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var MB_PAY = 5;                 /* £5k per ogni lettera capita */
+var MBKEY = "footefl-inbox";
+
+/* ───────── quello che resta sul telefono ───────── */
+function mbAll() {
+  try { return JSON.parse(localStorage.getItem(MBKEY) || "{}") || {}; }
+  catch (e) { return {}; }
+}
+function mbState() {
+  var a = mbAll(), s = a[scope()];
+  if (!s) s = { seen:{}, done:{} };
+  if (!s.seen) s.seen = {};
+  if (!s.done) s.done = {};
+  return s;
+}
+function mbPut(s) {
+  var a = mbAll();
+  a[scope()] = s;
+  try { localStorage.setItem(MBKEY, JSON.stringify(a)); } catch (e) {}
+}
+function mbSeen(id) { return !!mbState().seen[id]; }
+function mbOpen(id) {
+  var s = mbState();
+  if (s.seen[id]) return;
+  s.seen[id] = 1; mbPut(s);
+}
+/* la risposta giusta paga una volta sola, e la cassa e' quella del club */
+function mbAnswer(id, ok) {
+  var s = mbState(), paid = 0;
+  if (ok && !s.done[id]) {
+    s.done[id] = 1;
+    if (ME.club) { loadGround(); GROUND.funds += MB_PAY; saveGround(); paid = MB_PAY; }
+  }
+  s.last = id; mbPut(s);
+  return paid;
+}
+function mbDone(id) { return !!mbState().done[id]; }
+
+/* ───────── chi scrive ───────── */
+var MFROM = {
+  league: { n:"The league office",       t:"LEAGUE" },
+  panel:  { n:"The disciplinary panel",  t:"PANEL" },
+  medic:  { n:"The club physio",         t:"MEDICAL" },
+  coach:  { n:"The head coach",          t:"COACH" },
+  fans:   { n:"The supporters' club",    t:"SUPPORTERS" },
+  scout:  { n:"The chief scout",         t:"SCOUTING" },
+  keeper: { n:"The groundsman",          t:"GROUND" }
+};
+
+/* ───────── la lingua secondo il livello ─────────
+   A1 e A2 leggono la versione corta, B1 e B2 quella distesa. */
+function mbEasy() {
+  var l = String(ME.level || "A1").toUpperCase();
+  return l === "A1" || l === "A2";
+}
+function lv(easy, full) { return mbEasy() ? easy : full; }
+
+/* il cielo come aggettivo: "the sky is rainy", non "the sky is rain".
+   Qui si impara l'inglese anche dalla posta, quindi la frase dev'essere
+   una frase vera. */
+var CLIMADJ = { sunny:"sunny", cloudy:"cloudy", rain:"rainy",
+                storm:"stormy", snow:"snowy", fog:"foggy" };
+function climAdj(id) { return CLIMADJ[id] || "cloudy"; }
+
+/* ───────── le lettere ─────────
+   Ogni generatore guarda lo stato e, se ha qualcosa da dire, restituisce
+   una lettera con il suo codice fisso: lo stesso fatto da' sempre la
+   stessa lettera, cosi' "gia' letta" vuol dire qualcosa. */
+function mbWelcome(cmp) {
+  var n = cmp ? cmp.name : "this competition";
+  return {
+    id:"hello", from:"coach", md:0, tag:"BEFORE YOU START",
+    title:lv("Welcome to " + n, "A word before " + n + " starts"),
+    body:lv(
+      ["Hello. This is the message centre. Every important thing in " + n +
+       " arrives here: the next match, the cards, the injuries, the money.",
+       "Read each letter and answer the question at the bottom. Every right " +
+       "answer puts £5k in the club till."],
+      ["Welcome to " + n + ". From now on everything that matters in this " +
+       "competition lands in this room: the fixture for the coming matchday, " +
+       "the decisions of the disciplinary panel, the medical notes, and whatever " +
+       "the groundsman wants to do with the money you have earned.",
+       "Each letter ends with one question. Answer it correctly and £5k goes " +
+       "straight into the club till — reading carefully is part of the job here."]),
+    q:{ t:lv("Where do the important messages arrive?",
+             "According to the coach, what lands in this room?"),
+        o:lv(["Here, in the message centre", "On the pitch", "In the dressing room"],
+             ["Everything that matters in this competition",
+              "Only the results of the other teams",
+              "The songs of the supporters"]), c:0 }
+  };
+}
+
+function mbFixture() {
+  if (!ME.next || !ME.next.md || !ME.club) return null;
+  var home = ME.next.atHome, opp = home ? ME.next.away : ME.next.home;
+  var a = ME.next.attack || {}, d = ME.next.defence || {};
+  var where = home ? "at home" : "away";
+  return {
+    id:"fix-md" + ME.next.md, from:"league", md:ME.next.md, tag:"MATCHDAY " + ME.next.md,
+    title:lv("Matchday " + ME.next.md + ": " + opp,
+             "Matchday " + ME.next.md + " — " + opp + ", " + where),
+    body:lv(
+      ["You play " + opp + " " + where + ".",
+       "The sky is " + climAdj(a.clim) + " in attack: " + a.slots +
+       " moments. In defence it is " + climAdj(d.clim) + ": " + d.slots + " moments.",
+       "Fill in your team sheet before you play."],
+      ["The league office confirms matchday " + ME.next.md + ": " + opp + ", " +
+       where + ".",
+       "The forecast gives " + climAdj(a.clim) +
+       " skies for the attacking half, which opens " + a.slots +
+       " moments, and " + climAdj(d.clim) + " skies for the defensive half, " +
+       "which opens " + d.slots + ". The two halves are never more than one step " +
+       "apart on the scale, so plan your sheet around the smaller number.",
+       "Your team sheet must be filled in and locked before kick-off."]),
+    q:{ t:lv("How many moments do you have in attack?",
+             "How many moments does the weather open in the attacking half?"),
+        o:mbNums(a.slots, d.slots), c:0 }
+  };
+}
+/* tre numeri plausibili, con quello giusto per primo */
+function mbNums(right, other) {
+  var o = [String(right)], pool = [right + 2, right - 2, other, right + 1, right - 1];
+  for (var i = 0; i < pool.length && o.length < 3; i++) {
+    var v = pool[i];
+    if (v > 0 && v <= 10 && o.indexOf(String(v)) < 0) o.push(String(v));
+  }
+  while (o.length < 3) o.push(String(o.length + 1));
+  return o;
+}
+
+function mbResult(md) {
+  var st = liveGet(md);
+  if (!st || !st.score) return null;
+  var s = st.score, them = oppName(s.opp), win = s.me > s.them, draw = s.me === s.them;
+  var pts = win ? 3 : draw ? 1 : 0;
+  return {
+    id:"res-md" + md, from:win ? "fans" : "league", md:md, tag:"FULL TIME",
+    title:lv((win ? "We won " : draw ? "We drew " : "We lost ") + s.me + "–" + s.them,
+             (win ? "Three points against " : draw ? "A point against " : "Beaten by ") + them),
+    body:lv(
+      [(ME.club ? ME.club.name : "We") + " " + s.me + " – " + s.them + " " + them + ".",
+       (win ? "Three points. Well played." : draw ? "One point each." :
+        "No points this time. The next match is another chance."),
+       "The table moves when your teacher publishes the matchday."],
+      [(ME.club ? ME.club.name : "We") + " " + s.me + "–" + s.them + " " + them +
+       " on matchday " + md + ", worth " + pts +
+       (pts === 1 ? " point." : " points."),
+       win ? "The supporters went home singing, and the gate money is already in the till."
+           : draw ? "A point is a point, but the room was quiet afterwards."
+                  : "Nobody enjoys an afternoon like that. Read the match report, find the " +
+                    "words that cost you, and bring them back next week.",
+       "Remember that the standing you see is provisional until your teacher " +
+       "publishes the official matchday."]),
+    q:{ t:lv("How many points is this result worth?",
+             "How many points did this result bring?"),
+        o:[String(pts), String(pts === 3 ? 1 : 3), String(pts === 0 ? 2 : 0)], c:0 }
+  };
+}
+
+function mbSusp() {
+  var out = [], all = suspAll(), k;
+  for (k in all) {
+    (all[k] || []).forEach(function (x) {
+      var p = (ME.squad || []).filter(function (y) { return y.no === x.no; })[0];
+      var nm = (p && p.name) || ("shirt " + x.no);
+      var why = x.why === "red" ? "a straight red card" : "two yellow cards";
+      out.push({
+        id:"susp-" + k + "-" + x.no, from:"panel", md:parseInt(k, 10) || 0,
+        tag:"MATCHDAY " + k,
+        title:lv(nm + " is suspended", "Suspension: " + nm),
+        body:lv(
+          [nm + " was sent off on matchday " + k + " for " + why + ".",
+           "He cannot play on matchday " + ((parseInt(k, 10) || 0) + 1) + ".",
+           "Put another player in his moments."],
+          ["The panel has looked again at matchday " + k + ". " + nm +
+           " was sent off for " + why + " and is suspended for matchday " +
+           ((parseInt(k, 10) || 0) + 1) + ".",
+           "His moments do not disappear: a team-mate who was not already busy " +
+           "takes them, and the goals or the mistakes will be his. Choose that " +
+           "team-mate yourself on the team sheet, or the app will choose for you."]),
+        q:{ t:lv("Why can " + nm + " not play?",
+                 "What is the reason for the suspension?"),
+            o:x.why === "red"
+              ? ["He was sent off", "He is injured", "He is too old"]
+              : ["He got two yellow cards", "He missed the bus", "He scored an own goal"],
+            c:0 }
+      });
+    });
+  }
+  return out;
+}
+
+function mbInjury() {
+  var out = [], all = injAll(), k;
+  for (k in all) {
+    var x = all[k];
+    if (!x || x.no == null) continue;
+    var md = parseInt(String(k).replace("md", ""), 10) || 0;
+    var p = (ME.squad || []).filter(function (y) { return y.no === x.no; })[0];
+    var nm = (p && p.name) || ("shirt " + x.no);
+    out.push({
+      id:"inj-" + k, from:"medic", md:md, tag:"MEDICAL ROOM",
+      title:lv(nm + " is injured", "Medical note: " + nm),
+      body:lv(
+        [nm + " played " + x.moments + " moments on matchday " + md + ".",
+         "He is tired and he is hurt. He cannot play the next match.",
+         "A physio at the training ground brings him back faster."],
+        ["After " + x.moments + " moments on matchday " + md + ", " + nm +
+         " has come off with a muscle problem and will miss the next match.",
+         "It is always the players who run the most: nobody can take twenty " +
+         "moments every week and stay fresh. Spread the load across the squad, " +
+         "and think about the physio at the training ground — with a physio on " +
+         "the staff these players are back for the following matchday."]),
+      q:{ t:lv("Who gets injured in this game?",
+               "According to the physio, who is most at risk of injury?"),
+          o:lv(["The players who play the most moments", "The oldest player",
+                "The captain"],
+               ["The players who are given the most moments",
+                "The players who never leave the bench",
+                "The player who scores the most goals"]), c:0 }
+    });
+  }
+  return out;
+}
+
+function mbTill() {
+  if (!ME.club) return null;
+  loadGround();
+  var f = GROUND.funds || 0;
+  if (f < 20) return null;                 /* sotto i £20k non c'e' niente da dire */
+  var step = Math.min(4, Math.floor(f / 25));
+  return {
+    id:"till-" + step, from:"keeper", md:mdNow(), tag:"THE TRAINING GROUND",
+    title:lv("There is " + money(f) + " in the till", "The till is filling up: " + money(f)),
+    body:lv(
+      ["The club has " + money(f) + ".",
+       "You can buy seats for the stadium, or staff for the club.",
+       "A bigger stadium means more money after every match."],
+      ["The club now holds " + money(f) + ", and it does nothing sitting there.",
+       "Seats in the stand raise the gate money you take after every home match, " +
+       "so a stand pays for itself and then keeps paying. The staff work differently: " +
+       "the analyst gives you more time on the difficult word, the physio brings " +
+       "injured players back a week earlier, and the VAR screen cancels one yellow " +
+       "and one red in every match.",
+       "Every upgrade says underneath exactly what it does. Read before you spend."]),
+    q:{ t:lv("What does a bigger stadium give you?",
+             "What is the advantage of building more seats?"),
+        o:lv(["More money after every match", "More players", "Better weather"],
+             ["More gate money after every home match",
+              "An extra moment in attack",
+              "A free transfer every matchday"]), c:0 }
+  };
+}
+
+function mbTable() {
+  if (!ME.club || typeof leagueRows !== "function") return null;
+  var rows = leagueRows(), me = null, i;
+  for (i = 0; i < rows.length; i++) if (rows[i].id === ME.club.id) me = rows[i];
+  if (!me || !me.p) return null;
+  var cup = LEAGUE.cupPlaces || 2, inside = me.pos <= cup;
+  var left = (LEAGUE.mdTotal || 0) - (LEAGUE.md || 0);
+  return {
+    id:"tab-md" + (LEAGUE.md || 0), from:"league", md:LEAGUE.md || 0, tag:"THE TABLE",
+    title:lv(inside ? "You are in the cup places" : "You are outside the cup places",
+             inside ? "Inside the cup places, for now" : "Outside the cup places"),
+    body:lv(
+      ["You are number " + me.pos + " with " + me.pts +
+       (me.pts === 1 ? " point." : " points."),
+       "The first " + cup + " teams go to the cups.",
+       left > 0 ? "There are " + left + " matchdays left." : "The season is over."],
+      [((LEAGUE.md || 0) >= 1 ? "After matchday " + LEAGUE.md + " you sit "
+                              : "As things stand you sit ") + me.pos +
+       (me.pos === 1 ? "st" : me.pos === 2 ? "nd" : me.pos === 3 ? "rd" : "th") +
+       " with " + me.pts + (me.pts === 1 ? " point" : " points") + ", " +
+       (inside ? "which is enough for the cups as things stand."
+               : "which is not enough for the cups as things stand."),
+       "The top " + cup + " qualify. " + (left > 0
+         ? "There are " + left + (left === 1 ? " matchday" : " matchdays") +
+           " left, so nothing is decided."
+         : "The season is over and the table is final.")]),
+    q:{ t:lv("How many teams go to the cups?",
+             "How many places qualify for the cups?"),
+        o:[String(cup), String(cup + 2), String(cup + 1)], c:0 }
+  };
+}
+
+function mbMarket() {
+  if (!ME.club || (LEAGUE.md || 0) > 0) return null;
+  return {
+    id:"market", from:"scout", md:0, tag:"THE TRANSFER MARKET",
+    title:lv("The market is open", "Twenty questions, then a scout"),
+    body:lv(
+      ["Before matchday 1 you can answer twenty questions at your level.",
+       "A good score gives you a better scout.",
+       "A better scout brings better players, up to three."],
+      ["The transfer window opens once a season and it closes with matchday 1. " +
+       "Twenty questions at your level decide which scout signs for the club, and " +
+       "the scout decides the quality of the players you can bring in — up to three."]),
+    q:{ t:lv("What decides the quality of your scout?",
+             "What decides which scout you get?"),
+        o:lv(["How well you answer the twenty questions", "The weather",
+              "The name of your club"],
+             ["How well you answer the twenty questions",
+              "How much money is in the till",
+              "Your position in the table"]), c:0 }
+  };
+}
+
+/* le giornate di questa competizione che hanno un risultato sul telefono */
+function mbPlayed() {
+  var pre = "footefl-live-" + scope() + "-md", out = [], i, k, n;
+  try {
+    for (i = 0; i < localStorage.length; i++) {
+      k = localStorage.key(i);
+      if (!k || k.indexOf(pre) !== 0) continue;
+      n = parseInt(k.slice(pre.length), 10);
+      if (n) out.push(n);
+    }
+  } catch (e) {}
+  return out.sort(function (a, b) { return b - a; });
+}
+
+/* ───────── tutta la posta, dalla piu' recente ───────── */
+function mbList() {
+  var cmp = (typeof COMPS !== "undefined"
+    ? COMPS.filter(function (m) { return m.id === scope(); })[0] : null) || null;
+  var out = [], md;
+  function add(x) { if (x) out.push(x); }
+
+  add(mbFixture());
+  /* i risultati si cercano nel cassetto, non si contano a partire dalla
+     giornata: una partita giocata in anticipo o una coppa fuori calendario
+     resterebbero senza lettera */
+  mbPlayed().forEach(function (n) { add(mbResult(n)); });
+  mbSusp().forEach(add);
+  mbInjury().forEach(add);
+  add(mbTable());
+  add(mbTill());
+  add(mbMarket());
+  add(mbWelcome(cmp));
+
+  /* la giornata piu' alta in cima; a parita' resta l'ordine di qui sopra */
+  out.forEach(function (m, i) { m._i = i; });
+  out.sort(function (a, b) { return (b.md - a.md) || (a._i - b._i); });
+  return out;
+}
+function mbUnread() {
+  return mbList().filter(function (m) { return !mbSeen(m.id); }).length;
+}
+
+/* ───────── la barra nella home della competizione ───────── */
+function mailCard() {
+  if (!ME.code || !ME.club) return "";
+  var n = mbUnread(), all = mbList().length;
+  if (!all) return "";
+  return '<section class="pad"><button class="stbar mail' + (n ? " nw" : "") +
+    '" id="hmailb" type="button"><span class="stn">&#9993;</span>' +
+    '<span class="stt"><b>Message centre' +
+    (n ? '<em class="mcn">' + n + "</em>" : "") + "</b><span>" +
+    (n ? (n === 1 ? "One letter you have not opened yet."
+                  : n + " letters you have not opened yet.")
+       : "Nothing new. " + all + (all === 1 ? " letter" : " letters") + " in the room.") +
+    "</span></span><i>&#8250;</i></button></section>";
+}
+function wireMail() {
+  if ($("hmailb")) $("hmailb").onclick = function () { go("inbox"); };
+}
+
+/* ───────── la stanza ───────── */
+var MBOPEN = null;              /* la lettera aperta adesso */
+
+VIEWS.inbox = function (d) {
+  var cmp = COMPS.filter(function (m) { return m.id === scope(); })[0];
+  paintClub(ME.club);
+  barFlow("Message centre", (cmp ? cmp.name : "My season") +
+    " · level " + (ME.level || "A1"), 0);
+  MBOPEN = (d && d.id) || null;     /* si entra con la posta chiusa */
+  html('<div class="pad"><div id="mcl"></div>' +
+    '<p class="hint mct">Every letter ends with one question. ' +
+    "The first right answer puts " + money(MB_PAY) + " in the club till.</p></div>");
+  drawMail();
+};
+
+function drawMail() {
+  var list = mbList(), box = $("mcl");
+  if (!box) return;
+  if (!list.length) {
+    box.innerHTML = '<p class="empty2">No post yet.</p>';
+    return;
+  }
+  box.innerHTML = list.map(function (m) {
+    var f = MFROM[m.from] || MFROM.league, open = MBOPEN === m.id;
+    var seen = mbSeen(m.id), done = mbDone(m.id);
+    return '<div class="mcx' + (open ? " on" : "") + (seen ? "" : " nw") + '">' +
+      '<button class="mch" data-m="' + esc(m.id) + '" type="button" aria-expanded="' +
+      (open ? "true" : "false") + '">' +
+      '<span class="mcf">' + esc(f.t) + "</span>" +
+      '<span class="mcw"><b>' + esc(m.title) + "</b><em>" + esc(f.n) +
+      (m.tag ? " &middot; " + esc(m.tag) : "") + "</em></span>" +
+      (done ? '<i class="mcok">&#10003;</i>' : seen ? '<i class="mcar">&#8250;</i>'
+            : '<i class="mcdot"></i>') + "</button>" +
+      (open ? '<div class="mcb">' +
+        m.body.map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") +
+        mailQ(m) + "</div>" : "") +
+      "</div>";
+  }).join("");
+
+  Array.prototype.forEach.call(box.querySelectorAll(".mch"), function (b) {
+    b.onclick = function () {
+      var id = b.dataset.m;
+      MBOPEN = (MBOPEN === id) ? null : id;
+      if (MBOPEN) mbOpen(MBOPEN);
+      drawMail();
+    };
+  });
+  wireMailQ(list);
+}
+
+/* la domanda in fondo alla lettera */
+function mailQ(m) {
+  if (!m.q) return "";
+  if (mbDone(m.id)) {
+    return '<div class="mcq done"><p class="mcqt">' + esc(m.q.t) + "</p>" +
+      '<p class="mcgot">&#10003; ' + esc(m.q.o[m.q.c]) +
+      " &middot; read and understood.</p></div>";
+  }
+  return '<div class="mcq" id="q-' + esc(m.id) + '"><p class="mcqt">' + esc(m.q.t) +
+    "</p>" + m.q.o.map(function (o, i) {
+      return '<button class="mco" data-q="' + esc(m.id) + '" data-i="' + i +
+        '" type="button">' + esc(o) + "</button>";
+    }).join("") + '<p class="mcsay"></p></div>';
+}
+function wireMailQ(list) {
+  Array.prototype.forEach.call(document.querySelectorAll(".mco"), function (b) {
+    b.onclick = function () {
+      var id = b.dataset.q, i = parseInt(b.dataset.i, 10);
+      var m = list.filter(function (x) { return x.id === id; })[0];
+      if (!m) return;
+      var box = $("q-" + id), say = box ? box.querySelector(".mcsay") : null;
+      var ok = i === m.q.c;
+      Array.prototype.forEach.call(box.querySelectorAll(".mco"), function (o) {
+        var k = parseInt(o.dataset.i, 10);
+        if (k === m.q.c && ok) o.className = "mco good";
+        else if (k === i && !ok) o.className = "mco bad";
+      });
+      if (ok) {
+        var paid = mbAnswer(id, true);
+        if (say) {
+          say.className = "mcsay good";
+          say.innerHTML = paid ? "Right. " + money(paid) + " into the club till."
+                               : "Right.";
+        }
+        setTimeout(function () { if (HERE && HERE.name === "inbox") drawMail(); }, 1100);
+      } else if (say) {
+        say.className = "mcsay bad";
+        say.textContent = "Not that one. Read the letter again and try the others.";
+      }
+    };
+  });
+}
+
+
 /* ───── 70-league.js ───── */
 /* ═══════════════════════════════════════════════════════════════════
    THE LEAGUE
@@ -13479,6 +14014,42 @@ function climateOf(id) {
   return CLIMATES.filter(function (c) { return c.id === id; })[0] || CLIMATES[2];
 }
 function climateActions(id) { return climateOf(id).actions; }
+
+/* ───────── la scala del meteo ─────────
+   Fra il cielo dell'attacco e quello della difesa passa al massimo una
+   casella: sole e nuvoloso si', sole e nebbia mai. Se in difesa piove,
+   in attacco si puo' avere nuvoloso, pioggia o tempesta, e basta.
+   La regola e' una sola e vale dappertutto — campionato, coppa,
+   amichevole, training league — ed e' la stessa che sta nella
+   piattaforma del professore: qui si ricontrolla, non si reinventa. */
+function climIdx(id) {
+  for (var i = 0; i < CLIMATES.length; i++) if (CLIMATES[i].id === id) return i;
+  return -1;
+}
+function climOk(att, def) {
+  var a = climIdx(att), d = climIdx(def);
+  return a >= 0 && d >= 0 && Math.abs(a - d) <= 1;
+}
+/* il cielo piu' vicino a quello chiesto che la scala permette */
+function climNear(fix, want) {
+  var a = climIdx(fix), w = climIdx(want);
+  if (a < 0) return want;
+  if (w < 0) w = a;
+  return CLIMATES[Math.max(a - 1, Math.min(a + 1, w))].id;
+}
+/* una coppia estratta a caso, gia' dentro la scala */
+function climPair() {
+  var a = Math.floor(Math.random() * CLIMATES.length);
+  var d = Math.max(0, Math.min(CLIMATES.length - 1,
+            a + Math.floor(Math.random() * 3) - 1));
+  return { att:CLIMATES[a].id, def:CLIMATES[d].id };
+}
+/* quello che arriva dal bollettino passa comunque di qui: se in un file
+   pubblicato sono finiti due cieli lontani, la difesa si avvicina */
+function climFix(att, def) {
+  att = climIdx(att) < 0 ? "cloudy" : att;
+  return { att:att, def:climOk(att, def) ? def : climNear(att, def) };
+}
 /* quali climi tengono aperta la casella n: serve a spiegare perche' e' chiusa */
 function opensWith(n) {
   return CLIMATES.filter(function (c) { return c.actions >= n; })
