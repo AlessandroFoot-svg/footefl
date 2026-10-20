@@ -2223,6 +2223,63 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .lc.frm{width:auto;min-width:96px;padding:0 12px;justify-items:start}
 .ltr.me .lc{color:#FFFDEE}
 .lswipe{margin-top:8px;text-align:right;font-size:10.5px;font-weight:600;color:#6FA38D}
+.bgain{display:block;margin-top:6px;padding:7px 9px;border-radius:9px;
+  background:rgba(227,239,38,.1);border-left:2px solid var(--gold);
+  font-size:11px;font-weight:700;font-style:normal;line-height:1.4;color:#D7F2C6}
+.varic{font:800 8px/1 var(--brand);letter-spacing:.06em;color:#9FD5A8;
+  border:1px solid #9FD5A8;border-radius:3px;padding:3px 2px;font-style:normal}
+
+/* ═════════ la rosa: filtri e scheda ═════════ */
+.sqf{display:flex;gap:7px;overflow-x:auto;padding:0 0 2px;margin-bottom:9px;
+  scrollbar-width:none}
+.sqf::-webkit-scrollbar{display:none;height:0}
+.sqb{flex:none;padding:7px 12px;border-radius:14px;border:1px solid var(--edge);
+  background:rgba(226,251,206,.05);color:var(--fog);font:800 10px/1 var(--brand);
+  letter-spacing:.1em;cursor:pointer;font-family:var(--brand)}
+.sqb.on{background:var(--gold);border-color:var(--gold);color:#06231D}
+.sqf.thin .sqb{padding:6px 10px;font-size:9px}
+.pgst{position:absolute;top:6px;right:7px;min-width:20px;padding:2px 5px;border-radius:7px;
+  background:var(--gold);color:#06231D;font:800 10px/1.3 var(--brand);text-align:center}
+.peg{position:relative}
+.phero{display:flex;align-items:center;gap:14px;padding:14px;border-radius:18px;
+  background:linear-gradient(135deg,var(--club) 0%,rgba(4,23,15,.9) 120%);
+  border:1px solid var(--edge)}
+.pkit{position:relative;flex:none;width:76px;height:76px;display:grid;place-items:center}
+.pkit img{width:76px;height:76px;object-fit:contain}
+.pkit svg{width:70px;height:70px;fill:var(--club)}
+.pno{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);
+  font:800 22px/1 var(--brand);color:var(--kitink)}
+.pwho{flex:1;min-width:0}
+.pwho b{display:block;font:800 21px/1.1 var(--brand);letter-spacing:-.02em;color:#FFFDEE}
+.prow2{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.prow2 .rl{font:800 9px/1 var(--brand);letter-spacing:.1em;font-style:normal;
+  padding:4px 6px;border-radius:5px;background:var(--fog);color:#06231D}
+.prow2 .rl.cap{background:var(--gold)}
+.prow2 .rl.gem{background:#D9B65A}
+.pwho em{display:block;margin-top:7px;font-size:11.5px;font-weight:600;font-style:normal;
+  color:var(--fog)}
+.pban{margin-top:11px;padding:11px 13px;border-radius:13px;font-size:12px;font-weight:700;
+  background:rgba(201,85,63,.14);border:1px solid rgba(201,85,63,.5);color:#E8A89A}
+.pban.hurt{background:rgba(227,200,74,.12);border-color:rgba(227,200,74,.5);color:#E3C84A}
+.pstats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.pst{padding:12px 13px;border-radius:14px;background:rgba(226,251,206,.05);
+  border:1px solid #14503C}
+.pst i{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;font-style:normal;
+  color:#8FC4AC}
+.pst b{display:block;margin-top:6px;font:800 24px/1 var(--brand);color:#FFFDEE}
+.pst u{display:block;margin-top:4px;text-decoration:none;font-size:10px;font-weight:600;
+  color:#8FC4AC}
+.pgrow{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;
+  border-radius:14px;border:1px solid var(--edge);background:rgba(226,251,206,.05)}
+.pgrow i{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;font-style:normal;
+  color:#8FC4AC}
+.pgrow b{display:block;margin-top:5px;font:800 18px/1 var(--brand);color:var(--gold)}
+.pbars{display:flex;gap:5px}
+.pbars i{width:26px;height:7px;border-radius:4px;background:rgba(226,251,206,.18)}
+.pbars i.up{background:var(--gold)}
+.pgrow em{flex:1;text-align:right;font-size:11px;font-weight:600;font-style:normal;
+  color:var(--fog)}
+.pgst.nil{background:rgba(226,251,206,.16);color:#8FC4AC}
 </style>
 </head>
 <body>
@@ -2800,7 +2857,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "58";
+var APPVER = "60";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -5797,7 +5854,7 @@ VIEWS.howto = function () {
     ["Your code is your season",
      "The code your teacher gave you says which competitions are yours and which club " +
      "you manage in each one. Nobody chooses the team: it is already decided."],
-    ["Warm up whenever you like",
+    ["The Rondo, whenever you like",
      "Three rounds of recorded sentences. You need every sentence right to move on, and " +
      "clearing all three puts money in the club."],
     ["The transfer market opens once",
@@ -7194,7 +7251,10 @@ function warmRounds() {
 }
 /* la cassa segue la fatica: dieci per tre giri, meno se i giri sono meno */
 function warmPay() {
-  return Math.round(WARM_PAY * warmRounds() / WARM_ROUNDS);
+  var p = Math.round(WARM_PAY * warmRounds() / WARM_ROUNDS);
+  /* l'allenatore di lingua in panchina vale due in piu' */
+  if (typeof built === "function") { loadGround(); if (built("coach")) p += 2; }
+  return p;
 }
 
 /* quali gruppi tocca a questa sessione: si scelgono una volta sola,
@@ -7238,7 +7298,7 @@ function warmCard() {
   if (!warmReady()) {
     return '<section class="pad"><div class="warm off">' +
       '<span class="wi">&#9835;</span>' +
-      "<span class=\"wt\"><b>Warm up</b><span>Your teacher has not recorded the " +
+      "<span class=\"wt\"><b>Rondo</b><span>Your teacher has not recorded the " +
       "sentences for your level yet. When he does, three rounds turn up here." +
       "</span></span></div></section>";
   }
@@ -7259,8 +7319,8 @@ function warmCard() {
   }
   return '<section class="pad"><button class="warm" id="warmGo" type="button">' +
     '<span class="wi">&#9835;</span>' +
-    '<span class="wt"><b>' + (r ? "Warm up &middot; round " + (r + 1) + " of " +
-      N : "Warm up") + "</b><span>" +
+    '<span class="wt"><b>' + (r ? "Rondo &middot; round " + (r + 1) + " of " +
+      N : "Rondo") + "</b><span>" +
     (r
       ? "Six more sentences. " + left + (left === 1 ? " round" : " rounds") +
         " to go for " + money(pay) + "."
@@ -8207,6 +8267,97 @@ function cardHtml(p) {
    quanti sono e quanti sono cresciuti, che e' quello che serve sapere
    di sfuggita. */
 var SQOPEN = false;
+/* ═══════════════ LA ROSA ═══════════════
+   Un riquadro che si apre e si chiude, con due file di filtri: per
+   reparto e per rendimento. Toccando una maglia si apre la scheda del
+   giocatore, e da li' si va a potenziarlo. */
+var SQF = { role:"all", sort:"no" };
+var SQROLES = [
+  { id:"all", t:"ALL" }, { id:"GK", t:"GK" }, { id:"DF", t:"DF" },
+  { id:"MF", t:"MF" }, { id:"FW", t:"FW" }
+];
+var SQSORT = [
+  { id:"no",   t:"NUMBER", k:null },
+  { id:"g",    t:"GOALS",  k:"g" },
+  { id:"s",    t:"SAVES",  k:"s" },
+  { id:"m",    t:"MOMENTS", k:"m" },
+  { id:"c",    t:"CARDS",  k:"c" }
+];
+
+/* i numeri di ogni giocatore in questa competizione: momenti giocati,
+   gol, parate e cartellini. Vengono dai tempi registrati e dai
+   risultati che il telefono conosce. */
+function sqStats() {
+  var out = {}, i;
+  function row(no) {
+    if (!out[no]) out[no] = { m:0, g:0, s:0, y:0, r:0, c:0 };
+    return out[no];
+  }
+  loadForm();
+  var hs = (FORM && FORM.halves) ? FORM.halves : [];
+  hs.forEach(function (h) {
+    (h.slots || []).forEach(function (no) { if (no != null) row(no).m++; });
+    (h.cards || []).forEach(function (c) {
+      if (c.no == null) return;
+      if (c.kind === "yellow") { row(c.no).y++; row(c.no).c++; }
+      else if (c.kind === "red") { row(c.no).r++; row(c.no).c++; }
+    });
+  });
+  /* i gol: dai risultati chiusi, azione per azione */
+  var gk = (ME.squad || []).filter(function (p) { return p.role === "GK"; })[0];
+  try {
+    var pre = "footefl-live-" + scope() + "-md";
+    for (i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (!k || k.indexOf(pre) !== 0) continue;
+      var md = parseInt(k.slice(pre.length), 10);
+      var st = JSON.parse(localStorage.getItem(k) || "null");
+      if (!st || !st.score) continue;
+      var att = hs.filter(function (h) { return h.md === md && h.ph === "att"; })[0];
+      (st.score.mine.duels || []).forEach(function (d) {
+        if (!d.goal) return;
+        var no = att && att.slots ? att.slots[d.n - 1] : null;
+        if (no != null) row(no).g++;
+      });
+      /* il wonder goal e il rigore: li firma chi era stato chiamato */
+      var sk = "footefl-sheet-" + scope() + "-" + (ME.club ? ME.club.id : "x") +
+               "-md" + md;
+      var sh = JSON.parse(localStorage.getItem(sk) || "null");
+      if (sh && sh.call && sh.call.att) {
+        if (st.score.mine.sources && st.score.mine.sources.bdo &&
+            sh.call.att.wonder != null) row(sh.call.att.wonder).g++;
+        if (st.score.mine.sources && st.score.mine.sources.penalty &&
+            sh.call.att.taker != null) row(sh.call.att.taker).g++;
+      }
+      /* le parate: i tiri loro che non sono entrati */
+      if (gk) {
+        (st.score.their.duels || []).forEach(function (d) {
+          if (!d.goal) row(gk.no).s++;
+        });
+      }
+    }
+  } catch (e) {}
+  return out;
+}
+
+function sqList() {
+  var st = sqStats();
+  var list = (ME.squad || []).slice().map(function (p) {
+    var x = st[p.no] || { m:0, g:0, s:0, y:0, r:0, c:0 };
+    return { p:p, m:x.m, g:x.g, s:x.s, y:x.y, r:x.r, c:x.c };
+  });
+  if (SQF.role !== "all") {
+    list = list.filter(function (r) { return (r.p.role || "") === SQF.role; });
+  }
+  var key = (SQSORT.filter(function (x) { return x.id === SQF.sort; })[0] || {}).k;
+  if (key) {
+    list.sort(function (a, b) { return b[key] - a[key] || a.p.no - b.p.no; });
+  } else {
+    list.sort(function (a, b) { return a.p.no - b.p.no; });
+  }
+  return list;
+}
+
 function drawSquadCard() {
   var box = $("sqc");
   if (!box) return;
@@ -8217,38 +8368,122 @@ function drawSquadCard() {
     (grown ? grown + (grown === 1 ? " has grown" : " have grown") : "nobody has grown yet") +
     "</em></span><i class=\"sqtog\">" + (SQOPEN ? "&minus;" : "+") + "</i></button>" +
     (SQOPEN
-      ? '<div class="sqbody"><p class="hint">Tap a shirt to see the player.</p>' +
+      ? '<div class="sqbody">' +
+        '<div class="sqf" id="sqrole"></div>' +
+        '<div class="sqf thin" id="sqsort"></div>' +
+        '<p class="hint" id="sqhint">Tap a shirt to open the player.</p>' +
         '<div id="shirts"></div></div>'
       : "");
   $("sqtog").onclick = function () { SQOPEN = !SQOPEN; drawSquadCard(); };
-  if (SQOPEN) drawShirts();
+  if (!SQOPEN) return;
+
+  $("sqrole").innerHTML = SQROLES.map(function (x) {
+    return '<button class="sqb' + (SQF.role === x.id ? " on" : "") + '" data-r="' +
+      x.id + '" type="button">' + x.t + "</button>";
+  }).join("");
+  $("sqsort").innerHTML = SQSORT.map(function (x) {
+    return '<button class="sqb' + (SQF.sort === x.id ? " on" : "") + '" data-s="' +
+      x.id + '" type="button">' + x.t + "</button>";
+  }).join("");
+  Array.prototype.forEach.call($("sqrole").querySelectorAll(".sqb"), function (b) {
+    b.onclick = function () { SQF.role = b.dataset.r; drawSquadCard(); };
+  });
+  Array.prototype.forEach.call($("sqsort").querySelectorAll(".sqb"), function (b) {
+    b.onclick = function () { SQF.sort = b.dataset.s; drawSquadCard(); };
+  });
+  drawShirts();
 }
 
 function drawShirts() {
-  var box = $("shirts"), per = 3, out = "";
+  var box = $("shirts"), per = 3, out = "", list = sqList();
   if (!box) return;
-  for (var i = 0; i < ME.squad.length; i += per) {
-    out += '<div class="row">' + ME.squad.slice(i, i + per).map(pegHtml).join("") + "</div>";
+  if (!list.length) {
+    box.innerHTML = '<p class="empty2">Nobody in this department.</p>';
+    return;
+  }
+  var key = (SQSORT.filter(function (x) { return x.id === SQF.sort; })[0] || {}).k;
+  for (var i = 0; i < list.length; i += per) {
+    out += '<div class="row">' + list.slice(i, i + per).map(function (r) {
+      var tag = key ? (key === "c"
+        ? (r.y ? r.y + "Y" : "") + (r.r ? (r.y ? " " : "") + r.r + "R" : "") || "0"
+        : String(r[key])) : "";
+      return pegHtml(r.p).replace("</button>", (tag
+        ? '<span class="pgst' + (tag === "0" ? " nil" : "") + '">' + tag + "</span>"
+        : "") + "</button>");
+    }).join("") + "</div>";
   }
   box.innerHTML = out;
   Array.prototype.forEach.call(box.querySelectorAll(".peg"), function (b) {
-    b.onclick = function () {
-      var no = parseInt(b.dataset.no, 10), row = b.parentNode;
-      var had = row.querySelector(".pcard");
-      Array.prototype.forEach.call(box.querySelectorAll(".pcard"), function (c) {
-        c.parentNode.removeChild(c);
-      });
-      Array.prototype.forEach.call(box.querySelectorAll(".peg"), function (x) {
-        x.classList.remove("on"); x.setAttribute("aria-expanded", "false");
-      });
-      if (openShirt === no && had) { openShirt = null; return; }
-      row.insertAdjacentHTML("beforeend", cardHtml(
-        ME.squad.filter(function (x) { return x.no === no; })[0]));
-      b.classList.add("on"); b.setAttribute("aria-expanded", "true");
-      openShirt = no;
-    };
+    b.onclick = function () { go("player", { no:parseInt(b.dataset.no, 10) }); };
   });
 }
+
+/* ───────── la scheda del giocatore ───────── */
+VIEWS.player = function (d) {
+  var no = d.no, p = (ME.squad || []).filter(function (x) { return x.no === no; })[0];
+  if (!p) return back();
+  var st = sqStats()[no] || { m:0, g:0, s:0, y:0, r:0 };
+  var ban = (typeof suspIs === "function") ? suspIs(no) : null;
+  var hurt = !ban && typeof injIs === "function" ? injIs(no) : null;
+  var grown = Math.min(2, p.grown || 0);
+  paintClub(ME.club);
+  barFlow(pName({ named:!!p.name, name:p.name, no:p.no }), ME.club.name, 0);
+
+  function cell(k, v, s2) {
+    return '<div class="pst"><i>' + k + "</i><b>" + v + "</b>" +
+      (s2 ? "<u>" + s2 + "</u>" : "") + "</div>";
+  }
+  html('<div class="pad">' +
+    '<div class="phero">' +
+      '<span class="pkit">' + (imgOf("kit-" + (ME.club ? ME.club.id : ""))
+        ? '<img src="' + imgOf("kit-" + ME.club.id) + '" alt="">'
+        : '<svg viewBox="0 0 100 100"><use href="#jersey"/></svg>') +
+        '<span class="pno">' + p.no + "</span></span>" +
+      '<span class="pwho"><b>' + esc(p.name || ("Shirt " + p.no)) + "</b>" +
+        '<span class="prow2">' + (p.role ? '<i class="rl">' + esc(p.role) + "</i>" : "") +
+        (p.tag === "CAP" ? '<i class="rl cap">CAPTAIN</i>' : "") +
+        (p.tag === "GEM" ? '<i class="rl gem">GEM</i>' : "") +
+        (p.tag === "GK" ? '<i class="rl">KEEPER</i>' : "") + "</span>" +
+        "<em>" + (p.age ? p.age + " &middot; " : "") + esc(p.city || "") +
+        (p.nat ? " &middot; " + esc(p.nat) : "") + "</em></span>" +
+    "</div>" +
+
+    (ban
+      ? '<div class="pban">Suspended for matchday ' + (ME.next ? ME.next.md : "") +
+        " &mdash; " + (ban.why === "red" ? "sent off" : "two yellows") + "</div>"
+      : hurt
+        ? '<div class="pban hurt">Injured &mdash; he ran ' + hurt.moments +
+          " moments last matchday. A physio would have him fit.</div>"
+        : "") +
+
+    '<div class="pstats">' +
+      cell("MOMENTS", st.m, "played this season") +
+      cell("GOALS", st.g, st.g === 1 ? "scored" : "scored") +
+      cell("SAVES", st.s, "kept out") +
+      cell("CARDS", st.y + st.r, st.y + " yellow &middot; " + st.r + " red") +
+    "</div>" +
+
+    '<div class="pgrow"><span><i>STRENGTH</i><b>' +
+      (grown ? "+0." + grown * 10 : "+0.00") + "</b></span>" +
+      '<span class="pbars">' + (function () {
+        var o = "";
+        for (var i = 0; i < 2; i++) o += '<i class="' + (i < grown ? "up" : "") + '"></i>';
+        return o;
+      })() + "</span>" +
+      "<em>" + (grown >= 2 ? "fully grown" : grown === 1 ? "one step taken"
+                                                         : "no steps yet") + "</em></div>" +
+
+    (grown < 2
+      ? '<button class="btn" id="pboost">Boost him &middot; go to the exercises</button>'
+      : '<button class="btn ghost" disabled>He cannot grow any more</button>') +
+    (ME.next && !ban && !hurt
+      ? '<button class="btn ghost" id="psheet">Put him on a moment</button>' : "") +
+    '<button class="btn ghost" id="pbk">Back to the squad</button></div>');
+
+  if ($("pboost")) $("pboost").onclick = function () { go("ground", { tab:"squad" }); };
+  if ($("psheet")) $("psheet").onclick = function () { go("prep"); };
+  $("pbk").onclick = back;
+};
 
 function drawSignings() {
   if (!ME.signings.length) return;
@@ -8968,8 +9203,23 @@ function discHalf(ph, r) {
                no:no, name:p ? pName(p) : "", role:p ? (p.role || "") : "" };
 
     if (ev.kind === "yellow" && no != null) {
+      /* il VAR si prende il primo giallo della partita */
+      if (hasVar() && varUse("yellow")) {
+        ev.varred = true; ev.kind = "varY";
+        out.events.push(ev);
+        return;
+      }
       D.y[no] = (D.y[no] || 0) + 1;
       if (D.y[no] === 2 && !discOff(no)) { ev.kind = "red"; ev.second = true; }
+    }
+
+    if (ev.kind === "red" && no != null && hasVar() && varUse("red")) {
+      /* e il primo rosso: l'uomo resta in campo, la parola resta sbagliata */
+      if (ev.second) D.y[no] = 1;
+      ev.varred = true; ev.kind = "varR";
+      out.events.push(ev);
+      saveSheet();
+      return;
     }
 
     if (ev.kind === "red" && no != null && !discOff(no)) {
@@ -9065,10 +9315,14 @@ function suspIs(no) {
 
 /* una riga di cartellino, per il riepilogo del tempo */
 function discRow(x) {
-  var tag = x.kind === "red" ? (x.off ? "SENT OFF" : x.second ? "SECOND YELLOW" : "RED")
+  var tag = x.kind === "varY" ? "VAR \u00b7 NO CARD"
+          : x.kind === "varR" ? "VAR \u00b7 NO RED"
+          : x.kind === "red" ? (x.off ? "SENT OFF" : x.second ? "SECOND YELLOW" : "RED")
           : x.kind === "yellow" ? "YELLOW"
           : x.kind === "sub" ? "ON" : x.kind === "short" ? "TEN MEN" : "FOUL";
-  var note = x.kind === "sub" ? "in for " + esc(x.forName || "")
+  var note = x.kind === "varY" || x.kind === "varR"
+      ? "on \u201c" + esc(x.word || "") + "\u201d &middot; the screen says no card"
+    : x.kind === "sub" ? "in for " + esc(x.forName || "")
     : x.kind === "short" ? "nobody left to take over from " + esc(x.forName || "")
     : "on “" + esc(x.word || "") + "”" +
       (x.second ? " &middot; second yellow" : "") +
@@ -9077,10 +9331,95 @@ function discRow(x) {
     '<span class="dsm">' + (x.min ? x.min + "′" : "&mdash;") + "</span>" +
     '<span class="dsc">' + (x.kind === "yellow" ? '<i class="cardbox y"></i>'
       : x.kind === "red" ? '<i class="cardbox r"></i>'
+      : x.kind === "varY" || x.kind === "varR" ? '<i class="varic">VAR</i>'
       : '<i class="dsar">&#8593;</i>') + "</span>" +
     '<span class="dsn"><b>' + esc(x.name || "the team") +
     (x.role ? '<u class="rl">' + esc(x.role) + "</u>" : "") + "</b><em>" + note +
     "</em></span><span class=\"dst\">" + tag + "</span></div>";
+}
+
+/* ═══════════════ IL VAR ═══════════════
+   Comprato nello staff: in ogni partita cancella un giallo e un rosso.
+   La parola resta sbagliata e la qualita' non cambia — il risultato e'
+   lo stesso — ma il cartellino sparisce: niente espulsione, niente
+   squalifica, e nel referto resta scritto che l'ha tolto il VAR. */
+function hasVar() {
+  if (typeof built !== "function") return false;
+  loadGround();
+  return !!built("var");
+}
+function varUse(kind) {
+  var D = discInit();
+  if (!D.var) D.var = { y:0, r:0 };
+  if (kind === "yellow" && !D.var.y) { D.var.y = 1; saveSheet(); return true; }
+  if (kind === "red" && !D.var.r) { D.var.r = 1; saveSheet(); return true; }
+  return false;
+}
+
+/* ═══════════════ GLI INFORTUNI ═══════════════
+   Uno per giornata al massimo, e non a caso: si fa male chi ha corso di
+   piu', cioe' chi ha preso piu' momenti in quella partita. La sorte
+   decide solo se succede, e lo decide una volta sola, con un seme fatto
+   di competizione, giornata e squadra: lo stesso conto rifatto domani
+   da' lo stesso risultato, e la piattaforma puo' leggerlo dal referto
+   invece di ricalcolarlo.
+   Con il fisioterapista il giocatore recupera e gioca lo stesso. */
+var INJ_CHANCE = 0.35;
+
+function injKey() {
+  return "footefl-inj-" + scope() + "-" + (ME.club ? ME.club.id : "x");
+}
+function injAll() {
+  try { return JSON.parse(localStorage.getItem(injKey()) || "{}") || {}; }
+  catch (e) { return {}; }
+}
+function injSave(o) {
+  try { localStorage.setItem(injKey(), JSON.stringify(o)); } catch (e) {}
+}
+/* a fine partita: chi ha corso di piu' rischia */
+function injPick(md) {
+  var all = injAll();
+  if (all["md" + md]) return all["md" + md];          /* gia' deciso */
+  loadForm();
+  var use = {}, hs = halvesOf(md);
+  hs.forEach(function (h) {
+    (h.slots || []).forEach(function (no) {
+      if (no != null) use[no] = (use[no] || 0) + 1;
+    });
+  });
+  var pool = Object.keys(use).map(function (k) {
+    return { no:parseInt(k, 10), n:use[k] };
+  }).filter(function (x) {
+    return !discOff(x.no);                             /* un espulso non si infortuna */
+  });
+  if (!pool.length) { all["md" + md] = { no:null }; injSave(all); return all["md" + md]; }
+  pool.sort(function (a, b) { return b.n - a.n || a.no - b.no; });
+  var r = rng(scope() + "|" + md + "|" + (ME.club ? ME.club.id : "x"));
+  var hurt = r() < INJ_CHANCE ? pool[0] : null;
+  var p = hurt ? playerNo(hurt.no) : null;
+  all["md" + md] = hurt
+    ? { no:hurt.no, name:p ? pName(p) : "", moments:hurt.n, until:md + 1 }
+    : { no:null };
+  injSave(all);
+  return all["md" + md];
+}
+/* l'infortunato di questa giornata, se il fisioterapista non l'ha rimesso in piedi */
+function injIs(no) {
+  if (!ME.next) return null;
+  var all = injAll(), md = ME.next.md, k;
+  for (k in all) {
+    if (!all.hasOwnProperty(k)) continue;
+    var x = all[k];
+    if (!x || x.no == null || x.until !== md) continue;
+    if (x.no !== no) continue;
+    if (typeof built === "function") { loadGround(); if (built("physio")) return null; }
+    return x;
+  }
+  return null;
+}
+function injOf(md) {
+  var x = injAll()["md" + md];
+  return x && x.no != null ? x : null;
 }
 
 
@@ -10888,6 +11227,12 @@ function correctHalf(ph, written, opt) {
    e va fino in fondo, come la voce di un maestro in aula. Poi quindici
    secondi per rileggere, con la loro barra che scende. */
 var EXTRA_S = 15;
+/* con l'analista in panchina l'ultima lettura dura venti secondi */
+function extraSecs() {
+  if (typeof built !== "function") return EXTRA_S;
+  loadGround();
+  return built("analy") ? 20 : EXTRA_S;
+}
 
 function playerHtml(src, id) {
   return '<div class="aud once" id="' + id + 'box">' +
@@ -10956,7 +11301,7 @@ VIEWS.mWrite = function (d) {
   html('<div class="pad">' +
     '<p class="lede">Press play and <b>it does not stop</b>: no pause, no going back, ' +
     "no second listen. Write as you hear it &mdash; full stops, commas and capital " +
-    "letters count. When the voice ends you get <b>" + EXTRA_S +
+    "letters count. When the voice ends you get <b>" + extraSecs() +
     " seconds</b> to read it over.</p>" +
     playerHtml(AUDIO[dict.id], "au") +
     '<div id="donebox"></div>' +
@@ -11061,7 +11406,7 @@ VIEWS.mWrite = function (d) {
       $("snd").onclick = function () { send(); };
       return;
     }
-    countdown(rest, rest <= EXTRA_S ? "LAST LOOK" : "STILL RUNNING", rest);
+    countdown(rest, rest <= extraSecs() ? "LAST LOOK" : "STILL RUNNING", rest);
   }
 
   /* ───── ho finito, non aspetto la rilettura ─────
@@ -11073,7 +11418,7 @@ VIEWS.mWrite = function (d) {
     box.innerHTML = '<button class="btn done2" id="dnow" type="button">' +
       (ph === "att" ? "I have finished &mdash; go to the defence"
                     : "I have finished &mdash; end the match") + " &rsaquo;</button>" +
-      '<p class="donen">The reading stops here and your last ' + EXTRA_S +
+      '<p class="donen">The reading stops here and your last ' + extraSecs() +
       " seconds start.</p>";
     $("dnow").onclick = function () {
       try { $("au").pause(); } catch (e) {}
@@ -11087,7 +11432,8 @@ VIEWS.mWrite = function (d) {
   /* ───── i quindici secondi in piu' ───── */
   function extraTime() {
     if ($("donebox")) $("donebox").innerHTML = "";
-    countdown(EXTRA_S, "LAST LOOK", EXTRA_S);
+    var x = extraSecs();
+    countdown(x, "LAST LOOK", x);
   }
 
   function countdown(secs, label, span) {
@@ -11105,7 +11451,7 @@ VIEWS.mWrite = function (d) {
       $("xnum").textContent = rest >= 60
         ? Math.floor(rest / 60) + ":" + ("0" + Math.floor(rest % 60)).slice(-2)
         : Math.ceil(rest) + "s";
-      if (rest <= EXTRA_S) $("xlab").textContent = "LAST LOOK";
+      if (rest <= extraSecs()) $("xlab").textContent = "LAST LOOK";
       if (rest <= 5) $("xtime").firstChild.classList.add("hot");
       if (rest <= 0) { clearInterval(tick); send(); }
     }, 100);
@@ -11177,6 +11523,11 @@ VIEWS.mEnd2 = function () {
                                              : { events:[], slots:[], off:[] };
   if (DSC.off.length && typeof suspAdd === "function") {
     DSC.off.forEach(function (o) { suspAdd(ME.next.md + 1, o.no, "red"); });
+  }
+  /* chiusa la difesa la partita e' finita: si vede se qualcuno si e' fatto male */
+  var INJ = null;
+  if (ph === "def" && typeof injPick === "function") {
+    setTimeout(function () { injPick(ME.next.md); }, 0);
   }
   recordHalf({ md:ME.next.md, ph:ph, clim:c.label, climId:c.id, max:r.max, open:r.open,
     right:r.right, total:r.total, yellow:r.yellow, red:r.red, fouls:r.fouls,
@@ -11678,23 +12029,38 @@ var SESSIONS = [
 
 var BUILDS = [
   { id:"seats", g:"stand",  name:"Seats for the terraces", cost:40,  cap:5000,  star:0,
-    note:"Two thousand standing becomes five thousand sitting." },
+    note:"Two thousand standing becomes five thousand sitting.",
+    gain:"Gate money goes from £4k to £10k at every match." },
   { id:"shop",  g:"club",   name:"The club shop",          cost:30,  gate:3,    star:0,
-    note:"Scarves and shirts on a match day. Three thousand more at every gate." },
+    note:"Scarves and shirts on a match day.",
+    gain:"+£3k at every match, for ever." },
   { id:"light", g:"stand",  name:"Floodlights",            cost:50,  star:0,
-    note:"Four pylons. You can play in the evening, and it looks like a real ground." },
+    note:"Four pylons, and the evening becomes playable.",
+    gain:"Nothing in the match: your ground looks like a real one." },
   { id:"roof",  g:"stand",  name:"A roof over the main stand", cost:60, star:1,
-    note:"Nobody goes home wet. It does nothing to the match — it only looks right." },
+    note:"Nobody goes home wet.",
+    gain:"Nothing in the match. One star for the collection." },
   { id:"pitch", g:"club",   name:"A new pitch",            cost:70,  star:1,
-    note:"Flat, green, properly cut." },
+    note:"Flat, green, properly cut.",
+    gain:"Nothing in the match. One star for the collection." },
   { id:"tier",  g:"stand",  name:"A second tier",          cost:120, cap:12000, star:1,
-    note:"Twelve thousand. From up there you see the whole pitch." },
+    note:"Twelve thousand seats. From up there you see the whole pitch.",
+    gain:"Gate money goes to £24k at every match." },
   { id:"crest", g:"club",   name:"Crest and kit",          cost:25,  star:0,
-    note:"Your badge, your colours, your motto under the name." },
+    note:"Your badge, your colours, your motto under the name.",
+    gain:"Nothing in the match: the club starts to look like yours." },
   { id:"coach", g:"staff",  name:"A language coach",       cost:45,  star:1,
-    note:"Every week she tells you which mistake to work on first." },
+    note:"She reads your dictations and picks the mistake that comes back most.",
+    gain:"+£2k every time you finish the Rondo." },
   { id:"analy", g:"staff",  name:"An analyst",             cost:55,  star:1,
-    note:"The errors of your last match, in front of you before the next one." }
+    note:"The errors of your last match, in front of you before the next one.",
+    gain:"Five more seconds of last look: 20 instead of 15." },
+  { id:"physio", g:"staff", name:"A physio",              cost:40,  star:1,
+    note:"Ice, tape and a massage table. Somebody always pulls something.",
+    gain:"Your injured player is fit for the next match instead of missing it." },
+  { id:"var",   g:"staff",  name:"VAR",                     cost:50,  star:1,
+    note:"A screen on the touchline and somebody watching it again.",
+    gain:"One yellow and one red cancelled in every match. The word stays wrong and the quality does not change — only the card goes." }
 ];
 var GROUP_NAME = { stand:"The stand", club:"The club", staff:"The staff" };
 
@@ -11899,7 +12265,7 @@ function fmtCap(n) { return n >= 1000 ? (n / 1000) + ",000" : String(n); }
 /* ───────── la schermata ───────── */
 var GTAB = "squad";
 var GTABS = [{ id:"squad", n:"My squad" }, { id:"stand", n:"The stadium" },
-             { id:"club",  n:"The club" }];
+             { id:"club",  n:"The club" }, { id:"staff", n:"The staff" }];
 VIEWS.ground = function (d) {
   loadGround(); loadLevel();
   paintClub(ME.club);
@@ -11930,17 +12296,23 @@ VIEWS.ground = function (d) {
             "that is the whole point of a calendar.") + "</p>" +
         '<div id="sessbox"></div>'
       : (GTAB === "stand" ? '<div class="stadbig">' + stadiumSvg(false) + "</div>" : "") +
-        '<h2 class="sec top">' + (GTAB === "stand" ? "The stand" : "The club") + "</h2>" +
+        '<h2 class="sec top">' + (GTAB === "stand" ? "The stand"
+          : GTAB === "staff" ? "The staff" : "The club") + "</h2>" +
         '<p class="lede sm2">' + (GTAB === "stand"
-          ? "Nothing here makes you win a match. It makes the place yours, and it makes " +
-            "the gate bigger — more seats, more people, more money next time."
-          : "The shop, the pitch, your own badge, and the two people who read your " +
-            "mistakes before you do. None of them kicks a ball.") + "</p>" +
+          ? "Seats do not win matches: they fill the till. Every thousand seats is " +
+            "money at every gate, and that money buys everything else."
+          : GTAB === "staff"
+            ? "Four people on the bench, and each one changes something you can feel: " +
+              "the time you get to read, what the Rondo pays, who is fit on Saturday, " +
+              "and the card that gets cancelled."
+            : "The shop, the pitch and your own badge. None of them kicks a ball — " +
+              "the shop, though, pays at every match.") + "</p>" +
         '<div id="yard"></div>') +
 
     '<button class="btn ghost" id="gbk">Back to my squad</button></div>');
 
-  if (sq) drawSessions(); else drawYard(GTAB === "stand" ? ["stand"] : ["club", "staff"]);
+  if (sq) drawSessions();
+  else drawYard(GTAB === "stand" ? ["stand"] : GTAB === "staff" ? ["staff"] : ["club"]);
   Array.prototype.forEach.call($("main").querySelectorAll(".gtab"), function (b) {
     b.onclick = function () { GTAB = b.dataset.t; swap("ground"); };
   });
@@ -11986,7 +12358,8 @@ function drawYard(groups) {
         return '<div class="bld' + (have ? " have" : able ? " able" : "") + '">' +
           '<span class="bmid"><b>' + esc(b.name) +
           (b.star ? ' <i class="st2">&#9733;</i>' : "") + "</b>" +
-          "<span>" + esc(b.note) + "</span></span>" +
+          "<span>" + esc(b.note) + "</span>" +
+          (b.gain ? '<em class="bgain">' + esc(b.gain) + "</em>" : "") + "</span>" +
           (have
             ? '<span class="bdone">BUILT</span>'
             : '<button class="bbuy" data-b="' + b.id + '" type="button"' +
@@ -12279,7 +12652,9 @@ function tlPlayHtml() {
 }
 function tlWirePlayer(lines, onStart, onEnd) {
   var a = $("au"), pp = $("aupp"), st = $("aust"), fill = $("aubar").firstChild;
-  var i = 0, going = false, GAP = 4200, tm = $("autm");
+  /* otto secondi fra una frase e l'altra: con quattro non si faceva in
+     tempo a scrivere */
+  var i = 0, going = false, GAP = 8200, tm = $("autm");
   pp.onclick = function () {
     if (going) return;
     going = true; pp.disabled = true;
@@ -12666,7 +13041,8 @@ VIEWS.tlWrite = function (d) {
 
   html('<div class="pad">' +
     '<p class="lede">Six sentences, one after the other, with time to write between ' +
-    "them. When the voice ends you get <b>" + EXTRA_S + " seconds</b>.</p>" +
+    "them &mdash; eight seconds each time. When the voice ends you get <b>" +
+    EXTRA_S + " seconds</b>.</p>" +
     tlPlayHtml() +
     '<div id="donebox"></div><div id="xtime"></div>' +
     '<textarea id="dw" rows="10" autocomplete="off" autocapitalize="off" ' +
@@ -13499,17 +13875,21 @@ VIEWS.pslot = function (d) {
     '<div class="plist">' + pool.map(function (p) {
       var mine = cur === p.no, used = placedCount(p.no), max = maxFor(p.no);
       var ban = (typeof suspIs === "function") ? suspIs(p.no) : null;
-      var room = mine || (used < max && !ban);
+      var hurt = !ban && (typeof injIs === "function") ? injIs(p.no) : null;
+      var room = mine || (used < max && !ban && !hurt);
       var rk = roleOf(p.no);
       var why = ban
         ? (ban.why === "red" ? "suspended · sent off last matchday"
                              : "suspended · two yellows")
+        : hurt
+        ? "injured · he ran " + hurt.moments + " moments last matchday"
         : rk
         ? ROLE_NAME[rk].toLowerCase() + " · " + used + " of " + max + " moments used"
         : used ? "already played moment " + whereIs(p.no)
         : p.bought ? "signed in the market"
         : p.named ? "in the squad" : "no name yet";
-      return '<button class="prow' + (room ? "" : " used") + (ban ? " ban" : "") +
+      return '<button class="prow' + (room ? "" : " used") +
+        (ban || hurt ? " ban" : "") +
         (mine ? " cur" : "") +
         '" data-no="' + p.no + '"' + (room ? "" : " disabled") + ' type="button">' +
         (p.wall
