@@ -2159,6 +2159,13 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .nxc.lockc .nxgo{margin-top:14px;background:rgba(226,251,206,.08);color:var(--gold);
   border:1px solid var(--edge)}
 .lad2{margin-top:4px}
+/* la carta della partita senza il prato dietro: il testo torna chiaro */
+.nxc.plain{background:rgba(226,251,206,.05);border:1px solid var(--edge);
+  color:var(--cream);box-shadow:none}
+.nxc.plain .nxk{color:var(--gold)}
+.nxc.plain .nxteam b{color:#FFFDEE}
+.nxc.plain .nxteam em,.nxc.plain .nxvs{color:var(--fog)}
+.nxc.plain .nxbadge{color:#F2E6C8}
 </style>
 </head>
 <body>
@@ -2733,7 +2740,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "55";
+var APPVER = "56";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -12095,7 +12102,7 @@ function tlGameCard(g) {
       (id === TL.club ? '<em>' + (id === home ? "AT HOME" : "AWAY") + "</em>" : "") +
       "</span>";
   }
-  return '<div class="nxc"><div class="nxin"><div class="nxhead solo">' +
+  return '<div class="nxc plain"><div class="nxin"><div class="nxhead solo">' +
     '<span class="nxk">TRAINING &middot; MATCHDAY ' + TL.md + "</span>" +
     side(home) + '<span class="nxvs">versus</span>' + side(away) +
     "</div></div></div>";
