@@ -2085,6 +2085,56 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   padding:9px 13px;background:rgba(227,239,38,.1);border-bottom:1px solid var(--edge)}
 .ftbreak b{font:800 10px/1 var(--brand);letter-spacing:.18em;color:var(--gold)}
 .ftbreak em{font:800 13px/1 var(--brand);font-style:normal;color:#FFFDEE}
+
+/* ═════════ modulo e strategia ═════════ */
+.picks{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px}
+.picks.tall{grid-template-columns:1fr}
+.pk{padding:12px 13px;border-radius:14px;border:1px solid var(--edge);
+  background:rgba(226,251,206,.05);color:var(--cream);text-align:left;cursor:pointer;
+  font-family:inherit}
+.pk b{display:block;font:800 16px/1 var(--brand);color:#FFFDEE}
+.pk em{display:block;margin-top:5px;font-size:11px;font-weight:600;font-style:normal;
+  line-height:1.35;color:var(--fog)}
+.pk.on{border-color:var(--gold);background:rgba(227,239,38,.12)}
+.pk.on b{color:var(--gold)}
+.wxbig i.shf{display:block;margin-top:4px;font:800 9.5px/1 var(--brand);
+  letter-spacing:.1em;font-style:normal;color:var(--gold)}
+
+/* ═════════ il campionato di allenamento ═════════ */
+.tlcard{display:flex;align-items:center;gap:13px;width:100%;padding:14px 15px;
+  border-radius:16px;border:1px dashed var(--edge);background:rgba(226,251,206,.04);
+  color:var(--cream);text-align:left;font-family:inherit;cursor:pointer}
+.tlic{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;
+  background:rgba(227,239,38,.14);color:var(--gold)}
+.tlic svg{width:22px;height:22px}
+.tlt{flex:1;min-width:0}
+.tlt b{display:block;font-size:14px;font-weight:800;color:#FFFDEE}
+.tlt span{display:block;margin-top:3px;font-size:11.5px;font-weight:600;color:var(--fog)}
+.tlcard i{flex:none;font-style:normal;font-size:17px;color:#6FA38D}
+.tlh{padding:11px 13px;border-radius:14px;border:1px dashed var(--edge);
+  background:rgba(226,251,206,.04);margin-bottom:4px}
+.tlh span{display:block;font:800 9px/1 var(--brand);letter-spacing:.16em;color:var(--gold)}
+.tlh b{display:block;margin-top:6px;font-size:11.5px;font-weight:600;line-height:1.45;
+  color:var(--fog)}
+.tlclub{display:flex;align-items:center;gap:12px;margin-top:10px;padding:12px 14px;
+  border-radius:15px;border:1px solid var(--edge);background:rgba(226,251,206,.05)}
+.tlclub img{width:40px;height:40px;object-fit:contain}
+.tlclub i{display:block;font:800 8.5px/1 var(--brand);letter-spacing:.14em;
+  font-style:normal;color:#6FA38D}
+.tlclub b{display:block;margin-top:4px;font-size:15px;font-weight:800;color:#FFFDEE}
+.botmark{margin-left:6px;padding:2px 5px;border-radius:4px;background:rgba(226,251,206,.12);
+  font:800 8px/1.4 var(--brand);letter-spacing:.1em;font-style:normal;color:#A8D4BE}
+.tlres{padding:2px 0}
+.tlr{display:flex;align-items:center;gap:9px;padding:9px 13px;
+  border-bottom:1px solid var(--edge);font-size:12px}
+.tlr:last-child{border-bottom:0}
+.tlr span{flex:none;width:38px;font:800 9px/1 var(--brand);letter-spacing:.1em;
+  color:#6FA38D}
+.tlr b{flex:1;min-width:0;font-weight:700;color:#D7F2C6;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.tlr b:last-of-type{text-align:right}
+.tlr i{flex:none;font-style:normal;font:800 13px/1 var(--brand);color:var(--gold)}
+.tlmiss{display:flex;flex-wrap:wrap;gap:7px;padding:13px}
 </style>
 </head>
 <body>
@@ -2670,7 +2720,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "51";
+var APPVER = "52";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -5518,6 +5568,28 @@ function landSaid() {
       "<span>&mdash; YOU, TO THE REPORTERS</span></div>";
 }
 
+/* ───────── il campionato di allenamento ───────── */
+function landTrain() {
+  var box = $("ldtrain");
+  if (!box) return;
+  var t = (typeof tlLoad === "function") ? tlLoad() : null;
+  var sub = t
+    ? (t.md > t.fix.length
+        ? "the league is over &middot; tap to see it"
+        : "matchday " + t.md + " of " + t.fix.length + " &middot; " +
+          (t.teams.length - 1) + " bots")
+    : "a league of your own against the computer";
+  box.innerHTML = '<button class="tlcard" id="ldtrgo" type="button">' +
+    '<span class="tlic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<circle cx="12" cy="12" r="9"/><path d="m12 6 4 2.9-1.5 4.7h-5L8 8.9z"/>' +
+    '<path d="M12 6V3M16 8.9l2.8-1M14.5 13.6l1.8 2.4M9.5 13.6l-1.8 2.4M8 8.9 5.2 7.9"/>' +
+    "</svg></span>" +
+    '<span class="tlt"><b>Training league</b><span>' + sub + "</span></span>" +
+    '<i aria-hidden="true">&rsaquo;</i></button>';
+  $("ldtrgo").onclick = function () { go("train"); };
+}
+
 /* ───────── le sei porte ───────── */
 var LDOORS = [
   { go:"words", lab:"My words",
@@ -5570,6 +5642,7 @@ VIEWS.land = function () {
        '<div id="ldhead"></div>' +
        '<div id="ldcomps"></div>' +
        '<div class="pad" id="ldword"></div>' +
+       '<div class="pad" id="ldtrain"></div>' +
        '<div class="pad" id="ldnum"></div>' +
        '<div class="pad" id="ldsaid"></div>' +
        '<div class="pad" id="ldstat"></div>' +
@@ -5580,6 +5653,7 @@ VIEWS.land = function () {
   landHead();
   landComps();
   $("ldword").innerHTML = wotdCard();
+  landTrain();
   landNumbers();
   landSaid();
   $("ldstat").innerHTML = '<button class="ldstat" id="ldall" type="button">' +
@@ -5589,7 +5663,8 @@ VIEWS.land = function () {
   $("ldall").onclick = function () { go("me"); };
   landDoors();
   drawOut();
-  popIn(["ldhead", "ldcomps", "ldword", "ldnum", "ldsaid", "ldstat", "lddoors"]);
+  popIn(["ldhead", "ldcomps", "ldword", "ldtrain", "ldnum", "ldsaid", "ldstat",
+         "lddoors"]);
 
   /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
   if (!ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
@@ -9039,12 +9114,27 @@ function ftRole(w) {
 }
 
 /* ───────── tutte le azioni, in ordine di minuto ───────── */
-function ftEvents(md, s, them) {
-  var ev = [], myC = crestOf(ME.club.id), thC = crestOf(s.opp);
-  var myI = initials(ME.club.name), thI = initials(them), gk = ftKeeper();
+function ftEvents(md, s, them, o) {
+  o = o || {};
+  var myName = o.myName || (ME.club ? ME.club.name : ""), ev = [];
+  var myC = o.myCrest !== undefined ? o.myCrest : crestOf(ME.club.id);
+  var thC = o.thCrest !== undefined ? o.thCrest : crestOf(s.opp);
+  var myI = initials(myName), thI = initials(them);
+  var gk = o.keeper || ftKeeper();
+  var who = o.who || function (ph, n) { return ftWho(md, ph, n); };
+  var wname = o.wonderName ||
+    ((SHEET && SHEET.call && SHEET.call.att && SHEET.call.att.wonder != null &&
+      typeof playerNo === "function" && playerNo(SHEET.call.att.wonder))
+       ? pName(playerNo(SHEET.call.att.wonder)) : "");
+  var wrole = "";
+  if (!o.wonderName && SHEET && SHEET.call && SHEET.call.att &&
+      SHEET.call.att.wonder != null && typeof playerNo === "function") {
+    var wp0 = playerNo(SHEET.call.att.wonder);
+    if (wp0) wrole = ftRole({ role:wp0.role, tag:wp0.tag });
+  }
 
   s.mine.duels.forEach(function (d) {
-    var w = ftWho(md, "att", d.n);
+    var w = who("att", d.n);
     ev.push({ min:(s.mine.mins || [])[d.n - 1] || null, crest:myC, ini:myI,
       name:w ? w.name : "Nobody on this action", role:ftRole(w),
       note:"moment " + d.n + " &middot; " + fmt(d.shot) +
@@ -9053,16 +9143,13 @@ function ftEvents(md, s, them) {
   });
 
   if (s.mine.sources.bdo) {
-    var wp = (SHEET && SHEET.call && SHEET.call.att.wonder != null &&
-              typeof playerNo === "function") ? playerNo(SHEET.call.att.wonder) : null;
     ev.push({ min:s.mine.bdoMin || null, crest:myC, ini:myI,
-      name:wp ? pName(wp) : ME.club.name,
-      role:wp ? ftRole({ role:wp.role, tag:wp.tag }) : "",
+      name:wname || myName, role:wrole,
       note:"the hard word, written perfectly", tag:"WONDER", cls:"in wnd" });
   }
   if (s.mine.penalty.conceded) {
     ev.push({ min:s.mine.penMin || null, crest:myC, ini:myI,
-      name:"Penalty for " + ME.club.name, role:"",
+      name:"Penalty for " + myName, role:"",
       note:esc(them) + " conceded it",
       tag:s.mine.penalty.outcome === "goal" ? "GOAL" : "SAVED",
       cls:s.mine.penalty.outcome === "goal" ? "in" : "" });
@@ -9096,8 +9183,9 @@ function ftEvents(md, s, them) {
   }
 
   /* i cartellini: il minuto non lo sappiamo, quindi stanno in fondo */
-  loadForm();
-  halvesOf(md).forEach(function (h) {
+  var hs = o.cards;
+  if (!hs) { loadForm(); hs = halvesOf(md); }
+  hs.forEach(function (h) {
     if (h.yellow) {
       ev.push({ min:null, late:true, crest:myC, ini:myI, card:"y",
         name:h.yellow + (h.yellow === 1 ? " yellow card" : " yellow cards"),
@@ -9142,10 +9230,24 @@ var FTRUN = { t:null };
 VIEWS.ftRun = function () {
   var md = ME.next ? ME.next.md : 0, st = liveGet(md) || {}, s = st.score;
   if (!s) return back();
-  var them = oppName(s.opp), ev = ftEvents(md, s, them);
-  var myC = crestOf(ME.club.id), thC = crestOf(s.opp);
-  paintClub(ME.club);
-  barFlow("Live", ME.club.name + " v " + them, 0, false);
+  var them = oppName(s.opp);
+  ftRunPage({
+    s:s, them:them, myName:ME.club.name,
+    myCrest:crestOf(ME.club.id), thCrest:crestOf(s.opp),
+    ev:ftEvents(md, s, them),
+    title:ME.club.name + " v " + them,
+    done:function () { st.shown = true; liveSave(md, st); },
+    see:function () { swap("live"); }
+  });
+};
+
+/* la stessa pagina serve al campionato di allenamento: le cose che
+   cambiano arrivano da fuori */
+function ftRunPage(cfg) {
+  var s = cfg.s, them = cfg.them, ev = cfg.ev || [];
+  var myC = cfg.myCrest, thC = cfg.thCrest, myName = cfg.myName;
+  paintClub(ME.club || { colour:"#0E3B2C" });
+  barFlow("Live", cfg.title || (myName + " v " + them), 0, false);
 
   html('<div class="pad">' +
     '<div class="rnb">' +
@@ -9153,19 +9255,17 @@ VIEWS.ftRun = function () {
       '<em id="rph">KICK OFF</em></span>' +
       '<div class="rnsc">' +
         '<span class="rnsd">' + (myC ? '<img src="' + myC + '" alt="">'
-          : "<i>" + esc(initials(ME.club.name)) + "</i>") +
-          "<b>" + esc(ME.club.name) + "</b></span>" +
+          : "<i>" + esc(initials(myName)) + "</i>") +
+          "<b>" + esc(myName) + "</b></span>" +
         '<span class="rnn"><b id="rA">0</b><i>&ndash;</i><b id="rB">0</b></span>' +
         '<span class="rnsd">' + (thC ? '<img src="' + thC + '" alt="">'
-          : "<i>" + esc(thI(them)) + "</i>") +
+          : "<i>" + esc(initials(them)) + "</i>") +
           "<b>" + esc(them) + "</b></span>" +
       "</div>" +
       '<div class="rnbar"><i id="rbar"></i></div>' +
     "</div>" +
     '<div class="ftl run" id="tl"></div>' +
     '<button class="btn ghost" id="rskip">Skip to the result</button></div>');
-
-  function thI(n) { return initials(n); }
 
   var t0 = Date.now(), DUR = 20000, i = 0, half = false, A = 0, B = 0;
   var tl = $("tl");
@@ -9233,25 +9333,24 @@ VIEWS.ftRun = function () {
       put(ftRowHtml(e));
       i++;
     }
-    if (p >= 1) { clearInterval(FTRUN.t); FTRUN.t = null; done(); }
+    if (p >= 1) { clearInterval(FTRUN.t); FTRUN.t = null; over(); }
   }
-  function done() {
+  function over() {
     $("rph").textContent = "FULL TIME";
     mark("FULL TIME", A + " &ndash; " + B);
-    st.shown = true; liveSave(md, st);
+    cfg.done && cfg.done();
     $("rskip").className = "btn";
-    $("rskip").textContent = "See the whole match ›";
-    $("rskip").onclick = function () { swap("live"); };
+    $("rskip").textContent = "See the whole match \u203a";
+    $("rskip").onclick = function () { cfg.see(); };
   }
   $("rskip").onclick = function () {
     if (FTRUN.t) { clearInterval(FTRUN.t); FTRUN.t = null; }
-    st.shown = true; liveSave(md, st);
-    swap("live");
+    cfg.done && cfg.done();
+    cfg.see();
   };
-  /* primo tempo: si parte dal fischio d'inizio */
   mark("FIRST HALF", "the match is under way");
   FTRUN.t = setInterval(tick, 80);
-};
+}
 
 /* ═══════════════ IL TABELLINO FERMO ═══════════════ */
 VIEWS.live = function () {
@@ -10201,9 +10300,11 @@ function tokenise(text) {
   });
   return out;
 }
-/* gli elementi del dettato della giornata, con la parola decisiva segnata */
-function elementsOf(ph) {
-  var d = MATCHDICT[ph], want = (ph === "att" ? d.bdo : d.pen) || "";
+/* gli elementi del dettato della giornata, con la parola decisiva segnata.
+   Il dettato si puo' passare da fuori: il campionato di allenamento ne
+   usa uno costruito con le frasi del riscaldamento. */
+function elementsOf(ph, dct) {
+  var d = dct || MATCHDICT[ph], want = (ph === "att" ? d.bdo : d.pen) || "";
   var els = tokenise(d.x), hit = false;
   els.forEach(function (e) {
     if (!hit && e.t === "mot" && e.w.toLowerCase() === want.toLowerCase()) {
@@ -10265,16 +10366,20 @@ function alignWords(ref, got) {
 }
 
 /* ───────── la correzione, con le regole del campionato ───────── */
-function correctHalf(ph, written) {
-  var els = elementsOf(ph);
+function correctHalf(ph, written, opt) {
+  opt = opt || {};
+  var els = elementsOf(ph, opt.dict);
   var pairs = alignWords(els, tokenise(written));
   var answers = pairs.map(function (p) {
     return { written:p.g, extra:p.extra || "",
              errors: p.g === "" ? -1 : errCount(p.e.w, p.g) };
   });
-  var c = climateOf(phaseClim(ph));
+  var c = opt.clim || climateOf(phaseClim(ph));
+  /* quanti momenti apre questa fase: il cielo, piu' o meno quello che ha
+     deciso la strategia */
+  var cap = opt.cap || (typeof phaseCap === "function" ? phaseCap(ph) : c.actions);
   var tot = els.reduce(function (s, e) { return s + (e.t === "ponct" ? 50 : 100); }, 0);
-  var step = Math.floor(tot / c.actions);
+  var step = Math.floor(tot / cap);
   var run = 0, yellow = 0, red = 0, fouls = 0, shots = [], done = 0;
 
   els.forEach(function (e, k) {
@@ -10285,7 +10390,7 @@ function correctHalf(ph, written) {
     else if (err === -1 || err >= 3) red++;
     else if (err === 2) yellow++;
     else if (err === 1) fouls++;
-    var matured = step > 0 ? Math.min(c.actions, Math.floor(run / step)) : 0;
+    var matured = step > 0 ? Math.min(cap, Math.floor(run / step)) : 0;
     while (matured > done) {
       done++;
       shots.push({ n:done, quality:(e.t === "ponct" ? 100 : v), at:k });
@@ -10296,7 +10401,7 @@ function correctHalf(ph, written) {
   els.forEach(function (e, k) { if (e.special) hi = k; });
   var hardOk = hi >= 0 && answers[hi].errors === 0;
 
-  return { els:els, answers:answers, clim:c, open:done, max:c.actions,
+  return { els:els, answers:answers, clim:c, open:done, max:cap,
            run:run, step:step, total:els.length,
            right:answers.filter(function (a, k) {
              return a.errors === 0 && !a.extra; }).length,
@@ -10836,6 +10941,41 @@ function wireRow(id, pick) {
   });
 }
 
+/* ───────── modulo e strategia ─────────
+   Il modulo e' la forma della squadra: si vede nel tabellino e nel
+   referto, e non tocca i numeri. La strategia invece pesa: un momento
+   in piu' da una parte e' un momento in meno dall'altra. */
+var SHAPES = [
+  { id:"442", t:"4-4-2", s:"two up front, a flat four behind" },
+  { id:"433", t:"4-3-3", s:"three forwards, width on both wings" },
+  { id:"352", t:"3-5-2", s:"the game runs through the middle" },
+  { id:"532", t:"5-3-2", s:"five at the back, nothing gets through" }
+];
+var PLANS = [
+  { id:"off", t:"Offensive", s:"+1 moment in attack, &minus;1 in defence" },
+  { id:"nat", t:"Balanced",  s:"the weather decides, nothing moves" },
+  { id:"def", t:"Defensive", s:"+1 moment in defence, &minus;1 in attack" }
+];
+function planOf() {
+  loadSheet();
+  return (SHEET.call && SHEET.call.plan) || "nat";
+}
+function shapeOf() {
+  loadSheet();
+  return (SHEET.call && SHEET.call.shape) || "442";
+}
+function planShift(ph) {
+  var p = planOf();
+  if (p === "off") return ph === "att" ? 1 : -1;
+  if (p === "def") return ph === "att" ? -1 : 1;
+  return 0;
+}
+/* quanti momenti apre davvero questa fase */
+function phaseCap(ph) {
+  var c = climateOf(phaseClim(ph));
+  return Math.max(1, c.actions + planShift(ph));
+}
+
 VIEWS.mCall = function (d) {
   var ph = d.ph;
   /* si arriva qui anche da una ripresa: il blocco delle chiamate deve
@@ -10872,7 +11012,20 @@ VIEWS.mCall = function (d) {
       "perfectly, this is the name that goes on the scoresheet.</p>" +
       shirtRow("pwn", C.wonder) +
 
-      '<h2 class="sec top">4 &middot; Which way does your keeper dive?</h2>' +
+      '<h2 class="sec top">4 &middot; Your shape</h2>' +
+      '<p class="lede sm2">How the eleven stand. It goes on the scoresheet and in ' +
+      "your report; it does not move the numbers.</p>" +
+      '<div class="picks" id="shapes"></div>' +
+
+      '<h2 class="sec top">5 &middot; Your plan</h2>' +
+      '<p class="lede sm2">This one weighs: a moment more on one side is a moment ' +
+      "less on the other. The weather says " +
+      climateOf(phaseClim("att")).actions + " in attack and " +
+      climateOf(phaseClim("def")).actions + " in defence.</p>" +
+      '<div class="picks tall" id="plans"></div>' +
+      '<div id="xmoment"></div>' +
+
+      '<h2 class="sec top">6 &middot; Which way does your keeper dive?</h2>' +
       '<p class="lede sm2">For the penalty <b>against you</b>, later in the defence. ' +
       "You call it now, before you have heard anything. " +
       esc(SHEET.roles.gk === WALL_NO ? "The Wall"
@@ -10882,6 +11035,13 @@ VIEWS.mCall = function (d) {
 
       '<div id="callfoot"></div></div>');
 
+    drawPicks("shapes", SHAPES, shapeOf(), function (id) {
+      SHEET.call.shape = id; saveSheet(); swap("mCall", d);
+    });
+    drawPicks("plans", PLANS, planOf(), function (id) {
+      SHEET.call.plan = id; saveSheet(); swap("mCall", d);
+    });
+    drawExtra();
     drawSides("sides", C.side, function (s) { C.side = s; saveSheet(); refresh(); });
     wireRow("ptk", function (no) { C.taker = no; saveSheet(); refresh(); });
     wireRow("pwn", function (no) { C.wonder = no; saveSheet(); refresh(); });
@@ -10905,6 +11065,29 @@ VIEWS.mCall = function (d) {
   }
   refresh();
 
+  /* il momento in piu' che apre la strategia offensiva vuole un nome:
+     lo slot sta in fondo al foglio d'attacco, come gli altri */
+  function drawExtra() {
+    var box = $("xmoment");
+    if (!box) return;
+    var base = climateOf(phaseClim("att")).actions, cap = phaseCap("att"), k;
+    for (k = cap + 1; k <= base + 2; k++) {
+      if (SHEET.att[k] != null) { SHEET.att[k] = null; saveSheet(); }
+    }
+    if (planOf() !== "off") {
+      box.innerHTML = planOf() === "def"
+        ? '<p class="lede sm2">The extra save is your keeper&rsquo;s: nothing to ' +
+          "choose.</p>"
+        : "";
+      return;
+    }
+    box.innerHTML = '<h2 class="sec top">Who takes the extra moment?</h2>' +
+      '<p class="lede sm2">Your plan opens moment number ' + cap +
+      " in attack. One more name.</p>" +
+      shirtRow("pxt", SHEET.att[cap] != null ? SHEET.att[cap] : null);
+    wireRow("pxt", function (no) { SHEET.att[cap] = no; saveSheet(); swap("mCall", d); });
+  }
+
   function refresh() {
     var D = SHEET.call.def;
     var ok = ph === "att"
@@ -10921,8 +11104,9 @@ VIEWS.mCall = function (d) {
     $("callfoot").innerHTML =
       (ok
         ? '<div class="callsum">' + (ph === "att"
-            ? "<b>Penalty " + sideName(C.side) + " &middot; keeper dives " +
-              sideName(SHEET.call.def.dive) + "</b>" +
+            ? "<b>" + shapeName() + " &middot; " + planName() + "</b>" +
+              "Penalty " + sideName(C.side) + ", keeper dives " +
+              sideName(SHEET.call.def.dive) + " &middot; " +
               esc(pName(playerNo(C.taker))) + " takes it &middot; " +
               esc(pName(playerNo(C.wonder))) + " signs the wonder goal"
             : "<b>Diving " + sideName(C.dive) + "</b>" +
@@ -10934,6 +11118,27 @@ VIEWS.mCall = function (d) {
     if (ok) $("cgo").onclick = function () { saveSheet(); swap("mWrite", { ph:ph }); };
   }
 };
+
+function shapeName() {
+  var x = SHAPES.filter(function (y) { return y.id === shapeOf(); })[0];
+  return x ? x.t : "4-4-2";
+}
+function planName() {
+  var x = PLANS.filter(function (y) { return y.id === planOf(); })[0];
+  return x ? x.t : "Balanced";
+}
+/* una fila di scelte grandi: modulo, strategia */
+function drawPicks(id, list, chosen, pick) {
+  var box = $(id);
+  if (!box) return;
+  box.innerHTML = list.map(function (x) {
+    return '<button class="pk' + (x.id === chosen ? " on" : "") + '" data-i="' +
+      esc(x.id) + '" type="button"><b>' + x.t + "</b><em>" + x.s + "</em></button>";
+  }).join("");
+  Array.prototype.forEach.call(box.querySelectorAll(".pk"), function (b) {
+    b.onclick = function () { pick(b.dataset.i); };
+  });
+}
 
 function drawSides(id, chosen, pick) {
   $(id).innerHTML = ["L", "R"].map(function (s) {
@@ -11493,6 +11698,666 @@ VIEWS.gsGrow = function () {
 function squadOf(no) {
   return (ME.squad || []).filter(function (p) { return p.no === no; })[0] || null;
 }
+
+
+/* ───── 53-train.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   IL CAMPIONATO DI ALLENAMENTO
+
+   Un campionato tutto suo, contro il computer, che vive solo su questo
+   telefono: niente cassetto, niente referto al professore, niente soldi
+   nella cassa del club vero e niente badge. Serve per allenarsi, e per
+   far provare il gioco a chi arriva a metà anno.
+
+   Il motore e' lo stesso delle partite vere — tiro contro parata,
+   qualita' per qualita' — e i dettati sono le frasi registrate del
+   riscaldamento, rimesse in fila: la voce e' sempre quella del
+   professore, e le combinazioni sono tante.
+
+   Quello che si impara resta: le parole sbagliate finiscono nella
+   lista come dopo una partita di campionato.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var TKEY = "footefl-train";
+var TL = null;
+
+function tlLoad() {
+  try { TL = JSON.parse(localStorage.getItem(TKEY) || "null"); } catch (e) { TL = null; }
+  return TL;
+}
+function tlSave() {
+  try { localStorage.setItem(TKEY, JSON.stringify(TL)); } catch (e) {}
+}
+function tlWipe() {
+  try { localStorage.removeItem(TKEY); } catch (e) {}
+  TL = null;
+}
+
+var TDIFF = [
+  { id:"easy", t:"Easy", s:"they write like beginners", skill:0.42 },
+  { id:"even", t:"Even", s:"about as good as you are", skill:0.68 },
+  { id:"hard", t:"Hard", s:"they hardly ever miss a word", skill:0.88 }
+];
+function tlDiff() {
+  var d = TDIFF.filter(function (x) { return x.id === (TL && TL.diff); })[0];
+  return d || TDIFF[1];
+}
+
+/* ───────── il dettato: sei frasi registrate, rimesse in fila ───────── */
+function tlLines(level) {
+  var out = [];
+  (warmSets(level) || []).forEach(function (s) {
+    (s.lines || []).forEach(function (l) { out.push(l); });
+  });
+  if (!out.length && level !== "A1") return tlLines("A1");
+  return out;
+}
+function tlDict(ph) {
+  var all = tlLines(ME.level || "A1").slice(), take = [];
+  for (var i = 0; i < 6 && all.length; i++) {
+    take.push(all.splice(Math.floor(Math.random() * all.length), 1)[0]);
+  }
+  var text = take.map(function (l) { return l.t.replace(/[.!?]*$/, "") + "."; }).join(" ");
+  /* la parola decisiva e' la piu' lunga: la stessa regola per tutti */
+  var hard = "";
+  text.replace(/[A-Za-z']+/g, function (w) {
+    if (w.length > hard.length) hard = w;
+    return w;
+  });
+  var d = { id:"train", title:"Training dictation", x:text, lines:take };
+  if (ph === "att") d.bdo = hard; else d.pen = hard;
+  return d;
+}
+
+/* il lettore incatenato: una frase dopo l'altra, con il tempo di scrivere */
+function tlPlayHtml() {
+  return '<div class="aud once" id="aubox">' +
+    '<audio id="au" preload="auto"></audio>' +
+    '<button class="apl" id="aupp" type="button">' +
+    '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>' +
+    '<span class="astate" id="aust"><b>Start the dictation</b>' +
+    "<em>Six sentences, one after the other. No going back.</em></span>" +
+    '<div class="abar" id="aubar"><i></i></div>' +
+    '<span class="atime" id="autm">0 / 6</span></div>';
+}
+function tlWirePlayer(lines, onStart, onEnd) {
+  var a = $("au"), pp = $("aupp"), st = $("aust"), fill = $("aubar").firstChild;
+  var i = 0, going = false, GAP = 4200, tm = $("autm");
+  pp.onclick = function () {
+    if (going) return;
+    going = true; pp.disabled = true;
+    onStart && onStart();
+    $("aubox").classList.add("live");
+    st.innerHTML = "<b>Listening</b><em>Write as you hear it.</em>";
+    play();
+  };
+  function play() {
+    tm.textContent = (i + 1) + " / " + lines.length;
+    fill.style.width = ((i / lines.length) * 100).toFixed(1) + "%";
+    a.src = WARMAUD[lines[i].a] || "";
+    var pr = a.play();
+    if (pr && pr["catch"]) pr["catch"](function () { fail(); });
+  }
+  a.onended = function () {
+    i++;
+    fill.style.width = ((i / lines.length) * 100).toFixed(1) + "%";
+    if (i >= lines.length) {
+      $("aubox").classList.remove("live");
+      $("aubox").classList.add("over");
+      st.innerHTML = "<b>The dictation is over</b><em>Last look.</em>";
+      return onEnd && onEnd();
+    }
+    setTimeout(play, GAP);
+  };
+  function fail() {
+    st.innerHTML = "<b>The sound will not play</b><em>You can still write and send.</em>";
+    onEnd && onEnd();
+  }
+  a.onerror = fail;
+}
+
+/* ───────── le squadre e il calendario ───────── */
+function tlClub(id) {
+  return CLUBS.filter(function (c) { return c.id === id; })[0] ||
+         { id:id, name:id, colour:"#16233F" };
+}
+function tlName(id) { return tlClub(id).name; }
+
+/* girone all'italiana, metodo del cerchio: ognuno incontra tutti una volta */
+function tlFixtures(ids) {
+  var t = ids.slice();
+  if (t.length % 2) t.push(null);                 /* chi riposa */
+  var n = t.length, rounds = [], r, i;
+  for (r = 0; r < n - 1; r++) {
+    var day = [];
+    for (i = 0; i < n / 2; i++) {
+      var a = t[i], b = t[n - 1 - i];
+      if (a && b) day.push(r % 2 ? { a:b, b:a } : { a:a, b:b });
+    }
+    rounds.push(day);
+    t.splice(1, 0, t.pop());                      /* ruota, tenendo fermo il primo */
+  }
+  return rounds;
+}
+
+function tlStart(clubId, bots, diff) {
+  var pool = CLUBS.filter(function (c) { return c.id !== clubId; });
+  shuffle(pool, rng(clubId + "|" + Date.now()));
+  var teams = [{ id:clubId, bot:false }];
+  for (var i = 0; i < bots && i < pool.length; i++) {
+    teams.push({ id:pool[i].id, bot:true });
+  }
+  var tab = {};
+  teams.forEach(function (t) { tab[t.id] = { p:0, w:0, d:0, l:0, gf:0, ga:0, form:[] }; });
+  TL = { v:1, club:clubId, diff:diff, md:1, teams:teams, tab:tab,
+         fix:tlFixtures(teams.map(function (t) { return t.id; })),
+         hist:[], cur:null };
+  tlSave();
+}
+
+function tlRows() {
+  var rows = TL.teams.map(function (t) {
+    var r = TL.tab[t.id] || { p:0, w:0, d:0, l:0, gf:0, ga:0, form:[] };
+    return { id:t.id, name:tlName(t.id), bot:t.bot, colour:tlClub(t.id).colour,
+             p:r.p, w:r.w, d:r.d, l:r.l, gf:r.gf, ga:r.ga, form:r.form || [],
+             gd:r.gf - r.ga, pts:r.w * 3 + r.d };
+  });
+  rows.sort(function (a, b) {
+    return b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || (a.name < b.name ? -1 : 1);
+  });
+  return rows.map(function (r, i) { r.pos = i + 1; return r; });
+}
+function tlMyGame(md) {
+  var day = TL.fix[(md - 1) % TL.fix.length] || [];
+  for (var i = 0; i < day.length; i++) {
+    if (day[i].a === TL.club || day[i].b === TL.club) return day[i];
+  }
+  return null;
+}
+function tlAdd(a, b, ga, gb) {
+  var A = TL.tab[a], B = TL.tab[b];
+  if (!A || !B) return;
+  A.p++; B.p++; A.gf += ga; A.ga += gb; B.gf += gb; B.ga += ga;
+  if (ga > gb) { A.w++; B.l++; A.form.push("W"); B.form.push("L"); }
+  else if (ga < gb) { B.w++; A.l++; B.form.push("W"); A.form.push("L"); }
+  else { A.d++; B.d++; A.form.push("D"); B.form.push("D"); }
+}
+
+/* ───────── il bot scrive il suo foglio ─────────
+   Non scrive davvero: produce le qualita' che un alunno di quella forza
+   produrrebbe. Zero, un quarto, mezzo, tre quarti, pieno — la stessa
+   scala del campionato, mai un numero che non esiste. */
+function tlQ(skill) {
+  var r = skill + (Math.random() - 0.5) * 0.5;
+  r = Math.max(0, Math.min(1, r));
+  return Math.round(r * 4) * 25;
+}
+function tlMinutes(n, from, to) {
+  var m = [], i;
+  for (i = 0; i < n; i++) {
+    m.push(Math.round(from + (to - from) * ((i + 1) / (n + 1)) +
+           (Math.random() - 0.5) * 6));
+  }
+  return m.map(function (x) { return Math.max(1, Math.min(90, x)); });
+}
+function tlBotHalf(skill, actions) {
+  var q = [], i;
+  var open = Math.max(1, Math.min(actions, Math.round(actions * (0.55 + skill * 0.45))));
+  for (i = 0; i < open; i++) q.push(tlQ(skill));
+  return q;
+}
+function tlBotCard(skill, attClim, defClim) {
+  var aq = tlBotHalf(skill, climateOf(attClim).actions);
+  var dq = tlBotHalf(skill, climateOf(defClim).actions);
+  var sides = ["G", "C", "D"];
+  return {
+    att:{ q:aq, m:tlMinutes(aq.length, 4, 88), w:Math.random() < skill * 0.55,
+          hm:Math.round(10 + Math.random() * 75) },
+    def:{ q:dq, m:tlMinutes(dq.length, 4, 88), p:Math.random() < (1 - skill) * 0.55,
+          hm:Math.round(10 + Math.random() * 75) },
+    sh:sides[Math.floor(Math.random() * 3)], dv:sides[Math.floor(Math.random() * 3)]
+  };
+}
+/* due bot fra loro: si risolve subito, senza che nessuno scriva */
+function tlBotVsBot(skill) {
+  var a = tlBotCard(skill, "cloudy", "rain"), b = tlBotCard(skill, "cloudy", "rain");
+  var ha = ftHalf({ qualities:a.att.q, butDeOuf:a.att.w },
+                  { qualities:b.def.q, penaltyConceded:b.def.p },
+                  "dynamique", { shooter:a.sh, keeper:b.dv });
+  var hb = ftHalf({ qualities:b.att.q, butDeOuf:b.att.w },
+                  { qualities:a.def.q, penaltyConceded:a.def.p },
+                  "dynamique", { shooter:b.sh, keeper:a.dv });
+  return { ga:ha.goals, gb:hb.goals };
+}
+
+/* ═══════════════ LE PAGINE ═══════════════ */
+
+VIEWS.train = function () {
+  tlLoad();
+  if (!TL) return swap("tlSetup");
+  paintClub(ME.club || tlClub(TL.club));
+  var rows = tlRows(), game = tlMyGame(TL.md);
+  var last = TL.hist.length ? TL.hist[TL.hist.length - 1] : null;
+  var over = TL.md > TL.fix.length;
+
+  barFlow("Training league", tlDiff().t + " &middot; " + (TL.teams.length) + " teams", 0);
+
+  html('<div class="pad">' +
+    '<div class="tlh"><span>NOT THE REAL SEASON</span>' +
+    "<b>Nothing here reaches your teacher: no report, no money, no badges. " +
+    "Only practice, with the same rules.</b></div>" +
+
+    (over
+      ? '<div class="ftc win"><span class="ftk">TRAINING LEAGUE</span>' +
+        '<span class="ftt">IT IS OVER</span>' +
+        '<div class="ftchips"><span class="on">' + ord(myRow(rows).pos) +
+        " of " + rows.length + "</span><span>" + myRow(rows).pts + " pts</span></div></div>"
+      : game
+        ? '<h2 class="sec">Matchday ' + TL.md + " of " + TL.fix.length + "</h2>" +
+          tlGameCard(game)
+        : '<div class="panel empty3">You sit this one out. Tap below to play it ' +
+          "through.</div>") +
+
+    (!over && game ? '<button class="btn" id="tlgo">Play matchday ' + TL.md +
+      "</button>" : "") +
+    (!over && !game ? '<button class="btn" id="tlskip">Run matchday ' + TL.md +
+      "</button>" : "") +
+
+    '<h2 class="sec top">The table</h2>' +
+    '<div class="ltab">' + rows.map(function (r) {
+      return '<div class="lrow' + (r.id === TL.club ? " me" : "") + '">' +
+        '<span class="lp' + (r.pos <= 2 ? " cup" : "") + '">' + r.pos + "</span>" +
+        '<span class="ldot" style="background:' + dotOf(r.colour) + '"></span>' +
+        '<span class="lmid"><b>' + esc(r.name) +
+        (r.bot ? '<em class="botmark">BOT</em>' : "") + "</b><span>" +
+        r.w + "W " + r.d + "D " + r.l + "L &middot; " + r.gf + ":" + r.ga +
+        "</span></span>" +
+        '<span class="lpts">' + r.pts + "<em>pts</em></span></div>";
+    }).join("") + "</div>" +
+
+    (TL.hist.length
+      ? '<h2 class="sec top">Results</h2><div class="panel tlres">' +
+        TL.hist.slice().reverse().slice(0, 8).map(function (h) {
+          return '<div class="tlr"><span>MD ' + h.md + "</span><b>" +
+            esc(tlName(h.a)) + "</b><i>" + h.ga + " &ndash; " + h.gb + "</i><b>" +
+            esc(tlName(h.b)) + "</b></div>";
+        }).join("") + "</div>"
+      : "") +
+
+    '<button class="btn ghost" id="tlend">Close this league</button>' +
+    '<button class="btn ghost" id="tlbk">Back</button></div>');
+
+  if ($("tlgo")) $("tlgo").onclick = function () { swap("tlCall"); };
+  if ($("tlskip")) $("tlskip").onclick = function () { tlRunDay(null); swap("train"); };
+  $("tlend").onclick = function () {
+    if (!confirm("Close the training league?\n\nThe table goes, your word list stays.")) return;
+    tlWipe(); reset("land");
+  };
+  $("tlbk").onclick = function () { reset("land"); };
+
+  function myRow(rs) {
+    return rs.filter(function (r) { return r.id === TL.club; })[0] || { pos:1, pts:0 };
+  }
+};
+
+function tlGameCard(g) {
+  var home = g.a, away = g.b;
+  function side(id) {
+    var cr = crestOf(id);
+    return '<span class="nxteam">' + (cr
+      ? '<img class="fbig" src="' + cr + '" alt="">'
+      : '<i class="nxbadge" style="background:' + esc(tlClub(id).colour) + '">' +
+        esc(initials(tlName(id))) + "</i>") +
+      "<b>" + esc(tlName(id)) + "</b>" +
+      (id === TL.club ? '<em>' + (id === home ? "AT HOME" : "AWAY") + "</em>" : "") +
+      "</span>";
+  }
+  return '<div class="nxc"><div class="nxin"><div class="nxhead solo">' +
+    '<span class="nxk">TRAINING &middot; MATCHDAY ' + TL.md + "</span>" +
+    side(home) + '<span class="nxvs">versus</span>' + side(away) +
+    "</div></div></div>";
+}
+
+/* ───────── aprire il campionato ───────── */
+VIEWS.tlSetup = function () {
+  tlLoad();
+  paintClub(ME.club || { colour:"#0E3B2C" });
+  barFlow("Training league", "Against the machine", 0);
+  var mine = ME.club ? ME.club.id : (TSET.club || CLUBS[0].id);
+
+  html('<div class="pad">' +
+    '<p class="lede">A league of your own against the computer. Same dictations in ' +
+    "your teacher&rsquo;s voice, same rules, same engine &mdash; but it stays on this " +
+    "phone. <b>No report, no money, no badges</b> &mdash; only practice.</p>" +
+
+    (ME.club
+      ? '<div class="tlclub">' + (crestOf(mine)
+          ? '<img src="' + crestOf(mine) + '" alt="">' : "") +
+        "<span><i>YOU MANAGE</i><b>" + esc(tlName(mine)) + "</b></span></div>"
+      : '<h2 class="sec">Your club</h2><div class="picks" id="tclubs"></div>') +
+
+    '<h2 class="sec top">How many bots?</h2>' +
+    '<div class="picks" id="tbots"></div>' +
+
+    '<h2 class="sec top">How good are they?</h2>' +
+    '<div class="picks tall" id="tdiff"></div>' +
+
+    '<div id="tsum"></div></div>');
+
+  if (!ME.club) {
+    drawPicks("tclubs", CLUBS.slice(0, 6).map(function (c) {
+      return { id:c.id, t:c.name, s:c.city || "" };
+    }), mine, function (id) { TSET.club = id; swap("tlSetup"); });
+  }
+  drawPicks("tbots", [
+    { id:"1", t:"1 bot", s:"two teams, two matchdays" },
+    { id:"2", t:"2 bots", s:"three teams, three matchdays" },
+    { id:"3", t:"3 bots", s:"four teams, three matchdays" }
+  ], String(TSET.bots), function (id) { TSET.bots = parseInt(id, 10); swap("tlSetup"); });
+  drawPicks("tdiff", TDIFF, TSET.diff, function (id) { TSET.diff = id; swap("tlSetup"); });
+
+  $("tsum").innerHTML = '<button class="btn" id="tlmk">Start the league</button>' +
+    '<button class="btn ghost" id="tlno">Back</button>';
+  $("tlmk").onclick = function () {
+    tlStart(mine, TSET.bots, TSET.diff);
+    swap("train");
+  };
+  $("tlno").onclick = function () { reset("land"); };
+};
+var TSET = { bots:3, diff:"even", club:"" };
+
+/* ───────── le chiamate, in versione breve ───────── */
+VIEWS.tlCall = function () {
+  tlLoad();
+  var g = tlMyGame(TL.md);
+  if (!g) return swap("train");
+  if (!TL.cur || TL.cur.md !== TL.md) {
+    TL.cur = { md:TL.md, opp:(g.a === TL.club ? g.b : g.a), home:g.a === TL.club,
+               attClim:CLIMATES[Math.floor(Math.random() * CLIMATES.length)].id,
+               defClim:CLIMATES[Math.floor(Math.random() * CLIMATES.length)].id,
+               shape:"442", plan:"nat", side:null, dive:null, att:null, def:null };
+    tlSave();
+  }
+  var C = TL.cur;
+  paintClub(ME.club || tlClub(TL.club));
+  barFlow("Before the match", tlName(TL.club) + " v " + tlName(C.opp), 20, false);
+
+  html('<div class="pad">' +
+    '<div class="wxbig"><div><span>Attack</span><b>' +
+      climateOf(C.attClim).label + "</b></div>" +
+      "<div><span>Defence</span><b>" + climateOf(C.defClim).label + "</b></div></div>" +
+
+    '<h2 class="sec top">Your shape</h2>' +
+    '<div class="picks" id="tshape"></div>' +
+
+    '<h2 class="sec top">Your plan</h2>' +
+    '<p class="lede sm2">The weather opens ' + climateOf(C.attClim).actions +
+    " moments in attack and " + climateOf(C.defClim).actions +
+    " in defence. Your plan moves one.</p>" +
+    '<div class="picks tall" id="tplan"></div>' +
+
+    '<h2 class="sec top">Where does your penalty go?</h2>' +
+    '<div class="sides" id="tside"></div>' +
+
+    '<h2 class="sec top">Which way does your keeper dive?</h2>' +
+    '<div class="sides" id="tdive"></div>' +
+
+    '<div id="tfoot"></div></div>');
+
+  drawPicks("tshape", SHAPES, C.shape, function (id) { C.shape = id; tlSave(); swap("tlCall"); });
+  drawPicks("tplan", PLANS, C.plan, function (id) { C.plan = id; tlSave(); swap("tlCall"); });
+  drawSides("tside", C.side, function (s) { C.side = s; tlSave(); foot(); });
+  drawSides("tdive", C.dive, function (s) { C.dive = s; tlSave(); foot(); });
+  foot();
+
+  function foot() {
+    var ok = C.side && C.dive;
+    $("tfoot").innerHTML = (ok
+      ? '<div class="callsum"><b>' + shapeTx(C.shape) + " &middot; " + planTx(C.plan) +
+        "</b>Penalty " + sideName(C.side) + ", keeper dives " + sideName(C.dive) +
+        "</div>"
+      : '<p class="bnote">Call the penalty and the dive.</p>') +
+      '<button class="btn" id="tgo"' + (ok ? "" : " disabled") +
+      ">Start the attack</button>";
+    if (ok) $("tgo").onclick = function () { swap("tlWrite", { ph:"att" }); };
+  }
+};
+function shapeTx(id) {
+  var x = SHAPES.filter(function (y) { return y.id === id; })[0];
+  return x ? x.t : id;
+}
+function planTx(id) {
+  var x = PLANS.filter(function (y) { return y.id === id; })[0];
+  return x ? x.t : id;
+}
+function tlShift(ph) {
+  var p = TL && TL.cur ? TL.cur.plan : "nat";
+  if (p === "off") return ph === "att" ? 1 : -1;
+  if (p === "def") return ph === "att" ? -1 : 1;
+  return 0;
+}
+function tlCap(ph) {
+  var c = climateOf(ph === "att" ? TL.cur.attClim : TL.cur.defClim);
+  return Math.max(1, c.actions + tlShift(ph));
+}
+
+/* ───────── il dettato ───────── */
+VIEWS.tlWrite = function (d) {
+  tlLoad();
+  var ph = d.ph, C = TL.cur;
+  if (!C) return swap("train");
+  if (!C[ph + "Dict"]) { C[ph + "Dict"] = tlDict(ph); tlSave(); }
+  var dict = C[ph + "Dict"], clim = climateOf(ph === "att" ? C.attClim : C.defClim);
+  var cap = tlCap(ph);
+
+  paintClub(ME.club || tlClub(TL.club));
+  barFlow(ph === "att" ? "Attack" : "Defence",
+          clim.label + " &middot; " + cap + (ph === "att" ? " shots" : " saves"),
+          ph === "att" ? 50 : 75, false);
+
+  html('<div class="pad">' +
+    '<p class="lede">Six sentences, one after the other, with time to write between ' +
+    "them. When the voice ends you get <b>" + EXTRA_S + " seconds</b>.</p>" +
+    tlPlayHtml() +
+    '<div id="donebox"></div><div id="xtime"></div>' +
+    '<textarea id="dw" rows="10" autocomplete="off" autocapitalize="off" ' +
+    'autocorrect="off" spellcheck="false" data-gramm="false" ' +
+    'placeholder="write what you hear"></textarea>' +
+    '<p class="wcount" id="wc">0 words</p>' +
+    '<div id="sendbox"></div></div>');
+
+  var ta = $("dw"), sent = false, tick = null;
+  noHelp(ta, function () { $("wc").textContent = "No pasting: write it yourself."; });
+  ta.oninput = function () {
+    var n = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+    $("wc").textContent = n + (n === 1 ? " word" : " words");
+  };
+
+  tlWirePlayer(dict.lines, function () {
+    $("donebox").innerHTML = '<button class="btn done2" id="dnow" type="button">' +
+      (ph === "att" ? "I have finished &mdash; go to the defence"
+                    : "I have finished &mdash; end the match") + " &rsaquo;</button>";
+    $("dnow").onclick = function () {
+      try { $("au").pause(); } catch (e) {}
+      $("aubox").classList.add("over");
+      extra();
+    };
+  }, extra);
+
+  function extra() {
+    if ($("donebox")) $("donebox").innerHTML = "";
+    var t0 = Date.now();
+    $("xtime").innerHTML = '<div class="xbar"><span>LAST LOOK</span>' +
+      '<div class="xtrack"><i id="xfill"></i></div><b id="xnum">' + EXTRA_S +
+      "s</b></div>";
+    $("sendbox").innerHTML = '<button class="btn" id="snd">Send it now</button>';
+    $("snd").onclick = send;
+    try { ta.focus(); } catch (e) {}
+    tick = setInterval(function () {
+      var rest = Math.max(0, EXTRA_S - (Date.now() - t0) / 1000);
+      var f = $("xfill"); if (!f) { clearInterval(tick); return; }
+      f.style.width = (rest / EXTRA_S * 100).toFixed(1) + "%";
+      $("xnum").textContent = Math.ceil(rest) + "s";
+      if (rest <= 0) { clearInterval(tick); send(); }
+    }, 100);
+  }
+  function send() {
+    if (sent) return;
+    sent = true;
+    if (tick) clearInterval(tick);
+    try { $("au").pause(); } catch (e) {}
+    var r = correctHalf(ph, ta.value, { dict:dict, clim:clim, cap:cap });
+    C[ph] = { q:r.shots.map(function (x) { return x.quality; }),
+              m:r.shots.map(function (x) { return matMinute(x.at, r.els.length); }),
+              w:ph === "att" ? !!r.bonus : false,
+              p:ph === "def" ? !!r.penalty : false,
+              hm:matMinute(r.hardIndex, r.els.length),
+              right:r.right, total:r.total, yellow:r.yellow, red:r.red,
+              hardWord:r.hardWord, hardOk:!!r.hardOk };
+    /* le parole sbagliate di questo tempo, per la pagina di fine partita */
+    C[ph].miss = r.els.filter(function (e, k) {
+      return e.t === "mot" && r.answers[k].errors !== 0;
+    }).map(function (e, k) { return e.w; }).slice(0, 12);
+    tlSave();
+    swap(ph === "att" ? "tlWrite" : "tlResolve", { ph:"def" });
+  }
+};
+
+/* ───────── il conto, con il motore del campionato ───────── */
+VIEWS.tlResolve = function () {
+  tlLoad();
+  var C = TL.cur;
+  if (!C || !C.att || !C.def) return swap("train");
+  var skill = tlDiff().skill;
+  var bot = tlBotCard(skill, C.attClim, C.defClim);
+
+  var ha = ftHalf({ qualities:C.att.q, butDeOuf:C.att.w },
+                  { qualities:bot.def.q, penaltyConceded:bot.def.p },
+                  "dynamique", { shooter:C.side, keeper:bot.dv });
+  var hb = ftHalf({ qualities:bot.att.q, butDeOuf:bot.att.w },
+                  { qualities:C.def.q, penaltyConceded:C.def.p },
+                  "dynamique", { shooter:bot.sh, keeper:C.dive });
+  ha.mins = C.att.m || []; ha.bdoMin = C.att.hm || null; ha.penMin = bot.def.hm || null;
+  hb.mins = bot.att.m || []; hb.bdoMin = bot.att.hm || null; hb.penMin = C.def.hm || null;
+
+  C.score = { me:ha.goals, them:hb.goals, mine:ha, their:hb, opp:C.opp,
+              home:C.home, mode:"dynamique" };
+  tlSave();
+  swap("tlRun");
+};
+
+/* chi prende l'azione: la rosa, in ordine, senza foglio da riempire */
+function tlWho(ph, n) {
+  var list = (ME.squad || []).filter(function (p) { return p.name; });
+  /* senza una squadra vera si prende la rosa del club scelto */
+  if (!list.length && TL && SQUADS[TL.club]) {
+    list = SQUADS[TL.club].map(function (q, i) {
+      return { no:i + 1, name:q.n, role:q.r || "",
+               tag:q.r === "GK" ? "GK" : q.cap ? "CAP" : q.gem ? "GEM" : "" };
+    });
+  }
+  if (!list.length) return null;
+  var p = ph === "att"
+    ? list[(list.length - n) % list.length]
+    : list[(n + 1) % list.length];
+  return { no:p.no, name:p.name, role:p.role || "", tag:p.tag || "" };
+}
+
+VIEWS.tlRun = function () {
+  tlLoad();
+  var C = TL.cur, s = C && C.score;
+  if (!s) return swap("train");
+  var them = tlName(C.opp);
+  ftRunPage({
+    s:s, them:them, myName:tlName(TL.club),
+    myCrest:crestOf(TL.club), thCrest:crestOf(C.opp),
+    title:"Training &middot; matchday " + C.md,
+    ev:ftEvents(C.md, s, them, {
+      myName:tlName(TL.club), myCrest:crestOf(TL.club), thCrest:crestOf(C.opp),
+      who:tlWho, keeper:tlWho("def", 0),
+      cards:[{ yellow:C.att.yellow, red:C.att.red, ph:"att" },
+             { yellow:C.def.yellow, red:C.def.red, ph:"def" }]
+    }),
+    done:function () { tlClose(); },
+    see:function () { swap("tlEnd"); }
+  });
+};
+
+/* chiusa la partita: in tabella la mia, e in un lampo quelle dei bot */
+function tlClose() {
+  if (!TL.cur || TL.cur.closed) return;
+  var C = TL.cur, s = C.score;
+  TL.cur.closed = true;
+  var a = C.home ? TL.club : C.opp, b = C.home ? C.opp : TL.club;
+  var ga = C.home ? s.me : s.them, gb = C.home ? s.them : s.me;
+  tlAdd(a, b, ga, gb);
+  TL.hist.push({ md:C.md, a:a, b:b, ga:ga, gb:gb });
+  TL.last = { attMiss:(C.att && C.att.miss) || [], defMiss:(C.def && C.def.miss) || [] };
+  tlRunDay(C.md, true);
+  TL.md++;
+  TL.cur = null;
+  tlSave();
+}
+/* le partite fra bot della giornata */
+function tlRunDay(md, skipMine) {
+  md = md || TL.md;
+  var day = TL.fix[(md - 1) % TL.fix.length] || [];
+  day.forEach(function (g) {
+    if (g.a === TL.club || g.b === TL.club) return;
+    var r = tlBotVsBot(tlDiff().skill);
+    tlAdd(g.a, g.b, r.ga, r.gb);
+    TL.hist.push({ md:md, a:g.a, b:g.b, ga:r.ga, gb:r.gb });
+  });
+  if (!skipMine) { TL.md++; tlSave(); }
+}
+
+VIEWS.tlEnd = function () {
+  tlLoad();
+  var rows = tlRows();
+  var last = TL.hist.filter(function (h) {
+    return h.a === TL.club || h.b === TL.club;
+  }).pop();
+  paintClub(ME.club || tlClub(TL.club));
+  barFlow("Full time", "Training league", 100);
+  var me = rows.filter(function (r) { return r.id === TL.club; })[0] || { pos:1, pts:0 };
+
+  html('<div class="pad">' +
+    (last
+      ? '<div class="ftc ' + ((last.a === TL.club ? last.ga > last.gb : last.gb > last.ga)
+          ? "win" : (last.ga === last.gb ? "draw" : "lost")) + '">' +
+        '<span class="ftk">TRAINING &middot; MATCHDAY ' + last.md + "</span>" +
+        '<span class="ftt">FULL TIME</span>' +
+        '<div class="ftsc">' +
+          '<span class="ftsd">' + (crestOf(last.a)
+            ? '<img src="' + crestOf(last.a) + '" alt="">' : "") +
+            "<b>" + esc(tlName(last.a)) + "</b></span>" +
+          '<span class="ftn2"><b>' + last.ga + "</b><i>&ndash;</i><b>" + last.gb +
+          "</b></span>" +
+          '<span class="ftsd">' + (crestOf(last.b)
+            ? '<img src="' + crestOf(last.b) + '" alt="">' : "") +
+            "<b>" + esc(tlName(last.b)) + "</b></span>" +
+        "</div>" +
+        '<div class="ftchips"><span class="on">' + ord(me.pos) + " in the table</span>" +
+        "<span>" + me.pts + " pts</span></div></div>"
+      : "") +
+    (missList()
+      ? '<h2 class="sec top">What slipped</h2><div class="panel tlmiss">' +
+        missList() + "</div>"
+      : "") +
+    '<p class="lede">Training only: nothing of this reaches your teacher.</p>' +
+    '<button class="btn" id="tnext">Back to the league</button></div>');
+
+  $("tnext").onclick = function () { swap("train"); };
+
+  function missList() {
+    var C = TL.last || null;
+    if (!C) return "";
+    var all = (C.attMiss || []).concat(C.defMiss || []);
+    if (!all.length) return "";
+    return all.map(function (w) { return '<span class="chip">' + esc(w) + "</span>"; })
+      .join("");
+  }
+};
 
 
 /* ───── 70-league.js ───── */
@@ -12240,7 +13105,9 @@ VIEWS.lock = function () {
 
 /* ───────── 4. si gioca ───────── */
 VIEWS.mGo = function (d) {
-  var ph = d.ph, c = climateOf(phaseClim(ph)), n = c.actions;
+  var ph = d.ph, c = climateOf(phaseClim(ph));
+  var n = (typeof phaseCap === "function") ? phaseCap(ph) : c.actions;
+  var shift = (typeof planShift === "function") ? planShift(ph) : 0;
   /* questo tempo e' gia' stato giocato: non si rientra */
   if (halfPlayed(ME.next.md, ph)) return swap("played", { ph:ph });
   barFlow(ph === "att" ? "Attack" : "Defence", ME.next.home + " vs " + ME.next.away, 0, false);
@@ -12252,7 +13119,7 @@ VIEWS.mGo = function (d) {
     "action takes it.</p>" +
     '<div class="wxbig"><div><span>Weather</span><b>' + c.label + "</b></div>" +
     "<div><span>" + (ph === "att" ? "Shots at most" : "Saves at most") +
-    "</span><b>" + n + "</b></div></div>" +
+    "</span><b>" + n + "</b>" + (shift ? '<i class="shf">' + (shift > 0 ? "+1 " : "&minus;1 ") + planName() + "</i>" : "") + "</div></div>" +
     '<p class="lede">Write what you hear. Nothing is corrected on screen until the ' +
     "end — this is the match, not practice.</p>" +
     '<button class="btn" id="kick">' +
