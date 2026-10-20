@@ -2629,19 +2629,8 @@ function joinClub(id) {
   });
   if (typeof BULL !== "undefined" && BULL) refitNext();   /* il vero avversario */
   setAction();
-  ME.words = [
-    { w:"rough",     wrote:"rouhg",     kind:"Letter order"   },
-    { w:"ferry",     wrote:"fery",      kind:"Double letter"  },
-    { w:"journey",   wrote:"jorney",    kind:"Missing letter" },
-    { w:"laughing",  wrote:"laffing",   kind:"Different word" },
-    { w:"upper",     wrote:"uppper",    kind:"Extra letter"   },
-    { w:"parents",   wrote:"parent",    kind:"Word ending"    },
-    { w:"children",  wrote:"childrens", kind:"Word ending"    },
-    { w:"afternoon", wrote:"afternon",  kind:"Double letter"  },
-    { w:"island",    wrote:"iland",     kind:"Missing letter" },
-    { w:"twice",     wrote:"twise",     kind:"Different word" },
-    { w:"September", wrote:"september", kind:"Capital letter" }
-  ];
+  /* la lista delle parole e' quella vera, scritta dai dettati */
+  ME.words = (typeof wordList === "function") ? wordList() : [];
   flushOutbox();        /* se era saltata la rete, le firme partono adesso */
 }
 
@@ -2720,7 +2709,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "52";
+var APPVER = "53";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -9137,7 +9126,7 @@ function ftEvents(md, s, them, o) {
     var w = who("att", d.n);
     ev.push({ min:(s.mine.mins || [])[d.n - 1] || null, crest:myC, ini:myI,
       name:w ? w.name : "Nobody on this action", role:ftRole(w),
-      note:"moment " + d.n + " &middot; " + fmt(d.shot) +
+      note:"our shot " + d.n + " &middot; " + fmt(d.shot) +
         (d.save == null ? ", no keeper" : " against " + fmt(d.save)),
       tag:d.goal ? "GOAL" : "SAVED", cls:d.goal ? "in" : "" });
   });
@@ -9159,14 +9148,14 @@ function ftEvents(md, s, them, o) {
     var m = (s.their.mins || [])[d.n - 1] || null;
     if (d.goal) {
       ev.push({ min:m, crest:thC, ini:thI, name:them, role:"",
-        note:"their moment " + d.n + " &middot; " + fmt(d.shot) +
+        note:"their shot " + d.n + " &middot; " + fmt(d.shot) +
           (d.save == null ? ", nobody on the line" : " against your " + fmt(d.save)),
         tag:"GOAL", cls:"out" });
     } else {
       ev.push({ min:m, crest:myC, ini:myI,
         name:gk ? gk.name : "Your keeper", role:"GK",
-        note:"stopped " + esc(them) + " &middot; " + fmt(d.save) + " against " +
-          fmt(d.shot),
+        note:"stopped their shot " + d.n + " &middot; " + fmt(d.save) +
+          " against " + fmt(d.shot),
         tag:"SAVED", cls:"kp" });
     }
   });
@@ -10729,6 +10718,10 @@ VIEWS.mEnd2 = function () {
                k:classify(e.w, r.answers[k].written, e.t) };
     }) });
 
+  /* le parole sbagliate entrano nella lista: e' il collegamento che
+     mancava, e vale anche per il campo d'allenamento */
+  if (typeof learnWords === "function") learnWords(r, "match");
+
   var lines = "";
   for (var k = 1; k <= r.open; k++) {
     var p = SHEET[ph][k] != null ? playerNo(SHEET[ph][k]) : null;
@@ -11625,6 +11618,8 @@ VIEWS.gsEnd = function () {
   if (!GS.paid) {
     markSession(GS.kind, earned);
     GS.paid = true;
+    /* anche qui le parole sbagliate vanno nella lista */
+    if (typeof learnItems === "function") learnItems(GS.items, "ground");
     /* il dettato finisce anche in My form, con gli errori veri */
     if (GS.kind === "dict") {
       recordHalf({ md:mdNow(), ph:"grd", clim:"Training", max:0, open:0,
@@ -12218,6 +12213,7 @@ VIEWS.tlWrite = function (d) {
     C[ph].miss = r.els.filter(function (e, k) {
       return e.t === "mot" && r.answers[k].errors !== 0;
     }).map(function (e, k) { return e.w; }).slice(0, 12);
+    if (typeof learnWords === "function") learnWords(r, "training");
     tlSave();
     swap(ph === "att" ? "tlWrite" : "tlResolve", { ph:"def" });
   }
@@ -13157,6 +13153,53 @@ function elValue(err, t) {
 /* ═══════════════ my words: ascolta, scrivi, sistema ═══════════════ */
 
 var NEED = 2;
+
+/* ═══════════════ la lista vera ═══════════════
+   Fino a ieri le parole della lista erano un esempio scritto a mano: i
+   dettati veri non ci finivano dentro. Adesso ogni parola sbagliata —
+   in partita, al campo d'allenamento o nel campionato contro il
+   computer — entra qui, con come l'ha scritta e che tipo di errore e'.
+   Sta sul telefono, sotto il codice dell'alunno, e non viaggia. */
+var WLKEY = "footefl-wordlist";
+function wordList() {
+  try { return JSON.parse(localStorage.getItem(WLKEY) || "[]") || []; }
+  catch (e) { return []; }
+}
+function wordListSave(l) {
+  /* le ultime sessanta bastano: una lista infinita non la fa nessuno */
+  try { localStorage.setItem(WLKEY, JSON.stringify(l.slice(-60))); } catch (e) {}
+}
+function learnWords(r, src) {
+  if (!r || !r.els) return;
+  var l = wordList(), seen = {};
+  l.forEach(function (x) { seen[String(x.w).toLowerCase()] = x; });
+  r.els.forEach(function (e, k) {
+    if (e.t !== "mot") return;
+    var a = (r.answers || [])[k];
+    if (!a || (a.errors === 0 && !a.extra)) return;
+    var key = String(e.w).toLowerCase();
+    var kind = (typeof classify === "function") ? classify(e.w, a.written, e.t) : "";
+    if (!kind) kind = a.written ? "Different word" : "Missing word";
+    if (seen[key]) {
+      seen[key].n = (seen[key].n || 1) + 1;
+      if (a.written) seen[key].wrote = a.written;
+      seen[key].when = Date.now();
+      return;
+    }
+    var row = { w:e.w, wrote:a.written || "\u2014", kind:kind, n:1,
+                when:Date.now(), from:src || "" };
+    l.push(row); seen[key] = row;
+  });
+  wordListSave(l);
+  ME.words = wordList();
+  /* una parola nuova torna da rifare, anche se l'avevi gia' sistemata */
+  r.els.forEach(function (e, k) {
+    var a = (r.answers || [])[k];
+    if (e.t === "mot" && a && (a.errors !== 0 || a.extra) && MEM[e.w]) {
+      delete MEM[e.w]; saveMem();
+    }
+  });
+}
 function wKey() { return "footefl-mywords-" + (ME.club ? ME.club.id : "x"); }
 var MEM = {};
 function loadMem() {
@@ -13167,6 +13210,16 @@ function wordHits(w) { return MEM[w] || 0; }
 function wordFixed(w) { return wordHits(w) >= NEED; }
 function wordsLeft() {
   return ME.words.filter(function (x) { return !wordFixed(x.w); });
+}
+
+/* il campo d'allenamento corregge a blocchi: stesso magazzino, altra forma */
+function learnItems(items, src) {
+  var r = { els:[], answers:[] };
+  (items || []).forEach(function (it) {
+    r.els.push({ w:it.w, t:it.t || "mot" });
+    r.answers.push({ written:it.g || "", extra:"", errors:it.k ? 1 : 0 });
+  });
+  learnWords(r, src);
 }
 
 /* ───────── la voce ───────── */
