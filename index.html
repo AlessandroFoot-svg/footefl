@@ -1900,11 +1900,11 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
    Prende il posto del riscaldamento nella pagina dell'alunno: una
    scheda di carta, come una pagina di dizionario strappata. */
 .wod{position:relative;border-radius:18px;overflow:hidden;color:#0A2419;
-  padding:0 0 15px;background:rgba(244,241,226,.78);
+  padding:0 0 15px;background:rgba(244,241,226,.87);
   border:1px solid rgba(244,241,226,.45);
   -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .wodtab{display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:9px 15px;background:rgba(227,239,38,.82)}
+  padding:9px 15px;background:rgba(227,239,38,.9)}
 .wodtab span{font:800 9.5px/1 var(--brand);letter-spacing:.18em;color:#06231D}
 .wodtab em{font:800 9.5px/1 var(--brand);letter-spacing:.14em;font-style:normal;
   color:#06231D;opacity:.72}
@@ -2972,7 +2972,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "65";
+var APPVER = "66";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -11192,25 +11192,84 @@ var AUDIO = {welcome:"data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjY
      difesa   Match at home      -> penalty:     cloudy
    ═══════════════════════════════════════════════════════════════════ */
 
-var MATCHDICT = {
-  att: {
-    id:"welcome", title:"Welcome to FootEFL", n:1,
+/* ───────── i dettati registrati ─────────
+   Otto, nell'ordine in cui li hai registrati. Ognuno porta le sue due
+   parole decisive: `bdo` e' quella che in attacco vale il wonder goal,
+   `pen` quella che in difesa regala il rigore. Sono le stesse che stanno
+   segnate nella piattaforma: se li' cambia la parola, cambia anche qui.
+   `dur` sono i secondi della registrazione, per l'orologio.
+   I primi due viaggiano dentro il file; gli altri sei stanno accanto
+   all'app, nella cartella au/, perche' trentatre' minuti di voce dentro
+   una pagina sola non ci stanno. */
+var DMATCH = [
+  { id:"welcome", title:"Welcome to FootEFL", n:1, dur:482,
     x:"Welcome to FootEFL. This is a new football world for English learners. " +
       "There are twelve players in every team. They come from different countries " +
       "and cities such as Brazil, Japan, Spain, and Norway. Each player has a name, " +
       "a number, and a position. Now you are ready to start the competition. " +
       "Learn English, choose a team, and play together with your classmates.",
-    bdo:"countries"          /* scritta giusta: wonder goal */
-  },
-  def: {
-    id:"athome", title:"Match at home", n:2,
+    bdo:"countries", pen:"competition" },
+
+  { id:"athome", title:"Match at home", n:2, dur:307,
     x:"Today the Ravens play at home. The captain is Clara and the goalkeeper is " +
       "Arthur. The team wears dark blue shirts and gold numbers. Four players attack, " +
       "and four players defend. The weather is cloudy, but the stadium is full. " +
       "Everyone is ready for the match.",
-    pen:"cloudy"             /* scritta sbagliata: rigore contro */
-  }
-};
+    bdo:"goalkeeper", pen:"cloudy" },
+
+  { id:"morning", title:"A busy morning", n:3, dur:235,
+    x:"Anna gets up early every morning. She opens the window and makes breakfast. " +
+      "Then she drinks some tea and eats bread with jam. After breakfast, she takes " +
+      "a shower and gets dressed. She leaves home at eight and walks to work.",
+    bdo:"breakfast", pen:"dressed" },
+
+  { id:"market", title:"A day at the market", n:4, dur:271,
+    x:"On Saturday Mia goes to the market with her brother. First they buy fresh " +
+      "fruit and vegetables. Then they look for cheese, bread, and eggs. Mia likes " +
+      "the colourful market because it is always busy. Before going home, they stop " +
+      "at a small café and drink some juice.",
+    bdo:"vegetables", pen:"colourful" },
+
+  { id:"green", title:"A green stadium", n:5, dur:342,
+    x:"The new stadium is green. There are big bins near the gates. Fans put paper, " +
+      "plastic, and glass in the right bin. On the roof there are solar panels. " +
+      "The players drink from bottles, and the grass is always clean. Every class " +
+      "plants a tree in September.",
+    bdo:"September", pen:"bottles" },
+
+  { id:"park", title:"The park behind the school", n:6, dur:313,
+    x:"There is a small park behind the school. Tall trees grow near the lake, " +
+      "and birds sing in the morning. Children play between the benches. Please, " +
+      "do not drop your paper on the grass. Put it in the bin under the big tree.",
+    bdo:"benches", pen:"between" },
+
+  { id:"ferry", title:"The island ferry", n:7, dur:371,
+    x:"The ferry to the island leaves twice a day. The journey is short, but the sea " +
+      "is rough this afternoon. Children are laughing on the upper deck, while their " +
+      "parents are reading inside. When the island appears, the houses look white and " +
+      "tiny. A fisherman with a red cap waves at us from the harbour.",
+    bdo:"journey", pen:"harbour" },
+
+  { id:"lighthouse", title:"The lighthouse", n:8, dur:431,
+    x:"The lighthouse stands on a narrow rock, far from the village. Tonight the wind " +
+      "is dangerous and the waves are enormous, so nobody goes out. Inside, the keeper " +
+      "writes in his old notebook, but the electric lamp never stops turning. When a " +
+      "small boat comes home late, the captain sees the bright light and he knows the way.",
+    bdo:"dangerous", pen:"enormous" }
+];
+
+/* la coppia della giornata: due dettati diversi, uno per reparto, uguali
+   per tutti quelli che giocano quella giornata. La giornata 1 resta la
+   coppia di sempre, cosi' le partite gia' giocate restano quelle. */
+function mdictOf(ph) {
+  var md = (ME.next && ME.next.md) || 1;
+  var i = ((md - 1) * 2) % DMATCH.length;
+  return ph === "att" ? DMATCH[i] : DMATCH[(i + 1) % DMATCH.length];
+}
+/* la voce: dentro il file per i primi due, accanto all'app per gli altri */
+function dictAudio(d) {
+  return (typeof AUDIO !== "undefined" && AUDIO[d.id]) || ("au/" + d.id + ".mp3");
+}
 
 /* ───────── scrivere senza aiuti ─────────
    Un dettato vale quello che vale solo se le parole le mette lui. Qui si
@@ -11287,7 +11346,7 @@ function tokenise(text) {
    Il dettato si puo' passare da fuori: il campionato di allenamento ne
    usa uno costruito con le frasi del riscaldamento. */
 function elementsOf(ph, dct) {
-  var d = dct || MATCHDICT[ph], want = (ph === "att" ? d.bdo : d.pen) || "";
+  var d = dct || mdictOf(ph), want = (ph === "att" ? d.bdo : d.pen) || "";
   var els = tokenise(d.x), hit = false;
   els.forEach(function (e) {
     if (!hit && e.t === "mot" && e.w.toLowerCase() === want.toLowerCase()) {
@@ -11474,7 +11533,7 @@ function wirePlayer(id, onEnd, onFail, onStart) {
 
 /* ───────── scrivere il dettato ───────── */
 VIEWS.mWrite = function (d) {
-  var ph = d.ph, dict = MATCHDICT[ph], c = climateOf(phaseClim(ph));
+  var ph = d.ph, dict = mdictOf(ph), c = climateOf(phaseClim(ph));
   /* il tempo si scrive una volta sola */
   if (typeof halfPlayed === "function" && ME.next && halfPlayed(ME.next.md, ph)) {
     return swap("played", { ph:ph });
@@ -11488,7 +11547,7 @@ VIEWS.mWrite = function (d) {
     "no second listen. Write as you hear it &mdash; full stops, commas and capital " +
     "letters count. When the voice ends you get <b>" + extraSecs() +
     " seconds</b> to read it over.</p>" +
-    playerHtml(AUDIO[dict.id], "au") +
+    playerHtml(dictAudio(dict), "au") +
     '<div id="donebox"></div>' +
     '<div id="xtime"></div>' +
     '<textarea id="dw" rows="10" autocomplete="off" autocapitalize="off" ' +
@@ -11566,7 +11625,7 @@ VIEWS.mWrite = function (d) {
   var back = windowLeft(ph);
   if (back === null) {
     wirePlayer("au", extraTime, letThemSend, function (dur) {
-      startStamp(ph, dur || (dict.id === "welcome" ? 482 : 307));
+      startStamp(ph, dur || dict.dur || 300);
       showDone();
     });
   } else if (back <= 0) {
@@ -11719,7 +11778,7 @@ VIEWS.mEnd2 = function () {
     hard:r.hard, hardOk:r.hardOk, hardWord:r.hardWord, when:Date.now(),
     /* il dettato e la parola decisiva: col foglio delle risposte qui sotto,
        il campionato puo' rifare la correzione col suo motore */
-    dict:MATCHDICT[ph].id, dname:MATCHDICT[ph].title, hardIx:r.hardIndex,
+    dict:mdictOf(ph).id, dname:mdictOf(ph).title, hardIx:r.hardIndex,
     /* quante volte la parola l'ha messa il telefono al posto suo */
     help:MT.help || 0,
     /* quante volte e' uscito dalla finestra, e quanto costa */
@@ -14733,7 +14792,7 @@ VIEWS.mGo = function (d) {
   if (halfPlayed(ME.next.md, ph)) return swap("played", { ph:ph });
   barFlow(ph === "att" ? "Attack" : "Defence", ME.next.home + " vs " + ME.next.away, 0, false);
   html('<div class="pad"><h1>' + (ph === "att" ? "Your attack." : "Now defend.") + "</h1>" +
-    '<p class="lede"><b>' + esc(MATCHDICT[ph].title) + "</b>, read by your teacher. " +
+    '<p class="lede"><b>' + esc(mdictOf(ph).title) + "</b>, read by your teacher. " +
     "You <b>hear it and write it</b>, all of it. " +
     "Every time your total crosses a line, <b>one " +
     (ph === "att" ? "shot" : "save") + " opens</b> and the player you put on that " +
