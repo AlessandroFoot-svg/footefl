@@ -1899,10 +1899,12 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 /* ═════════ la parola del giorno ═════════
    Prende il posto del riscaldamento nella pagina dell'alunno: una
    scheda di carta, come una pagina di dizionario strappata. */
-.wod{position:relative;border-radius:18px;overflow:hidden;background:#F4F1E2;color:#0A2419;
-  padding:0 0 15px}
+.wod{position:relative;border-radius:18px;overflow:hidden;color:#0A2419;
+  padding:0 0 15px;background:rgba(244,241,226,.78);
+  border:1px solid rgba(244,241,226,.45);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .wodtab{display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:9px 15px;background:var(--gold)}
+  padding:9px 15px;background:rgba(227,239,38,.82)}
 .wodtab span{font:800 9.5px/1 var(--brand);letter-spacing:.18em;color:#06231D}
 .wodtab em{font:800 9.5px/1 var(--brand);letter-spacing:.14em;font-style:normal;
   color:#06231D;opacity:.72}
@@ -2317,6 +2319,10 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .mcq.done{border-color:rgba(227,239,38,.35)}
 .mcgot{margin:0;font-size:12.5px;font-weight:700;color:var(--gold)}
 .mct{margin-top:14px}
+.psx{margin-left:4px;font-style:normal;font-size:10px;color:#8FC4AC}
+.prow2 .rl.sx{background:rgba(226,251,206,.16);color:var(--fog)}
+.ftl.run.all{overflow:visible;max-height:none}
+.ftup{margin:9px 2px 0;text-align:center}
 </style>
 </head>
 <body>
@@ -2568,6 +2574,44 @@ var CLUBS = [
 function blanks(n) {
   var a = []; for (var i = 0; i < n; i++) a.push({ n:"" }); return a;
 }
+/* ═══════════════ lei e lui ═══════════════
+   Le squadre di FootEFL sono miste, e nella rosa si vede: accanto al
+   nome c'e' il segno, e nella scheda del giocatore il pronome, che
+   e' anche una cosa da imparare — she/her, he/him.
+   I nomi stanno scritti qui una volta sola, invece di essere indovinati
+   a ogni disegno: certi nomi (Morgan, Robin, Camille, Charlie, Rowan)
+   sono di tutti e due, e a decidere dev'essere la scheda, non una
+   regola. Un nome che non sta in nessuna delle due liste non mostra
+   niente: meglio il silenzio di un errore. */
+var SEX_F = ("Ada Aino Aisling Amal Amara Aminata Amparo Aoi Aroha Ayomide " +
+  "Beatriz Cara Cari Carys Chiara Clara Consuelo Dara Eleanor Elsa Enfys " +
+  "Esperanza Eunhye Evelyn Faith Fatima Fe Freya Giulia Grace Gwyneth Hikari " +
+  "Hoda Ida Jihye Klara Lejla Leyla Libertad Luana Luiza Maeve Maimouna " +
+  "Martha Megumi Merveille Milagros Morgan Nada Naomi Nhyira Nkiruka Nora " +
+  "Noémie Nour Poppy Rahma Rowan Saoirse Sarang Shanti Socorro Sorcha " +
+  "Sláine Tilly Toni Valentina Vitória Zofia").split(" ");
+var SEX_M = ("Adom Alessandro Alfie Amado Amaury Angus Arjun Arman Arthur " +
+  "Barış Bram Caio Callum Camilo Caspar Charlie Daan Elias Elliot Ellis Ezio " +
+  "Faisal Felix Finn Hamish Heddwyn Jai Joaquín Jonas Julian João Kacper " +
+  "Karim Kemar Lukas Makoto Malik Mateo Matteo Mirko Monty Ned Nikos Noah " +
+  "Oskar Otis Refugio Reggie Ren Robin Rory Rui Salem Sami Sherif Sid " +
+  "Souleymane Struan Thabo Theo Thomas Théo Tomás Álvaro Camille").split(" ");
+function sexOf(name) {
+  var f = String(name || "").trim().split(/\s+/)[0];
+  if (!f) return "";
+  if (SEX_F.indexOf(f) >= 0) return "f";
+  if (SEX_M.indexOf(f) >= 0) return "m";
+  return "";
+}
+function sexMark(name) {
+  var s = sexOf(name);
+  return s === "f" ? "♀" : s === "m" ? "♂" : "";
+}
+function sexSay(name) {
+  var s = sexOf(name);
+  return s === "f" ? "SHE &middot; HER" : s === "m" ? "HE &middot; HIM" : "";
+}
+
 var SQUADS = {
   RAV: [
     { n:"Arthur Keep",   r:"GK", a:31, c:"York",           q:"English" },
@@ -2894,7 +2938,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "63";
+var APPVER = "64";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8317,7 +8361,9 @@ function pegHtml(p) {
     '<span class="no">' + p.no + "</span>" +
     (p.tag ? '<span class="badge">' + p.tag + "</span>" : "") + "</span>" +
     '<span class="pname' + (p.name ? "" : " empty") + '">' +
-    (p.name ? esc(surname(p.name)) : "&mdash;") + "</span>" +
+    (p.name ? esc(surname(p.name)) +
+      (sexMark(p.name) ? '<i class="psx">' + sexMark(p.name) + "</i>" : "")
+            : "&mdash;") + "</span>" +
     '<span class="steps">' + st + "</span></button>";
 }
 function cardHtml(p) {
@@ -8522,6 +8568,7 @@ VIEWS.player = function (d) {
         '<span class="pno">' + p.no + "</span></span>" +
       '<span class="pwho"><b>' + esc(p.name || ("Shirt " + p.no)) + "</b>" +
         '<span class="prow2">' + (p.role ? '<i class="rl">' + esc(p.role) + "</i>" : "") +
+        (sexSay(p.name) ? '<i class="rl sx">' + sexSay(p.name) + "</i>" : "") +
         (p.tag === "CAP" ? '<i class="rl cap">CAPTAIN</i>' : "") +
         (p.tag === "GEM" ? '<i class="rl gem">GEM</i>' : "") +
         (p.tag === "GK" ? '<i class="rl">KEEPER</i>' : "") + "</span>" +
@@ -8555,10 +8602,10 @@ VIEWS.player = function (d) {
                                                          : "no steps yet") + "</em></div>" +
 
     (grown < 2
-      ? '<button class="btn" id="pboost">Boost him &middot; go to the exercises</button>'
+      ? '<button class="btn" id="pboost">Boost the player &middot; go to the exercises</button>'
       : '<button class="btn ghost" disabled>He cannot grow any more</button>') +
     (ME.next && !ban && !hurt
-      ? '<button class="btn ghost" id="psheet">Put him on a moment</button>' : "") +
+      ? '<button class="btn ghost" id="psheet">Put the player on a moment</button>' : "") +
     '<button class="btn ghost" id="pbk">Back to the squad</button></div>');
 
   if ($("pboost")) $("pboost").onclick = function () { go("ground", { tab:"squad" }); };
@@ -10155,7 +10202,11 @@ function ftRunPage(cfg) {
       slideOut(first);
     }
   }
+  /* la partita intera resta scritta qui dentro anche quando la finestra
+     ne mostra sei: al triplice fischio si rimette tutta, e si scorre */
+  var log = [];
   function put(h) {
+    log.push('<div class="ftin">' + h + "</div>");
     var d = document.createElement("div");
     d.className = "ftin";
     d.innerHTML = h;
@@ -10192,6 +10243,19 @@ function ftRunPage(cfg) {
   function over() {
     $("rph").textContent = "FULL TIME";
     mark("FULL TIME", A + " &ndash; " + B);
+    /* finita: la finestra si apre e torna tutta la partita, dal primo
+       minuto all'ultimo. Il tabellone resta appiccicato in alto mentre
+       il dito scorre. */
+    tl.className = "ftl run all";
+    tl.innerHTML = log.join("");
+    var d = $("rnd"); if (d) d.style.display = "none";
+    var up = $("ftup");
+    if (!up) {
+      up = document.createElement("p");
+      up.id = "ftup"; up.className = "hint ftup";
+      up.textContent = "Slide up for the whole match, minute by minute.";
+      tl.parentNode.insertBefore(up, tl.nextSibling);
+    }
     cfg.done && cfg.done();
     $("rskip").className = "btn";
     $("rskip").textContent = "See the whole match \u203a";
@@ -12735,7 +12799,7 @@ function tlWirePlayer(lines, onStart, onEnd) {
   var a = $("au"), pp = $("aupp"), st = $("aust"), fill = $("aubar").firstChild;
   /* otto secondi fra una frase e l'altra: con quattro non si faceva in
      tempo a scrivere */
-  var i = 0, going = false, GAP = 8200, tm = $("autm");
+  var i = 0, going = false, GAP = 11200, tm = $("autm");
   pp.onclick = function () {
     if (going) return;
     going = true; pp.disabled = true;
