@@ -2551,7 +2551,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "45";
+var APPVER = "46";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8547,6 +8547,21 @@ function ftHalf(att, def, mode, sides) {
 function ftMode() { return (BULL && BULL.mode === "rapide") ? "rapide" : "dynamique"; }
 
 /* ───────── la riga che questo telefono mette nel cassetto ───────── */
+/* ───────── la chiave della competizione ─────────
+   Nel cassetto non va l'id della pubblicazione: cambia a ogni volta che
+   il professore ripubblica, e due telefoni che hanno scaricato in
+   momenti diversi finivano a scrivere sotto due chiavi diverse, senza
+   trovarsi mai. Qui si costruisce una chiave che dipende solo da quello
+   che il professore ha scritto: campionato, stagione, nome e classe. */
+function liveComp() {
+  var b = BULL || {};
+  var raw = [b.comp || "", b.season || "", b.compName || b.file || "",
+             b.group || b.clsName || ""].join("|");
+  var key = raw.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+               .replace(/^-+|-+$/g, "").slice(0, 60);
+  return key || scope();
+}
+
 function liveCard(md) {
   if (!ME.club || !ME.next) return null;
   var hs = formHalves(scope(), ME.club.id).filter(function (h) { return h.md === md; });
@@ -8559,7 +8574,7 @@ function liveCard(md) {
   loadSheet();
   var call = (SHEET && SHEET.call) || { att:{}, def:{} };
   return {
-    v:1, comp:scope(), md:md, club:ME.club.id, opp:ME.next.oppId || "",
+    v:1, comp:liveComp(), md:md, club:ME.club.id, opp:ME.next.oppId || "",
     home:!!ME.next.atHome,
     att:{ q:att.quals || [], m:att.mins || [], w:!!att.hardOk, hm:att.hardMin || null },
     def:{ q:def.quals || [], m:def.mins || [], p:!!(def.hard && !def.hardOk),
@@ -8769,7 +8784,7 @@ function liveCardHtml() {
 function liveKeysHtml(md) {
   var c = liveCard(md);
   if (!c) return "";
-  return '<span class="lvkeys">comp <b>' + esc(c.comp) + "</b> &middot; md <b>" +
+  return '<span class="lvkeys">key <b>' + esc(c.comp) + "</b> &middot; md <b>" +
     esc(c.md) + "</b> &middot; mine <b>" + esc(c.club) + "</b> &middot; looking for <b>" +
     esc(c.opp || "?") + "</b></span>";
 }
