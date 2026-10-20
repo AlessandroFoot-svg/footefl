@@ -2023,6 +2023,15 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .lvseen b{display:block;font:800 8.5px/1 var(--brand);letter-spacing:.14em;color:#6FA38D}
 .lvseen i{display:block;margin-top:5px;font:600 10.5px/1.4 var(--brand);font-style:normal;
   color:#A8D4BE;word-break:break-all}
+.prov{font-style:normal;color:var(--gold);font-size:12px;margin-left:5px}
+.lprov{margin-top:10px;padding:9px 11px;border-radius:10px;background:rgba(227,239,38,.08);
+  border:1px solid rgba(227,239,38,.35);font-size:11px;font-weight:600;line-height:1.45;
+  color:#D7F2C6}
+.lprov b{font-weight:800;color:var(--gold)}
+.ldc .pip.off{background:#6FA38D}
+.qv u{display:block;margin-top:3px;text-decoration:none;font:600 9.5px/1 var(--brand);
+  color:#6FA38D}
+.qrw .qv:last-child u{text-align:right}
 </style>
 </head>
 <body>
@@ -2381,16 +2390,68 @@ var LEAGUE = {
 };
 
 /* la classifica vera e propria: punti, poi differenza reti, poi gol fatti */
+/* ───────── i risultati che il telefono conosce gia' ─────────
+   La classifica ufficiale e' quella del professore: arriva nel
+   bollettino e conta le giornate che lui ha gia' risolto. Quando due
+   alunni chiudono una partita, pero', il risultato esiste prima che lui
+   lo pubblichi: qui lo si aggiunge alla classifica, segnato come
+   provvisorio, cosi' i tre punti si vedono subito. */
+function liveExtra() {
+  var out = [];
+  if (!ME.club || typeof scope !== "function") return out;
+  var pre = "footefl-live-" + scope() + "-md", from = (LEAGUE.md || 1);
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (!k || k.indexOf(pre) !== 0) continue;
+      var md = parseInt(k.slice(pre.length), 10);
+      if (!md || md < from) continue;        /* gia' dentro quella ufficiale */
+      var st = JSON.parse(localStorage.getItem(k) || "null");
+      if (!st || !st.score || !st.score.opp) continue;
+      out.push({ md:md, a:ME.club.id, b:st.score.opp,
+                 gf:st.score.me, ga:st.score.them });
+    }
+  } catch (e) {}
+  return out;
+}
+
 function leagueRows() {
-  return LEAGUE.teams.filter(function (t) {
+  var rows = LEAGUE.teams.filter(function (t) {
     return t.world === (ME.world || "en");
   }).map(function (t) {
     return { id:t.id, name:t.name, student:t.student, colour:t.colour,
              p:t.p, w:t.w, d:t.d, l:t.l, gf:t.gf, ga:t.ga,
-             gd:t.gf - t.ga, pts:t.w * 3 + t.d, form:t.form };
+             form:(t.form || []).slice(), live:false };
+  });
+  var by = {};
+  rows.forEach(function (r) { by[r.id] = r; });
+  function add(r, gf, ga) {
+    if (!r) return;
+    r.p++; r.gf += gf; r.ga += ga;
+    if (gf > ga) { r.w++; r.form.push("W"); }
+    else if (gf === ga) { r.d++; r.form.push("D"); }
+    else { r.l++; r.form.push("L"); }
+    r.live = true;
+  }
+  liveExtra().forEach(function (x) {
+    add(by[x.a], x.gf, x.ga);
+    add(by[x.b], x.ga, x.gf);
+  });
+  return rows.map(function (r) {
+    r.gd = r.gf - r.ga; r.pts = r.w * 3 + r.d; return r;
   }).sort(function (a, b) {
     return b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || (a.name < b.name ? -1 : 1);
   }).map(function (r, i) { r.pos = i + 1; return r; });
+}
+/* il gradino dell'alunno, ricalcolato: chi sta sopra, io, chi sta sotto */
+function refreshTable() {
+  if (!ME.club) return;
+  var all = leagueRows(), mine = 0, id = ME.club.id;
+  all.forEach(function (r, i) { if (r.id === id) mine = i; });
+  var from = Math.max(0, Math.min(mine - 1, all.length - 3));
+  ME.table = all.slice(from, from + 3).map(function (r) {
+    return { pos:r.pos, name:r.name, pts:r.pts, me:r.id === id, live:!!r.live };
+  });
 }
 function teamOf(id) {
   return leagueRows().filter(function (r) { return r.id === id; })[0] || null;
@@ -2556,7 +2617,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "48";
+var APPVER = "49";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -5254,6 +5315,13 @@ function landComps() {
       var mine = ((t.teams || []).filter(function (x) { return x.id === m.club; })[0]) || {};
       var row = ((t.table || []).filter(function (x) { return x.id === m.club; })[0]) || null;
       var cr = crestOf(m.club);
+      /* giornata chiusa: la carta lo dice, invece di chiamare a giocare */
+      var played = false;
+      try {
+        var nx = ((t.next || {})[m.club] || {}).md;
+        played = !!nx && typeof matchPlayed === "function" && m.id === scope() &&
+                 matchPlayed(nx);
+      } catch (e) {}
       var col = mine.colour || "#16233F";
       return '<button class="ldc' + (on ? " on" : "") + '" data-c="' + esc(m.id) + '" ' +
         'type="button" aria-expanded="' + (on ? "true" : "false") + '" ' +
@@ -5266,9 +5334,12 @@ function landComps() {
         "<span>" + esc(m.clubName || "no club yet") +
           (row ? " &middot; " + ord(row.pos) + " of " + (t.table || []).length : "") +
         "</span>" +
-        '<em>' + (fresh.indexOf(m.id) >= 0
-          ? '<span class="pip"></span>NEW ROUND'
-          : '<span class="pip"></span>MATCHDAY ' + (m.md || 1) + " OF " + (m.mdTotal || 1)) +
+        '<em>' + (played
+          ? '<span class="pip off"></span>MATCHDAY ' + (m.md || 1) + " PLAYED"
+          : fresh.indexOf(m.id) >= 0
+            ? '<span class="pip"></span>NEW ROUND'
+            : '<span class="pip"></span>MATCHDAY ' + (m.md || 1) + " OF " +
+              (m.mdTotal || 1)) +
         "</em></button>";
     }).join("") + '<span class="ldend"></span></div>' +
     '<div id="ldprev"></div>';
@@ -5963,11 +6034,13 @@ function drawNextUp() {
       var body = !open ? "" : '<div class="nxbody">' +
         '<span class="nxw">' + sky("ATTACK", n.att) + sky("DEFENCE", n.def) + "</span>" +
         '<button class="nxgo" data-c="' + esc(n.id) + '" type="button">' + (n.halves >= 2
-          ? "&#10003; Both halves played"
+          ? "Matchday " + n.md + " is played &mdash; see it"
           : n.halves === 1 ? "Play the other half"
           : esc(sheet || "Prepare my team sheet")) + " &rsaquo;</button>" +
         '<span class="nxs">' + (n.halves >= 2
-          ? "Your teacher has your report."
+          ? (n.md < (n.mdTotal || 1)
+              ? "Waiting for your teacher to open matchday " + (n.md + 1) + "."
+              : "That was the last matchday of the season.")
           : n.halves === 1 ? "One half done, one waiting."
           : n.att.actions + " moments in attack, " + n.def.actions + " in defence.") +
         "</span></div>";
@@ -7892,13 +7965,14 @@ function drawSignings() {
 }
 
 function drawTable() {
+  refreshTable();
   var left = ME.mdTotal - ME.mdPlayed;
   var me = ME.table.filter(function (r) { return r.me; })[0];
   var inCup = me && me.pos <= ME.cupPlaces;
   $("lad").innerHTML = ME.table.map(function (r) {
     return '<div class="lad' + (r.me ? " me" : "") + '"><span class="pos">' + r.pos +
-      '</span><span class="tn">' + esc(r.name) + '</span><span class="pt">' + r.pts +
-      "<em>pts</em></span></div>";
+      '</span><span class="tn">' + esc(r.name) + (r.live ? ' <i class="prov">•</i>' : "") +
+      '</span><span class="pt">' + r.pts + "<em>pts</em></span></div>";
   }).join("") +
   '<div class="cupline">' + (inCup
     ? "Top " + ME.cupPlaces + " go to the cups. You are in."
@@ -8966,22 +9040,23 @@ VIEWS.live = function () {
       tag:s.their.penalty.outcome === "goal" ? "GOAL" : "SAVED",
       cls:s.their.penalty.outcome === "goal" ? "out" : "kp" }) : "");
 
-  /* ── le due qualita' a confronto ── */
-  function avg(a) {
-    if (!a || !a.length) return null;
-    var n = 0; a.forEach(function (x) { n += x; });
-    return Math.round(n / a.length);
+  /* ── i punti dei due reparti: la somma delle azioni, non una media ──
+     Ogni momento vale 0, 0,25, 0,50, 0,75 o 1. Qui si sommano: e' il
+     peso vero di un attacco e di una difesa. */
+  function tot(a) {
+    var n = 0, c = 0;
+    (a || []).forEach(function (x) { if (x != null) { n += x; c++; } });
+    return { v:n, n:c };
   }
-  var myAtt = avg(s.mine.duels.map(function (d) { return d.shot; }));
-  var myDef = avg(s.their.duels.map(function (d) { return d.save; })
-                    .filter(function (x) { return x != null; }));
-  var thAtt = avg(s.their.duels.map(function (d) { return d.shot; }));
-  var thDef = avg(s.mine.duels.map(function (d) { return d.save; })
-                    .filter(function (x) { return x != null; }));
+  var myAtt = tot(s.mine.duels.map(function (d) { return d.shot; }));
+  var myDef = tot(s.their.duels.map(function (d) { return d.save; }));
+  var thAtt = tot(s.their.duels.map(function (d) { return d.shot; }));
+  var thDef = tot(s.mine.duels.map(function (d) { return d.save; }));
   function qrow(lab, a, b) {
-    return '<div class="qrw"><span class="qv">' + (a == null ? "&mdash;" : fmt(a)) +
-      '</span><span class="ql">' + lab + '</span><span class="qv">' +
-      (b == null ? "&mdash;" : fmt(b)) + "</span></div>";
+    return '<div class="qrw"><span class="qv">' + fmt(a.v) +
+      '<u>' + a.n + (a.n === 1 ? " moment" : " moments") + "</u></span>" +
+      '<span class="ql">' + lab + '</span><span class="qv">' + fmt(b.v) +
+      '<u>' + b.n + (b.n === 1 ? " moment" : " moments") + "</u></span></div>";
   }
 
   var pts = win ? 3 : draw ? 1 : 0;
@@ -9029,9 +9104,12 @@ VIEWS.live = function () {
     '<div class="panel qbox"><div class="qhd"><span>' + esc(ME.club.name) +
       "</span><span>" + esc(them) + "</span></div>" +
       qrow("attack", myAtt, thAtt) + qrow("defence", myDef, thDef) +
-      '<p class="qn">' + (s.mode === "rapide"
+      '<p class="qn">The points each side put together: every moment is worth ' +
+      "0, 0,25, 0,50, 0,75 or 1, and here they are added up. " +
+      (s.mode === "rapide"
         ? "Quick rules: every shot the other side could not answer is a goal."
-        : "Shot against save, quality by quality. The better number wins.") +
+        : "In the match they go one against one: shot against save, and the " +
+          "better number wins.") +
       "</p></div>" +
 
     (tab && tab.pos
@@ -11219,6 +11297,11 @@ VIEWS.league = function () {
   barFlow("The league", "Matchday " + LEAGUE.md + " of " + LEAGUE.mdTotal, 0);
   html('<div class="pad">' +
     '<h2 class="sec">The table</h2><div class="ltab" id="ltab"></div>' +
+    (rows.filter(function (r) { return r.live; }).length
+      ? '<p class="lprov">&#8226; <b>Provisional.</b> These points come from matches ' +
+        "already finished on the phones. Your teacher publishes the official table " +
+        "when he runs the matchday.</p>"
+      : "") +
     '<p class="lkey">P played &middot; W won &middot; D drawn &middot; L lost &middot; ' +
     "GF goals for &middot; GA goals against &middot; GD difference. " +
     "Top " + LEAGUE.cupPlaces + " go to the cups" +
@@ -11243,7 +11326,9 @@ function drawTable2(rows) {
       "</span>" +
       '<span class="ldot" style="background:' + dotOf(r.colour) + '"></span>' +
       '<span class="lmid"><b>' + esc(r.name) +
-      (cup ? '<em class="trophy" title="' + esc(cup) + '">&#9733;</em>' : "") + "</b>" +
+      (cup ? '<em class="trophy" title="' + esc(cup) + '">&#9733;</em>' : "") +
+      (r.live ? '<em class="prov" title="Not published by your teacher yet">&#8226;</em>'
+              : "") + "</b>" +
       "<span>" + esc(mine ? ME.student : r.student) + " &middot; " +
       r.w + "W " + r.d + "D " + r.l + "L &middot; " + r.gf + ":" + r.ga +
       " (" + gdStr(r.gd) + ")</span></span>" +
