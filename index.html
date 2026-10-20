@@ -2548,7 +2548,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "43";
+var APPVER = "44";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -5988,7 +5988,12 @@ function drawNextUp() {
     });
   Array.prototype.forEach.call($("hnext").querySelectorAll(".nxgo"), function (b) {
     b.onclick = function () {
-      enterComp(b.dataset.c, function (err) { if (!err) reset("squad"); });
+      enterComp(b.dataset.c, function (err) {
+        if (err) return;
+        /* se la giornata e' chiusa si va a vederla, non a rigiocarla */
+        if (ME.next && matchPlayed(ME.next.md)) return reset("played", {});
+        reset("squad");
+      });
     };
   });
 }
@@ -7940,12 +7945,20 @@ function drawNext() {
     '<button class="nxgo" id="goPrep" type="button">' + sheetLabel() + " &rsaquo;</button>" +
     '<span class="nxs">' + ac.actions + " moments in attack, " + dc.actions +
     " in defence.</span></div></div></div>";
-  $("goPrep").onclick = function () { go(sheetDone() ? "lock" : "prep"); };
+  $("goPrep").onclick = function () {
+    if (matchPlayed(n.md)) return go("played", {});
+    /* l'attacco e' fatto: si va dritti alla difesa, senza ripassare dal foglio */
+    if (halfPlayed(n.md, "att")) return go("mGo", { ph:"def" });
+    go(sheetDone() ? "lock" : "prep");
+  };
 }
 
 /* la stessa riga racconta a che punto e' il foglio */
 function sheetLabel() {
   loadSheet();
+  var md = ME.next ? ME.next.md : 0;
+  if (md && matchPlayed(md)) return "Matchday " + md + " is played &mdash; see it";
+  if (md && halfPlayed(md, "att")) return "Play the defence";
   if (SHEET.locked) return "Back into the match";
   if (sheetReady())  return "My team sheet is ready &mdash; get the code";
   var n = filled("att") + filled("def"), t = phaseSlots("att") + phaseSlots("def");
@@ -8092,6 +8105,21 @@ function recordHalf(rec) {
 function halvesOf(md) {
   return FORM.halves.filter(function (h) { return h.md === md; });
 }
+/* ───────── una partita si gioca una volta sola ─────────
+   Il tempo registrato e' la prova: finche' c'e' quella riga, quel tempo
+   non si riapre. Senza questo l'alunno poteva rientrare, riscrivere il
+   dettato e cambiare un risultato gia' partito verso l'altro telefono. */
+function halfPlayed(md, ph) {
+  loadForm();
+  return halvesOf(md).filter(function (h) { return h.ph === ph; }).length > 0;
+}
+function matchPlayed(md) { return halfPlayed(md, "att") && halfPlayed(md, "def"); }
+function halfNext(md) {
+  if (!halfPlayed(md, "att")) return "att";
+  if (!halfPlayed(md, "def")) return "def";
+  return "";
+}
+
 function matchdaysPlayed() {
   var o = {};
   FORM.halves.forEach(function (h) { o[h.md] = 1; });
@@ -8578,7 +8606,12 @@ function liveFetch(comp, md, club, done) {
     "&md=eq." + encodeURIComponent(md) +
     "&club=eq." + encodeURIComponent(club);
   fetch(url, { headers:{ "apikey":DROP.key, "Authorization":"Bearer " + DROP.key } })
-    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (r) {
+      /* una lettura rifiutata non e' "l'altro non ha finito": e' un
+         permesso che manca. Dirlo, invece di far aspettare per sempre. */
+      if (!r.ok) throw new Error("read " + r.status);
+      return r.json();
+    })
     .then(function (a) { done(null, (a && a[0] && a[0].body) || null); })
     ["catch"](function (e) { done(String(e.message || e)); });
 }
@@ -8698,28 +8731,19 @@ function liveCardHtml() {
     '<span class="lvtry" id="lvTry">Look again &rsaquo;</span></div></section>';
 }
 
-/* al disegno della pagina: manda la mia riga, poi guarda se c'e' la loro */
-function wireLive(boxId, viewName) {
+/* al disegno della pagina: manda la mia riga, poi guarda se c'e' la loro.
+   `quiet` vuol dire "ridisegna e basta": senza, un cassetto che risponde
+   subito male rimandava la riga all'infinito. */
+function wireLive(boxId, viewName, quiet) {
   boxId = boxId || "hlive"; viewName = viewName || "home";
-  var md = ME.next ? ME.next.md : 0;
-  if (!liveState(md)) return;
+  var md = ME.next ? ME.next.md : 0, state = liveState(md);
+  if (!state) return;
   var box = $(boxId);
   function again() {
     if (!box || !HERE || HERE.name !== viewName) return;
     box.innerHTML = liveCardHtml();
-    wireLive(boxId, viewName);
+    wireLive(boxId, viewName, true);
   }
-  var b = $("lvGo");
-  if (b) { b.onclick = function () { go("live"); }; return; }
-  var t = $("lvTry");
-  if (t) t.onclick = function () {
-    t.textContent = "Trying…";
-    liveSetWhy(md, "");
-    var st = liveGet(md) || {}; st.sent = false; liveSave(md, st);
-    push();
-  };
-  push();
-
   function push() {
     livePush(md, function (err) {
       if (err && err !== "notyet") { liveSetWhy(md, err); return again(); }
@@ -8730,6 +8754,18 @@ function wireLive(boxId, viewName) {
       });
     });
   }
+  var b = $("lvGo");
+  if (b) { b.onclick = function () { go("live"); }; return; }
+  var t = $("lvTry");
+  if (t) t.onclick = function () {
+    t.textContent = "Trying…";
+    liveSetWhy(md, "");
+    var st = liveGet(md) || {}; st.sent = false; liveSave(md, st);
+    push();
+  };
+  if (quiet) return;
+  if (state === "nodesk" || state === "noopp" || state === "done") return;
+  push();
 }
 
 /* ═══════════════ NOVANTA MINUTI, UNO PER UNO ═══════════════ */
@@ -9909,6 +9945,10 @@ function wirePlayer(id, onEnd, onFail, onStart) {
 /* ───────── scrivere il dettato ───────── */
 VIEWS.mWrite = function (d) {
   var ph = d.ph, dict = MATCHDICT[ph], c = climateOf(phaseClim(ph));
+  /* il tempo si scrive una volta sola */
+  if (typeof halfPlayed === "function" && ME.next && halfPlayed(ME.next.md, ph)) {
+    return swap("played", { ph:ph });
+  }
   barFlow(ph === "att" ? "Attack" : "Defence",
           dict.title + " \u00b7 " + c.label + " \u00b7 " + c.actions +
           (ph === "att" ? " shots at most" : " saves at most"), 50, false);
@@ -11683,9 +11723,40 @@ function whereIs(no) {
    gia' tutti calcolati, non c'e' altro da rifare. */
 var CODES_ON = false;
 
+/* ───────── gia' giocata ─────────
+   Una giornata si gioca una volta. Qui si dice che cosa c'e' gia' e si
+   manda dove si guarda: il risultato, o il rapporto linguistico. */
+VIEWS.played = function (d) {
+  var md = ME.next.md, ph = d && d.ph, both = matchPlayed(md);
+  paintClub(ME.club);
+  barFlow("Matchday " + md, ME.club.name, 100);
+  html('<div class="pad"><h1>' +
+    (both ? "This match is played." : "This half is played.") + "</h1>" +
+    '<p class="lede">' + (both
+      ? "Both halves are in and your card has gone to the result desk. A matchday " +
+        "is played once: what you wrote is what counts."
+      : "Your " + (ph === "def" ? "defence" : "attack") + " is already written and " +
+        "sent. You cannot write it twice &mdash; the other half is still waiting " +
+        "for you.") + "</p>" +
+    '<div id="pftbox"></div>' +
+    (both ? "" : '<button class="btn" id="pgo">Play the ' +
+      (halfNext(md) === "def" ? "defence" : "attack") + "</button>") +
+    '<button class="btn' + (both ? "" : " ghost") + '" id="prep2">' +
+    "See my language report</button>" +
+    '<button class="btn ghost" id="pbk">Back to the competition</button></div>');
+  if ($("pgo")) $("pgo").onclick = function () { swap("mGo", { ph:halfNext(md) }); };
+  $("prep2").onclick = function () { swap("mReport"); };
+  $("pbk").onclick = function () { reset("home"); };
+  if (both && typeof wireLive === "function") {
+    $("pftbox").innerHTML = (typeof liveCardHtml === "function") ? liveCardHtml() : "";
+    wireLive("pftbox", "played");
+  }
+};
+
 VIEWS.lock = function () {
   loadSheet();
   var md = ME.next.md;
+  if (matchPlayed(md)) return swap("played", {});
   barFlow(CODES_ON ? "The match is locked" : "Ready to play", "Matchday " + md, 100);
 
   if (!CODES_ON) {
@@ -11738,6 +11809,8 @@ VIEWS.lock = function () {
 /* ───────── 4. si gioca ───────── */
 VIEWS.mGo = function (d) {
   var ph = d.ph, c = climateOf(phaseClim(ph)), n = c.actions;
+  /* questo tempo e' gia' stato giocato: non si rientra */
+  if (halfPlayed(ME.next.md, ph)) return swap("played", { ph:ph });
   barFlow(ph === "att" ? "Attack" : "Defence", ME.next.home + " vs " + ME.next.away, 0, false);
   html('<div class="pad"><h1>' + (ph === "att" ? "Your attack." : "Now defend.") + "</h1>" +
     '<p class="lede"><b>' + esc(MATCHDICT[ph].title) + "</b>, read by your teacher. " +
