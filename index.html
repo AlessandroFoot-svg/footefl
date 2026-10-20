@@ -2071,9 +2071,15 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .rnbar{margin-top:12px;height:5px;border-radius:3px;background:rgba(226,251,206,.14);
   overflow:hidden}
 .rnbar i{display:block;height:100%;width:0;background:var(--gold);border-radius:3px}
+/* la testata del vivo resta attaccata in alto, qualunque cosa succeda */
+.rnb{position:sticky;top:0;z-index:3}
 .ftl.run{margin-top:13px;min-height:90px;border-radius:18px;border:1px solid var(--edge);
-  background:rgba(4,23,15,.5);padding:0;overflow:hidden}
-.ftin{animation:ftpop .36s ease both}
+  background:rgba(4,23,15,.5);padding:0;overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,0) 0,#000 16px);
+  mask-image:linear-gradient(180deg,rgba(0,0,0,0) 0,#000 16px)}
+.ftin{animation:ftpop .36s ease both;overflow:hidden;
+  transition:max-height .34s ease,opacity .26s ease,transform .3s ease}
+.ftin.gone{animation:none;opacity:0;transform:translateY(-10px)}
 @keyframes ftpop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .ftbreak{display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:9px 13px;background:rgba(227,239,38,.1);border-bottom:1px solid var(--edge)}
@@ -2664,7 +2670,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "50";
+var APPVER = "51";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -9165,12 +9171,42 @@ VIEWS.ftRun = function () {
   var tl = $("tl");
   if (FTRUN.t) clearInterval(FTRUN.t);
 
+  /* la finestra tiene sei righe: la settima spinge fuori la piu' vecchia,
+     che scivola in alto e sparisce sotto la testata. Cosi' il punteggio
+     resta sempre davanti agli occhi e la pagina non si allunga. */
+  var FTMAX = 6;
+  function alive() {
+    var n = 0, c = tl.children;
+    for (var k = 0; k < c.length; k++) if (!c[k].getAttribute("data-out")) n++;
+    return n;
+  }
+  function slideOut(el) {
+    el.setAttribute("data-out", "1");
+    el.style.maxHeight = el.offsetHeight + "px";
+    void el.offsetHeight;                       /* forza il calcolo prima di chiudere */
+    el.className = "ftin gone";
+    el.style.maxHeight = "0px";
+    setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 360);
+  }
+  function trim() {
+    var guard = 0;
+    while (alive() > FTMAX && guard++ < 20) {
+      var c = tl.children, first = null;
+      for (var k = 0; k < c.length && !first; k++) {
+        if (!c[k].getAttribute("data-out")) first = c[k];
+      }
+      if (!first) break;
+      slideOut(first);
+    }
+  }
   function put(h) {
     var d = document.createElement("div");
     d.className = "ftin";
     d.innerHTML = h;
     tl.appendChild(d);
-    try { d.scrollIntoView({ block:"center", behavior:"smooth" }); } catch (e) {}
+    trim();
   }
   function mark(txt, sub) {
     put('<div class="ftbreak"><b>' + txt + "</b><em>" + sub + "</em></div>");
