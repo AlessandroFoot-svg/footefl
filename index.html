@@ -1709,6 +1709,192 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .prc.done::before{opacity:.26}
 /* nella sala, il velo si alza: si deve vedere dove si sta parlando */
 .prpad{min-height:70vh}
+
+/* ═════════ LA LANDING ═════════
+   La prima pagina: chi sei, dove giochi, e la porta per entrare.
+   La testata ha il prato tagliato a strisce; quello che scende da una
+   competizione e' su carta avorio, perche' si legga di colpo. */
+.ldwrap{padding-bottom:4px}
+.ldh{position:relative;overflow:hidden;border-bottom:1px solid var(--edge);
+  background:repeating-linear-gradient(100deg,#0E3A27 0 34px,#0B2F20 34px 68px)}
+.ldveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,23,15,.2) 0%,
+  rgba(4,23,15,.88) 92%)}
+.ldring{position:absolute;left:-80px;bottom:-150px;width:270px;height:270px;
+  border:2px solid rgba(226,251,206,.14);border-radius:50%}
+.ldhin{position:relative;padding:18px 16px 20px}
+.ldtop{display:flex;align-items:center;justify-content:space-between}
+.ldmk{font:800 13px/1 var(--brand);letter-spacing:.04em;color:var(--gold)}
+.ldmk em{font-style:italic}
+.ldchip{padding:5px 10px;border-radius:7px;background:rgba(227,239,38,.16);
+  font:800 9px/1 var(--brand);letter-spacing:.14em;color:var(--gold)}
+.ldhi{margin-top:26px;font-size:15px;font-weight:600;color:var(--fog)}
+.ldh h1{margin-top:3px;font:800 46px/1 var(--brand);letter-spacing:-.035em;color:#FFFDEE}
+.ldwel{margin-top:9px;font-size:12px;font-weight:600;color:var(--fog)}
+.ldwel b{color:var(--gold)}
+.ldwel b em{font-style:italic}
+.ldfacts{display:flex;align-items:center;margin-top:18px;padding:11px 13px;
+  border-radius:14px;background:rgba(4,23,15,.55);border:1px solid var(--edge)}
+.ldf{flex:none;padding-right:13px}
+.ldf.line{padding:0 13px;border-left:1px solid #14503C}
+.ldf.wide{flex:1;min-width:0}
+.ldf i{display:block;font:800 8.5px/1 var(--brand);letter-spacing:.14em;
+  font-style:normal;color:#6FA38D}
+.ldf b{display:block;margin-top:3px;font:800 15px/1 var(--brand);color:#FFFDEE}
+.ldf:first-child b{color:var(--gold)}
+.lddots{display:block;margin-top:6px;white-space:nowrap}
+.lddots i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;
+  background:#6FA38D}
+.lddots i.w{background:#7FD17F}
+.lddots i.d{background:#E3C84A}
+.lddots i.l{background:#C9553F}
+
+.ldk{display:block;font:800 9.5px/1 var(--brand);letter-spacing:.18em;color:#6FA38D}
+.ldbar{display:flex;align-items:center;gap:10px;padding:20px 16px 0}
+.ldbar .ldk{flex:1}
+.ldago{font-size:10px;font-weight:600;color:#6FA38D}
+.ldref{flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--edge);
+  background:rgba(226,251,206,.06);color:var(--gold);cursor:pointer;display:grid;
+  place-items:center}
+.ldref svg{width:16px;height:16px}
+.ldref.spin svg{animation:ldspin 1s linear infinite}
+@keyframes ldspin{to{transform:rotate(360deg)}}
+
+/* il carosello: scorre col dito, la barra non si vede */
+.ldrail{display:flex;gap:11px;margin-top:11px;padding:0 16px 4px;overflow-x:auto;
+  scroll-snap-type:x mandatory;scroll-padding-left:16px;scrollbar-width:none;-ms-overflow-style:none}
+.ldrail::-webkit-scrollbar{display:none;width:0;height:0}
+.ldend{flex:none;width:2px}
+.ldc{position:relative;flex:none;width:231px;scroll-snap-align:start;border-radius:19px;
+  overflow:hidden;padding:14px;text-align:left;border:1px solid var(--edge);color:#FFFDEE;
+  font-family:inherit;cursor:pointer;
+  background:linear-gradient(140deg,var(--cc) 0%,rgba(0,0,0,.45) 140%)}
+.ldc.on{border:1.5px solid var(--gold)}
+.ldcr{position:absolute;right:10px;top:12px;width:40px;height:40px}
+.ldcr.bdg{display:grid;place-items:center;border-radius:50%;background:rgba(0,0,0,.3);
+  font:800 12px/1 var(--brand);font-style:normal;color:#F2E6C8}
+.ldc i{display:block;font:800 9px/1 var(--brand);letter-spacing:.16em;font-style:normal;
+  color:var(--gold);padding-right:46px}
+.ldc b{display:block;margin-top:6px;font:800 18px/1.1 var(--brand);padding-right:46px}
+.ldc>span{display:block;margin-top:3px;font-size:11.5px;font-weight:600;
+  color:rgba(255,253,238,.82)}
+.ldc em{display:flex;align-items:center;gap:7px;margin-top:13px;
+  font:800 10px/1 var(--brand);letter-spacing:.08em;font-style:normal;color:#FFFDEE}
+.ldc .pip{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+
+/* quello che scende: il programma su carta */
+.ldpv{margin:13px 16px 0;border-radius:18px;overflow:hidden;background:#F4F1E2;color:#0A2419}
+.ldpvh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  padding:12px 15px 0}
+.ldpvh span{font:800 9.5px/1.2 var(--brand);letter-spacing:.14em;color:#4E6B5C}
+.ldpvh em{flex:none;font:800 9.5px/1 var(--brand);letter-spacing:.12em;font-style:normal;
+  color:#8A2029}
+.ldfix{display:flex;align-items:center;gap:12px;padding:12px 15px 14px}
+.ldfix img{width:42px;height:42px;flex:none}
+.ldfb{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;
+  background:#0A2419;color:#F4F1E2;font:800 13px/1 var(--brand);font-style:normal}
+.ldfix>span{flex:1;min-width:0}
+.ldfix b{display:block;font:800 17px/1.15 var(--brand)}
+.ldfix em{display:block;margin:3px 0;font-size:11px;font-weight:600;font-style:normal;
+  color:#4E6B5C}
+.ldwhen{flex:none;text-align:right}
+.ldwhen i{display:block;font:800 9px/1 var(--brand);letter-spacing:.1em;font-style:normal;
+  color:#4E6B5C}
+.ldwhen u{display:block;text-decoration:none;font:800 22px/1 var(--brand)}
+.ldno{padding:0 15px 14px;font-size:12px;font-weight:600;line-height:1.4;color:#4E6B5C}
+.ldtwo{padding:0 15px 13px}
+.ldk2{display:block;margin-bottom:8px;font:800 9.5px/1 var(--brand);letter-spacing:.16em;
+  color:#4E6B5C}
+.ldrow{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;
+  background:rgba(10,36,25,.07);font-size:12.5px;font-weight:700;margin-bottom:6px}
+.ldrow .p{flex:none;width:15px;color:#8A6A1E}
+.ldrow .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ldrow .v{flex:none;color:#4E6B5C}
+.ldrow.me{background:#0A2419;color:#FFFDEE}
+.ldrow.me .p,.ldrow.me .v{color:var(--gold)}
+.ldnote{margin-top:2px;font-size:10.5px;font-weight:600;color:#4E6B5C}
+.ldgo{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:50px;
+  border:0;background:#0A2419;color:var(--gold);font-family:inherit;font-size:14.5px;
+  font-weight:800;cursor:pointer}
+
+/* il riscaldamento, in lime pieno */
+.ldwcard .pad{padding:0}
+.ldwcard .warm{background:var(--gold);border:0;color:#06231D}
+.ldwcard .warm .wi{background:#06231D;color:var(--gold)}
+.ldwcard .warm .wt b{color:#06231D}
+.ldwcard .warm .wt span{color:#14402F}
+.ldwcard .warm i,.ldwcard .warm .wgo{color:#06231D}
+.ldwcard .warm.off{background:rgba(226,251,206,.05);border:1px solid var(--edge);
+  color:var(--cream)}
+.ldwcard .warm.off .wt b{color:#FFFDEE}
+.ldwcard .warm.off .wt span{color:var(--fog)}
+.ldwcard .warm.off .wi{background:rgba(227,239,38,.18);color:var(--gold)}
+
+/* i numeri */
+.ldngrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}
+.ldn{border-radius:16px;padding:13px 14px 12px;background:rgba(226,251,206,.05);
+  border:1px solid #14503C}
+.ldn i{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;font-style:normal;
+  color:#8FC4AC}
+.ldn b{display:block;margin-top:6px;font:800 27px/1 var(--brand);color:#FFFDEE}
+.ldn u{display:block;margin-top:4px;text-decoration:none;font-size:10px;font-weight:600;
+  color:#8FC4AC}
+.ldn u.sm{display:inline;margin:0;font-size:15px;color:#8FC4AC}
+
+/* il ritaglio di giornale */
+.ldcut{padding:13px 14px;border-radius:14px;background:#E9E6D7}
+.ldcut i{display:block;font:800 9px/1.2 var(--brand);letter-spacing:.16em;font-style:normal;
+  color:#8A2029}
+.ldcut p{margin-top:7px;font-size:14.5px;font-weight:600;font-style:italic;line-height:1.35;
+  color:#0A2419}
+.ldcut span{display:block;margin-top:6px;font:800 10px/1 var(--brand);letter-spacing:.1em;
+  color:#4E6B5C}
+
+.ldstat{display:flex;align-items:center;gap:11px;width:100%;padding:13px 14px;
+  border-radius:15px;border:1px solid var(--edge);background:rgba(226,251,206,.05);
+  color:var(--cream);text-align:left;font-family:inherit;cursor:pointer}
+.ldstat svg{flex:none;width:19px;height:19px;color:var(--gold)}
+.ldstat b{flex:1;font-size:13.5px;font-weight:800;color:#FFFDEE}
+.ldstat i{font-style:normal;color:#6FA38D;font-size:17px}
+
+/* le sei porte */
+.lddgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:11px}
+.lddoor{display:grid;justify-items:center;gap:7px;padding:13px 6px;border-radius:15px;
+  border:1px solid #14503C;background:rgba(226,251,206,.045);color:var(--gold);
+  font-family:inherit;cursor:pointer}
+.lddoor svg{width:21px;height:21px}
+.lddoor b{font-size:10px;font-weight:800;line-height:1.2;text-align:center;color:#D7F2C6}
+
+/* come funziona, e chi l'ha fatto */
+.hw{padding:4px 0}
+.hwr{display:flex;gap:12px;padding:13px 15px;border-bottom:1px solid var(--edge)}
+.hwr:last-child{border-bottom:0}
+.hwn{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;
+  background:var(--gold);color:#06231D;font:800 12px/1 var(--brand)}
+.hwr b{display:block;font-size:13.5px;font-weight:800;color:#FFFDEE}
+.hwr em{display:block;margin-top:4px;font-size:12px;font-weight:500;font-style:normal;
+  line-height:1.45;color:var(--fog)}
+.mk{padding:17px 16px}
+.mkbig{font:800 26px/1 var(--brand);letter-spacing:.14em;color:var(--gold)}
+.mkbig em{font-style:italic}
+.mk p{margin-top:12px;font-size:13px;font-weight:500;line-height:1.5;color:var(--cream)}
+.mk p b{font-weight:800;color:#FFFDEE}
+.mksig{font:800 9.5px/1 var(--brand)!important;letter-spacing:.2em;color:#6FA38D!important;
+  margin-top:18px!important}
+/* la freccia della home: riporta alla pagina dell'alunno */
+.lmast{position:relative}
+.lback{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:34px;height:34px;
+  border-radius:50%;border:1px solid var(--edge);background:rgba(226,251,206,.06);
+  color:var(--cream);font-size:15px;cursor:pointer;display:grid;place-items:center}
+.lback:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.ldwhen u.cup{font:800 11px/1.2 var(--brand);letter-spacing:.04em;max-width:76px;
+  display:inline-block}
+/* i pallini dei giri, sul lime */
+.ldwcard .warm .wpip i{background:rgba(6,35,29,.3)}
+.ldwcard .warm .wpip i.on{background:#06231D}
+.ldwcard .warm.off .wpip i{background:rgba(226,251,206,.22)}
+.ldwcard .warm.done{background:var(--gold);border:0;color:#06231D}
+.ldwcard .warm.done .wt b{color:#06231D}
+.ldwcard .warm.done .wt span{color:#14402F}
 </style>
 </head>
 <body>
@@ -2242,7 +2428,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "40";
+var APPVER = "41";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -4236,7 +4422,7 @@ VIEWS.stars = function () {
     '<p class="bnote">Tabard Road FC is not for sale: your teacher opens that one.</p>' +
     '<button class="btn ghost" id="shome">Go to the clubs</button></div>');
 
-  $("shome").onclick = function () { reset("home"); };
+  $("shome").onclick = function () { reset(homeView()); };
 };
 
 
@@ -4824,6 +5010,391 @@ VIEWS.club = function (d) {
 };
 
 
+/* ───── 21-land.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   LA LANDING — la pagina dell'alunno, prima di tutto il resto
+
+   Qui non si gioca: si guarda chi si e', a che cosa si e' iscritti, e si
+   sceglie da dove entrare. Dentro una competizione ci si porta con
+   "Let's go", e da li' in poi comanda la home di sempre.
+   Niente nomi di altri alunni, niente cassa: i soldi stanno nel club,
+   che cambia da una competizione all'altra.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var LAND = { open: "" };
+
+function hourWord() {
+  var h = new Date().getHours();
+  return h < 12 ? "Good morning," : h < 18 ? "Good afternoon," : "Good evening,";
+}
+
+/* la mia forma: gli ultimi cinque risultati, da tutte le competizioni */
+function lastFive() {
+  var out = [];
+  gameStats().rows.forEach(function (r) {
+    (r.form || []).forEach(function (x) { out.push(String(x).toUpperCase()); });
+  });
+  return out.slice(-5);
+}
+
+/* l'ultima cosa detta in sala stampa, in qualunque competizione */
+function lastSaid() {
+  var best = null;
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (!k || k.indexOf("footefl-press-") !== 0) continue;
+      var md = parseInt(String(k).split("-md")[1], 10) || 0;
+      var box = JSON.parse(localStorage.getItem(k)) || {};
+      var said = (box.post && box.post.length) ? box.post : (box.pre || []);
+      if (!said.length) continue;
+      var txt = String(said[said.length - 1].a || "").trim();
+      if (!txt) continue;
+      if (!best || md > best.md) best = { md:md, text:txt, after:!!(box.post && box.post.length) };
+    }
+  } catch (e) {}
+  return best;
+}
+
+/* quante partite aspettano ancora: e' l'unica scadenza vera che l'app
+   conosce, perche' nel bollettino non ci sono date */
+function toPlay() {
+  return nextUp().filter(function (n) { return n.halves < 2; }).length;
+}
+
+/* ───────── la testata ───────── */
+function landHead() {
+  var nm = myName() || ME.student || "";
+  var n = toPlay(), five = lastFive();
+  var chip = n ? (n === 1 ? "1 MATCH TO PLAY" : n + " MATCHES TO PLAY") : "ALL SQUARE";
+
+  var facts = '<span class="ldf"><i>LEVEL</i><b>' + esc(ME.level || "A1") + "</b></span>" +
+    '<span class="ldf line"><i>PLAYING IN</i><b>' + COMPS.length + "</b></span>" +
+    (five.length
+      ? '<span class="ldf line wide"><i>MY LAST FIVE</i><span class="lddots">' +
+        five.map(function (r) {
+          return '<i class="' + r.toLowerCase() + '"></i>';
+        }).join("") + "</span></span>"
+      : '<span class="ldf line wide"><i>SEASON</i><b>1</b></span>');
+
+  $("ldhead").innerHTML = '<div class="ldh">' +
+    '<span class="ldveil" aria-hidden="true"></span>' +
+    '<span class="ldring" aria-hidden="true"></span>' +
+    '<div class="ldhin">' +
+      '<div class="ldtop"><span class="ldmk">FOOT<em>EFL</em></span>' +
+      '<span class="ldchip">' + chip + "</span></div>" +
+      '<p class="ldhi">' + hourWord() + "</p>" +
+      "<h1>" + esc(nm || "Player") + "</h1>" +
+      '<p class="ldwel">welcome to <b>FOOT<em>EFL</em></b> &middot; season 1</p>' +
+      '<div class="ldfacts">' + facts + "</div>" +
+    "</div></div>";
+}
+
+/* ───────── i campionati, a carosello ───────── */
+function landComps() {
+  var box = $("ldcomps");
+  if (!COMPS.length) {
+    box.innerHTML = '<section class="pad"><h2 class="sec">Your competitions</h2>' +
+      '<div class="panel empty3">Nothing found for <b>' + esc(ME.code) + "</b> yet. " +
+      "It is not a mistake: your teacher publishes when the matchday is ready." +
+      '</div><button class="btn ghost" id="ldlook">Look again</button></section>';
+    $("ldlook").onclick = function () {
+      $("ldlook").disabled = true; $("ldlook").textContent = "Looking…";
+      pullOnline(function () { reset("land"); });
+    };
+    return;
+  }
+  if (!LAND.open || !COMPS.filter(function (m) { return m.id === LAND.open; }).length) {
+    LAND.open = (COMPS.filter(function (m) { return m.id === scope(); })[0] || COMPS[0]).id;
+  }
+  var fresh = freshComps().map(function (m) { return m.id; });
+
+  box.innerHTML = '<div class="ldbar"><span class="ldk">YOUR COMPETITIONS &middot; ' +
+      COMPS.length + "</span>" +
+      '<span class="ldago" id="ldago">' + sinceWord() + "</span>" +
+      '<button class="ldref" id="ldref" type="button" aria-label="Look for new competitions">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" ' +
+      'stroke-linecap="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/>' +
+      '<path d="M20 5v6h-6"/></svg></button></div>' +
+    '<div class="ldrail">' + COMPS.map(function (m) {
+      var on = m.id === LAND.open;
+      var t = (compBull(m.id) || {});
+      var mine = ((t.teams || []).filter(function (x) { return x.id === m.club; })[0]) || {};
+      var row = ((t.table || []).filter(function (x) { return x.id === m.club; })[0]) || null;
+      var cr = crestOf(m.club);
+      var col = mine.colour || "#16233F";
+      return '<button class="ldc' + (on ? " on" : "") + '" data-c="' + esc(m.id) + '" ' +
+        'type="button" aria-expanded="' + (on ? "true" : "false") + '" ' +
+        'style="--cc:' + esc(col) + '">' +
+        (cr ? '<img class="ldcr" src="' + cr + '" alt="">'
+            : '<i class="ldcr bdg">' + esc(initials(m.clubName || m.name)) + "</i>") +
+        "<i>" + esc(kindLabel(m.kind).toUpperCase()) +
+          (t.clsName ? " &middot; " + esc(t.clsName) : "") + "</i>" +
+        "<b>" + esc(m.name) + "</b>" +
+        "<span>" + esc(m.clubName || "no club yet") +
+          (row ? " &middot; " + ord(row.pos) + " of " + (t.table || []).length : "") +
+        "</span>" +
+        '<em>' + (fresh.indexOf(m.id) >= 0
+          ? '<span class="pip"></span>NEW ROUND'
+          : '<span class="pip"></span>MATCHDAY ' + (m.md || 1) + " OF " + (m.mdTotal || 1)) +
+        "</em></button>";
+    }).join("") + '<span class="ldend"></span></div>' +
+    '<div id="ldprev"></div>';
+
+  Array.prototype.forEach.call(box.querySelectorAll(".ldc"), function (b) {
+    b.onclick = function () {
+      LAND.open = (LAND.open === b.dataset.c) ? "" : b.dataset.c;
+      landComps();
+    };
+  });
+  $("ldref").onclick = function () {
+    var b = $("ldref");
+    b.disabled = true; b.className = "ldref spin";
+    pullOnline(function () {
+      ONL.when = Date.now();
+      if (HERE && HERE.name === "land") { landComps(); landNumbers(); }
+    });
+  };
+  landPrev();
+}
+
+function ord(n) {
+  var s = ["th", "st", "nd", "rd"], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+function sinceWord() {
+  if (!ONL.when) return "not looked yet";
+  var m = Math.round((Date.now() - ONL.when) / 60000);
+  return m < 1 ? "just now" : m === 1 ? "1 min ago" : m + " min ago";
+}
+
+/* ───────── quello che scende: la partita e i primi due ───────── */
+function landPrev() {
+  var box = $("ldprev");
+  if (!box) return;
+  if (!LAND.open) { box.innerHTML = ""; return; }
+  var m = COMPS.filter(function (x) { return x.id === LAND.open; })[0];
+  if (!m) { box.innerHTML = ""; return; }
+  var b = compBull(m.id) || {};
+  var n = nextUp().filter(function (x) { return x.id === m.id; })[0] || null;
+  var table = (b.table || []).slice().sort(function (p, q) { return (p.pos || 99) - (q.pos || 99); });
+  var mineRow = table.filter(function (r) { return r.id === m.club; })[0] || null;
+
+  var fix = n
+    ? '<div class="ldfix">' +
+        (crestOf(n.club) ? '<img src="' + crestOf(n.club) + '" alt="">'
+                         : '<i class="ldfb">' + esc(initials(n.clubName)) + "</i>") +
+        "<span><b>" + esc(n.clubName) + "</b><em>versus</em><b>" + esc(n.opp) + "</b></span>" +
+        '<span class="ldwhen">' + (n.cup
+          ? "<i>ROUND</i><u class=\"cup\">" + esc(n.cup) + "</u>"
+          : "<i>MATCHDAY</i><u>" + n.md + "</u>") + "</span>" +
+      "</div>"
+    : '<p class="ldno">Your teacher has not put the next matchday in yet. ' +
+      "The moment he does, it turns up here.</p>";
+
+  var two = table.slice(0, 2).map(function (r) {
+    var t = ((b.teams || []).filter(function (x) { return x.id === r.id; })[0]) || {};
+    var me = r.id === m.club;
+    return '<div class="ldrow' + (me ? " me" : "") + '"><span class="p">' + (r.pos || "") +
+      '</span><span class="n">' + esc(t.name || r.id) + (me ? " &mdash; you" : "") +
+      '</span><span class="v">' + (r.pts || 0) + " pts</span></div>";
+  }).join("");
+
+  var tail = (mineRow && mineRow.pos > 2)
+    ? '<p class="ldnote">You are ' + ord(mineRow.pos) + " with " + (mineRow.pts || 0) +
+      " pts. Top " + (b.cupPlaces || 2) + " go to the cups."
+    : '<p class="ldnote">Top ' + (b.cupPlaces || 2) + " go to the cups." +
+      (mineRow ? " You are in." : "");
+
+  box.innerHTML = '<div class="ldpv">' +
+    '<div class="ldpvh"><span>' + esc(m.name).toUpperCase() +
+      (n ? " &middot; MATCHDAY " + n.md : "") + "</span>" +
+      (n ? "<em>" + (n.atHome ? "AT HOME" : "AWAY") + "</em>" : "") + "</div>" +
+    fix +
+    (two ? '<div class="ldtwo"><span class="ldk2">THE TOP TWO</span>' + two + tail +
+           "</p></div>" : "") +
+    '<button class="ldgo" id="ldgo" type="button">Let\'s go &rsaquo;</button></div>';
+
+  $("ldgo").onclick = function () {
+    enterComp(m.id, function (err) { if (!err) go("home"); });
+  };
+}
+
+/* ───────── i numeri ───────── */
+function landNumbers() {
+  var g = gameStats(), s = allStats();
+  var got = 0, ready = 0;
+  try {
+    var tk = bdgTaken();
+    BADGES.forEach(function (b) { if (tk[b.id]) got++; });
+    ready = badgeReady().length;
+  } catch (e) {}
+
+  function cell(k, v, sub, small) {
+    return '<div class="ldn"><i>' + k + "</i><b>" + v +
+      (small ? '<u class="sm">' + small + "</u>" : "") + "</b><u>" + sub + "</u></div>";
+  }
+  $("ldnum").innerHTML = '<span class="ldk">YOUR NUMBERS</span><div class="ldngrid">' +
+    cell("MATCHES", String(g.p), g.w + " won &middot; " + g.d + " drawn &middot; " + g.l + " lost") +
+    cell("ACCURACY", (s.total ? s.acc + "%" : "&mdash;"),
+         s.total ? "on " + s.total + " words written" : "nothing written yet") +
+    cell("HALVES PLAYED", String(s.halves),
+         s.grd ? s.grd + " more at the training ground" : "in your matches") +
+    cell("BADGES", String(got), ready ? "one ready to collect" : "of four", "/4") +
+    "</div>";
+}
+
+/* ───────── il ritaglio di giornale ───────── */
+function landSaid() {
+  var q = lastSaid();
+  $("ldsaid").innerHTML = !q ? "" :
+    '<div class="ldcut"><i>THE PRESS ROOM &middot; ' +
+      (q.after ? "AFTER MATCHDAY " : "BEFORE MATCHDAY ") + q.md + "</i>" +
+      "<p>&ldquo;" + esc(q.text) + "&rdquo;</p>" +
+      "<span>&mdash; YOU, TO THE REPORTERS</span></div>";
+}
+
+/* ───────── le sei porte ───────── */
+var LDOORS = [
+  { go:"words", lab:"My words",
+    ic:'<path d="M4 4.5h6a2.5 2.5 0 0 1 2 1 2.5 2.5 0 0 1 2-1h6V18h-6a2.5 2.5 0 0 0-2 1 ' +
+       '2.5 2.5 0 0 0-2-1H4z"/><path d="M12 5.5V19"/>' },
+  { go:"clubs", lab:"Teams",
+    ic:'<path d="M12 3 4.5 5.4v6.1c0 4.3 3.1 7.7 7.5 9.1 4.4-1.4 7.5-4.8 7.5-9.1V5.4z"/>' +
+       '<path d="M12 8.6v5.2M9.4 11.2h5.2"/>' },
+  { go:"badges", lab:"Badges",
+    ic:'<circle cx="12" cy="9" r="5.4"/><path d="m8.6 13.6-1.4 7 4.8-2.4 4.8 2.4-1.4-7"/>' +
+       '<path d="m12 6.4 1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3z" ' +
+       'stroke-width="1.4"/>' },
+  { go:"more", lab:"Settings", gear:true },
+  { go:"howto", lab:"How it works",
+    ic:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.4 2.5c-.6.2-.9.8-.9 ' +
+       '1.4v.5"/><path d="M12 16.8h.01"/>' },
+  { go:"makers", lab:"The creators",
+    ic:'<circle cx="9" cy="8" r="3.3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/>' +
+       '<path d="M16.5 5.2a3.3 3.3 0 0 1 0 6.1M18 14.8c2 .8 3.4 2.6 3.4 5.2"/>' }
+];
+
+function landDoors() {
+  $("lddoors").innerHTML = '<span class="ldk">THE REST OF THE GROUND</span>' +
+    '<div class="lddgrid">' + LDOORS.map(function (d, i) {
+      var art = d.gear
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">' +
+          '<circle cx="12" cy="12" r="8.2" stroke-width="3.3" stroke-dasharray="2.4 3.1"/>' +
+          '<circle cx="12" cy="12" r="5.4" stroke-width="2"/>' +
+          '<circle cx="12" cy="12" r="2.1" stroke-width="2"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+          'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d.ic + "</svg>";
+      return '<button class="lddoor" data-i="' + i + '" type="button">' + art +
+        "<b>" + d.lab + "</b></button>";
+    }).join("") + "</div>";
+  Array.prototype.forEach.call($("lddoors").querySelectorAll(".lddoor"), function (el) {
+    el.onclick = function () { go(LDOORS[parseInt(el.dataset.i, 10)].go); };
+  });
+}
+
+/* ───────── la pagina ───────── */
+VIEWS.land = function () {
+  loadCode(); loadComps();
+  if (!ME.code && !isPract()) return swap("gate");
+  if (!ME.code) return swap("home");
+  paintNeutral();
+  refreshStars(); loadLevel();
+  $("bar").innerHTML = ""; prog(0);
+
+  html('<div class="ldwrap">' +
+       '<div id="ldhead"></div>' +
+       '<div id="ldcomps"></div>' +
+       '<div class="pad" id="ldwarm"></div>' +
+       '<div class="pad" id="ldnum"></div>' +
+       '<div class="pad" id="ldsaid"></div>' +
+       '<div class="pad" id="ldstat"></div>' +
+       '<div class="pad" id="lddoors"></div>' +
+       '<div id="hout"></div>' +
+       '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
+
+  landHead();
+  landComps();
+  $("ldwarm").innerHTML = '<div class="ldwcard">' + warmCard() + "</div>";
+  wireWarm();
+  landNumbers();
+  landSaid();
+  $("ldstat").innerHTML = '<button class="ldstat" id="ldall" type="button">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" ' +
+    'stroke-linecap="round" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>' +
+    "</svg><b>All my statistics</b><i>&#8250;</i></button>";
+  $("ldall").onclick = function () { go("me"); };
+  landDoors();
+  drawOut();
+  popIn(["ldhead", "ldcomps", "ldwarm", "ldnum", "ldsaid", "ldstat", "lddoors"]);
+
+  /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
+  if (!ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
+    pullOnline(function (err, mine) {
+      if (err || !mine || !HERE || HERE.name !== "land") return;
+      landHead(); landComps(); landNumbers();
+    });
+  }
+};
+
+/* ───────── come funziona ───────── */
+VIEWS.howto = function () {
+  paintNeutral();
+  barFlow("How it works", "FootEFL in six moves", 0);
+  var steps = [
+    ["Your code is your season",
+     "The code your teacher gave you says which competitions are yours and which club " +
+     "you manage in each one. Nobody chooses the team: it is already decided."],
+    ["Warm up whenever you like",
+     "Three rounds of recorded sentences. You need every sentence right to move on, and " +
+     "clearing all three puts money in the club."],
+    ["The transfer market opens once",
+     "Twenty grammar questions at your level. Your score decides which scouts answer the " +
+     "phone, and a better scout brings more players."],
+    ["Prepare the team sheet",
+     "Before each match you pick where you shoot and where your keeper dives. The weather " +
+     "of each half tells you how many moments you get."],
+    ["Play the two halves",
+     "You write what you hear. Every word you get right is a chance; the ones you miss " +
+     "become your word list, to fix before the next match."],
+    ["The press room, the badges, the table",
+     "One question before the match and two after. Badges come from what you do in the " +
+     "matches, never from the warm-up. The table is your teacher's."]
+  ];
+  html('<div class="pad"><div class="panel hw">' + steps.map(function (s, i) {
+    return '<div class="hwr"><span class="hwn">' + (i + 1) + "</span><span><b>" +
+      esc(s[0]) + "</b><em>" + esc(s[1]) + "</em></span></div>";
+  }).join("") + "</div>" +
+    '<button class="btn ghost" id="hwbk">Back</button></div>');
+  $("hwbk").onclick = back;
+};
+
+/* ───────── chi l'ha fatto ───────── */
+VIEWS.makers = function () {
+  paintNeutral();
+  barFlow("The creators", "Who made FootEFL", 0);
+  html('<div class="pad"><div class="panel mk">' +
+    '<p class="mkbig">FOOT<em>EFL</em></p>' +
+    "<p>A football season played in English, written for his own classes by " +
+    "<b>Prof. Autiello</b>.</p>" +
+    "<p>The clubs, the crests and the kits are invented; the cities and the stories " +
+    "behind the names are real. The sentences you hear in the warm-up are recorded " +
+    "by your teacher, one by one.</p>" +
+    "<p>The nine clubs of the league were built around nine English places &mdash; the " +
+    "Tower ravens, Sherwood, the Birmingham trades, the Liverpool ropewalks, the ford " +
+    "of the oxen, the Manchester weavers, Bankside and the Tabard Inn.</p>" +
+    '<p class="mksig">Season 1 &middot; app ' + APPVER + "</p>" +
+    "</div><button class=\"btn ghost\" id=\"mkbk\">Back</button></div>");
+  $("mkbk").onclick = back;
+};
+
+/* ───────── dove si torna ─────────
+   Dal riscaldamento, dalle parole e dai badge si torna alla landing:
+   sono cose dell'alunno, non di una competizione. Dalla partita, dalla
+   sala stampa e dal risultato si torna alla home della competizione. */
+function homeView() { return ME.code ? "land" : "home"; }
+
+
 /* ───── 22-gate.js ───── */
 /* ═══════════════════════════════════════════════════════════════════
    LA PORTA E IL CRUSCOTTO
@@ -5036,10 +5607,12 @@ VIEWS.gate = function (d) {
    gia' decisa, non c'e' niente da scegliere e si entra dentro */
 function landFromCode() {
   loadComps();
+  /* con una competizione sola la squadra e' gia' decisa: si entra lo
+     stesso, ma la prima pagina resta la sua */
   if (COMPS.length === 1 && !ME.club) {
-    return enterComp(COMPS[0].id, function () { reset("home"); });
+    return enterComp(COMPS[0].id, function () { reset("land"); });
   }
-  reset("home");
+  reset("land");
 }
 
 /* ═══════════════ 2. IL CRUSCOTTO ═══════════════ */
@@ -5049,8 +5622,18 @@ VIEWS.home = function () {
   if (ME.club) paintClub(ME.club); else paintNeutral();
   refreshStars(); loadLevel();
 
-  /* la home non ha barra: la testata e' lo stadio, dentro il corpo */
-  if (ME.code) { $("bar").innerHTML = ""; prog(0); }
+  /* la home e' la pagina di UNA competizione: in cima il suo nome e la
+     freccia che riporta alla pagina dell'alunno, dove stanno tutte */
+  if (ME.code) {
+    var act = COMPS.filter(function (m) { return m.id === scope(); })[0];
+    $("bar").innerHTML = '<div class="mast lmast">' +
+      '<button class="lback" id="hback" type="button" aria-label="My competitions">' +
+      "&#8592;</button>" +
+      '<div class="mk">FOOT<em>EFL</em></div>' +
+      "<p>" + esc(act ? act.name : "My season") + "</p></div>";
+    prog(0);
+    $("hback").onclick = function () { reset("land"); };
+  }
   else {
     $("bar").innerHTML = '<div class="mast"><div class="mk">FOOT<em>EFL</em></div>' +
       "<p>PRACTICE &middot; NO CODE</p>" +
@@ -5090,7 +5673,9 @@ function popIn(ids) {
   ids.forEach(function (id) {
     var el = $(id);
     if (!el || !el.firstChild) return;
-    el.className = "pop";
+    /* si aggiunge, non si sostituisce: in landing questi contenitori
+       hanno gia' la loro classe e perderla toglieva i margini */
+    el.className = el.className ? el.className + " pop" : "pop";
     el.style.animationDelay = (n * 70) + "ms";
     n++;
   });
@@ -5553,7 +6138,7 @@ function homeBtn(box) {
   b.className = "hmb"; b.type = "button";
   b.setAttribute("aria-label", "My home");
   b.innerHTML = HOME_SVG;
-  b.onclick = function () { reset("home"); };
+  b.onclick = function () { reset(homeView()); };
   box.appendChild(b);
 }
 var gatePrevFlow = barFlow;
@@ -6017,7 +6602,7 @@ VIEWS.warmEnd = function () {
         "</button>") +
     '<button class="btn ghost" id="wback">Back to my home</button></div>');
   if ($("wagain")) $("wagain").onclick = function () { swap("warm"); };
-  $("wback").onclick = function () { reset("home"); };
+  $("wback").onclick = function () { reset(homeView()); };
 };
 
 
@@ -6281,7 +6866,7 @@ VIEWS.badges = function () {
     el.onclick = function () { go("badgeTake", { id:el.dataset.t }); };
   });
   wireWear();
-  $("bback").onclick = function () { reset("home"); };
+  $("bback").onclick = function () { reset(homeView()); };
 };
 
 /* ───────── quello che porto addosso ─────────
@@ -6365,7 +6950,7 @@ VIEWS.badgeTake = function (d) {
     "under <b>What you wear</b>.</p>" +
     '<button class="btn" id="tkok">Wear it</button>' +
     '<button class="btn ghost" id="tkb">My badges</button></div>');
-  $("tkok").onclick = function () { reset("home"); };
+  $("tkok").onclick = function () { reset(homeView()); };
   $("tkb").onclick = function () { swap("badges"); };
 };
 
@@ -10700,16 +11285,18 @@ loadBulletin();
    computer del professore e non la vede nessun altro. */
 if (fromLink) {
   /* arrivato dalla sua tesserina: la porta l'ha aperta il link, quindi si
-     va dritti a casa e intanto si guarda se c'e' qualcosa di nuovo */
-  reset("home");
+     va dritto alla sua pagina e intanto si guarda se c'e' qualcosa di nuovo */
+  reset("land");
   pullOnline(function () {
-    if (HERE && HERE.name === "home") landFromCode();
+    if (HERE && HERE.name === "land") landFromCode();
   });
 } else if (!ME.code && !isPract()) {
   /* la porta: senza codice e senza aver chiesto di allenarsi non si entra */
   reset("gate");
 } else {
-  reset("home");
+  /* con il codice si atterra sulla propria pagina; chi si allena e basta
+     non ha competizioni da scegliere e va dritto al cruscotto */
+  reset(ME.code ? "land" : "home");
   flushOutbox();
 }
 
