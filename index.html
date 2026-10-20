@@ -2087,16 +2087,23 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .ftbreak em{font:800 13px/1 var(--brand);font-style:normal;color:#FFFDEE}
 
 /* ═════════ modulo e strategia ═════════ */
-.picks{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px}
-.picks.tall{grid-template-columns:1fr}
-.pk{padding:12px 13px;border-radius:14px;border:1px solid var(--edge);
-  background:rgba(226,251,206,.05);color:var(--cream);text-align:left;cursor:pointer;
-  font-family:inherit}
-.pk b{display:block;font:800 16px/1 var(--brand);color:#FFFDEE}
-.pk em{display:block;margin-top:5px;font-size:11px;font-weight:600;font-style:normal;
+/* le scelte grandi — modulo, strategia, bot. Classe tutta loro: .pk era
+   gia' il quadratino delle maglie, e quella larghezza fissa spezzava le
+   parole una per riga. */
+.chzs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px}
+.chzs.tall{grid-template-columns:1fr}
+.chzs.three{grid-template-columns:1fr 1fr 1fr}
+.chz{display:block;width:100%;min-width:0;padding:13px;border-radius:14px;
+  border:1px solid var(--edge);background:rgba(226,251,206,.05);color:var(--cream);
+  text-align:left;cursor:pointer;font-family:inherit}
+.chz b{display:block;font:800 16px/1.1 var(--brand);color:#FFFDEE}
+.chzs.three .chz{text-align:center;padding:12px 6px}
+.chzs.three .chz b{font-size:15px}
+.chz em{display:block;margin-top:5px;font-size:11px;font-weight:600;font-style:normal;
   line-height:1.35;color:var(--fog)}
-.pk.on{border-color:var(--gold);background:rgba(227,239,38,.12)}
-.pk.on b{color:var(--gold)}
+.chz.on{border-color:var(--gold);background:rgba(227,239,38,.12)}
+.chz.on b{color:var(--gold)}
+.chz img{display:block;width:38px;height:38px;object-fit:contain;margin-bottom:8px}
 .wxbig i.shf{display:block;margin-top:4px;font:800 9.5px/1 var(--brand);
   letter-spacing:.1em;font-style:normal;color:var(--gold)}
 
@@ -2726,7 +2733,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "54";
+var APPVER = "55";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -11088,14 +11095,14 @@ VIEWS.mCall = function (d) {
       '<h2 class="sec top">4 &middot; Your shape</h2>' +
       '<p class="lede sm2">How the eleven stand. It goes on the scoresheet and in ' +
       "your report; it does not move the numbers.</p>" +
-      '<div class="picks" id="shapes"></div>' +
+      '<div class="chzs" id="shapes"></div>' +
 
       '<h2 class="sec top">5 &middot; Your plan</h2>' +
       '<p class="lede sm2">This one weighs: a moment more on one side is a moment ' +
       "less on the other. The weather says " +
       climateOf(phaseClim("att")).actions + " in attack and " +
       climateOf(phaseClim("def")).actions + " in defence.</p>" +
-      '<div class="picks tall" id="plans"></div>' +
+      '<div class="chzs tall" id="plans"></div>' +
       '<div id="xmoment"></div>' +
 
       '<h2 class="sec top">6 &middot; Which way does your keeper dive?</h2>' +
@@ -11205,10 +11212,11 @@ function drawPicks(id, list, chosen, pick) {
   var box = $(id);
   if (!box) return;
   box.innerHTML = list.map(function (x) {
-    return '<button class="pk' + (x.id === chosen ? " on" : "") + '" data-i="' +
-      esc(x.id) + '" type="button"><b>' + x.t + "</b><em>" + x.s + "</em></button>";
+    return '<button class="chz' + (x.id === chosen ? " on" : "") + '" data-i="' +
+      esc(x.id) + '" type="button">' + (x.img ? '<img src="' + x.img + '" alt="">' : "") +
+      "<b>" + x.t + "</b>" + (x.s ? "<em>" + x.s + "</em>" : "") + "</button>";
   }).join("");
-  Array.prototype.forEach.call(box.querySelectorAll(".pk"), function (b) {
+  Array.prototype.forEach.call(box.querySelectorAll(".chz"), function (b) {
     b.onclick = function () { pick(b.dataset.i); };
   });
 }
@@ -12094,47 +12102,59 @@ function tlGameCard(g) {
 }
 
 /* ───────── aprire il campionato ───────── */
+/* le quattro squadre con la rosa completa: sono quelle che si possono
+   prendere in allenamento */
+var TCLUBS = ["RAV", "BRA", "ROP", "SHE"];
+
 VIEWS.tlSetup = function () {
   tlLoad();
   paintClub(ME.club || { colour:"#0E3B2C" });
   barFlow("Training league", "Against the machine", 0);
-  var mine = ME.club ? ME.club.id : (TSET.club || CLUBS[0].id);
+  if (!TSET.club) {
+    TSET.club = (ME.club && TCLUBS.indexOf(ME.club.id) >= 0) ? ME.club.id : TCLUBS[0];
+  }
 
   html('<div class="pad">' +
     '<p class="lede">A league of your own against the computer. Same dictations in ' +
     "your teacher&rsquo;s voice, same rules, same engine &mdash; but it stays on this " +
-    "phone. <b>No report, no money, no badges</b> &mdash; only practice.</p>" +
+    "phone. <b>No report, no money, no badges</b> &mdash; only practice. The words " +
+    "you miss still go on your list.</p>" +
 
-    (ME.club
-      ? '<div class="tlclub">' + (crestOf(mine)
-          ? '<img src="' + crestOf(mine) + '" alt="">' : "") +
-        "<span><i>YOU MANAGE</i><b>" + esc(tlName(mine)) + "</b></span></div>"
-      : '<h2 class="sec">Your club</h2><div class="picks" id="tclubs"></div>') +
+    '<h2 class="sec top">1 &middot; Your club</h2>' +
+    '<div class="chzs" id="tclubs"></div>' +
 
-    '<h2 class="sec top">How many bots?</h2>' +
-    '<div class="picks" id="tbots"></div>' +
+    '<h2 class="sec top">2 &middot; How many bots?</h2>' +
+    '<div class="chzs three" id="tbots"></div>' +
+    '<p class="lede sm2" id="tfmt"></p>' +
 
-    '<h2 class="sec top">How good are they?</h2>' +
-    '<div class="picks tall" id="tdiff"></div>' +
+    '<h2 class="sec top">3 &middot; How good are they?</h2>' +
+    '<div class="chzs tall" id="tdiff"></div>' +
 
     '<div id="tsum"></div></div>');
 
-  if (!ME.club) {
-    drawPicks("tclubs", CLUBS.slice(0, 6).map(function (c) {
-      return { id:c.id, t:c.name, s:c.city || "" };
-    }), mine, function (id) { TSET.club = id; swap("tlSetup"); });
-  }
+  drawPicks("tclubs", TCLUBS.map(function (id) {
+    var c = tlClub(id);
+    return { id:id, t:c.name, s:c.city || "", img:crestOf(id) };
+  }), TSET.club, function (id) { TSET.club = id; swap("tlSetup"); });
+
   drawPicks("tbots", [
-    { id:"1", t:"1 bot", s:"two teams, two matchdays" },
-    { id:"2", t:"2 bots", s:"three teams, three matchdays" },
-    { id:"3", t:"3 bots", s:"four teams, three matchdays" }
+    { id:"1", t:"1" }, { id:"2", t:"2" }, { id:"3", t:"3" }
   ], String(TSET.bots), function (id) { TSET.bots = parseInt(id, 10); swap("tlSetup"); });
+
+  var teams = TSET.bots + 1;
+  $("tfmt").innerHTML = teams + " teams &middot; " +
+    (teams % 2 ? teams : teams - 1) + " matchdays &middot; everyone plays everyone once" +
+    (teams % 2 ? ", and one sits out each time" : "");
+
   drawPicks("tdiff", TDIFF, TSET.diff, function (id) { TSET.diff = id; swap("tlSetup"); });
 
-  $("tsum").innerHTML = '<button class="btn" id="tlmk">Start the league</button>' +
+  $("tsum").innerHTML = '<div class="tlclub">' + (crestOf(TSET.club)
+      ? '<img src="' + crestOf(TSET.club) + '" alt="">' : "") +
+    "<span><i>YOU MANAGE</i><b>" + esc(tlName(TSET.club)) + "</b></span></div>" +
+    '<button class="btn" id="tlmk">Start the league</button>' +
     '<button class="btn ghost" id="tlno">Back</button>';
   $("tlmk").onclick = function () {
-    tlStart(mine, TSET.bots, TSET.diff);
+    tlStart(TSET.club, TSET.bots, TSET.diff);
     swap("train");
   };
   $("tlno").onclick = function () { reset("land"); };
@@ -12163,13 +12183,13 @@ VIEWS.tlCall = function () {
       "<div><span>Defence</span><b>" + climateOf(C.defClim).label + "</b></div></div>" +
 
     '<h2 class="sec top">Your shape</h2>' +
-    '<div class="picks" id="tshape"></div>' +
+    '<div class="chzs" id="tshape"></div>' +
 
     '<h2 class="sec top">Your plan</h2>' +
     '<p class="lede sm2">The weather opens ' + climateOf(C.attClim).actions +
     " moments in attack and " + climateOf(C.defClim).actions +
     " in defence. Your plan moves one.</p>" +
-    '<div class="picks tall" id="tplan"></div>' +
+    '<div class="chzs tall" id="tplan"></div>' +
 
     '<h2 class="sec top">Where does your penalty go?</h2>' +
     '<div class="sides" id="tside"></div>' +
