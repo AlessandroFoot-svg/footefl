@@ -2015,6 +2015,9 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   border-radius:16px;border:1px solid var(--edge);background:rgba(226,251,206,.05)}
 .ftpos b{font:800 26px/1 var(--brand);color:var(--gold)}
 .ftpos span{font-size:12.5px;font-weight:700;color:#D7F2C6}
+.lvkeys{display:block;margin-top:9px;font:600 10px/1.5 var(--brand);letter-spacing:.04em;
+  color:#6FA38D}
+.lvkeys b{font-weight:800;color:#A8D4BE}
 </style>
 </head>
 <body>
@@ -2548,7 +2551,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "44";
+var APPVER = "45";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8664,6 +8667,24 @@ function oppName(id) {
   var t = BULL ? (BULL.teams || []).filter(function (x) { return x.id === id; })[0] : null;
   return (t && t.name) || id;
 }
+/* ───────── il banco risponde, ma che cosa? ─────────
+   Se la mia riga non si rilegge, il cassetto prende e non restituisce:
+   manca il permesso di lettura. Se la mia si rilegge e la loro no,
+   allora davvero l'altro non ha ancora finito. */
+function liveDiag(md, done) {
+  var c = liveCard(md);
+  if (!c) return done("notyet");
+  liveFetch(c.comp, md, c.club, function (err, mine) {
+    if (err) return done(err);
+    if (!mine) return done("noread");
+    if (!c.opp) return done("noopp");
+    liveFetch(c.comp, md, c.opp, function (e2, theirs) {
+      if (e2) return done(e2);
+      done(theirs ? "" : "nothem");
+    });
+  });
+}
+
 /* a che punto siamo: "" niente da dire, altrimenti uno di questi stati */
 function liveState(md) {
   if (!ME.club || !ME.next) return "";
@@ -8674,6 +8695,8 @@ function liveState(md) {
   if (st.score) return "done";
   loadDrop();
   if (!DROP || !DROP.url || !DROP.key) return "nodesk";
+  if (st.why === "noread") return "noread";
+  if (st.why === "nothem") return "waiting";
   if (st.why && st.why !== "waiting") return "broken";
   if (!st.sent) return "unsent";
   return "waiting";
@@ -8716,6 +8739,16 @@ function liveCardHtml() {
       "needs your teacher to publish the result desk with the competition &mdash; " +
       "tell him, and the score appears here by itself.</span></div></section>";
   }
+  if (state === "noread") {
+    return '<section class="pad"><div class="lvc wait">' + head +
+      '<span class="lvw big">The desk takes your card but will not give it back' +
+      "</span>" +
+      '<span class="lvn">Your card went in and cannot be read again &mdash; not even ' +
+      "yours. The reading permission is missing on the <b>cards</b> table: your " +
+      "teacher has to add it, then this page fills by itself.</span>" +
+      liveKeysHtml(md) +
+      '<span class="lvtry" id="lvTry">Look again &rsaquo;</span></div></section>';
+  }
   if (state === "broken" || state === "unsent") {
     return '<section class="pad"><div class="lvc wait">' + head +
       '<span class="lvw big">Your card has not gone out</span>' +
@@ -8726,9 +8759,19 @@ function liveCardHtml() {
   }
   return '<section class="pad"><div class="lvc wait">' + head +
     '<span class="lvw big">' + esc(them) + " has not finished yet</span>" +
-    '<span class="lvn">Your card is in. The moment they close their second half, ' +
-    "the result appears here.</span>" +
+    '<span class="lvn">Your card is in and it reads back. The moment they close ' +
+    "their second half, the result appears here.</span>" +
+    liveKeysHtml(md) +
     '<span class="lvtry" id="lvTry">Look again &rsaquo;</span></div></section>';
+}
+/* le tre chiavi con cui si cerca: servono al professore per confrontarle
+   con le righe che vede nel cassetto */
+function liveKeysHtml(md) {
+  var c = liveCard(md);
+  if (!c) return "";
+  return '<span class="lvkeys">comp <b>' + esc(c.comp) + "</b> &middot; md <b>" +
+    esc(c.md) + "</b> &middot; mine <b>" + esc(c.club) + "</b> &middot; looking for <b>" +
+    esc(c.opp || "?") + "</b></span>";
 }
 
 /* al disegno della pagina: manda la mia riga, poi guarda se c'e' la loro.
@@ -8748,7 +8791,11 @@ function wireLive(boxId, viewName, quiet) {
     livePush(md, function (err) {
       if (err && err !== "notyet") { liveSetWhy(md, err); return again(); }
       liveLook(md, function (e2, s) {
-        if (e2 === "waiting") { liveSetWhy(md, "waiting"); return again(); }
+        if (e2 === "waiting") {
+          /* nessuna riga dall'altro: ma e' perche' non ha giocato, o
+             perche' il cassetto non si lascia leggere? */
+          return liveDiag(md, function (why) { liveSetWhy(md, why || "waiting"); again(); });
+        }
         if (e2) { liveSetWhy(md, e2); return again(); }
         if (s) again();
       });
@@ -8765,6 +8812,7 @@ function wireLive(boxId, viewName, quiet) {
   };
   if (quiet) return;
   if (state === "nodesk" || state === "noopp" || state === "done") return;
+  if (state === "noread") return;          /* ci riprova il bottone, non da solo */
   push();
 }
 
