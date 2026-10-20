@@ -2135,6 +2135,23 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .tlr b:last-of-type{text-align:right}
 .tlr i{flex:none;font-style:normal;font:800 13px/1 var(--brand);color:var(--gold)}
 .tlmiss{display:flex;flex-wrap:wrap;gap:7px;padding:13px}
+
+/* ═════════ la prossima giornata, chiusa a chiave ═════════ */
+.nxc.lockc .nxveil{background:linear-gradient(135deg,rgba(14,58,39,.93) 0%,
+  rgba(6,28,19,.9) 62%,rgba(4,23,15,.94) 100%)}
+.nxc.lockc{color:var(--cream)}
+.nxc.lockc .nxk{color:var(--gold)}
+.lockrow{display:flex;align-items:center;gap:13px;margin-top:13px}
+.lockic{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--edge);background:rgba(4,23,15,.5);color:var(--gold)}
+.lockic svg{width:22px;height:22px}
+.lockt{flex:1;min-width:0}
+.lockt b{display:block;font-size:15px;font-weight:800;color:#FFFDEE}
+.lockt em{display:block;margin-top:4px;font-size:11.5px;font-weight:600;font-style:normal;
+  line-height:1.4;color:var(--fog)}
+.nxc.lockc .nxgo{margin-top:14px;background:rgba(226,251,206,.08);color:var(--gold);
+  border:1px solid var(--edge)}
+.lad2{margin-top:4px}
 </style>
 </head>
 <body>
@@ -2709,7 +2726,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "53";
+var APPVER = "54";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -5978,11 +5995,13 @@ VIEWS.home = function () {
      competizioni, le porte e il codice stanno nella pagina dell'alunno. */
   html('<div id="hwho"></div><div id="hlive"></div><div id="hpress"></div>' +
        '<div id="hnext"></div>' +
+       '<div id="htab"></div>' +
        '<div id="hwarm"></div><div id="hnum"></div>' +
        '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p>');
 
-  drawWho(); drawLive(); drawPress(); drawNextUp(); drawWarm(); drawNumbers();
-  popIn(["hwho", "hlive", "hpress", "hnext", "hwarm", "hnum"]);
+  drawWho(); drawLive(); drawPress(); drawNextUp(); drawHomeTable();
+  drawWarm(); drawNumbers();
+  popIn(["hwho", "hlive", "hpress", "hnext", "htab", "hwarm", "hnum"]);
 
   /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
   if (ME.code && !ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
@@ -6148,6 +6167,32 @@ function drawNextUp() {
             flag(n.opp, theirs, n.oppColour, false) +
             "<b>" + esc(n.opp) + "</b></span>");
 
+      /* giornata chiusa: non si rigioca, e la prossima la apre il
+         professore. La carta lo dice con il lucchetto. */
+      if (n.halves >= 2) {
+        var nxt = n.md + 1, endish = n.md >= (n.mdTotal || 1);
+        return '<div class="nxc lockc">' +
+          '<img class="nxbg" src="' + imgOf("bg-next") + '" alt="">' +
+          '<span class="nxveil" aria-hidden="true"></span>' +
+          '<div class="nxin"><div class="nxhead solo">' +
+          '<span class="nxk">' + (endish
+            ? "SEASON OVER"
+            : "MATCHDAY " + nxt + " &middot; LOCKED") + "</span>" +
+          '<div class="lockrow"><span class="lockic">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+          'stroke-linecap="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" ' +
+          'height="10" rx="2.5"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg></span>' +
+          "<span class=\"lockt\"><b>" + (endish
+            ? "That was the last matchday"
+            : "Your teacher opens it") + "</b><em>" + (endish
+            ? "Matchday " + n.md + " is played. Nothing left in the calendar."
+            : "Matchday " + n.md + " is played. The next one turns up here the " +
+              "moment he publishes it.") + "</em></span></div>" +
+          '<button class="nxgo" data-c="' + esc(n.id) + '" type="button">' +
+          "See matchday " + n.md + " &rsaquo;</button>" +
+          "</div></div></div>";
+      }
+
       var body = !open ? "" : '<div class="nxbody">' +
         '<span class="nxw">' + sky("ATTACK", n.att) + sky("DEFENCE", n.def) + "</span>" +
         '<button class="nxgo" data-c="' + esc(n.id) + '" type="button">' + (n.halves >= 2
@@ -6194,6 +6239,41 @@ function drawNextUp() {
       });
     };
   });
+}
+
+/* ───────── dove sono in classifica ─────────
+   Nella pagina della competizione ci vuole: finita una partita si guarda
+   la tabella, non si va a cercarla. I punti delle partite gia' chiuse
+   sui telefoni ci sono gia', segnati col pallino. */
+function drawHomeTable() {
+  var box = $("htab");
+  if (!box) return;
+  if (!ME.club || !BULL) { box.innerHTML = ""; return; }
+  refreshTable();
+  var rows = leagueRows(), me = rows.filter(function (r) {
+    return r.id === ME.club.id; })[0];
+  if (!me) { box.innerHTML = ""; return; }
+  var prov = rows.filter(function (r) { return r.live; }).length;
+  var left = (LEAGUE.mdTotal || 0) - (LEAGUE.md || 0);
+  var near = ME.table || [];
+
+  box.innerHTML = '<section class="pad"><h2 class="sec">Where I stand' +
+    (prov ? '<em class="cnt thin">live</em>' : "") + "</h2>" +
+    '<div class="lad2">' + near.map(function (r) {
+      return '<div class="lad' + (r.me ? " me" : "") + '"><span class="pos">' + r.pos +
+        '</span><span class="tn">' + esc(r.name) +
+        (r.live ? ' <i class="prov">&bull;</i>' : "") + '</span><span class="pt">' +
+        r.pts + "<em>pts</em></span></div>";
+    }).join("") + "</div>" +
+    '<div class="cupline">' + (me.pos <= (LEAGUE.cupPlaces || 2)
+      ? "Top " + (LEAGUE.cupPlaces || 2) + " go to the cups. You are in."
+      : "Top " + (LEAGUE.cupPlaces || 2) + " go to the cups. You are outside.") +
+    (left > 0 ? " " + left + (left === 1 ? " matchday" : " matchdays") + " to go." : "") +
+    (prov ? " The dot means your teacher has not published it yet." : "") +
+    "</div>" +
+    '<button class="more" id="hlg" type="button">See the whole table' +
+    "<i>&#8250;</i></button></section>";
+  $("hlg").onclick = function () { LG.team = null; go("league"); };
 }
 
 /* ───────── a che cosa sono iscritto ───────── */
