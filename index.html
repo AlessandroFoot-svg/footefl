@@ -2018,6 +2018,11 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .lvkeys{display:block;margin-top:9px;font:600 10px/1.5 var(--brand);letter-spacing:.04em;
   color:#6FA38D}
 .lvkeys b{font-weight:800;color:#A8D4BE}
+.lvseen{display:block;margin-top:10px;padding:9px 11px;border-radius:10px;
+  background:rgba(4,23,15,.5);border:1px solid var(--edge)}
+.lvseen b{display:block;font:800 8.5px/1 var(--brand);letter-spacing:.14em;color:#6FA38D}
+.lvseen i{display:block;margin-top:5px;font:600 10.5px/1.4 var(--brand);font-style:normal;
+  color:#A8D4BE;word-break:break-all}
 </style>
 </head>
 <body>
@@ -2551,7 +2556,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "46";
+var APPVER = "48";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8644,14 +8649,18 @@ function liveSave(md, o) {
   try { localStorage.setItem(liveKey(md), JSON.stringify(o)); } catch (e) {}
 }
 
-/* la riga parte una volta sola, appena i due tempi sono chiusi */
+/* La riga parte una volta sola, appena i due tempi sono chiusi — ma
+   "una volta" vale per QUELLA chiave. Se la chiave della competizione
+   cambia (e con l'aggiornamento e' cambiata), la scheda va rimessa sul
+   banco sotto il nome nuovo, se no i due telefoni si cercano in due
+   cassetti diversi senza saperlo. */
 function livePush(md, done) {
   var st = liveGet(md) || {};
-  if (st.sent) return done && done(null);
   var card = liveCard(md);
   if (!card) return done && done("notyet");
+  if (st.sent && st.sentKey === card.comp) return done && done(null);
   livePost(card, function (err) {
-    if (!err) { st.sent = true; liveSave(md, st); }
+    if (!err) { st.sent = true; st.sentKey = card.comp; liveSave(md, st); }
     done && done(err);
   });
 }
@@ -8682,6 +8691,23 @@ function oppName(id) {
   var t = BULL ? (BULL.teams || []).filter(function (x) { return x.id === id; })[0] : null;
   return (t && t.name) || id;
 }
+/* una lettura senza filtri: le ultime righe del cassetto, viste con la
+   chiave pubblica. Serve a capire se il cassetto non si lascia leggere
+   oppure se dentro c'e' altro rispetto a quello che cerchiamo. */
+function liveAny(done) {
+  loadDrop();
+  if (!DROP || !DROP.url || !DROP.key) return done("nodrop");
+  var url = DROP.url.replace(/\/+$/, "") + "/rest/v1/" + encodeURIComponent(liveTable()) +
+    "?select=comp,md,club&order=id.desc&limit=6";
+  fetch(url, { headers:{ "apikey":DROP.key, "Authorization":"Bearer " + DROP.key } })
+    .then(function (r) {
+      if (!r.ok) throw new Error("read " + r.status);
+      return r.json();
+    })
+    .then(function (a) { done(null, a || []); })
+    ["catch"](function (e) { done(String(e.message || e)); });
+}
+
 /* ───────── il banco risponde, ma che cosa? ─────────
    Se la mia riga non si rilegge, il cassetto prende e non restituisce:
    manca il permesso di lettura. Se la mia si rilegge e la loro no,
@@ -8691,11 +8717,22 @@ function liveDiag(md, done) {
   if (!c) return done("notyet");
   liveFetch(c.comp, md, c.club, function (err, mine) {
     if (err) return done(err);
-    if (!mine) return done("noread");
-    if (!c.opp) return done("noopp");
-    liveFetch(c.comp, md, c.opp, function (e2, theirs) {
-      if (e2) return done(e2);
-      done(theirs ? "" : "nothem");
+    if (mine) {
+      if (!c.opp) return done("noopp");
+      return liveFetch(c.comp, md, c.opp, function (e2, theirs) {
+        if (e2) return done(e2);
+        done(theirs ? "" : "nothem");
+      });
+    }
+    /* la mia riga non si rilegge: il cassetto e' chiuso, o dentro c'e'
+       scritto diverso da quello che cerco? */
+    liveAny(function (e3, rows) {
+      if (e3) return done(e3);
+      if (!rows || !rows.length) return done("noread");
+      var st = liveGet(md) || {};
+      st.seen = rows.slice(0, 6);
+      liveSave(md, st);
+      done("notmine");
     });
   });
 }
@@ -8711,6 +8748,7 @@ function liveState(md) {
   loadDrop();
   if (!DROP || !DROP.url || !DROP.key) return "nodesk";
   if (st.why === "noread") return "noread";
+  if (st.why === "notmine") return "notmine";
   if (st.why === "nothem") return "waiting";
   if (st.why && st.why !== "waiting") return "broken";
   if (!st.sent) return "unsent";
@@ -8758,11 +8796,25 @@ function liveCardHtml() {
     return '<section class="pad"><div class="lvc wait">' + head +
       '<span class="lvw big">The desk takes your card but will not give it back' +
       "</span>" +
-      '<span class="lvn">Your card went in and cannot be read again &mdash; not even ' +
-      "yours. The reading permission is missing on the <b>cards</b> table: your " +
-      "teacher has to add it, then this page fills by itself.</span>" +
+      '<span class="lvn">The desk gives back nothing at all &mdash; not one card, ' +
+      "not even yours. The reading permission is missing on the <b>cards</b> " +
+      "table: your teacher has to add it, then this page fills by itself.</span>" +
       liveKeysHtml(md) +
       '<span class="lvtry" id="lvTry">Look again &rsaquo;</span></div></section>';
+  }
+  if (state === "notmine") {
+    var seen = (st.seen || []).map(function (r) {
+      return "<i>" + esc(r.club) + " &middot; md " + esc(r.md) + " &middot; " +
+        esc(String(r.comp).slice(0, 34)) + "</i>";
+    }).join("");
+    return '<section class="pad"><div class="lvc wait">' + head +
+      '<span class="lvw big">Your card is not on the desk</span>' +
+      '<span class="lvn">The desk reads fine, but there is no card under your key. ' +
+      "Tap below to put it there again.</span>" +
+      liveKeysHtml(md) +
+      '<span class="lvseen"><b>LAST CARDS ON THE DESK</b>' + (seen || "<i>none</i>") +
+      "</span>" +
+      '<span class="lvtry" id="lvTry">Send it again &rsaquo;</span></div></section>';
   }
   if (state === "broken" || state === "unsent") {
     return '<section class="pad"><div class="lvc wait">' + head +
@@ -8827,7 +8879,8 @@ function wireLive(boxId, viewName, quiet) {
   };
   if (quiet) return;
   if (state === "nodesk" || state === "noopp" || state === "done") return;
-  if (state === "noread") return;          /* ci riprova il bottone, non da solo */
+  /* questi due li riprova il bottone, non da solo */
+  if (state === "noread" || state === "notmine") return;
   push();
 }
 
