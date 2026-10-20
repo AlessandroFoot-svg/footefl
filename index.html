@@ -2857,7 +2857,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "60";
+var APPVER = "61";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -6161,12 +6161,16 @@ VIEWS.home = function () {
   html('<div id="hwho"></div><div id="hlive"></div><div id="hpress"></div>' +
        '<div id="hnext"></div>' +
        '<div id="htab"></div>' +
-       '<div id="hwarm"></div><div id="hnum"></div>' +
+       '<section class="pad" id="hsq"><div class="sqc" id="sqc"></div></section>' +
+       '<div id="hwarm"></div>' +
+       '<div id="stadbar"></div>' +
+       '<div id="hnum"></div>' +
        '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p>');
 
   drawWho(); drawLive(); drawPress(); drawNextUp(); drawHomeTable();
-  drawWarm(); drawNumbers();
-  popIn(["hwho", "hlive", "hpress", "hnext", "htab", "hwarm", "hnum"]);
+  drawHomeSquad(); drawWarm(); drawHomeGround(); drawNumbers();
+  popIn(["hwho", "hlive", "hpress", "hnext", "htab", "hsq", "hwarm",
+         "stadbar", "hnum"]);
 
   /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
   if (ME.code && !ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
@@ -6420,24 +6424,32 @@ function drawHomeTable() {
   if (!me) { box.innerHTML = ""; return; }
   var prov = rows.filter(function (r) { return r.live; }).length;
   var left = (LEAGUE.mdTotal || 0) - (LEAGUE.md || 0);
-  var near = ME.table || [];
 
-  box.innerHTML = '<section class="pad"><h2 class="sec">Where I stand' +
+  /* la classifica intera, non piu' le tre righe intorno a me: la colonna
+     con il posto, il nome e i punti resta ferma, il resto scorre sotto
+     il dito, come nella stanza della lega */
+  box.innerHTML = '<section class="pad"><h2 class="sec">The table' +
     (prov ? '<em class="cnt thin">live</em>' : "") + "</h2>" +
-    '<div class="lad2">' + near.map(function (r) {
-      return '<div class="lad' + (r.me ? " me" : "") + '"><span class="pos">' + r.pos +
-        '</span><span class="tn">' + esc(r.name) +
-        (r.live ? ' <i class="prov">&bull;</i>' : "") + '</span><span class="pt">' +
-        r.pts + "<em>pts</em></span></div>";
-    }).join("") + "</div>" +
+    '<div class="ltx" id="ltab"></div>' +
+    '<p class="lswipe">Slide the table sideways for the rest &rsaquo;</p>' +
     '<div class="cupline">' + (me.pos <= (LEAGUE.cupPlaces || 2)
       ? "Top " + (LEAGUE.cupPlaces || 2) + " go to the cups. You are in."
       : "Top " + (LEAGUE.cupPlaces || 2) + " go to the cups. You are outside.") +
     (left > 0 ? " " + left + (left === 1 ? " matchday" : " matchdays") + " to go." : "") +
     (prov ? " The dot means your teacher has not published it yet." : "") +
     "</div>" +
-    '<button class="more" id="hlg" type="button">See the whole table' +
+    '<button class="more" id="hlg" type="button">The season so far' +
     "<i>&#8250;</i></button></section>";
+
+  if (typeof drawTable2 === "function") {
+    drawTable2(rows);
+    /* qui la riga non filtra niente: porta alla stanza della lega gia'
+       aperta su quella squadra (le classifiche marcatori stanno li') */
+    Array.prototype.forEach.call($("ltab").querySelectorAll(".ltr[data-t]"),
+      function (b) {
+        b.onclick = function () { LG.team = b.dataset.t; go("league"); };
+      });
+  }
   $("hlg").onclick = function () { LG.team = null; go("league"); };
 }
 
@@ -6501,6 +6513,27 @@ function drawPress() {
   if (!box) return;
   box.innerHTML = (typeof pressCard === "function") ? pressCard() : "";
   if (typeof wirePress === "function") wirePress();
+}
+
+/* ───────── la rosa, dentro la competizione ─────────
+   Sta sotto la classifica: prima si guarda dove si e' arrivati, poi si
+   guarda con chi. Il riquadro e' lo stesso della pagina del club — si
+   apre e si chiude, e ogni maglia porta alla scheda del giocatore. */
+function drawHomeSquad() {
+  var sec = $("hsq");
+  if (!sec) return;
+  if (!ME.club || !ME.squad || !ME.squad.length) { sec.innerHTML = ""; return; }
+  if (typeof drawSquadCard === "function") drawSquadCard();
+}
+
+/* ───────── migliora la squadra ─────────
+   Le tre porte del campo d'allenamento: la rosa, lo stadio, il club.
+   Sta dopo il Rondo perche' il Rondo si fa adesso, questo si decide. */
+function drawHomeGround() {
+  var box = $("stadbar");
+  if (!box) return;
+  if (!ME.club) { box.innerHTML = ""; return; }
+  if (typeof drawStadium === "function") drawStadium();
 }
 
 /* ───────── il riscaldamento ─────────
