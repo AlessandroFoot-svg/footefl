@@ -2032,6 +2032,53 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .qv u{display:block;margin-top:3px;text-decoration:none;font:600 9.5px/1 var(--brand);
   color:#6FA38D}
 .qrw .qv:last-child u{text-align:right}
+
+/* ═════════ il tabellino: stemma, ruolo, cartellini ═════════ */
+.ftsh img{width:28px;height:28px;object-fit:contain}
+.ftsh{background:rgba(226,251,206,.08);color:#D7F2C6}
+.ftr.in .ftsh,.ftr.out .ftsh{background:rgba(226,251,206,.1)}
+.ftn b{display:flex;align-items:baseline;gap:7px}
+.ftn b .rl{text-decoration:none;font:800 8.5px/1 var(--brand);letter-spacing:.1em;
+  color:#06231D;background:var(--fog);border-radius:4px;padding:3px 5px;white-space:nowrap}
+.ftr.out .ftn b .rl{background:#C9A0A0}
+.cardbox{display:block;width:15px;height:20px;border-radius:3px}
+.cardbox.y{background:#E3C84A}
+.cardbox.r{background:#C9553F}
+.ftr.crd .ftv{color:#E3C84A}
+
+/* ═════════ la partita che scorre ═════════ */
+.rnb{border-radius:20px;padding:14px 15px 13px;background:linear-gradient(180deg,
+  #0E3A27 0%,#061C13 100%);border:1px solid var(--edge)}
+.rnt{display:flex;align-items:center;gap:9px}
+.rnd{width:9px;height:9px;border-radius:50%;background:#C9553F;
+  animation:rnpulse 1.1s ease-in-out infinite}
+@keyframes rnpulse{0%,100%{opacity:1}50%{opacity:.25}}
+.rnt b{font:800 17px/1 var(--brand);color:#FFFDEE}
+.rnt em{flex:1;text-align:right;font:800 9.5px/1 var(--brand);letter-spacing:.16em;
+  font-style:normal;color:var(--gold)}
+.rnsc{display:flex;align-items:center;gap:10px;margin-top:12px}
+.rnsd{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:8px}
+.rnsc .rnsd:last-child{justify-content:flex-end;text-align:right}
+.rnsd img{width:34px;height:34px;object-fit:contain;flex:none}
+.rnsd i{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;
+  background:rgba(226,251,206,.1);font:800 12px/1 var(--brand);font-style:normal;
+  color:#F2E6C8}
+.rnsd b{font-size:12.5px;font-weight:800;color:#FFFDEE;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.rnn{flex:none;display:flex;align-items:baseline;gap:7px}
+.rnn b{font:800 32px/1 var(--brand);color:var(--gold);min-width:24px;text-align:center}
+.rnn i{font:800 20px/1 var(--brand);font-style:normal;color:#5E8C77}
+.rnbar{margin-top:12px;height:5px;border-radius:3px;background:rgba(226,251,206,.14);
+  overflow:hidden}
+.rnbar i{display:block;height:100%;width:0;background:var(--gold);border-radius:3px}
+.ftl.run{margin-top:13px;min-height:90px;border-radius:18px;border:1px solid var(--edge);
+  background:rgba(4,23,15,.5);padding:0;overflow:hidden}
+.ftin{animation:ftpop .36s ease both}
+@keyframes ftpop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.ftbreak{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:9px 13px;background:rgba(227,239,38,.1);border-bottom:1px solid var(--edge)}
+.ftbreak b{font:800 10px/1 var(--brand);letter-spacing:.18em;color:var(--gold)}
+.ftbreak em{font:800 13px/1 var(--brand);font-style:normal;color:#FFFDEE}
 </style>
 </head>
 <body>
@@ -2617,7 +2664,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "49";
+var APPVER = "50";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8958,91 +9005,237 @@ function wireLive(boxId, viewName, quiet) {
   push();
 }
 
-/* ═══════════════ NOVANTA MINUTI, UNO PER UNO ═══════════════ */
+/* ═══════════════ NOVANTA MINUTI, UNO PER UNO ═══════════════
+   Un tabellino solo, in ordine di minuto: i miei tiri, i loro, le parate
+   del mio portiere, i wonder goal e i rigori. Accanto a ogni riga lo
+   stemma della squadra a cui appartiene l'azione. */
 
-/* chi ha preso quell'azione: dal foglio di quella giornata */
 function ftWho(md, ph, n) {
   loadForm();
   var h = halvesOf(md).filter(function (x) { return x.ph === ph; })[0];
   var no = h && h.slots ? h.slots[n - 1] : null;
   if (no == null) return null;
   var p = (typeof playerNo === "function") ? playerNo(no) : null;
-  return p ? { no:p.no, name:pName(p) } : null;
+  if (!p) return null;
+  return { no:p.no, name:pName(p), role:p.role || "", tag:p.tag || "" };
 }
 function ftKeeper() {
   var g = (ME.squad || []).filter(function (p) { return p.role === "GK"; })[0];
-  return g ? { no:g.no, name:g.name || ("Shirt " + g.no) } : null;
+  return g ? { no:g.no, name:g.name || ("Shirt " + g.no), role:"GK", tag:"GK" } : null;
 }
-function ftRow(o) {
-  return '<div class="ftr' + (o.cls ? " " + o.cls : "") + '">' +
-    '<span class="ftm">' + (o.min ? o.min + "′" : "&mdash;") + "</span>" +
-    '<span class="ftsh' + (o.badge ? " bdg" : "") + '">' + esc(o.no) + "</span>" +
-    '<span class="ftn"><b>' + esc(o.name) + "</b><em>" + o.note + "</em></span>" +
-    '<span class="ftv">' + o.tag + "</span></div>";
+/* il ruolo, e il grado: capitano e gemma si vedono */
+function ftRole(w) {
+  if (!w) return "";
+  var r = w.role || "";
+  if (w.tag === "CAP") r += " (C)";
+  else if (w.tag === "GEM") r += " (GEM)";
+  return r;
 }
 
+/* ───────── tutte le azioni, in ordine di minuto ───────── */
+function ftEvents(md, s, them) {
+  var ev = [], myC = crestOf(ME.club.id), thC = crestOf(s.opp);
+  var myI = initials(ME.club.name), thI = initials(them), gk = ftKeeper();
+
+  s.mine.duels.forEach(function (d) {
+    var w = ftWho(md, "att", d.n);
+    ev.push({ min:(s.mine.mins || [])[d.n - 1] || null, crest:myC, ini:myI,
+      name:w ? w.name : "Nobody on this action", role:ftRole(w),
+      note:"moment " + d.n + " &middot; " + fmt(d.shot) +
+        (d.save == null ? ", no keeper" : " against " + fmt(d.save)),
+      tag:d.goal ? "GOAL" : "SAVED", cls:d.goal ? "in" : "" });
+  });
+
+  if (s.mine.sources.bdo) {
+    var wp = (SHEET && SHEET.call && SHEET.call.att.wonder != null &&
+              typeof playerNo === "function") ? playerNo(SHEET.call.att.wonder) : null;
+    ev.push({ min:s.mine.bdoMin || null, crest:myC, ini:myI,
+      name:wp ? pName(wp) : ME.club.name,
+      role:wp ? ftRole({ role:wp.role, tag:wp.tag }) : "",
+      note:"the hard word, written perfectly", tag:"WONDER", cls:"in wnd" });
+  }
+  if (s.mine.penalty.conceded) {
+    ev.push({ min:s.mine.penMin || null, crest:myC, ini:myI,
+      name:"Penalty for " + ME.club.name, role:"",
+      note:esc(them) + " conceded it",
+      tag:s.mine.penalty.outcome === "goal" ? "GOAL" : "SAVED",
+      cls:s.mine.penalty.outcome === "goal" ? "in" : "" });
+  }
+
+  s.their.duels.forEach(function (d) {
+    var m = (s.their.mins || [])[d.n - 1] || null;
+    if (d.goal) {
+      ev.push({ min:m, crest:thC, ini:thI, name:them, role:"",
+        note:"their moment " + d.n + " &middot; " + fmt(d.shot) +
+          (d.save == null ? ", nobody on the line" : " against your " + fmt(d.save)),
+        tag:"GOAL", cls:"out" });
+    } else {
+      ev.push({ min:m, crest:myC, ini:myI,
+        name:gk ? gk.name : "Your keeper", role:"GK",
+        note:"stopped " + esc(them) + " &middot; " + fmt(d.save) + " against " +
+          fmt(d.shot),
+        tag:"SAVED", cls:"kp" });
+    }
+  });
+  if (s.their.sources.bdo) {
+    ev.push({ min:s.their.bdoMin || null, crest:thC, ini:thI, name:them, role:"",
+      note:"their hard word, written perfectly", tag:"WONDER", cls:"out wnd" });
+  }
+  if (s.their.penalty.conceded) {
+    ev.push({ min:s.their.penMin || null, crest:thC, ini:thI,
+      name:"Penalty for " + them, role:"",
+      note:"your hard word came out wrong",
+      tag:s.their.penalty.outcome === "goal" ? "GOAL" : "SAVED",
+      cls:s.their.penalty.outcome === "goal" ? "out" : "kp" });
+  }
+
+  /* i cartellini: il minuto non lo sappiamo, quindi stanno in fondo */
+  loadForm();
+  halvesOf(md).forEach(function (h) {
+    if (h.yellow) {
+      ev.push({ min:null, late:true, crest:myC, ini:myI, card:"y",
+        name:h.yellow + (h.yellow === 1 ? " yellow card" : " yellow cards"),
+        role:"", note:"words with no capital letter &middot; " +
+          (h.ph === "att" ? "attack" : "defence"), tag:"BOOKED", cls:"crd" });
+    }
+    if (h.red) {
+      ev.push({ min:null, late:true, crest:myC, ini:myI, card:"r",
+        name:h.red + (h.red === 1 ? " red card" : " red cards"),
+        role:"", note:"sent off &middot; " + (h.ph === "att" ? "attack" : "defence"),
+        tag:"SENT OFF", cls:"crd out" });
+    }
+  });
+
+  ev.forEach(function (e, i) { e.ix = i; });
+  ev.sort(function (a, b) {
+    return ((a.late ? 999 : a.min || 95) - (b.late ? 999 : b.min || 95)) || a.ix - b.ix;
+  });
+  return ev;
+}
+
+function ftRowHtml(e) {
+  return '<div class="ftr' + (e.cls ? " " + e.cls : "") + '">' +
+    '<span class="ftm">' + (e.min ? e.min + "′" : "&mdash;") + "</span>" +
+    '<span class="ftsh">' + (e.card
+      ? '<i class="cardbox ' + e.card + '"></i>'
+      : e.crest ? '<img src="' + e.crest + '" alt="">' : "<i>" + esc(e.ini) + "</i>") +
+    "</span>" +
+    '<span class="ftn"><b>' + esc(e.name) +
+    (e.role ? '<u class="rl">' + esc(e.role) + "</u>" : "") + "</b>" +
+    '<em>' + e.note + "</em></span>" +
+    '<span class="ftv">' + e.tag + "</span></div>";
+}
+
+/* ═══════════════ LA PARTITA CHE SCORRE ═══════════════
+   Il risultato non si sbatte in faccia: i novanta minuti passano in
+   venti secondi e le azioni compaiono quando capitano, primo tempo e
+   secondo tempo. Si puo' saltare; la seconda volta si va dritti al
+   tabellino. */
+var FTRUN = { t:null };
+
+VIEWS.ftRun = function () {
+  var md = ME.next ? ME.next.md : 0, st = liveGet(md) || {}, s = st.score;
+  if (!s) return back();
+  var them = oppName(s.opp), ev = ftEvents(md, s, them);
+  var myC = crestOf(ME.club.id), thC = crestOf(s.opp);
+  paintClub(ME.club);
+  barFlow("Live", ME.club.name + " v " + them, 0, false);
+
+  html('<div class="pad">' +
+    '<div class="rnb">' +
+      '<span class="rnt"><span class="rnd" id="rnd"></span><b id="rmin">0&prime;</b>' +
+      '<em id="rph">KICK OFF</em></span>' +
+      '<div class="rnsc">' +
+        '<span class="rnsd">' + (myC ? '<img src="' + myC + '" alt="">'
+          : "<i>" + esc(initials(ME.club.name)) + "</i>") +
+          "<b>" + esc(ME.club.name) + "</b></span>" +
+        '<span class="rnn"><b id="rA">0</b><i>&ndash;</i><b id="rB">0</b></span>' +
+        '<span class="rnsd">' + (thC ? '<img src="' + thC + '" alt="">'
+          : "<i>" + esc(thI(them)) + "</i>") +
+          "<b>" + esc(them) + "</b></span>" +
+      "</div>" +
+      '<div class="rnbar"><i id="rbar"></i></div>' +
+    "</div>" +
+    '<div class="ftl run" id="tl"></div>' +
+    '<button class="btn ghost" id="rskip">Skip to the result</button></div>');
+
+  function thI(n) { return initials(n); }
+
+  var t0 = Date.now(), DUR = 20000, i = 0, half = false, A = 0, B = 0;
+  var tl = $("tl");
+  if (FTRUN.t) clearInterval(FTRUN.t);
+
+  function put(h) {
+    var d = document.createElement("div");
+    d.className = "ftin";
+    d.innerHTML = h;
+    tl.appendChild(d);
+    try { d.scrollIntoView({ block:"center", behavior:"smooth" }); } catch (e) {}
+  }
+  function mark(txt, sub) {
+    put('<div class="ftbreak"><b>' + txt + "</b><em>" + sub + "</em></div>");
+  }
+  function score() { $("rA").textContent = A; $("rB").textContent = B; }
+
+  function tick() {
+    var p = Math.min(1, (Date.now() - t0) / DUR), min = Math.round(p * 90);
+    $("rmin").innerHTML = min + "&prime;";
+    $("rbar").style.width = (p * 100).toFixed(1) + "%";
+    if (min >= 1 && min < 45) $("rph").textContent = "FIRST HALF";
+    if (!half && min >= 45) {
+      half = true;
+      $("rph").textContent = "HALF TIME";
+      mark("HALF TIME", A + " &ndash; " + B);
+    }
+    if (min > 45) $("rph").textContent = "SECOND HALF";
+    while (i < ev.length && ((ev[i].late ? 90 : ev[i].min || 90) <= min)) {
+      var e = ev[i];
+      if (e.tag === "GOAL" || e.tag === "WONDER") {
+        if (e.cls && e.cls.indexOf("out") === 0) B++; else A++;
+        score();
+      }
+      put(ftRowHtml(e));
+      i++;
+    }
+    if (p >= 1) { clearInterval(FTRUN.t); FTRUN.t = null; done(); }
+  }
+  function done() {
+    $("rph").textContent = "FULL TIME";
+    mark("FULL TIME", A + " &ndash; " + B);
+    st.shown = true; liveSave(md, st);
+    $("rskip").className = "btn";
+    $("rskip").textContent = "See the whole match ›";
+    $("rskip").onclick = function () { swap("live"); };
+  }
+  $("rskip").onclick = function () {
+    if (FTRUN.t) { clearInterval(FTRUN.t); FTRUN.t = null; }
+    st.shown = true; liveSave(md, st);
+    swap("live");
+  };
+  /* primo tempo: si parte dal fischio d'inizio */
+  mark("FIRST HALF", "the match is under way");
+  FTRUN.t = setInterval(tick, 80);
+};
+
+/* ═══════════════ IL TABELLINO FERMO ═══════════════ */
 VIEWS.live = function () {
   var md = ME.next ? ME.next.md : 0, st = liveGet(md) || {}, s = st.score;
   if (!s) return back();
+  /* la prima volta la partita si guarda scorrere */
+  if (!st.shown) return swap("ftRun");
+
   var them = oppName(s.opp), win = s.me > s.them, draw = s.me === s.them;
   var cmp = COMPS.filter(function (m) { return m.id === scope(); })[0];
   var tab = (typeof compGame === "function") ? compGame(scope(), ME.club.id) : null;
+  if (typeof refreshTable === "function") refreshTable();
+  var row = (typeof leagueRows === "function")
+    ? leagueRows().filter(function (r) { return r.id === ME.club.id; })[0] : null;
   paintClub(ME.club);
   barFlow("Full time", ME.club.name + " v " + them, 100);
 
-  /* ── il tabellino: le mie azioni, con chi le ha prese ── */
-  var rows = [];
-  s.mine.duels.forEach(function (d) {
-    var who = ftWho(md, "att", d.n);
-    rows.push({ m:(s.mine.mins || [])[d.n - 1] || null, goal:d.goal, html:ftRow({
-      min:(s.mine.mins || [])[d.n - 1] || null,
-      no:who ? who.no : "?", name:who ? who.name : "Nobody on this action",
-      note:"moment " + d.n + " &middot; " + fmt(d.shot) +
-        (d.save == null ? ", no keeper" : " against " + fmt(d.save)),
-      tag:d.goal ? "GOAL" : "SAVED", cls:d.goal ? "in" : "" }) });
-  });
-  if (s.mine.sources.bdo) {
-    var w = (SHEET && SHEET.call && SHEET.call.att.wonder != null)
-      ? ftWho(md, "att", 0) : null;
-    var wp = (SHEET && SHEET.call && SHEET.call.att.wonder != null &&
-              typeof playerNo === "function") ? playerNo(SHEET.call.att.wonder) : null;
-    rows.push({ m:s.mine.bdoMin || null, goal:true, html:ftRow({
-      min:s.mine.bdoMin || null, no:wp ? wp.no : "★",
-      name:wp ? pName(wp) : "Wonder goal",
-      note:"the hard word, written perfectly", tag:"WONDER", cls:"in wnd" }) });
-  }
-  if (s.mine.penalty.conceded) {
-    rows.push({ m:s.mine.penMin || null, goal:s.mine.penalty.outcome === "goal",
-      html:ftRow({ min:s.mine.penMin || null, no:"P", badge:true,
-        name:"Penalty to us", note:esc(them) + " conceded it",
-        tag:s.mine.penalty.outcome === "goal" ? "GOAL" : "SAVED",
-        cls:s.mine.penalty.outcome === "goal" ? "in" : "" }) });
-  }
-  rows.sort(function (a, b) { return (a.m || 999) - (b.m || 999); });
+  var ev = ftEvents(md, s, them);
 
-  /* ── la loro metà: quante ne sono passate dalla mia difesa ── */
-  var through = s.their.duels.filter(function (d) { return d.goal; }).length;
-  var stops = s.their.duels.filter(function (d) { return !d.goal; }).length;
-  var gk = ftKeeper();
-  var theirs = ftRow({ min:null, no:initials(them).slice(0, 2), badge:true,
-    name:esc(them), note:"their attack, your defence",
-    tag:through + (through === 1 ? " THROUGH" : " THROUGH"), cls:through ? "out" : "" }) +
-    (gk ? ftRow({ min:null, no:gk.no, name:esc(gk.name),
-      note:stops + (stops === 1 ? " stop" : " stops") +
-        (s.their.penalty.conceded && s.their.penalty.outcome !== "goal"
-          ? ", penalty saved" : ""),
-      tag:stops + (stops === 1 ? " SAVE" : " SAVES"), cls:"kp" }) : "") +
-    (s.their.sources.bdo ? ftRow({ min:s.their.bdoMin || null, no:"★", badge:true,
-      name:esc(them), note:"their hard word, written perfectly",
-      tag:"WONDER", cls:"out" }) : "") +
-    (s.their.penalty.conceded ? ftRow({ min:s.their.penMin || null, no:"P", badge:true,
-      name:"Penalty against us", note:"your hard word came out wrong",
-      tag:s.their.penalty.outcome === "goal" ? "GOAL" : "SAVED",
-      cls:s.their.penalty.outcome === "goal" ? "out" : "kp" }) : "");
-
-  /* ── i punti dei due reparti: la somma delle azioni, non una media ──
-     Ogni momento vale 0, 0,25, 0,50, 0,75 o 1. Qui si sommano: e' il
-     peso vero di un attacco e di una difesa. */
+  /* ── i punti dei due reparti: la somma delle azioni, non una media ── */
   function tot(a) {
     var n = 0, c = 0;
     (a || []).forEach(function (x) { if (x != null) { n += x; c++; } });
@@ -9054,9 +9247,9 @@ VIEWS.live = function () {
   var thDef = tot(s.mine.duels.map(function (d) { return d.save; }));
   function qrow(lab, a, b) {
     return '<div class="qrw"><span class="qv">' + fmt(a.v) +
-      '<u>' + a.n + (a.n === 1 ? " moment" : " moments") + "</u></span>" +
+      "<u>" + a.n + (a.n === 1 ? " moment" : " moments") + "</u></span>" +
       '<span class="ql">' + lab + '</span><span class="qv">' + fmt(b.v) +
-      '<u>' + b.n + (b.n === 1 ? " moment" : " moments") + "</u></span></div>";
+      "<u>" + b.n + (b.n === 1 ? " moment" : " moments") + "</u></span></div>";
   }
 
   var pts = win ? 3 : draw ? 1 : 0;
@@ -9069,18 +9262,18 @@ VIEWS.live = function () {
       '<span class="ftt">FULL TIME</span>' +
       '<div class="ftsc">' +
         '<span class="ftsd">' + (mine ? '<img src="' + mine + '" alt="">'
-          : '<i>' + esc(initials(ME.club.name)) + "</i>") +
+          : "<i>" + esc(initials(ME.club.name)) + "</i>") +
           "<b>" + esc(ME.club.name) + "</b></span>" +
         '<span class="ftn2"><b>' + s.me + "</b><i>&ndash;</i><b>" + s.them + "</b>" +
           "<em>" + (s.home ? "AT HOME" : "AWAY") + "</em></span>" +
         '<span class="ftsd">' + (foe ? '<img src="' + foe + '" alt="">'
-          : '<i>' + esc(initials(them)) + "</i>") +
+          : "<i>" + esc(initials(them)) + "</i>") +
           "<b>" + esc(them) + "</b></span>" +
       "</div>" +
       '<div class="ftchips"><span class="on">+' + pts +
         (pts === 1 ? " point" : " points") + "</span>" +
-        (tab && tab.pos ? "<span>" + ord(tab.pos) + " &middot; " + tab.pts +
-          " pts</span>" : "") + "</div>" +
+        (row ? "<span>" + ord(row.pos) + " &middot; " + row.pts + " pts</span>" : "") +
+      "</div>" +
     "</div>" +
 
     (s.mine.sources.bdo
@@ -9095,9 +9288,8 @@ VIEWS.live = function () {
 
     '<h2 class="sec top">How it happened</h2>' +
     '<div class="panel ftl">' +
-      (rows.length ? rows.map(function (r) { return r.html; }).join("")
-                   : '<p class="empty2">No action opened in your attack.</p>') +
-      theirs +
+      (ev.length ? ev.map(ftRowHtml).join("")
+                 : '<p class="empty2">Nothing opened in this match.</p>') +
     "</div>" +
 
     '<h2 class="sec top">The two sides</h2>' +
@@ -9112,16 +9304,19 @@ VIEWS.live = function () {
           "better number wins.") +
       "</p></div>" +
 
-    (tab && tab.pos
-      ? '<div class="ftpos"><b>' + ord(tab.pos) + "</b><span>of " + tab.of +
-        " teams &middot; " + tab.pts + " points</span></div>"
+    (row
+      ? '<div class="ftpos"><b>' + ord(row.pos) + "</b><span>of " +
+        leagueRows().length + " teams &middot; " + row.pts + " points" +
+        (row.live ? " &middot; waiting for your teacher" : "") + "</span></div>"
       : "") +
 
     '<button class="btn" id="ftrep">See my language report</button>' +
+    '<button class="btn ghost" id="ftrun2">Watch it again</button>' +
     '<button class="btn ghost" id="fttab">The whole table</button>' +
     '<button class="btn ghost" id="lvbk">Back to the competition</button></div>');
 
   $("ftrep").onclick = function () { go("mReport"); };
+  $("ftrun2").onclick = function () { swap("ftRun"); };
   $("fttab").onclick = function () { if (typeof LG === "object") LG.team = null;
                                      go("league"); };
   $("lvbk").onclick = function () { reset("home"); };
