@@ -13,16 +13,31 @@
    vecchia viene buttata e il telefono riparte pulito.
    ═══════════════════════════════════════════════════════════════════ */
 
-var VER = "80";
+var VER = "81";
 var BOX = "footefl-" + VER;
 var SHELL = ["./", "./index.html", "./manifest.webmanifest",
              "./icon-192.png", "./icon-512.png"];
-/* le voci dei dettati: stanno fuori dalla pagina perche' pesano, ma
-   devono essere sul telefono prima della partita — in palestra o in
-   corriera la rete non c'e'. Si scaricano dopo l'app, senza tenerla
-   ferma: se qualcosa non arriva, si prende al primo ascolto. */
-var VOICES = ["./au/morning.mp3", "./au/market.mp3", "./au/green.mp3",
-              "./au/park.mp3", "./au/ferry.mp3", "./au/lighthouse.mp3"];
+/* Le voci e le figure stanno fuori dalla pagina perche' pesano: l'app
+   e' tornata sotto il mega e si apre in un attimo. Ma devono essere sul
+   telefono prima della partita — in palestra o in corriera la rete non
+   c'e'. Allora, appena installata l'app, il guardiano si legge i due
+   elenchi (au/list.json e im/list.json) e se le porta giu' una alla
+   volta, senza tenere ferma la pagina. Se qualcosa non arriva, si
+   prende al primo uso. */
+var LISTS = [["./au/list.json", "./au/"], ["./im/list.json", "./im/"]];
+function haulIn(c) {
+  return LISTS.reduce(function (p, L) {
+    return p.then(function () {
+      return fetch(L[0], { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (names) {
+          return names.reduce(function (q, n) {
+            return q.then(function () { return c.add(L[1] + n)["catch"](function () {}); });
+          }, Promise.resolve());
+        })["catch"](function () {});
+    });
+  }, Promise.resolve());
+}
 
 self.addEventListener("install", function (e) {
   self.skipWaiting();
@@ -41,12 +56,7 @@ self.addEventListener("activate", function (e) {
     }));
   }).then(function () { return self.clients.claim(); })
     .then(function () {
-      /* e adesso le voci, una dopo l'altra */
-      return caches.open(BOX).then(function (c) {
-        return VOICES.reduce(function (p, u) {
-          return p.then(function () { return c.add(u)["catch"](function () {}); });
-        }, Promise.resolve());
-      });
+      return caches.open(BOX).then(haulIn);
     }));
 });
 
@@ -102,6 +112,22 @@ self.addEventListener("fetch", function (e) {
       fetch(req)["catch"](function () {
         return caches.match("./index.html").then(function (h) {
           return h || caches.match("./");
+        });
+      })
+    );
+    return;
+  }
+
+  /* le figure: dalla dispensa, e basta — non cambiano mai */
+  if (url.pathname.indexOf("/im/") >= 0) {
+    e.respondWith(
+      caches.match(req).then(function (hit) {
+        return hit || fetch(req).then(function (r) {
+          if (r && r.ok) {
+            var copy = r.clone();
+            caches.open(BOX).then(function (c) { c.put(req, copy); });
+          }
+          return r;
         });
       })
     );
