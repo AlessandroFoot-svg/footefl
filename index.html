@@ -2244,7 +2244,7 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   background:var(--gold);color:#06231D;font:800 10px/1.3 var(--brand);text-align:center}
 .peg{position:relative}
 .phero{display:flex;align-items:center;gap:14px;padding:14px;border-radius:18px;
-  background:linear-gradient(135deg,var(--club) 0%,rgba(4,23,15,.9) 120%);
+  background:var(--clubfade,linear-gradient(135deg,var(--club) 0%,rgba(4,23,15,.9) 120%));
   border:1px solid var(--edge)}
 .pkit{position:relative;flex:none;width:76px;height:76px;display:grid;place-items:center}
 .pkit img{width:76px;height:76px;object-fit:contain}
@@ -2466,6 +2466,22 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .actt b{display:block;font:800 12px/1 var(--brand);color:#FFFDEE}
 .actt em{display:block;margin-top:4px;font-size:10px;font-weight:600;font-style:normal;
   color:#8FC4AC}
+.mcpin{flex:none;font-style:normal;font-size:14px;color:var(--gold)}
+.mcnone{padding:16px;border-radius:15px;border:1px dashed var(--edge);
+  background:rgba(226,251,206,.03)}
+.mcnone b{display:block;font:800 15px/1.2 var(--brand);color:#FFFDEE}
+.mcnone span{display:block;margin-top:7px;font-size:12.5px;font-weight:600;line-height:1.5;
+  color:var(--fog)}
+
+/* ═════════ la bandiera ═════════ */
+.flag{display:inline-flex;align-items:center;margin-right:7px;vertical-align:-2px}
+.flag .fgi{font-style:normal;font-size:15px;line-height:1;
+  font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+/* la sigla, dove la bandiera non si disegna */
+.flag .fgl{display:none}
+.flag .fgl.on{display:inline-block;padding:1px 5px;border-radius:4px;text-decoration:none;
+  background:rgba(226,251,206,.16);color:var(--fog);
+  font:800 9px/1.4 var(--brand);letter-spacing:.06em}
 </style>
 </head>
 <body>
@@ -3110,7 +3126,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "69";
+var APPVER = "70";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -3216,6 +3232,12 @@ function paintBg(name, soft) {
      stampa — e non soltanto un'atmosfera dietro ai pannelli. */
   if (soft) h.className = "bgsoft"; else h.className = "";
 }
+/* le sfumature di chi ha due colori. Con la trasparenza in fondo, cosi'
+   lo stadio dietro resta visibile e la pagina non diventa un rettangolo. */
+var CLUB_FADE = {
+  ROP:"linear-gradient(135deg,rgba(26,58,110,.92) 0%,rgba(31,74,120,.78) 42%," +
+      "rgba(140,30,38,.82) 100%)"
+};
 function paintClub(c) {
   paintGround();
   var r = document.documentElement.style;
@@ -3224,6 +3246,11 @@ function paintClub(c) {
   var own = (typeof imgOf === "function") && imgOf("bg-" + String(c.id).toUpperCase());
   if (own) r.setProperty("--bg", "url(" + own + ")");
   r.setProperty("--club", c.colour);
+  /* qualche club ha due colori, non uno: la testata della scheda
+     giocatore li sfuma invece di spalmare una tinta sola */
+  var two = CLUB_FADE[String(c.id).toUpperCase()];
+  r.setProperty("--clubfade", two ||
+    ("linear-gradient(135deg," + c.colour + " 0%,rgba(4,23,15,.9) 120%)"));
   /* il numero sulla maglia prende il colore che si stacca: crema su kit scuro,
      il colore proprio del club su kit chiaro — come le maglie vere */
   var dark = c.ink || "#140F06";
@@ -8784,7 +8811,8 @@ VIEWS.player = function (d) {
         (p.tag === "CAP" ? '<i class="rl cap">CAPTAIN</i>' : "") +
         (p.tag === "GEM" ? '<i class="rl gem">GEM</i>' : "") +
         (p.tag === "GK" ? '<i class="rl">KEEPER</i>' : "") + "</span>" +
-        "<em>" + (p.age ? p.age + " &middot; " : "") + esc(p.city || "") +
+        "<em>" + (typeof flagHtml === "function" ? flagHtml(p.nat) : "") +
+        (p.age ? p.age + " &middot; " : "") + esc(p.city || "") +
         (p.nat ? " &middot; " + esc(p.nat) : "") + "</em></span>" +
     "</div>" +
 
@@ -12674,14 +12702,14 @@ function drawStadium() {
     '<span class="tgveil" aria-hidden="true"></span>' +
     '<div class="tgin">' +
       '<span class="tgk">THE TRAINING GROUND &middot; MATCHDAY ' + mdNow() + "</span>" +
-      '<b class="tgt">Improve your team</b>' +
+      '<b class="tgt">Build the club</b>' +
       '<div class="tgnum"><span><b>' + fmtCap(capacity()) + "</b><em>capacity</em></span>" +
         "<span><b>" + money(GROUND.funds) + "</b><em>in the till</em></span>" +
         "<span><b>" + left + "</b><em>" +
         (left === 1 ? "session left" : "sessions left") + "</em></span></div>" +
       '<div class="tgrow">' +
-        door("squad", imgOf("pitch"), "MY SQUAD",
-             left ? left + (left === 1 ? " session" : " sessions") : "closed today") +
+        door("squad", imgOf("pitch"), "SESSIONS",
+             left ? left + (left === 1 ? " to play" : " to play") : "closed today") +
         door("stand", imgOf("stadium"), "THE STADIUM",
              nStand ? nStand + " to build" : "all built") +
         door("club", crestOf(ME.club ? ME.club.id : "") || imgOf("ic-settings"),
@@ -12697,7 +12725,7 @@ function fmtCap(n) { return n >= 1000 ? (n / 1000) + ",000" : String(n); }
 
 /* ───────── la schermata ───────── */
 var GTAB = "squad";
-var GTABS = [{ id:"squad", n:"My squad" }, { id:"stand", n:"The stadium" },
+var GTABS = [{ id:"squad", n:"Sessions" }, { id:"stand", n:"The stadium" },
              { id:"club",  n:"The club" }, { id:"staff", n:"The staff" }];
 VIEWS.ground = function (d) {
   loadGround(); loadLevel();
@@ -12742,14 +12770,14 @@ VIEWS.ground = function (d) {
               "the shop, though, pays at every match.") + "</p>" +
         '<div id="yard"></div>') +
 
-    '<button class="btn ghost" id="gbk">Back to my squad</button></div>');
+    '<button class="btn ghost" id="gbk">Back to the competition</button></div>');
 
   if (sq) drawSessions();
   else drawYard(GTAB === "stand" ? ["stand"] : GTAB === "staff" ? ["staff"] : ["club"]);
   Array.prototype.forEach.call($("main").querySelectorAll(".gtab"), function (b) {
     b.onclick = function () { GTAB = b.dataset.t; swap("ground"); };
   });
-  $("gbk").onclick = function () { reset("squad"); };
+  $("gbk").onclick = function () { reset(ME.code ? "home" : "squad"); };
 };
 
 function drawSessions() {
@@ -14020,6 +14048,26 @@ function mbPlayed() {
   return out.sort(function (a, b) { return b - a; });
 }
 
+/* ───────── la posta che resta ─────────
+   Una lettera letta e capita ha finito il suo lavoro: sparisce, come
+   si butta un volantino. Restano solo quelle che servono ancora —
+   la giornata che si deve giocare, una squalifica, un infortunio —
+   e quelle si riconoscono dal fermaglio. */
+var MB_KEEP = { fix:1, susp:1, inj:1 };
+function mbKeeps(m) {
+  var head = String(m.id).split("-")[0];
+  if (!MB_KEEP[head]) return false;
+  /* la giornata vecchia non serve piu': si tiene solo quella in corso */
+  var now = (ME.next && ME.next.md) || 1;
+  if (head === "fix") return m.md >= now;
+  return m.md >= now - 1;
+}
+function mbGone(m) {
+  /* senza domanda basta averla aperta; con la domanda, averla capita */
+  var over = m.q ? mbDone(m.id) : mbSeen(m.id);
+  return over && !mbKeeps(m);
+}
+
 /* ───────── tutta la posta, dalla piu' recente ───────── */
 function mbList() {
   var cmp = (typeof COMPS !== "undefined"
@@ -14039,6 +14087,7 @@ function mbList() {
   add(mbMarket());
   add(mbWelcome(cmp));
 
+  out = out.filter(function (m) { return !mbGone(m); });
   /* la giornata piu' alta in cima; a parita' resta l'ordine di qui sopra */
   out.forEach(function (m, i) { m._i = i; });
   out.sort(function (a, b) { return (b.md - a.md) || (a._i - b._i); });
@@ -14052,7 +14101,7 @@ function mbUnread() {
 function mailCard() {
   if (!ME.code || !ME.club) return "";
   var n = mbUnread(), all = mbList().length;
-  if (!all) return "";
+  if (!all) return "";          /* stanza vuota: niente riga, niente rumore */
   return '<section class="pad"><button class="stbar mail' + (n ? " nw" : "") +
     '" id="hmailb" type="button"><span class="stn">&#9993;</span>' +
     '<span class="stt"><b>Message centre' +
@@ -14085,7 +14134,9 @@ function drawMail() {
   var list = mbList(), box = $("mcl");
   if (!box) return;
   if (!list.length) {
-    box.innerHTML = '<p class="empty2">No post yet.</p>';
+    box.innerHTML = '<div class="mcnone"><b>Nothing in the room.</b>' +
+      "<span>Every letter you have read and answered has been thrown away. " +
+      "The next one arrives with the next matchday.</span></div>";
     return;
   }
   box.innerHTML = list.map(function (m) {
@@ -14097,8 +14148,10 @@ function drawMail() {
       '<span class="mcf">' + esc(f.t) + "</span>" +
       '<span class="mcw"><b>' + esc(m.title) + "</b><em>" + esc(f.n) +
       (m.tag ? " &middot; " + esc(m.tag) : "") + "</em></span>" +
-      (done ? '<i class="mcok">&#10003;</i>' : seen ? '<i class="mcar">&#8250;</i>'
-            : '<i class="mcdot"></i>') + "</button>" +
+      (done && mbKeeps(m) ? '<i class="mcpin" title="Kept: you still need this">' +
+         "\u2691</i>"
+       : done ? '<i class="mcok">&#10003;</i>'
+       : seen ? '<i class="mcar">&#8250;</i>' : '<i class="mcdot"></i>') + "</button>" +
       (open ? '<div class="mcb">' +
         m.body.map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") +
         mailQ(m) + "</div>" : "") +
@@ -14883,6 +14936,80 @@ function fameCard() {
             : t >= 2 ? "Local papers, local money."
                      : "Only the street paper turns up.") + "</em></div>" +
     "</div></section>";
+}
+
+/* ═══════════════ LA BANDIERA ═══════════════
+   La nazionalita' dei giocatori e' scritta a parole ("Bosnian"): qui si
+   traduce nella sua bandiera. Sui telefoni degli alunni — iPhone e
+   Android — si vede il drappo; su Windows il carattere non esiste e
+   restano le due lettere del paese, che vanno bene lo stesso e anzi
+   sono un'altra cosa che si impara. */
+var NAT_ISO = {
+  "english":"GB-ENG", "scottish":"GB-SCT", "welsh":"GB-WLS",
+  "northern irish":"GB", "british":"GB", "irish":"IE",
+  "italian":"IT", "french":"FR", "german":"DE", "spanish":"ES",
+  "portuguese":"PT", "brazilian":"BR", "argentine":"AR", "colombian":"CO",
+  "mexican":"MX", "canadian":"CA", "american":"US",
+  "polish":"PL", "croatian":"HR", "bosnian":"BA", "greek":"GR",
+  "turkish":"TR", "swedish":"SE", "norwegian":"NO", "danish":"DK",
+  "finnish":"FI", "dutch":"NL", "belgian":"BE", "swiss":"CH",
+  "austrian":"AT", "czech":"CZ", "ukrainian":"UA", "romanian":"RO",
+  "japanese":"JP", "korean":"KR", "chinese":"CN", "indian":"IN",
+  "iranian":"IR", "saudi":"SA", "qatari":"QA", "egyptian":"EG",
+  "moroccan":"MA", "tunisian":"TN", "algerian":"DZ", "nigerian":"NG",
+  "ghanaian":"GH", "kenyan":"KE", "congolese":"CD", "senegalese":"SN",
+  "south african":"ZA", "australian":"AU", "new zealander":"NZ",
+  "jamaican":"JM", "albanian":"AL", "serbian":"RS", "russian":"RU"
+};
+function isoOf(nat) { return NAT_ISO[String(nat || "").toLowerCase()] || ""; }
+/* le lettere diventano i caratteri regionali che il telefono disegna */
+function flagChar(iso) {
+  if (!iso) return "";
+  if (iso.indexOf("-") > 0) {
+    /* Inghilterra, Scozia e Galles hanno la loro, scritta a tag */
+    var sub = { "GB-ENG":"gbeng", "GB-SCT":"gbsct", "GB-WLS":"gbwls" }[iso];
+    if (!sub) return "";
+    var out = "🏴", i;
+    for (i = 0; i < sub.length; i++) {
+      out += String.fromCodePoint(0xE0000 + sub.charCodeAt(i));
+    }
+    return out + "󠁿";
+  }
+  return String.fromCodePoint(0x1F1E6 + iso.charCodeAt(0) - 65) +
+         String.fromCodePoint(0x1F1E6 + iso.charCodeAt(1) - 65);
+}
+/* il telefono sa disegnare le bandiere? Si misura: se la coppia di
+   lettere regionali diventa UN glifo, e' piu' stretta di due lettere
+   separate. Dove non lo sa (Windows), restano le sigle. */
+var FLAGOK = null;
+function flagsWork() {
+  if (FLAGOK !== null) return FLAGOK;
+  FLAGOK = false;
+  try {
+    var c = document.createElement("canvas").getContext("2d");
+    c.font = "24px " + '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+    var pair = c.measureText("\uD83C\uDDEE\uD83C\uDDF9").width;   /* IT */
+    var one = c.measureText("\uD83C\uDDEE").width;                 /* la sola I */
+    FLAGOK = pair < one * 1.6;
+  } catch (e) { FLAGOK = false; }
+  return FLAGOK;
+}
+var GB_SHORT = { "GB-ENG":"ENG", "GB-SCT":"SCO", "GB-WLS":"WAL" };
+function flagHtml(nat) {
+  var iso = isoOf(nat);
+  if (!iso) return "";
+  /* Inghilterra, Scozia e Galles: la loro bandiera quasi nessun telefono
+     la disegna, quindi si scrive la sigla e si fa prima */
+  if (GB_SHORT[iso]) {
+    return '<span class="flag" title="' + esc(nat) + '">' +
+      '<u class="fgl on">' + GB_SHORT[iso] + "</u></span>";
+  }
+  if (!flagsWork()) {
+    return '<span class="flag" title="' + esc(nat) + '">' +
+      '<u class="fgl on">' + esc(iso) + "</u></span>";
+  }
+  return '<span class="flag" title="' + esc(nat) + '">' +
+    '<i class="fgi">' + flagChar(iso) + "</i></span>";
 }
 
 
