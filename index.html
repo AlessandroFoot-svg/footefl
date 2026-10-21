@@ -3475,7 +3475,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "78";
+var APPVER = "79";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -13036,24 +13036,71 @@ var BUILDS = [
 var GROUP_NAME = { stand:"The stand", club:"The club", staff:"The staff" };
 
 /* ───────── la cassa ───────── */
-function grKey() { return "footefl-ground-" + (ME.club ? ME.club.id : "x"); }
+/* ═══════════════ DUE CASSETTI, NON UNO ═══════════════
+   Quello che e' DEL CLUB in QUESTA competizione — la cassa, quello che
+   hai costruito, le sessioni e le azioni di giornata — sta in un
+   cassetto per competizione: in coppa hai un'altra cassa, come volevi.
+   Quello che e' DELLA PERSONA — l'inglese che un giocatore ha imparato
+   e il lavoro che ha fatto in palestra — sta in un cassetto solo, del
+   club: Elliot Mercer non dimentica l'inglese perche' si gioca in
+   un'altra competizione.
+   Il codice del club puo' cambiare da una competizione all'altra (il
+   professore ne ha bisogno per la classifica): qui si usa sempre il
+   club vero, quello che il nome dice. */
+function baseId() {
+  var id = ME.club ? ME.club.id : "x";
+  return (typeof aliasOf === "function") ? aliasOf(id) : String(id).toUpperCase();
+}
+function grKey() { return "footefl-ground-" + scope() + "-" + baseId(); }
+function plKey() { return "footefl-players-" + baseId(); }
+/* il cassetto unico di prima: si legge ancora, una volta, per non far
+   perdere niente a chi ha gia' giocato */
+function grOldKey() { return "footefl-ground-" + (ME.club ? ME.club.id : "x"); }
+
 var GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{}, lang:{}, acts:{} };
 function loadGround() {
   GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{}, lang:{}, acts:{} };
-  try {
-    var s = JSON.parse(localStorage.getItem(grKey()));
-    if (s) {
-      GROUND.funds = s.funds || 0; GROUND.built = s.built || {};
-      GROUND.sess = s.sess || {};  GROUND.grown = s.grown || {};
-      GROUND.gate = s.gate || {};  GROUND.lang = s.lang || {};
-      GROUND.acts = s.acts || {};
-    }
-  } catch (e) {}
+  var old = null;
+  try { old = JSON.parse(localStorage.getItem(grOldKey())); } catch (e) {}
+
+  /* 1. la stagione di questo club in questa competizione */
+  var s = null, moved = false;
+  try { s = JSON.parse(localStorage.getItem(grKey())); } catch (e) {}
+  if (!s && old) { s = old; moved = true; }    /* il vecchio cassetto, una volta */
+  if (s) {
+    GROUND.funds = s.funds || 0; GROUND.built = s.built || {};
+    GROUND.sess = s.sess || {};  GROUND.gate = s.gate || {};
+    GROUND.acts = s.acts || {};
+  }
+
+  /* 2. i giocatori, che sono gli stessi in tutte le competizioni */
+  var pl = null;
+  try { pl = JSON.parse(localStorage.getItem(plKey())); } catch (e) {}
+  if (!pl && old) { pl = { grown:old.grown, lang:old.lang }; moved = true; }
+  if (pl) {
+    GROUND.grown = pl.grown || {}; GROUND.lang = pl.lang || {};
+  }
+
+  /* il travaso si fa una volta sola: se no la cassa vecchia rispunterebbe
+     in ogni competizione, e i soldi si moltiplicherebbero da soli */
+  if (moved) {
+    saveGround();
+    try { localStorage.removeItem(grOldKey()); } catch (e) {}
+  }
+
   applyGrowth();
   return GROUND;
 }
 function saveGround() {
-  try { localStorage.setItem(grKey(), JSON.stringify(GROUND)); } catch (e) {}
+  try {
+    localStorage.setItem(grKey(), JSON.stringify({
+      funds:GROUND.funds, built:GROUND.built, sess:GROUND.sess,
+      gate:GROUND.gate, acts:GROUND.acts
+    }));
+    localStorage.setItem(plKey(), JSON.stringify({
+      grown:GROUND.grown, lang:GROUND.lang
+    }));
+  } catch (e) {}
 }
 /* i passi comprati nel ground si posano sulla rosa */
 function applyGrowth() {
