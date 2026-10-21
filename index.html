@@ -2565,6 +2565,34 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   font:800 9px/1 var(--brand);font-style:normal}
 .hdr em{font:800 8.5px/1 var(--brand);letter-spacing:.04em;font-style:normal;
   color:#CFE8D8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+/* ═════════ le spiegazioni: giro guidato e domande ═════════ */
+.hwtwo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+.hwdoor{padding:15px 13px;border-radius:17px;border:1px solid var(--gold);
+  background:rgba(227,239,38,.07);color:inherit;text-align:left;cursor:pointer;
+  font-family:inherit}
+.hwdi{display:block;width:26px;height:26px;color:var(--gold);margin-bottom:9px}
+.hwdi .tvg{width:26px;height:26px}
+.hwdoor b{display:block;font:800 15px/1.2 var(--brand);color:#FFFDEE}
+.hwdoor em{display:block;margin-top:5px;font-size:11px;font-weight:600;font-style:normal;
+  color:var(--fog);line-height:1.35}
+.tcard{padding:22px 18px 20px;border-radius:20px;border:1px solid var(--edge);
+  background:linear-gradient(180deg,rgba(226,251,206,.08),rgba(4,23,15,.55));
+  text-align:center}
+.tart{display:block;width:62px;height:62px;margin:0 auto 16px;border-radius:50%;
+  display:grid;place-items:center;background:rgba(227,239,38,.12);
+  border:1px solid rgba(227,239,38,.45);color:var(--gold)}
+.tart .tvg{width:30px;height:30px}
+.tcard b{display:block;font:800 21px/1.2 var(--brand);letter-spacing:-.01em;color:#FFFDEE}
+.tcard p{margin:11px 0 0;font-size:14px;font-weight:600;line-height:1.55;color:var(--cream)}
+.tdots{display:flex;justify-content:center;gap:7px;margin:16px 0 14px}
+.tdots i{width:8px;height:8px;border-radius:50%;background:rgba(226,251,206,.22);
+  cursor:pointer}
+.tdots i.on{background:var(--gold);transform:scale(1.25)}
+.mcx.faq .mch{padding:13px 14px}
+.mcx.faq .mcw b{font-size:13.5px;line-height:1.35}
+.mcx.faq .mcar{font-size:17px;font-weight:800;color:var(--gold)}
+.mcx.faq .mcb p{margin:0;font-size:13px;line-height:1.55;color:var(--cream)}
 </style>
 </head>
 <body>
@@ -3379,7 +3407,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "75";
+var APPVER = "76";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -16261,6 +16289,361 @@ function drawOffer() {
   });
   if ($("spcall")) $("spcall").disabled = true;
 }
+
+
+/* ───── 60-help.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   LA STANZA DELLE SPIEGAZIONI
+
+   Tre porte dietro "How it works", nella pagina dell'alunno:
+
+     1. le sei mosse — la pagina che c'era gia', rifatta com'e' il gioco
+        adesso: il Rondo non c'e' piu', le azioni e l'inglese dei
+        giocatori si'
+     2. il giro guidato — otto schermate, una alla volta, ognuna con il
+        suo disegno: si legge in due minuti e si sa giocare
+     3. le domande — l'alunno sceglie quella che si sta facendo e la
+        risposta si apre sotto
+
+   Tutto in inglese, ma al livello di chi legge: A1 e A2 leggono frasi
+   corte, B1 e B2 la versione distesa. Una spiegazione che non si
+   capisce non e' una spiegazione, e questa e' la prima pagina che un
+   alunno apre quando si perde.
+   ═══════════════════════════════════════════════════════════════════ */
+
+function hEasy() {
+  var l = String(ME.level || "A1").toUpperCase();
+  return l === "A1" || l === "A2";
+}
+function hv(easy, full) { return hEasy() ? easy : full; }
+
+/* ───────── i disegni del giro ─────────
+   Due tratti e via: servono a dire "questa e' la pagina di cui parlo",
+   non a essere belli. */
+var TOURART = {
+  code:'<rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M7 11h4M7 14h7"/>',
+  page:'<rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  sheet:'<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M7 9h3M7 13h3M7 17h3"/>' +
+        '<circle cx="15.5" cy="9" r="1.6"/><circle cx="15.5" cy="13" r="1.6"/>',
+  ear:'<path d="M8 9a4 4 0 1 1 8 0c0 3-3 3-3 6a2.5 2.5 0 0 1-5 0"/><path d="M12 20h.01"/>',
+  ball:'<circle cx="12" cy="12" r="8.5"/><path d="m12 7 3.2 2.4-1.2 3.8h-4L8.8 9.4z"/>',
+  bars:'<path d="M5 20V12M10 20V6M15 20v-5M20 20v-9"/>',
+  mic:'<rect x="9.2" y="3" width="5.6" height="10" rx="2.8"/>' +
+      '<path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/>',
+  coin:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.8 9.8h3.4a2 2 0 0 1 0 4H10a2 ' +
+       '2 0 0 0 0 4h3.6"/>'
+};
+function tourSvg(k) {
+  return '<svg class="tvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" ' +
+    'aria-hidden="true">' + (TOURART[k] || "") + "</svg>";
+}
+
+/* ───────── il giro guidato ───────── */
+function tourSteps() {
+  return [
+  { a:"code", t:hv("Your code is your season", "The code is the whole season"),
+    x:hv("Your teacher gives you a code. It says which competitions are yours and " +
+         "which club you manage. You do not choose the club: it is already yours.",
+         "Everything starts from the code your teacher gives you. It decides which " +
+         "competitions you are in and which club you manage in each one — the club " +
+         "is not a choice, it is an assignment, exactly as it would be in real life.") },
+
+  { a:"page", t:hv("One page for each competition", "Each competition has its own page"),
+    x:hv("Tap a competition on your home page. Inside you find the last result, the " +
+         "next match, your squad and the table.",
+         "From your home page you step into one competition at a time. Inside you have " +
+         "the last result, the match that is coming, your squad, the table and the " +
+         "training ground — and five doors at the top for the post, the press, the " +
+         "sponsors, the city and your numbers.") },
+
+  { a:"sheet", t:hv("Fill in the team sheet", "The team sheet comes before the match"),
+    x:hv("Before the match you say who takes each moment, where you shoot and where " +
+         "your keeper dives. The weather says how many moments you get.",
+         "Before kick-off you decide who takes each moment, which side you shoot and " +
+         "which way the keeper dives. The weather of each half decides how many moments " +
+         "open at all — a storm gives you fewer than sunshine.") },
+
+  { a:"ear", t:hv("Listen and write", "You hear it once, and you write it"),
+    x:hv("Your teacher reads a text. You hear it and you write it. Every word you get " +
+         "right opens a moment for your team.",
+         "Each half is a dictation read by your teacher. It does not stop and it does not " +
+         "repeat: you write what you hear, and the quality of your writing is what opens " +
+         "the moments your players then take.") },
+
+  { a:"ball", t:hv("The match plays itself", "Then the match resolves itself"),
+    x:hv("Your words meet the words of the other player. The app shows the match minute " +
+         "by minute, with the goals and who scored them.",
+         "Your attacking half is weighed against your opponent's defending half, word by " +
+         "word. The result arrives as a live timeline — goals, wonder goals, penalties " +
+         "and cards, with the name of the player on each action.") },
+
+  { a:"bars", t:hv("Train your players", "The squad grows where you train it"),
+    x:hv("In my squad, open a player. You can train the body in the gym or the English " +
+         "with four exercises. Six actions every matchday, no more.",
+         "Open any player from my squad and you can work on two things: the body, in the " +
+         "gym, and the English, with synonyms, definitions, translation and the right " +
+         "thing to say. You get six actions a matchday, over four players at most, so " +
+         "choosing is part of the game.") },
+
+  { a:"mic", t:hv("The press room", "The press room pays, and it judges"),
+    x:hv("A paper asks four questions. Three go to your players, and the answer is as " +
+         "good as their English. The last one you write yourself.",
+         "Before and after the match a paper turns up — a small local one if nobody " +
+         "knows you, a national one if they do. Three questions go to players you choose, " +
+         "and what comes out of their mouths is exactly as good as the English you have " +
+         "trained. The fourth is yours to write, and your teacher reads it.") },
+
+  { a:"coin", t:hv("The club lives on money", "Everything ends up in the till"),
+    x:hv("Matches, sessions, the press and the sponsors all pay. With the money you " +
+         "build the stadium, open the club and hire the staff.",
+         "Gate money, training sessions, press answers and sponsors all feed the till, " +
+         "and the till pays for seats, for the club and for the staff — the analyst, " +
+         "the physio and the VAR screen. Win and speak well, and the city notices: " +
+         "bigger papers turn up and bigger companies answer the telephone.") }
+  ];
+}
+
+var TOUR = { i:0 };
+VIEWS.tour = function (d) {
+  var steps = tourSteps();
+  if (d && typeof d.i === "number") TOUR.i = d.i;
+  if (TOUR.i >= steps.length) TOUR.i = steps.length - 1;
+  if (TOUR.i < 0) TOUR.i = 0;
+  var s = steps[TOUR.i], last = TOUR.i === steps.length - 1;
+  paintNeutral();
+  barFlow("The tour", (TOUR.i + 1) + " of " + steps.length, 0);
+
+  html('<div class="pad"><div class="tcard">' +
+    '<span class="tart">' + tourSvg(s.a) + "</span>" +
+    "<b>" + esc(s.t) + "</b><p>" + esc(s.x) + "</p></div>" +
+    '<div class="tdots">' + steps.map(function (x, k) {
+      return '<i class="' + (k === TOUR.i ? "on" : "") + '" data-k="' + k + '"></i>';
+    }).join("") + "</div>" +
+    '<button class="btn" id="tnx">' + (last ? "That is the whole game" : "Next") +
+    "</button>" +
+    (TOUR.i ? '<button class="btn ghost" id="tpr">Back one step</button>' : "") +
+    '<button class="btn ghost" id="tbk">Leave the tour</button></div>');
+
+  $("tnx").onclick = function () {
+    if (last) return reset(typeof homeView === "function" ? homeView() : "home");
+    TOUR.i++; swap("tour");
+  };
+  if ($("tpr")) $("tpr").onclick = function () { TOUR.i--; swap("tour"); };
+  $("tbk").onclick = function () { reset("howto"); };
+  Array.prototype.forEach.call($("main").querySelectorAll(".tdots i"), function (b) {
+    b.onclick = function () { TOUR.i = parseInt(b.dataset.k, 10); swap("tour"); };
+  });
+};
+
+/* ───────── le domande ─────────
+   Quelle che un alunno si fa davvero, in ordine di quando se le fa. */
+function faqGroups() {
+  return [
+  { n:"The match", q:[
+    { q:"Why can I only shoot eight times?",
+      a:hv("The weather decides. Sunshine opens ten moments, fog only five. The sky is " +
+           "the same for both teams.",
+           "The number of moments comes from the weather of that half: ten under a clear " +
+           "sky, five in fog. It is the same sky for both sides, so nobody is favoured.") },
+    { q:"What is a wonder goal?",
+      a:hv("One hard word in the attacking half. Write it perfectly and you score, " +
+           "whatever else happens.",
+           "Every attacking dictation hides one difficult word. Write it exactly right " +
+           "and it becomes a goal on its own, no matter how the rest of the half went.") },
+    { q:"And the penalty against me?",
+      a:hv("The same thing in defence. If you miss that word, the other team gets a " +
+           "penalty.",
+           "The defending dictation hides a word too, and that one is a trap: miss it and " +
+           "you concede a penalty, which your keeper may still save.") },
+    { q:"Can I play the same match twice?",
+      a:hv("No. A half is played once. The app remembers it.",
+           "No. Once a half is closed it is closed for good — the app keeps the record " +
+           "and will not let the same matchday be played again.") },
+    { q:"What happens if I leave the app while I am writing?",
+      a:hv("The app counts it. Every time costs 0.10 on that dictation, and your teacher " +
+           "sees it in the report.",
+           "Leaving the window during a dictation is counted and costs 0.10 each time on " +
+           "that half. It does not change the result of a single action, but it travels " +
+           "in the report your teacher reads.") } ] },
+
+  { n:"Words and mistakes", q:[
+    { q:"Where do my wrong words go?",
+      a:hv("Into my words. Fix a word twice and it leaves the list for good.",
+           "Every word you get wrong in a match or at the training ground goes into my " +
+           "words. Get it right twice and it leaves the list — that is the only way out.") },
+    { q:"Does spelling count in the press room?",
+      a:hv("No. There you write what you think. Your teacher reads it, not a machine.",
+           "Not there. The press room is the one place where nobody marks your spelling: " +
+           "you write what you think and your teacher reads it with the match report.") },
+    { q:"What is the word of the day?",
+      a:hv("A word at your level, with its meaning and a sentence. It changes every time " +
+           "you go into a competition.",
+           "A word chosen for your level, with its meaning and an example sentence. It " +
+           "changes every time you step into a competition, so it is worth a look.") } ] },
+
+  { n:"My squad", q:[
+    { q:"What are the little bars under a shirt?",
+      a:hv("The gym. Three sessions, +0.05 each, and the body is at its best.",
+           "They are the gym sessions a player has done: three in all, +0.05 each, and " +
+           "after that the body cannot improve any further.") },
+    { q:"What do the English bars do?",
+      a:hv("They decide how a player speaks in the press room, and how much the paper " +
+           "pays.",
+           "They decide what comes out when that player is asked a question: one bar is " +
+           "broken English, five is fluent. The better the answer, the more the paper pays " +
+           "and the more the city respects the club.") },
+    { q:"Why can I only train four players?",
+      a:hv("Six actions every matchday, four players at most, two sessions each on the " +
+           "same thing. Choose well.",
+           "You get six actions a matchday and they cannot go on more than four players, " +
+           "with a limit of two on the same kind of work for the same player. The budget " +
+           "is the game: training one is not training another.") },
+    { q:"Why is my player suspended?",
+      a:hv("Two yellow cards or a red one. He misses the next matchday.",
+           "Cards come from the words you lose: two yellows or a straight red and the " +
+           "player sits out the following matchday. A team-mate takes his moments.") },
+    { q:"How does a player get injured?",
+      a:hv("The one who plays the most moments can get hurt — about one matchday in " +
+           "three. A physio brings him back sooner.",
+           "The players who run the most are the ones who break down, roughly one matchday " +
+           "in three. Spreading the moments helps, and a physio on the staff brings them " +
+           "back a week earlier.") } ] },
+
+  { n:"Money and the city", q:[
+    { q:"Where does the money come from?",
+      a:hv("The gate on matchday, the training sessions, the press room and the sponsors.",
+           "Four sources: the gate at every home match, the sessions you play at the " +
+           "training ground, what the papers pay for your answers, and the sponsors you " +
+           "sign.") },
+    { q:"What can I buy?",
+      a:hv("Seats for the stadium, things for the club, and the staff: the analyst, the " +
+           "physio and the VAR.",
+           "Seats, which raise the gate for ever after; the club itself, the shop and the " +
+           "pitch; and the staff — the analyst gives you more reading time, the physio " +
+           "heals faster, the VAR cancels one card a match.") },
+    { q:"What is 'how the city sees you'?",
+      a:hv("A number from 0 to 100. Win and speak well and it goes up. High, and big " +
+           "papers and big companies come to you.",
+           "It is one number, from 0 to 100, that moves with your results and with what " +
+           "your players say in the press room. It decides which paper turns up for the " +
+           "conference and which company answers when you look for a sponsor.") },
+    { q:"Nobody answers when I call a sponsor.",
+      a:hv("That is normal at the start. Win a match, speak well, and the telephone " +
+           "starts working.",
+           "At the bottom of the scale almost half the calls end in a polite no. That is " +
+           "the point: a club nobody has heard of has to earn its backers.") } ] },
+
+  { n:"My teacher", q:[
+    { q:"Who decides the table?",
+      a:hv("Your teacher. What you see with a dot is still waiting for him.",
+           "The official table is published by your teacher. Points from matches already " +
+           "finished on the phones appear with a dot next to them — provisional until " +
+           "he runs the matchday.") },
+    { q:"Why is my next match locked?",
+      a:hv("Your teacher has not opened it yet. It appears here the moment he does.",
+           "Matchdays open one at a time, and only your teacher opens them. The padlock " +
+           "means the fixture exists but is not yours to play yet.") },
+    { q:"Does my teacher see what I write?",
+      a:hv("Yes. Your dictations and your press answers travel to him in the report.",
+           "Yes — the match report carries your dictations word by word, your press " +
+           "answers and the little things like how many times you left the window. It " +
+           "travels with your code, never with your name.") } ] }
+  ];
+}
+
+var FAQOPEN = "";
+VIEWS.faq = function () {
+  paintNeutral();
+  barFlow("Questions", "Tap the one you are asking yourself", 0);
+  var gs = faqGroups();
+  html('<div class="pad" id="faqbox"></div>');
+  drawFaq(gs);
+};
+function drawFaq(gs) {
+  var box = $("faqbox");
+  if (!box) return;
+  box.innerHTML = gs.map(function (g, gi) {
+    return '<h2 class="sec' + (gi ? " top" : "") + '">' + esc(g.n) + "</h2>" +
+      g.q.map(function (x, qi) {
+        var id = gi + "-" + qi, open = FAQOPEN === id;
+        return '<div class="mcx faq' + (open ? " on" : "") + '">' +
+          '<button class="mch" data-f="' + id + '" type="button" aria-expanded="' +
+          (open ? "true" : "false") + '">' +
+          '<span class="mcw"><b>' + esc(x.q) + "</b></span>" +
+          '<i class="mcar">' + (open ? "&minus;" : "+") + "</i></button>" +
+          (open ? '<div class="mcb"><p>' + esc(x.a) + "</p></div>" : "") +
+          "</div>";
+      }).join("");
+  }).join("") + '<button class="btn ghost" id="faqbk">Back</button>';
+
+  Array.prototype.forEach.call(box.querySelectorAll(".mch"), function (b) {
+    b.onclick = function () {
+      FAQOPEN = (FAQOPEN === b.dataset.f) ? "" : b.dataset.f;
+      drawFaq(gs);
+    };
+  });
+  $("faqbk").onclick = function () { reset("howto"); };
+}
+
+/* ───────── la porta: le sei mosse, il giro, le domande ───────── */
+VIEWS.howto = function () {
+  paintNeutral();
+  barFlow("How it works", "FootEFL in six moves", 0);
+  var steps = [
+    [hv("Your code is your season", "The code is the whole season"),
+     hv("The code says which competitions are yours and which club you manage. " +
+        "Nobody chooses the club: it is already yours.",
+        "Your code decides which competitions you play and which club you manage in " +
+        "each one. The club is not a choice, and that is the point.")],
+    [hv("The market opens once", "The transfer market opens once a season"),
+     hv("Twenty questions at your level before matchday 1. A good score brings a " +
+        "better scout, and a better scout brings better players.",
+        "Twenty questions at your level, before the first matchday. How well you do " +
+        "decides which scout signs for the club, and the scout decides the quality of " +
+        "the players you can bring in — up to three.")],
+    [hv("The team sheet, then the two halves", "Prepare the sheet, then play the halves"),
+     hv("You choose who takes each moment. Then you listen and write: attack first, " +
+        "defence after.",
+        "You decide who takes each moment, where you shoot and where the keeper dives. " +
+        "Then come the two dictations, attack and defence, and what you write becomes " +
+        "the match.")],
+    [hv("The squad grows if you train it", "A squad grows only where you train it"),
+     hv("Six actions every matchday: the gym for the body, four exercises for the " +
+        "English.",
+        "Six actions a matchday, over four players at most: the gym for the body, and " +
+        "synonyms, definitions, translation and the right thing to say for the English.")],
+    [hv("The press room and the city", "The press room, and what the city thinks"),
+     hv("A paper asks four questions. Three go to your players, one is yours. Good " +
+        "answers bring money and respect.",
+        "A paper turns up before and after the match. Three questions go to players you " +
+        "pick, and the answers are as good as the English you trained; the fourth is " +
+        "yours to write. It all moves the money and the way the city sees the club.")],
+    [hv("The table is your teacher's", "The table belongs to your teacher"),
+     hv("You see the points as soon as a match is finished, with a dot. Your teacher " +
+        "makes them official.",
+        "Results close on the phones and appear immediately, marked with a dot. They " +
+        "become official when your teacher publishes the matchday.")]
+  ];
+  html('<div class="pad">' +
+    '<div class="hwtwo">' +
+      '<button class="hwdoor" id="hwtour" type="button">' +
+        '<span class="hwdi">' + tourSvg("page") + "</span>" +
+        "<b>Take the tour</b><em>Eight screens, two minutes</em></button>" +
+      '<button class="hwdoor" id="hwfaq" type="button">' +
+        '<span class="hwdi">' + tourSvg("ear") + "</span>" +
+        "<b>Questions</b><em>Pick one, read the answer</em></button>" +
+    "</div>" +
+    '<h2 class="sec top">The six moves</h2>' +
+    '<div class="panel hw">' + steps.map(function (s, i) {
+      return '<div class="hwr"><span class="hwn">' + (i + 1) + "</span><span><b>" +
+        esc(s[0]) + "</b><em>" + esc(s[1]) + "</em></span></div>";
+    }).join("") + "</div>" +
+    '<button class="btn ghost" id="hwbk">Back</button></div>');
+  $("hwtour").onclick = function () { TOUR.i = 0; go("tour"); };
+  $("hwfaq").onclick = function () { FAQOPEN = ""; go("faq"); };
+  $("hwbk").onclick = back;
+};
 
 
 /* ───── 70-league.js ───── */
