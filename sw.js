@@ -13,28 +13,72 @@
    vecchia viene buttata e il telefono riparte pulito.
    ═══════════════════════════════════════════════════════════════════ */
 
-var VER = "81";
+var VER = "83";
 var BOX = "footefl-" + VER;
 var SHELL = ["./", "./index.html", "./manifest.webmanifest",
              "./icon-192.png", "./icon-512.png"];
-/* Le voci e le figure stanno fuori dalla pagina perche' pesano: l'app
-   e' tornata sotto il mega e si apre in un attimo. Ma devono essere sul
-   telefono prima della partita — in palestra o in corriera la rete non
-   c'e'. Allora, appena installata l'app, il guardiano si legge i due
-   elenchi (au/list.json e im/list.json) e se le porta giu' una alla
-   volta, senza tenere ferma la pagina. Se qualcosa non arriva, si
+
+/* ───────── due case per la stessa roba ─────────
+   Le voci e le figure stanno fuori dalla pagina perche' pesano: l'app
+   e' tornata sotto il mega e si apre in un attimo. Il loro posto e'
+   im/ e au/ accanto all'app.
+   Ma chi carica i file sul sito puo' averli lasciati sciolti nella
+   radice, tutti insieme: GitHub, quando gli si trascina una cartella,
+   a volte il nome della cartella se lo dimentica. Allora il guardiano
+   guarda in due posti: prima dove c'e' scritto (im/crest-RAV.webp),
+   poi col solo nome accanto all'app (crest-RAV.webp). Trovata una
+   volta, se la tiene in dispensa e non ci pensa piu'. Cosi' il sito
+   funziona com'e' adesso e continuera' a funzionare quando le
+   cartelle saranno a posto. */
+function bare(path) { return "./" + String(path).split("/").pop(); }
+function keep(key, res) {
+  caches.open(BOX).then(function (c) { c.put(key, res); });
+}
+/* la stessa cosa in dispensa, sotto l'uno o l'altro nome */
+function shelfHit(req, url) {
+  return caches.match(req).then(function (h) {
+    return h || caches.match(bare(url.pathname));
+  });
+}
+/* e se in dispensa non c'e': si chiede alla rete, prima l'uno poi l'altro */
+function grab(req, url) {
+  var b = bare(url.pathname);
+  function plan() {
+    return fetch(b).then(function (r) {
+      if (r && r.ok) keep(b, r.clone());
+      return r;
+    });
+  }
+  return fetch(req).then(function (r) {
+    if (r && r.ok) { keep(req, r.clone()); return r; }
+    return plan();
+  })["catch"](plan);
+}
+/* il file intero, da dove si trova: serve per tagliarne una fetta */
+function whole(url) {
+  var b = bare(url.pathname);
+  return fetch(url.pathname).then(function (r) {
+    if (r && r.ok) { keep(url.pathname, r.clone()); return r; }
+    return fetch(b).then(function (r2) {
+      if (r2 && r2.ok) { keep(b, r2.clone()); return r2; }
+      return null;
+    });
+  })["catch"](function () { return null; });
+}
+
+/* L'elenco di tutto quello che sta fuori lo scrive la costruzione
+   dell'app, qui dentro: cosi' non dipende da un list.json che potrebbe
+   essere finito chissa' dove. Appena installata l'app il guardiano se
+   le porta giu' una alla volta, senza tenere ferma la pagina — in
+   palestra o in corriera la rete non c'e'. Se qualcosa non arriva, si
    prende al primo uso. */
-var LISTS = [["./au/list.json", "./au/"], ["./im/list.json", "./im/"]];
+var SHELF = ["au/athome.mp3","au/ferry.mp3","au/green.mp3","au/lighthouse.mp3","au/market.mp3","au/morning.mp3","au/park.mp3","au/warm/warm-01.mp3","au/warm/warm-02.mp3","au/warm/warm-03.mp3","au/warm/warm-04.mp3","au/warm/warm-05.mp3","au/warm/warm-06.mp3","au/warm/warm-07.mp3","au/warm/warm-08.mp3","au/warm/warm-09.mp3","au/warm/warm-10.mp3","au/warm/warm-11.mp3","au/warm/warm-12.mp3","au/warm/warm-13.mp3","au/warm/warm-14.mp3","au/warm/warm-15.mp3","au/warm/warm-16.mp3","au/warm/warm-17.mp3","au/warm/warm-18.mp3","au/warm/warm-19.mp3","au/warm/warm-20.mp3","au/warm/warm-21.mp3","au/warm/warm-22.mp3","au/warm/warm-23.mp3","au/warm/warm-24.mp3","au/warm/warm-25.mp3","au/warm/warm-26.mp3","au/warm/warm-27.mp3","au/warm/warm-28.mp3","au/warm/warm-29.mp3","au/warm/warm-30.mp3","au/warm/warm-31.mp3","au/warm/warm-32.mp3","au/warm/warm-33.mp3","au/warm/warm-34.mp3","au/warm/warm-35.mp3","au/warm/warm-36.mp3","au/warm/warm-37.mp3","au/warm/warm-38.mp3","au/warm/warm-39.mp3","au/warm/warm-40.mp3","au/warm/warm-41.mp3","au/warm/warm-42.mp3","au/warm/warm-43.mp3","au/warm/warm-44.mp3","au/warm/warm-45.mp3","au/warm/warm-46.mp3","au/warm/warm-47.mp3","au/warm/warm-48.mp3","au/warm/warm-49.mp3","au/warm/warm-50.mp3","au/warm/warm-51.mp3","au/warm/warm-52.mp3","au/warm/warm-53.mp3","au/warm/warm-54.mp3","au/warm/warm-55.mp3","au/warm/warm-56.mp3","au/warm/warm-57.mp3","au/warm/warm-58.mp3","au/warm/warm-59.mp3","au/warm/warm-60.mp3","au/warm/warm-61.mp3","au/warm/warm-62.mp3","au/warm/warm-63.mp3","au/warm/warm-64.mp3","au/warm/warm-65.mp3","au/warm/warm-66.mp3","au/welcome.mp3","im/bg-ROP.webp","im/bg-next.webp","im/bg-pitch.webp","im/bg-press.webp","im/crest-BRA.webp","im/crest-OXF.webp","im/crest-RAV.webp","im/crest-ROP.webp","im/crest-SHE.webp","im/gk-BRA.webp","im/gk-OXF.webp","im/gk-RAV.webp","im/gk-ROP.webp","im/gk-SHE.webp","im/hero-ROP.webp","im/ic-champions.png","im/ic-cup.png","im/ic-eurofa.png","im/ic-season.png","im/ic-settings.png","im/ic-training.png","im/kit-BRA.webp","im/kit-OXF.webp","im/kit-RAV.webp","im/kit-ROP.webp","im/kit-SHE.webp","im/pitch.jpg","im/stadium.jpg","im/suit-BRA.webp","im/suit-OXF.webp","im/suit-RAV.webp","im/suit-ROP.webp","im/suit-SHE.webp","im/wx-cloudy.jpg","im/wx-fog.jpg","im/wx-rain.jpg","im/wx-snow.jpg","im/wx-storm.jpg","im/wx-sunny.jpg"];
 function haulIn(c) {
-  return LISTS.reduce(function (p, L) {
+  return SHELF.reduce(function (p, n) {
     return p.then(function () {
-      return fetch(L[0], { cache: "no-store" })
-        .then(function (r) { return r.ok ? r.json() : []; })
-        .then(function (names) {
-          return names.reduce(function (q, n) {
-            return q.then(function () { return c.add(L[1] + n)["catch"](function () {}); });
-          }, Promise.resolve());
-        })["catch"](function () {});
+      return c.add("./" + n)["catch"](function () {
+        return c.add(bare(n))["catch"](function () {});
+      });
     });
   }, Promise.resolve());
 }
@@ -121,14 +165,8 @@ self.addEventListener("fetch", function (e) {
   /* le figure: dalla dispensa, e basta — non cambiano mai */
   if (url.pathname.indexOf("/im/") >= 0) {
     e.respondWith(
-      caches.match(req).then(function (hit) {
-        return hit || fetch(req).then(function (r) {
-          if (r && r.ok) {
-            var copy = r.clone();
-            caches.open(BOX).then(function (c) { c.put(req, copy); });
-          }
-          return r;
-        });
+      shelfHit(req, url).then(function (hit) {
+        return hit || grab(req, url);
       })
     );
     return;
@@ -138,23 +176,16 @@ self.addEventListener("fetch", function (e) {
   if (url.pathname.indexOf("/au/") >= 0) {
     var range = req.headers.get("range");
     e.respondWith(
-      caches.match(new Request(req.url)).then(function (hit) {
+      shelfHit(req, url).then(function (hit) {
         if (hit) return range ? rangeFrom(hit, range) : hit.clone();
-        return fetch(req).then(function (r) {
-          /* una risposta parziale non si mette in dispensa: si rifa' la
-             richiesta intera, si salva quella, e si serve il pezzo */
-          if (range) {
-            fetch(url.pathname).then(function (full) {
-              if (full && full.ok) {
-                caches.open(BOX).then(function (c) { c.put(url.pathname, full); });
-              }
-            })["catch"](function () {});
-          } else if (r && r.ok) {
-            var copy = r.clone();
-            caches.open(BOX).then(function (c) { c.put(req, copy); });
-          }
-          return r;
-        });
+        /* una risposta parziale non si mette in dispensa: si chiede il
+           file intero, si salva quello, e si serve la fetta */
+        if (range) {
+          return whole(url).then(function (full) {
+            return full ? rangeFrom(full, range) : fetch(req);
+          });
+        }
+        return grab(req, url);
       })
     );
     return;

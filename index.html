@@ -2608,6 +2608,14 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   filter:drop-shadow(0 6px 14px rgba(0,0,0,.5))}
 .cfq{flex:1;min-width:0}
 .cfsay.suited p{font-size:15px}
+
+/* ═════════ la testata che scorre ═════════ */
+.phtrack{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:0;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.phtrack::-webkit-scrollbar{display:none;height:0}
+.phtrack .phero{flex:0 0 100%;min-width:100%;scroll-snap-align:center;
+  box-sizing:border-box}
+.pslide{text-align:center;margin:9px 0 2px}
 </style>
 </head>
 <body>
@@ -3069,9 +3077,8 @@ var SEX_M = ("Adom Alessandro Alfie Amado Amaury Angus Arjun Arman Arthur " +
 var SEX_NB = [
   /* Sherwood — dalle schede personaggio */
   "Rowan Wisp", "Ellis Fern",
-  /* Brass — dalle schede personaggio (la 9, Ayaan Turner, e' NB e
-     aspetta ancora di essere battezzata in rosa) */
-  "Thabo Mason",
+  /* Brass — dalle schede personaggio */
+  "Thabo Mason", "Ayann Turner",
   /* Ravens e Ropewalkers: nelle schede non era ancora scritto,
      questi due per rosa sono da confermare */
   "Morgan Fog", "Rowan Ash",
@@ -3142,7 +3149,7 @@ var SQUADS = {
     { n:"Thabo Mason",       r:"MF", a:19, c:"Auckland",   q:"New Zealander" },
     { n:"Finn Cooper",       r:"MF", a:21, c:"Belfast",    q:"Northern Irish" },
     { n:"Naomi Weaver",      r:"FW", a:29, c:"Coventry",   q:"English" },
-    { n:"" },                                   /* la 9 e' ancora da battezzare */
+    { n:"Ayann Turner",      r:"FW", a:22, c:"Birmingham", q:"English" },
     { n:"Merveille Gilder",  r:"FW", a:23, c:"Kinshasa",   q:"Congolese" },
     { n:"Arjun Blacksmith",  r:"FW", a:30, c:"Mumbai",     q:"Indian" },
     { n:"Theo Smith",        r:"FW", a:27, c:"Oslo",       q:"Norwegian" }
@@ -3487,7 +3494,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "81";
+var APPVER = "83";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -9275,19 +9282,102 @@ function drawShirts() {
 }
 
 /* ───────── la scheda del giocatore ───────── */
+/* ───────── la scheda del giocatore ─────────
+   La testata e' un nastro: si scorre di lato col dito e si passa al
+   compagno, senza tornare alla rosa. Sotto cambia tutto da solo —
+   numeri, barre, bottoni \u2014 perche' la testata e' l'indice e il
+   resto e' la pagina. L'ordine e' quello della rosa, filtri compresi:
+   se stai guardando i difensori, scorri fra i difensori. */
+function heroHtml(p) {
+  return '<div class="phero" data-no="' + p.no + '">' +
+    '<span class="pkit">' + (shirtOf(p)
+      ? '<img src="' + shirtOf(p) + '" alt="">'
+      : '<svg viewBox="0 0 100 100"><use href="#jersey"/></svg>') +
+      '<span class="pno">' + p.no + "</span></span>" +
+    '<span class="pwho"><b>' + esc(p.name || ("Shirt " + p.no)) + "</b>" +
+      '<span class="prow2">' + (p.role ? '<i class="rl">' + esc(p.role) + "</i>" : "") +
+      (sexSay(p.name) ? '<i class="rl sx' + (sexOf(p.name) === "n" ? " nbx" : "") +
+        '">' + (sexOf(p.name) === "n" ? NB_SVG : "") + sexSay(p.name) + "</i>" : "") +
+      (p.tag === "CAP" ? '<i class="rl cap">CAPTAIN</i>' : "") +
+      (p.tag === "GEM" ? '<i class="rl gem">GEM</i>' : "") +
+      (p.tag === "GK" ? '<i class="rl">KEEPER</i>' : "") + "</span>" +
+      "<em>" + (typeof flagHtml === "function" ? flagHtml(p.nat) : "") +
+      (p.age ? p.age + " &middot; " : "") + esc(p.city || "") +
+      (p.nat ? " &middot; " + esc(p.nat) : "") + "</em></span>" +
+  "</div>";
+}
+
 VIEWS.player = function (d) {
   var no = d.no, p = playerOf(no);
   if (!p) return back();
+  /* i compagni, nell'ordine in cui stanno nella rosa adesso */
+  var line = sqList().map(function (r) { return r.p; });
+  if (!line.filter(function (x) { return x.no === no; }).length) line = squadAll();
+  var at = 0, i;
+  for (i = 0; i < line.length; i++) if (line[i].no === no) at = i;
+
+  paintClub(ME.club);
+  barFlow(pName({ named:!!p.name, name:p.name, no:p.no }), ME.club.name, 0);
+
+  html('<div class="pad">' +
+    ((typeof actBar === "function") ? actBar() : "") +
+    '<div class="phtrack" id="phtrack">' +
+      line.map(heroHtml).join("") + "</div>" +
+    (line.length > 1
+      ? '<p class="hint pslide" id="pslide">Slide the card sideways for the next ' +
+        "player &rsaquo;</p>"
+      : "") +
+    '<div id="pbody"></div></div>');
+
+  var tr = $("phtrack");
+  /* la testata parte sul giocatore chiesto. Si misura dal figlio, non
+     dalla larghezza: con lo scatto a fine corsa una posizione calcolata
+     male torna da sola a zero, ed era quello che faceva. */
+  function land() {
+    if (!tr || !tr.children[at]) return;
+    tr.scrollLeft = tr.children[at].offsetLeft;
+  }
+  land();
+  if (window.requestAnimationFrame) requestAnimationFrame(land);
+  setTimeout(land, 60);
+
+  var tick = null;
+  if (tr && line.length > 1) {
+    tr.onscroll = function () {
+      if (tick) clearTimeout(tick);
+      tick = setTimeout(function () {
+        /* chi e' piu' vicino al bordo sinistro: si misura sui figli, non
+           a divisioni, se no l'errore si somma e a meta' rosa si cambia
+           giocatore sbagliato */
+        var k = 0, d = 1e9, j, dd;
+        for (j = 0; j < tr.children.length; j++) {
+          dd = Math.abs(tr.children[j].offsetLeft - tr.scrollLeft);
+          if (dd < d) { d = dd; k = j; }
+        }
+        k = Math.max(0, Math.min(line.length - 1, k));
+        if (line[k] && line[k].no !== (HERE.data || {}).no) {
+          HERE.data = { no:line[k].no };
+          barFlow(pName({ named:!!line[k].name, name:line[k].name, no:line[k].no }),
+                  ME.club.name, 0);
+          drawPlayerBody(line[k].no);
+        }
+      }, 90);
+    };
+  }
+  drawPlayerBody(no);
+};
+
+/* tutto quello che sta sotto la testata, per un giocatore */
+function drawPlayerBody(no) {
+  var box = $("pbody"), p = playerOf(no);
+  if (!box || !p) return;
   var st = sqStats()[no] || { m:0, g:0, s:0, y:0, r:0 };
   var ban = (typeof suspIs === "function") ? suspIs(no) : null;
   var hurt = !ban && typeof injIs === "function" ? injIs(no) : null;
   var grown = (typeof grownOf === "function") ? grownOf(no) : Math.min(3, p.grown || 0);
   var lang = (typeof langOf === "function") ? langOf(no) : 1;
-  var left = (typeof actsLeft === "function") ? actsLeft() : 0;
   var whyB = (typeof actWhy === "function") ? actWhy(no, "body") : "";
   var whyL = (typeof actWhy === "function") ? actWhy(no, "lang") : "";
-  paintClub(ME.club);
-  barFlow(pName({ named:!!p.name, name:p.name, no:p.no }), ME.club.name, 0);
 
   function bar2(k, v, at, max, note) {
     var o = "", i;
@@ -9299,25 +9389,8 @@ VIEWS.player = function (d) {
     return '<div class="pst"><i>' + k + "</i><b>" + v + "</b>" +
       (s2 ? "<u>" + s2 + "</u>" : "") + "</div>";
   }
-  html('<div class="pad">' +
-    ((typeof actBar === "function") ? actBar() : "") +
-    '<div class="phero">' +
-      '<span class="pkit">' + (shirtOf(p)
-        ? '<img src="' + shirtOf(p) + '" alt="">'
-        : '<svg viewBox="0 0 100 100"><use href="#jersey"/></svg>') +
-        '<span class="pno">' + p.no + "</span></span>" +
-      '<span class="pwho"><b>' + esc(p.name || ("Shirt " + p.no)) + "</b>" +
-        '<span class="prow2">' + (p.role ? '<i class="rl">' + esc(p.role) + "</i>" : "") +
-        (sexSay(p.name) ? '<i class="rl sx' + (sexOf(p.name) === "n" ? " nbx" : "") +
-          '">' + (sexOf(p.name) === "n" ? NB_SVG : "") + sexSay(p.name) + "</i>" : "") +
-        (p.tag === "CAP" ? '<i class="rl cap">CAPTAIN</i>' : "") +
-        (p.tag === "GEM" ? '<i class="rl gem">GEM</i>' : "") +
-        (p.tag === "GK" ? '<i class="rl">KEEPER</i>' : "") + "</span>" +
-        "<em>" + (typeof flagHtml === "function" ? flagHtml(p.nat) : "") +
-        (p.age ? p.age + " &middot; " : "") + esc(p.city || "") +
-        (p.nat ? " &middot; " + esc(p.nat) : "") + "</em></span>" +
-    "</div>" +
 
+  box.innerHTML =
     (ban
       ? '<div class="pban">Suspended for matchday ' + (ME.next ? ME.next.md : "") +
         " &mdash; " + (ban.why === "red" ? "sent off" : "two yellows") + "</div>"
@@ -9328,19 +9401,16 @@ VIEWS.player = function (d) {
 
     '<div class="pstats">' +
       cell("MOMENTS", st.m, "played this season") +
-      cell("GOALS", st.g, st.g === 1 ? "scored" : "scored") +
+      cell("GOALS", st.g, "scored") +
       cell("SAVES", st.s, "kept out") +
       cell("CARDS", st.y + st.r, st.y + " yellow &middot; " + st.r + " red") +
     "</div>" +
 
-    /* le due crescite, una sopra l'altra: il corpo e la lingua */
     bar2("STRENGTH", stepStr(grown), grown, GROWN_MAX,
          grown >= GROWN_MAX ? "fully grown"
            : grown ? grown + (grown === 1 ? " session done" : " sessions done")
                    : "no sessions yet") +
     bar2("ENGLISH", lang + " of " + LANG_MAX, lang, LANG_MAX, LANGSAY[lang]) +
-
-
 
     (whyB && whyL && grown < GROWN_MAX && lang < LANG_MAX
       ? '<p class="hint bxleft">' + esc(whyB === whyL ? whyB : whyB + " " + whyL) + "</p>"
@@ -9355,12 +9425,16 @@ VIEWS.player = function (d) {
       : '<button class="btn ' + (whyL ? "ghost" : "gold2") + '" id="plang"' +
         (whyL ? " disabled" : "") + ">Boost the English &middot; four exercises</button>" +
         (whyL && !whyB ? '<p class="hint bxleft">' + esc(whyL) + "</p>" : "")) +
-    '<button class="btn ghost" id="pbk">Back to the squad</button></div>');
+    '<button class="btn ghost" id="pbk">Back to the squad</button>';
 
-  if ($("pboost") && !whyB) $("pboost").onclick = function () { go("boost", { no:no, what:"body" }); };
-  if ($("plang") && !whyL) $("plang").onclick = function () { go("boost", { no:no, what:"lang" }); };
-  $("pbk").onclick = back;
-};
+  if ($("pboost") && !whyB) {
+    $("pboost").onclick = function () { go("boost", { no:no, what:"body" }); };
+  }
+  if ($("plang") && !whyL) {
+    $("plang").onclick = function () { go("boost", { no:no, what:"lang" }); };
+  }
+  $("pbk").onclick = function () { toSquad(); };
+}
 
 function drawSignings() {
   if (!ME.signings.length) return;
@@ -18319,7 +18393,24 @@ if (fromLink) {
   if (!("serviceWorker" in navigator)) return;
   if (String(location.protocol).indexOf("http") !== 0) return;
   window.addEventListener("load", function () {
-    try { navigator.serviceWorker.register("sw.js"); } catch (e) {}
+    try {
+      navigator.serviceWorker.register("sw.js");
+      /* La primissima volta la pagina arriva prima del guardiano: le
+         figure chieste in quel momento passano dalla rete liscia e, se
+         sul sito stanno in un'altra cartella, non si vedono. Appena il
+         guardiano prende servizio si ricarica una volta sola — mezzo
+         secondo, e tutto e' al suo posto. Agli aggiornamenti non
+         succede: li' il guardiano c'e' gia'. */
+      if (!navigator.serviceWorker.controller) {
+        navigator.serviceWorker.addEventListener("controllerchange", function () {
+          try {
+            if (sessionStorage.getItem("ft-born")) return;
+            sessionStorage.setItem("ft-born", "1");
+          } catch (e) {}
+          location.reload();
+        });
+      }
+    } catch (e) {}
   });
 })();
 </script>
