@@ -2518,6 +2518,176 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 <main id="main"></main>
 
 <script>
+/* ───── 01-store.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   UN CASSETTO PER CODICE
+
+   La memoria del telefono e' una sola, e fino a ieri tutto ci finiva
+   dentro mescolato: se due alunni usavano lo stesso apparecchio, il
+   secondo trovava la cassa, le parole e i potenziamenti del primo.
+
+   Qui sopra la memoria si mette un filtro unico. Ogni chiave che
+   l'app scrive viene messa nel cassetto di chi sta giocando —
+   `u:ALE-QM34|footefl-ground-BRA` — e chi entra vede solo il proprio.
+   Chi torna col suo codice ritrova il suo, intatto.
+
+   Restano in comune soltanto le cose che sono dell'apparecchio o del
+   professore: il codice stesso, il numero del telefono, l'indirizzo
+   dei dati pubblicati e i bollettini, che sono uguali per tutti e
+   occupano spazio una volta sola.
+
+   Nessun file dell'app e' stato toccato: il filtro sta sotto, dove
+   passano tutte le letture e tutte le scritture. Chi ha gia' giocato
+   non perde niente — alla prima apertura la roba vecchia trasloca nel
+   cassetto del codice attivo.
+   ═══════════════════════════════════════════════════════════════════ */
+
+(function () {
+  "use strict";
+  if (typeof window === "undefined" || !window.Storage || !window.localStorage) return;
+
+  var LS;
+  try { LS = window.localStorage; } catch (e) { return; }
+
+  var P = window.Storage.prototype;
+  var _get = P.getItem, _set = P.setItem, _del = P.removeItem,
+      _key = P.key, _clear = P.clear;
+  var lenD = Object.getOwnPropertyDescriptor(P, "length");
+  if (!_get || !_set || !lenD || !lenD.get) return;     /* niente da fare */
+
+  var MARK = "footefl-ns";                 /* il trasloco e' gia' stato fatto */
+  var PRACTICE = "PRACTICE";               /* il cassetto di chi non ha codice */
+
+  /* quello che non si divide: e' del telefono, non dell'alunno */
+  function isShared(k) {
+    return k === "footefl-mycode" || k === "footefl-device" ||
+           k === "footefl-practice" || k === "footefl-drop-cfg" ||
+           k === "footefl-dataurl" || k === "footefl-gh" || k === MARK ||
+           k.indexOf("footefl-bulletin-") === 0;
+  }
+  function ours(k) { return k.indexOf("footefl-") === 0 && !isShared(k); }
+
+  function who() {
+    var c = "";
+    try { c = _get.call(LS, "footefl-mycode") || ""; } catch (e) {}
+    return "u:" + (c ? String(c).toUpperCase() : PRACTICE) + "|";
+  }
+  function map(k) {
+    k = String(k);
+    return ours(k) ? who() + k : k;
+  }
+
+  /* l'elenco di quello che l'alunno di adesso puo' vedere, con i nomi
+     di sempre: serve a chi gira le chiavi una per una (i risultati, la
+     posta, i marcatori) e non deve accorgersi di niente */
+  var cache = null;
+  function visible() {
+    if (cache) return cache;
+    var pre = who(), out = [], i, k, n = lenD.get.call(LS);
+    for (i = 0; i < n; i++) {
+      k = _key.call(LS, i);
+      if (k === null) continue;
+      if (k.indexOf(pre) === 0) out.push(k.slice(pre.length));
+      else if (k.indexOf("u:") === 0) continue;         /* di un altro alunno */
+      else if (!ours(k)) out.push(k);                   /* comune, o non nostra */
+    }
+    cache = out;
+    return out;
+  }
+  function dirty() { cache = null; }
+
+  P.getItem = function (k) {
+    return _get.call(this, this === LS ? map(k) : k);
+  };
+  P.setItem = function (k, v) {
+    if (this === LS) { dirty(); return _set.call(this, map(k), v); }
+    return _set.call(this, k, v);
+  };
+  P.removeItem = function (k) {
+    if (this === LS) { dirty(); return _del.call(this, map(k)); }
+    return _del.call(this, k);
+  };
+  P.key = function (i) {
+    if (this !== LS) return _key.call(this, i);
+    var v = visible();
+    return (i >= 0 && i < v.length) ? v[i] : null;
+  };
+  P.clear = function () {
+    if (this !== LS) return _clear.call(this);
+    /* si svuota il cassetto di chi gioca, non quello degli altri */
+    var pre = who(), kill = [], i, k, n = lenD.get.call(LS);
+    for (i = 0; i < n; i++) {
+      k = _key.call(LS, i);
+      if (k !== null && k.indexOf(pre) === 0) kill.push(k);
+    }
+    kill.forEach(function (x) { _del.call(LS, x); });
+    dirty();
+  };
+  try {
+    Object.defineProperty(P, "length", {
+      configurable: true,
+      get: function () {
+        return this === LS ? visible().length : lenD.get.call(this);
+      }
+    });
+  } catch (e) {}
+
+  /* ───────── il trasloco, una volta sola ─────────
+     Tutto quello che c'era prima del filtro va nel cassetto di chi sta
+     giocando adesso. Si fa con le funzioni vere, non con quelle
+     filtrate, se no si rigira su se stesso. */
+  try {
+    if (!_get.call(LS, MARK)) {
+      var pre = who(), move = [], i, k, n = lenD.get.call(LS);
+      for (i = 0; i < n; i++) {
+        k = _key.call(LS, i);
+        if (k === null || k.indexOf("u:") === 0) continue;
+        if (ours(k)) move.push(k);
+      }
+      move.forEach(function (x) {
+        var v = _get.call(LS, x);
+        if (v === null) return;
+        if (_get.call(LS, pre + x) === null) _set.call(LS, pre + x, v);
+        _del.call(LS, x);
+      });
+      _set.call(LS, MARK, "1");
+      dirty();
+    }
+  } catch (e) {}
+
+  /* ───────── dalla prova al codice ─────────
+     "Quello che fai senza codice resta tuo, e il giorno che metti il
+     codice te lo tieni": quando un cassetto nuovo si apre e quello
+     delle prove ha qualcosa, la roba lo segue. Una volta sola, e solo
+     se il cassetto nuovo e' vuoto. */
+  window.storeAdopt = function (code) {
+    try {
+      var to = "u:" + String(code || "").toUpperCase() + "|", from = "u:" + PRACTICE + "|";
+      var has = false, carry = [], i, k, n = lenD.get.call(LS);
+      for (i = 0; i < n; i++) {
+        k = _key.call(LS, i);
+        if (k === null) continue;
+        if (k.indexOf(to) === 0) has = true;
+        else if (k.indexOf(from) === 0) carry.push(k);
+      }
+      if (has || !carry.length) return false;
+      carry.forEach(function (x) {
+        var v = _get.call(LS, x);
+        if (v !== null) _set.call(LS, to + x.slice(from.length), v);
+      });
+      dirty();
+      return true;
+    } catch (e) { return false; }
+  };
+
+  /* chi sta giocando, per chi lo vuole far vedere */
+  window.storeWho = function () {
+    var p = who();
+    return p.slice(2, p.length - 1);
+  };
+})();
+
+
 /* ───── cards.js ───── */
 /* le cento carte, copiate dal campionato: [no, cents, stelle, prezzo%, ruolo, distintivo, nome, cognome, paese, parola] */
 var CARDS = [
@@ -3142,7 +3312,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "72";
+var APPVER = "73";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -4279,9 +4449,22 @@ function loadCode() {
   try { ME.code = localStorage.getItem(codeKey()) || ""; } catch (e) { ME.code = ""; }
   return ME.code;
 }
+/* cambiare codice vuol dire cambiare alunno. Il cassetto lo cambia il
+   filtro da solo, ma in memoria restano club, rosa e livello di chi
+   c'era prima: allora si riparte da zero, che e' l'unico modo pulito.
+   La prima volta no: li' non c'e' nessun altro da cui ripartire, e
+   quello che l'alunno ha fatto in prova lo segue dentro il suo codice. */
 function saveCode(c) {
+  var old = "";
+  try { old = localStorage.getItem(codeKey()) || ""; } catch (e) {}
   ME.code = String(c || "").toUpperCase().replace(/\s+/g, "");
   try { localStorage.setItem(codeKey(), ME.code); } catch (e) {}
+  if (old === ME.code) return;
+  if (ME.code && !old) {
+    if (typeof storeAdopt === "function") storeAdopt(ME.code);
+    return;
+  }
+  try { location.reload(); } catch (e) {}
 }
 function codeLooksRight(c) { return /^[A-Z]{3}-[A-Z0-9]{4}$/.test(String(c || "").toUpperCase()); }
 
