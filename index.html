@@ -2456,6 +2456,16 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   font-family:inherit}
 .spb b{display:block;font:800 13.5px/1.2 var(--brand);color:#FFFDEE}
 .spb span{display:block;margin-top:3px;font-size:11px;font-weight:700;color:var(--gold)}
+
+/* ═════════ il contatore delle azioni ═════════ */
+.actb{display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:12px;
+  border-radius:14px;border:1px solid var(--edge);background:rgba(4,23,15,.5)}
+.actn{display:flex;gap:4px}
+.actn i{width:12px;height:12px;border-radius:50%;background:rgba(226,251,206,.16)}
+.actn i.up{background:var(--gold)}
+.actt b{display:block;font:800 12px/1 var(--brand);color:#FFFDEE}
+.actt em{display:block;margin-top:4px;font-size:10px;font-weight:600;font-style:normal;
+  color:#8FC4AC}
 </style>
 </head>
 <body>
@@ -3100,7 +3110,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "68";
+var APPVER = "69";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -3261,8 +3271,15 @@ function swap(name, data) {            /* resta nello stesso punto della storia 
   HERE = { name:name, data:data };
   draw();
 }
+/* la freccia in alto a sinistra. Quando la pila e' vuota — succede ogni
+   volta che una schermata chiude con reset() — non deve restare morta:
+   si torna alla pagina dell'alunno, che e' il tetto di tutto. */
 function back() {
-  if (!STACK.length) return;
+  if (!STACK.length) {
+    var home = (typeof homeView === "function") ? homeView() : "home";
+    if (HERE && HERE.name === home) return;
+    return reset(home);
+  }
   HERE = STACK.pop();
   draw();
 }
@@ -8737,7 +8754,9 @@ VIEWS.player = function (d) {
   var hurt = !ban && typeof injIs === "function" ? injIs(no) : null;
   var grown = (typeof grownOf === "function") ? grownOf(no) : Math.min(3, p.grown || 0);
   var lang = (typeof langOf === "function") ? langOf(no) : 1;
-  var left = (typeof boostLeft === "function") ? boostLeft() : 0;
+  var left = (typeof actsLeft === "function") ? actsLeft() : 0;
+  var whyB = (typeof actWhy === "function") ? actWhy(no, "body") : "";
+  var whyL = (typeof actWhy === "function") ? actWhy(no, "lang") : "";
   paintClub(ME.club);
   barFlow(pName({ named:!!p.name, name:p.name, no:p.no }), ME.club.name, 0);
 
@@ -8752,6 +8771,7 @@ VIEWS.player = function (d) {
       (s2 ? "<u>" + s2 + "</u>" : "") + "</div>";
   }
   html('<div class="pad">' +
+    ((typeof actBar === "function") ? actBar() : "") +
     '<div class="phero">' +
       '<span class="pkit">' + (shirtOf(p)
         ? '<img src="' + shirtOf(p) + '" alt="">'
@@ -8790,25 +8810,25 @@ VIEWS.player = function (d) {
                    : "no sessions yet") +
     bar2("ENGLISH", lang + " of " + LANG_MAX, lang, LANG_MAX, LANGSAY[lang]) +
 
-    '<p class="hint bxleft">' + (left > 0
-      ? left + (left === 1 ? " player" : " players") +
-        " can still work today, body or English."
-      : "Three players have worked today. The next session opens on the next matchday.") +
-    "</p>" +
 
-    (grown < GROWN_MAX
-      ? '<button class="btn" id="pboost">Boost the body &middot; the gym</button>'
-      : '<button class="btn ghost" disabled>The body is at its best</button>') +
-    (lang < LANG_MAX
-      ? '<button class="btn gold2" id="plang">Boost the English &middot; four exercises</button>'
-      : '<button class="btn ghost" disabled>This one speaks for the club</button>') +
-    (ME.next && !ban && !hurt
-      ? '<button class="btn ghost" id="psheet">Put the player on a moment</button>' : "") +
+
+    (whyB && whyL && grown < GROWN_MAX && lang < LANG_MAX
+      ? '<p class="hint bxleft">' + esc(whyB === whyL ? whyB : whyB + " " + whyL) + "</p>"
+      : "") +
+    (grown >= GROWN_MAX
+      ? '<button class="btn ghost" disabled>The body is at its best</button>'
+      : '<button class="btn' + (whyB ? " ghost" : "") + '" id="pboost"' +
+        (whyB ? " disabled" : "") + ">Boost the body &middot; the gym</button>" +
+        (whyB && !whyL ? '<p class="hint bxleft">' + esc(whyB) + "</p>" : "")) +
+    (lang >= LANG_MAX
+      ? '<button class="btn ghost" disabled>This one speaks for the club</button>'
+      : '<button class="btn ' + (whyL ? "ghost" : "gold2") + '" id="plang"' +
+        (whyL ? " disabled" : "") + ">Boost the English &middot; four exercises</button>" +
+        (whyL && !whyB ? '<p class="hint bxleft">' + esc(whyL) + "</p>" : "")) +
     '<button class="btn ghost" id="pbk">Back to the squad</button></div>');
 
-  if ($("pboost")) $("pboost").onclick = function () { go("boost", { no:no, what:"body" }); };
-  if ($("plang")) $("plang").onclick = function () { go("boost", { no:no, what:"lang" }); };
-  if ($("psheet")) $("psheet").onclick = function () { go("prep"); };
+  if ($("pboost") && !whyB) $("pboost").onclick = function () { go("boost", { no:no, what:"body" }); };
+  if ($("plang") && !whyL) $("plang").onclick = function () { go("boost", { no:no, what:"lang" }); };
   $("pbk").onclick = back;
 };
 
@@ -12469,15 +12489,16 @@ var GROUP_NAME = { stand:"The stand", club:"The club", staff:"The staff" };
 
 /* ───────── la cassa ───────── */
 function grKey() { return "footefl-ground-" + (ME.club ? ME.club.id : "x"); }
-var GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{}, lang:{} };
+var GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{}, lang:{}, acts:{} };
 function loadGround() {
-  GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{}, lang:{} };
+  GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{}, lang:{}, acts:{} };
   try {
     var s = JSON.parse(localStorage.getItem(grKey()));
     if (s) {
       GROUND.funds = s.funds || 0; GROUND.built = s.built || {};
       GROUND.sess = s.sess || {};  GROUND.grown = s.grown || {};
       GROUND.gate = s.gate || {};  GROUND.lang = s.lang || {};
+      GROUND.acts = s.acts || {};
     }
   } catch (e) {}
   applyGrowth();
@@ -12914,7 +12935,6 @@ VIEWS.gsEnd = function () {
                    hard:false, hardOk:false, items:GS.items, when:Date.now() });
     }
   }
-  var canGrow = pct >= GROW_MIN && growLeft() > 0;
 
   barFlow("Session done", ME.club.name, 100, false);
   html('<div class="pad"><p class="bignum">' + pct + "<em>%</em></p>" +
@@ -12933,16 +12953,11 @@ VIEWS.gsEnd = function () {
           }).join("");
         })() + "</div>"
       : "") +
-    (canGrow
-      ? '<button class="btn" id="grow">Give a player his step</button>'
-      : pct >= GROW_MIN
-        ? '<p class="lede">Three players have already grown this matchday. ' +
-          "The step waits for the next one.</p>"
-        : '<p class="lede">A session at <b>' + GROW_MIN +
-          "%</b> or better earns a player a step of +0.05. Not this time.</p>") +
+    '<p class="lede">This session fills the till. ' +
+    "To make a player grow &mdash; the body or the English &mdash; open " +
+    "<b>my squad</b>, tap the player and spend one of your six actions.</p>" +
     '<button class="btn ghost" id="gagain">Back to the ground</button></div>');
 
-  if ($("grow")) $("grow").onclick = function () { go("gsGrow"); };
   $("gagain").onclick = function () { reset("ground"); };
 };
 
@@ -14490,21 +14505,77 @@ function boostItems(kind, level) {
 }
 
 /* ═══════════════ IL POTENZIAMENTO ═══════════════
-   Si entra dalla scheda del giocatore: corpo o lingua. Tre giocatori a
-   giornata in tutto, e la scelta e' il gioco — allenare la lingua di
-   uno vuol dire lasciare fermo il corpo di un altro. Il posto si
-   consuma quando si comincia, non quando si riesce: altrimenti si
-   riproverebbe all'infinito, e scegliere non costerebbe niente. */
+
+   Sei azioni a giornata, da spendere come si vuole: su quattro
+   giocatori al massimo, e non piu' di due sullo stesso reparto dello
+   stesso giocatore. Uno puo' prendersi due sessioni di palestra e due
+   di inglese — quattro azioni su sei — ma allora agli altri ne restano
+   due. La scelta e' il gioco, e il contatore in alto la rende visibile.
+
+   L'azione si consuma quando si comincia, non quando si riesce: se no
+   si riproverebbe all'infinito e scegliere non costerebbe niente. */
+
+var ACT_PER_MD = 6;        /* sei azioni per giornata */
+var ACT_PLAYERS = 4;       /* su non piu' di quattro giocatori */
+var ACT_SECTION = 2;       /* e due per reparto, per giocatore */
 
 var BX = null;
 
-function boostLeft() { return (typeof growLeft === "function") ? growLeft() : 0; }
-function boostBook() {
+function actsKey() { return "md" + mdNow(); }
+function actsAll() {
   loadGround();
-  var md = mdNow();
-  GROUND.gate["grow" + md] = (GROUND.gate["grow" + md] || 0) + 1;
+  if (!GROUND.acts) GROUND.acts = {};
+  if (!GROUND.acts[actsKey()]) GROUND.acts[actsKey()] = {};
+  return GROUND.acts[actsKey()];
+}
+function actsUsed() {
+  var a = actsAll(), n = 0, k;
+  for (k in a) n += a[k] || 0;
+  return n;
+}
+function actsLeft() { return Math.max(0, ACT_PER_MD - actsUsed()); }
+function actPlayers() {
+  var a = actsAll(), seen = [], k, no;
+  for (k in a) {
+    if (!a[k]) continue;
+    no = k.split(":")[0];
+    if (seen.indexOf(no) < 0) seen.push(no);
+  }
+  return seen;
+}
+function actOn(no, what) { return actsAll()[no + ":" + what] || 0; }
+/* perche' non si puo': la ragione si dice, non si lascia indovinare */
+function actWhy(no, what) {
+  if (actsLeft() <= 0) return "No actions left today. Six a matchday, and they are gone.";
+  if (actOn(no, what) >= ACT_SECTION) {
+    return "Two sessions of " + (what === "lang" ? "English" : "the gym") +
+      " for this player today. That is the limit.";
+  }
+  var seen = actPlayers();
+  if (seen.indexOf(String(no)) < 0 && seen.length >= ACT_PLAYERS) {
+    return "Four players have already worked today. Spend what is left on them.";
+  }
+  return "";
+}
+function actCan(no, what) { return !actWhy(no, what); }
+function actBook(no, what) {
+  var k = no + ":" + what, v = actOn(no, what) + 1;
+  loadGround();
+  if (!GROUND.acts) GROUND.acts = {};
+  if (!GROUND.acts[actsKey()]) GROUND.acts[actsKey()] = {};
+  GROUND.acts[actsKey()][k] = v;
   saveGround();
 }
+/* il contatore, da mettere in cima dove serve */
+function actBar() {
+  var left = actsLeft(), n = actPlayers().length, o = "", i;
+  for (i = 0; i < ACT_PER_MD; i++) o += '<i class="' + (i < left ? "up" : "") + '"></i>';
+  return '<div class="actb"><span class="actn">' + o + "</span>" +
+    "<span class=\"actt\"><b>" + left + " of " + ACT_PER_MD +
+    (left === 1 ? " action" : " actions") + " left</b><em>matchday " + mdNow() +
+    " \u00b7 " + n + " of " + ACT_PLAYERS + " players used</em></span></div>";
+}
+
 function grownOf(no) {
   loadGround();
   if (GROUND.grown[no] !== undefined) return Math.min(GROWN_MAX, GROUND.grown[no]);
@@ -14517,7 +14588,7 @@ function bodyUp(no) {
   GROUND.grown[no] = v;
   saveGround();
   if (typeof applyGrowth === "function") applyGrowth();
-  return GROUND.grown[no];
+  return v;
 }
 function stepStr(n) { return "+" + (n * GROW_STEP).toFixed(2); }
 
@@ -14527,14 +14598,14 @@ VIEWS.boost = function (d) {
   var p = (ME.squad || []).filter(function (x) { return x.no === no; })[0];
   if (!p) return back();
   loadGround();
-  var left = boostLeft(), at = what === "lang" ? langOf(no) : grownOf(no);
+  var why = actWhy(no, what), at = what === "lang" ? langOf(no) : grownOf(no);
   var max = what === "lang" ? LANG_MAX : GROWN_MAX;
   var list = what === "lang" ? LKINDS : GKINDS;
 
   paintClub(ME.club);
   barFlow(what === "lang" ? "Boost the English" : "Boost the body",
           pName({ named:!!p.name, name:p.name, no:p.no }) + " · " +
-          left + (left === 1 ? " player left today" : " players left today"), 0);
+          actsLeft() + " of " + ACT_PER_MD + " actions left", 0);
 
   html('<div class="pad">' +
     '<div class="bxtop"><span><i>' + (what === "lang" ? "ENGLISH" : "STRENGTH") +
@@ -14551,10 +14622,9 @@ VIEWS.boost = function (d) {
       ? '<p class="lede">There is nothing left to teach here. ' +
         (what === "lang" ? "This one speaks for the club." : "The body is at its best.") +
         "</p>"
-      : left <= 0
-        ? '<p class="lede">Three players have already worked today. ' +
-          "The next session opens on the next matchday.</p>"
-        : '<p class="lede">Six questions. <b>' + BOOST_MIN +
+      : why
+        ? '<p class="lede">' + esc(why) + "</p>"
+        : '<p class="lede">One action. Six questions. <b>' + BOOST_MIN +
           "% or better</b> and the bar goes up by one. " +
           "The place is taken the moment you start, so pick the exercise you can win.</p>" +
           '<div class="bxk">' + list.map(function (k) {
@@ -14569,7 +14639,8 @@ VIEWS.boost = function (d) {
       var items = what === "lang" ? boostItems(b.dataset.k, lvSafe()) : null;
       if (what === "body") items = gymItems();
       if (!items || !items.length) return;
-      boostBook();
+      if (!actCan(no, what)) return;
+      actBook(no, what);
       BX = { no:no, what:what, kind:b.dataset.k, i:0, items:items, right:0, done:[] };
       go("bxRun");
     };
@@ -14694,8 +14765,21 @@ VIEWS.bxEnd = function () {
     '<button class="btn ghost" id="bxs">Back to my squad</button></div>');
 
   $("bxp").onclick = function () { reset("player", { no:BX.no }); };
-  $("bxs").onclick = function () { reset("squad"); };
+  $("bxs").onclick = function () { toSquad(); };
 };
+
+/* ───────── tornare alla rosa ─────────
+   My squad non e' piu' una pagina a se': e' il riquadro dentro la
+   pagina della competizione. Quindi si torna li', col riquadro aperto
+   e la pagina gia' scesa fin dove sono le maglie. */
+function toSquad() {
+  if (typeof SQOPEN !== "undefined") SQOPEN = true;
+  reset(ME.code ? "home" : "squad");
+  setTimeout(function () {
+    var el = $("hsq");
+    if (el && el.scrollIntoView) el.scrollIntoView({ block:"start" });
+  }, 120);
+}
 
 
 /* ───── 57-fame.js ───── */
@@ -15081,26 +15165,49 @@ function confPool() {
   });
   return out;
 }
+/* ───────── chi ha gia' parlato ─────────
+   Ogni volta che un giocatore risponde in conferenza, la sua
+   probabilita' di essere chiamato scende del dieci per cento, con un
+   fondo al venti: cosi' il microfono gira per la rosa invece di
+   restare sempre in mano al solito. Il conto e' per competizione. */
+var MIC_DROP = 0.10, MIC_FLOOR = 0.20;
+function micKey() {
+  return "footefl-mic-" + scope() + "-" + (ME.club ? ME.club.id : "x");
+}
+function micAll() {
+  try { return JSON.parse(localStorage.getItem(micKey()) || "{}") || {}; }
+  catch (e) { return {}; }
+}
+function micAdd(no) {
+  var a = micAll();
+  a[no] = (a[no] || 0) + 1;
+  try { localStorage.setItem(micKey(), JSON.stringify(a)); } catch (e) {}
+}
+function micWeight(no) {
+  return Math.max(MIC_FLOOR, 1 - MIC_DROP * (micAll()[no] || 0));
+}
+
+/* i tre che si fanno avanti: sorteggio pesato, e sempre lo stesso per
+   quella domanda di quella giornata — riaprire la pagina non rimescola */
 function confThree(md, i, used) {
   var pool = confPool().filter(function (p) { return used.indexOf(p.no) < 0; });
   if (pool.length <= 3) return pool;
-  var played = [];
-  try {
-    var sh = (typeof loadSheet === "function") ? (loadSheet(), SHEET) : null;
-    ["att", "def"].forEach(function (ph) {
-      var sl = sh && sh[ph] ? sh[ph] : {};
-      for (var k in sl) if (sl[k]) played.push(sl[k]);
-    });
-  } catch (e) {}
-  var hat = pool.slice();
-  pool.forEach(function (p) { if (played.indexOf(p.no) >= 0) hat.push(p); });
-  /* sorteggio fisso per questa domanda: riaprire la pagina non cambia i tre */
-  var seed = md * 31 + i * 7, out = [];
-  while (out.length < 3 && hat.length) {
+  var seed = md * 9173 + i * 311 + (ME.club ? ME.club.id.length : 0);
+  function rnd() {
     seed = (seed * 1103515245 + 12345) % 2147483647;
-    var k = Math.abs(seed) % hat.length, p = hat[k];
-    hat = hat.filter(function (x) { return x.no !== p.no; });
-    out.push(p);
+    return Math.abs(seed) / 2147483647;
+  }
+  var hat = pool.slice(), out = [];
+  while (out.length < 3 && hat.length) {
+    var tot = 0, k;
+    for (k = 0; k < hat.length; k++) tot += micWeight(hat[k].no);
+    var hit = rnd() * tot, run = 0, chosen = hat[hat.length - 1];
+    for (k = 0; k < hat.length; k++) {
+      run += micWeight(hat[k].no);
+      if (hit <= run) { chosen = hat[k]; break; }
+    }
+    hat = hat.filter(function (x) { return x.no !== chosen.no; });
+    out.push(chosen);
   }
   return out;
 }
@@ -15261,6 +15368,7 @@ VIEWS.confSay = function () {
   if (!CF.saidIds || CF.saidIds.indexOf(CF.i) < 0) {
     CF.saidIds = (CF.saidIds || []).concat([CF.i]);
     CF.used.push(p.no);
+    micAdd(p.no);
     CF.pay += paid;
     CF.fame += fm;
     CF.said.push({ id:q.id, q:q.q, a:said, who:p.no, bars:bars, paid:paid, spoke:1 });
