@@ -2624,6 +2624,31 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .phtrack .phero{flex:0 0 100%;min-width:100%;scroll-snap-align:center;
   box-sizing:border-box}
 .pslide{text-align:center;margin:9px 0 2px}
+
+/* ═════════ da dove si comincia a contare ═════════
+   Strategia, cartellini della volta prima e carte comprate: tre numeri
+   che stanno gia' sul tabellone prima che il professore legga la prima
+   parola. Non cambiano quante azioni si aprono, cambiano quando. */
+.stbox{margin:10px 0 2px;padding:11px 13px;border-radius:14px;
+  border:1px solid rgba(226,251,206,.14);background:rgba(226,251,206,.05);
+  display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.stbox span{font:800 8.5px/1 var(--brand);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--fog);opacity:.8}
+.stbox b{font:800 19px/1 var(--brand);color:var(--gold)}
+.stbox em{flex:1 0 100%;display:flex;gap:10px;flex-wrap:wrap;margin-top:2px}
+.stbox em i{font:600 11px/1.3 var(--body);font-style:normal;color:var(--fog);opacity:.85}
+.stbox em i.bad{color:#E6A6A6}
+
+/* ═════════ quanto pesa in campo ═════════ */
+.wgt{margin:10px 0 2px;padding:11px 13px;border-radius:14px;
+  border:1px solid rgba(226,251,206,.14);background:rgba(226,251,206,.05);
+  display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.wgt span{font:800 8.5px/1 var(--brand);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--fog);opacity:.8}
+.wgt b{font:800 19px/1 var(--brand);color:var(--gold)}
+.wgt em{flex:1 0 100%;margin-top:3px;font:600 11px/1.4 var(--body);
+  font-style:normal;color:var(--fog);opacity:.85}
+.wgt.full{border-color:rgba(240,196,106,.35)}
 </style>
 </head>
 <body>
@@ -3502,7 +3527,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "85";
+var APPVER = "88";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -9426,6 +9451,18 @@ function drawPlayerBody(no) {
                    : "no sessions yet") +
     bar2("ENGLISH", lang + " of " + LANG_MAX, lang, LANG_MAX, LANGSAY[lang]) +
 
+    /* quanto pesa davvero in campo: palestra e inglese versano nello
+       stesso salvadanaio, e il salvadanaio si ferma a 0,15 */
+    (typeof growCents === "function"
+      ? '<div class="wgt' + (atCap(no) ? " full" : "") + '"><span>WEIGHT ON THE PITCH</span>' +
+        "<b>+" + fmt(growCents(no)) + "</b><em>of +0,15 &middot; " +
+        (atCap(no)
+          ? "at the ceiling: more sessions still sharpen the English, " +
+            "but the department starts no higher"
+          : "it goes on the starting points of the department he plays in") +
+        "</em></div>"
+      : "") +
+
     (whyB && whyL && grown < GROWN_MAX && lang < LANG_MAX
       ? '<p class="hint bxleft">' + esc(whyB === whyL ? whyB : whyB + " " + whyL) + "</p>"
       : "") +
@@ -10084,7 +10121,7 @@ function wireReport(md, id) {
      1,00  parola perfetta        niente
      0,75  una lettera            fallo
      0,50  due lettere            giallo
-     0,25  tre lettere            giallo
+     0,25  tre lettere            ROSSO
      0,00  quattro o piu', o parola saltata   ROSSO
      punteggiatura sbagliata      giallo
      due gialli allo stesso       ROSSO
@@ -12024,7 +12061,9 @@ var AUDIO = {welcome:"au/welcome.mp3",athome:"au/athome.mp3"};
    la correzione e' automatica.
    Le due parole decisive sono quelle del campionato:
      attacco  Welcome to FootEFL -> wonder goal: countries
-     difesa   Match at home      -> penalty:     cloudy
+     difesa   Match at home      -> penalty:     weather
+   Le sedici parole sono quelle scritte nella piattaforma, copiate dalla
+   libreria dettati: la stella e' il wonder goal, la P il rigore.
    ═══════════════════════════════════════════════════════════════════ */
 
 /* ───────── i dettati registrati ─────────
@@ -12043,20 +12082,20 @@ var DMATCH = [
       "and cities such as Brazil, Japan, Spain, and Norway. Each player has a name, " +
       "a number, and a position. Now you are ready to start the competition. " +
       "Learn English, choose a team, and play together with your classmates.",
-    bdo:"countries", pen:"competition" },
+    bdo:"countries", pen:"classmates" },
 
   { id:"athome", title:"Match at home", n:2, dur:307,
     x:"Today the Ravens play at home. The captain is Clara and the goalkeeper is " +
       "Arthur. The team wears dark blue shirts and gold numbers. Four players attack, " +
       "and four players defend. The weather is cloudy, but the stadium is full. " +
       "Everyone is ready for the match.",
-    bdo:"goalkeeper", pen:"cloudy" },
+    bdo:"wears", pen:"weather" },
 
   { id:"morning", title:"A busy morning", n:3, dur:235,
     x:"Anna gets up early every morning. She opens the window and makes breakfast. " +
       "Then she drinks some tea and eats bread with jam. After breakfast, she takes " +
       "a shower and gets dressed. She leaves home at eight and walks to work.",
-    bdo:"breakfast", pen:"dressed" },
+    bdo:"breakfast", pen:"shower" },
 
   { id:"market", title:"A day at the market", n:4, dur:271,
     x:"On Saturday Mia goes to the market with her brother. First they buy fresh " +
@@ -12070,7 +12109,7 @@ var DMATCH = [
       "plastic, and glass in the right bin. On the roof there are solar panels. " +
       "The players drink from bottles, and the grass is always clean. Every class " +
       "plants a tree in September.",
-    bdo:"September", pen:"bottles" },
+    bdo:"September", pen:"panels" },
 
   { id:"park", title:"The park behind the school", n:6, dur:313,
     x:"There is a small park behind the school. Tall trees grow near the lake, " +
@@ -12083,14 +12122,14 @@ var DMATCH = [
       "is rough this afternoon. Children are laughing on the upper deck, while their " +
       "parents are reading inside. When the island appears, the houses look white and " +
       "tiny. A fisherman with a red cap waves at us from the harbour.",
-    bdo:"journey", pen:"harbour" },
+    bdo:"harbour", pen:"rough" },
 
   { id:"lighthouse", title:"The lighthouse", n:8, dur:431,
     x:"The lighthouse stands on a narrow rock, far from the village. Tonight the wind " +
       "is dangerous and the waves are enormous, so nobody goes out. Inside, the keeper " +
       "writes in his old notebook, but the electric lamp never stops turning. When a " +
       "small boat comes home late, the captain sees the bright light and he knows the way.",
-    bdo:"dangerous", pen:"enormous" }
+    bdo:"enormous", pen:"narrow" }
 ];
 
 /* la coppia della giornata: due dettati diversi, uno per reparto, uguali
@@ -12242,6 +12281,80 @@ function alignWords(ref, got) {
   return out.reverse();
 }
 
+/* ───────── i punti di partenza ─────────
+   Le caselle le detta il cielo, e non si toccano. Quello che si muove e'
+   da dove si parte a contare: prima ancora della prima parola, sul
+   totale c'e' gia' qualcosa. Tre cose lo spostano, come sulla
+   piattaforma del professore:
+
+     la strategia   offensiva +1,00 in attacco e -1,00 in difesa
+                    difensiva il contrario, neutra niente
+     il PNL         i cartellini della giornata prima, stesso reparto:
+                    0,10 a giallo, 0,20 a rosso, non oltre 2,40 — e si
+                    TOGLIE, perche' e' un debito
+     i giocatori    le carte comprate schierate in questo reparto, col
+                    valore stampato sulla carta
+
+   Partire piu' avanti vuol dire che la prima soglia arriva prima: stesso
+   numero di tiri, ma maturano su parole diverse, e quindi con un'altra
+   qualita'. Partire indietro e' l'opposto: le prime parole servono a
+   ripianare il debito. In amichevole e nell'allenamento non vale niente
+   di tutto questo. */
+var PNL_MAX = 240;              /* dodici gialli, o sei rossi */
+function stratCents(ph) {
+  var p = (typeof planOf === "function") ? planOf() : "nat";
+  if (p === "off") return ph === "att" ? 100 : -100;
+  if (p === "def") return ph === "att" ? -100 : 100;
+  return 0;
+}
+/* il conto lasciato aperto dalla giornata prima, nello stesso reparto */
+function pnlCents(ph) {
+  if (!ME.club) return 0;
+  var md = ME.next ? ME.next.md : 0, best = null;
+  (typeof formHalves === "function" ? formHalves(scope(), ME.club.id) : [])
+    .forEach(function (h) {
+      if (h.ph !== ph || h.md >= md) return;
+      if (!best || h.md > best.md) best = h;
+    });
+  if (!best) return 0;
+  return Math.min(PNL_MAX, (best.yellow || 0) * 10 + (best.red || 0) * 20);
+}
+/* chi sta in questo reparto sul foglio, una volta sola */
+function onPhase(ph) {
+  if (typeof loadSheet === "function") loadSheet();
+  var on = [], k, no;
+  for (k = 1; k <= 24; k++) {
+    no = (SHEET && SHEET[ph]) ? SHEET[ph][k] : null;
+    if (no != null && on.indexOf(no) < 0) on.push(no);
+  }
+  return on;
+}
+/* le carte comprate schierate qui: il valore stampato sulla carta */
+function buyCents(ph) {
+  var on = onPhase(ph), sum = 0;
+  (ME.signings || []).forEach(function (s, i) {
+    if (on.indexOf(13 + i) >= 0) sum += s.cents || 0;
+  });
+  return sum;
+}
+/* e quelli cresciuti in palestra e con l'inglese: 0,05 a scatto,
+   non oltre 0,15 per giocatore */
+function grownCents(ph) {
+  if (typeof growCents !== "function") return 0;
+  var sum = 0;
+  onPhase(ph).forEach(function (no) {
+    if (no < 13) sum += growCents(no);
+  });
+  return sum;
+}
+function startParts(ph) {
+  var st = stratCents(ph), pn = pnlCents(ph);
+  var bc = buyCents(ph), gc = grownCents(ph);
+  return { strat:st, pnl:pn, players:bc + gc, buys:bc, grown:gc,
+           start:st - pn + bc + gc };
+}
+function startCents(ph) { return startParts(ph).start; }
+
 /* ───────── la correzione, con le regole del campionato ───────── */
 function correctHalf(ph, written, opt) {
   opt = opt || {};
@@ -12257,7 +12370,10 @@ function correctHalf(ph, written, opt) {
   var cap = opt.cap || (typeof phaseCap === "function" ? phaseCap(ph) : c.actions);
   var tot = els.reduce(function (s, e) { return s + (e.t === "ponct" ? 50 : 100); }, 0);
   var step = Math.floor(tot / cap);
-  var run = 0, yellow = 0, red = 0, fouls = 0, shots = [], done = 0, cards = [];
+  /* non si parte da zero: strategia, PNL e carte comprate sono gia' sul
+     tabellone prima della prima parola */
+  var start = (opt.start != null) ? opt.start : startCents(ph);
+  var run = start, yellow = 0, red = 0, fouls = 0, shots = [], done = 0, cards = [];
 
   els.forEach(function (e, k) {
     var err = answers[k].errors, v = elValue(err, e.t);
@@ -12267,17 +12383,21 @@ function correctHalf(ph, written, opt) {
        A chi vanno lo decide il momento che stava maturando: la parola
        cade dentro un tratto di partita, e quel tratto ha un padrone. */
     var kind = "";
+    /* il regolamento, pagina 2: una lettera fallo, due giallo, TRE ROSSO,
+       quattro o la parola saltata rosso. Il segno sbagliato un giallo. */
     if (e.t === "ponct") { if (err !== 0) kind = "yellow"; }
-    else if (err === -1 || err >= 4) kind = "red";
-    else if (err === 2 || err === 3) kind = "yellow";
+    else if (err === -1 || err >= 3) kind = "red";
+    else if (err === 2) kind = "yellow";
     else if (err === 1) kind = "foul";
     if (kind) {
       if (kind === "red") red++; else if (kind === "yellow") yellow++; else fouls++;
       cards.push({ k:k, w:e.w, kind:kind,
-                   seg:Math.max(1, Math.min(cap, step > 0 ? Math.ceil(run / step) : 1)),
+                   seg:Math.max(1, Math.min(cap, (run > 0 && step > 0) ? Math.ceil(run / step) : 1)),
                    min:matMinute(k, els.length) });
     }
-    var matured = step > 0 ? Math.min(cap, Math.floor(run / step)) : 0;
+    /* sotto zero non matura niente: col debito aperto le prime parole
+       servono a ripianarlo */
+    var matured = (run > 0 && step > 0) ? Math.min(cap, Math.floor(run / step)) : 0;
     while (matured > done) {
       done++;
       shots.push({ n:done, quality:(e.t === "ponct" ? 100 : v), at:k });
@@ -12288,7 +12408,7 @@ function correctHalf(ph, written, opt) {
   els.forEach(function (e, k) { if (e.special) hi = k; });
   var hardOk = hi >= 0 && answers[hi].errors === 0;
 
-  return { els:els, answers:answers, clim:c, open:done, max:cap,
+  return { els:els, answers:answers, clim:c, open:done, max:cap, start:start,
            cards:cards, wrong:cards.length,
            run:run, step:step, total:els.length,
            right:answers.filter(function (a, k) {
@@ -12888,16 +13008,14 @@ function shapeOf() {
   loadSheet();
   return (SHEET.call && SHEET.call.shape) || "442";
 }
-function planShift(ph) {
-  var p = planOf();
-  if (p === "off") return ph === "att" ? 1 : -1;
-  if (p === "def") return ph === "att" ? -1 : 1;
-  return 0;
-}
-/* quanti momenti apre davvero questa fase */
+/* Le caselle le detta il meteo e basta: il piano non ne aggiunge e non
+   ne toglie, ne' qui ne' nell'allenamento. Una sola logica dappertutto,
+   come per il cielo. La funzione resta, e risponde zero, perche' la
+   chiamano in piu' posti. */
+function planShift() { return 0; }
+/* quanti momenti apre davvero questa fase: quelli del cielo */
 function phaseCap(ph) {
-  var c = climateOf(phaseClim(ph));
-  return Math.max(1, c.actions + planShift(ph));
+  return Math.max(1, climateOf(phaseClim(ph)).actions);
 }
 
 VIEWS.mCall = function (d) {
@@ -12949,12 +13067,11 @@ VIEWS.mCall = function (d) {
       '<div class="chzs" id="shapes"></div>' +
 
       '<h2 class="sec top">5 &middot; Your plan</h2>' +
-      '<p class="lede sm2">This one weighs: a moment more on one side is a moment ' +
-      "less on the other. The weather says " +
+      '<p class="lede sm2">How you mean to play it. It goes on the scoresheet and ' +
+      "the press will ask you about it; the moments are the weather&rsquo;s, " +
       climateOf(phaseClim("att")).actions + " in attack and " +
-      climateOf(phaseClim("def")).actions + " in defence.</p>" +
+      climateOf(phaseClim("def")).actions + " in defence, and nothing moves them.</p>" +
       '<div class="chzs tall" id="plans"></div>' +
-      '<div id="xmoment"></div>' +
 
       '<h2 class="sec top">6 &middot; Which way does your keeper dive?</h2>' +
       '<p class="lede sm2">For the penalty <b>against you</b>, later in the defence. ' +
@@ -12972,7 +13089,6 @@ VIEWS.mCall = function (d) {
     drawPicks("plans", PLANS, planOf(), function (id) {
       SHEET.call.plan = id; saveSheet(); swap("mCall", d);
     });
-    drawExtra();
     drawSides("sides", C.side, function (s) { cur().side = s; saveSheet(); refresh(); });
     wireRow("ptk", function (no) { cur().taker = no; saveSheet(); refresh(); });
     wireRow("pwn", function (no) { cur().wonder = no; saveSheet(); refresh(); });
@@ -12995,34 +13111,6 @@ VIEWS.mCall = function (d) {
     drawSides("sides", C.dive, function (s) { cur().dive = s; saveSheet(); refresh(); });
   }
   refresh();
-
-  /* il momento in piu' che apre la strategia offensiva vuole un nome:
-     lo slot sta in fondo al foglio d'attacco, come gli altri */
-  function drawExtra() {
-    var box = $("xmoment");
-    if (!box) return;
-    var base = climateOf(phaseClim("att")).actions, cap = phaseCap("att"), k;
-    for (k = cap + 1; k <= base + 2; k++) {
-      if (SHEET.att[k] != null) { SHEET.att[k] = null; saveSheet(); }
-    }
-    if (planOf() !== "off") {
-      box.innerHTML = planOf() === "def"
-        ? '<p class="lede sm2">The extra save is your keeper&rsquo;s: nothing to ' +
-          "choose.</p>"
-        : "";
-      return;
-    }
-    /* Il momento in piu' non si chiama: lo prende il capitano, che e' gia'
-       uno dei tre che possono rientrare. Un nome in meno da scegliere
-       prima di aver sentito una parola. */
-    var cp = SHEET.roles.cap;
-    if (cp == null) cp = SHEET.att[1];
-    if (cp != null && SHEET.att[cap] !== cp) { SHEET.att[cap] = cp; saveSheet(); }
-    var who = cp != null ? playerNo(cp) : null;
-    box.innerHTML = '<p class="lede sm2">Your plan opens moment number ' + cap +
-      " in attack: " + (who ? "<b>" + esc(pName(who)) + "</b>" : "your captain") +
-      " takes it, as captain.</p>";
-  }
 
   function refresh() {
     var C = cur(), D = SHEET.call.def;
@@ -14128,9 +14216,9 @@ VIEWS.tlCall = function () {
     '<div class="chzs" id="tshape"></div>' +
 
     '<h2 class="sec top">Your plan</h2>' +
-    '<p class="lede sm2">The weather opens ' + climateOf(C.attClim).actions +
-    " moments in attack and " + climateOf(C.defClim).actions +
-    " in defence. Your plan moves one.</p>" +
+    '<p class="lede sm2">How you mean to play it. The weather opens ' +
+    climateOf(C.attClim).actions + " moments in attack and " +
+    climateOf(C.defClim).actions + " in defence, and nothing moves them.</p>" +
     '<div class="chzs tall" id="tplan"></div>' +
 
     '<h2 class="sec top">Where does your penalty go?</h2>' +
@@ -14167,12 +14255,9 @@ function planTx(id) {
   var x = PLANS.filter(function (y) { return y.id === id; })[0];
   return x ? x.t : id;
 }
-function tlShift(ph) {
-  var p = TL && TL.cur ? TL.cur.plan : "nat";
-  if (p === "off") return ph === "att" ? 1 : -1;
-  if (p === "def") return ph === "att" ? -1 : 1;
-  return 0;
-}
+/* anche qui: le caselle le detta il cielo, il piano non le muove.
+   Una sola logica, campionato e allenamento */
+function tlShift() { return 0; }
 function tlCap(ph) {
   var c = climateOf(ph === "att" ? TL.cur.attClim : TL.cur.defClim);
   return Math.max(1, c.actions + tlShift(ph));
@@ -14244,7 +14329,9 @@ VIEWS.tlWrite = function (d) {
     sent = true;
     if (tick) clearInterval(tick);
     try { $("au").pause(); } catch (e) {}
-    var r = correctHalf(ph, ta.value, { dict:dict, clim:clim, cap:cap });
+    /* l'allenamento e' un'amichevole: niente strategia, niente PNL,
+       niente carte. Si parte da zero come sulla piattaforma. */
+    var r = correctHalf(ph, ta.value, { dict:dict, clim:clim, cap:cap, start:0 });
     C[ph] = { q:r.shots.map(function (x) { return x.quality; }),
               m:r.shots.map(function (x) { return matMinute(x.at, r.els.length); }),
               w:ph === "att" ? !!r.bonus : false,
@@ -14931,6 +15018,27 @@ function wireMailQ(list) {
 var LANG_MAX = 5;          /* cinque barre, non di piu' */
 var GROWN_MAX = 3;         /* tre passi di palestra per giocatore */
 var GROW_STEP = 0.05;      /* ogni passo vale cinque centesimi */
+/* ───────── il tetto di un giocatore ─────────
+   Palestra e inglese versano nello stesso salvadanaio, e quel
+   salvadanaio si riempie a 0,15. Tre scatti in tutto, comunque li si
+   spenda: tre di corpo, tre di lingua, o due e uno. Oltre, l'esercizio
+   si fa ancora — l'inglese sale lo stesso, e in conferenza stampa si
+   sente — ma sul campo quel giocatore non pesa di piu'.
+   Il valore entra nei punti di partenza del reparto dove quel giocatore
+   e' schierato, come le carte comprate. */
+var CENTS_MAX = 15;        /* 0,15 per giocatore, corpo e lingua insieme */
+var STEP_CENTS = 5;        /* ogni scatto, di qualunque tipo, vale 0,05 */
+function stepsOf(no) {
+  var b = (typeof grownOf === "function") ? grownOf(no) : 0;
+  var l = (typeof langOf === "function") ? langOf(no) - 1 : 0;
+  return Math.max(0, b) + Math.max(0, l);
+}
+/* quanto vale davvero quel giocatore, in centesimi */
+function growCents(no) {
+  return Math.min(CENTS_MAX, stepsOf(no) * STEP_CENTS);
+}
+/* se ha gia' toccato il tetto, gli scatti dopo non valgono piu' niente */
+function atCap(no) { return stepsOf(no) * STEP_CENTS >= CENTS_MAX; }
 var BOOST_MIN = 80;        /* sotto l'ottanta per cento non si sale */
 var BOOST_N = 6;           /* sei domande per esercizio */
 var BOOST_PAY = 6;         /* e la cassa prende qualcosa lo stesso */
@@ -18123,11 +18231,28 @@ VIEWS.lock = function () {
   }
 };
 
+/* il tabellone prima della prima parola: da dove si comincia a contare.
+   Non cambia quante azioni si aprono — quelle le detta il cielo — ma
+   cambia su quali parole maturano, e quindi con che qualita'. */
+function startBox(ph) {
+  if (typeof startParts !== "function") return "";
+  var s = startParts(ph);
+  if (!s.strat && !s.pnl && !s.players) return "";
+  var bits = [];
+  if (s.strat) bits.push('<i>' + (s.strat > 0 ? "+" : "&minus;") +
+    fmt(Math.abs(s.strat)) + " " + planName().toLowerCase() + "</i>");
+  if (s.pnl) bits.push('<i class="bad">&minus;' + fmt(s.pnl) + " last cards</i>");
+  if (s.buys) bits.push("<i>+" + fmt(s.buys) + " signings</i>");
+  if (s.grown) bits.push("<i>+" + fmt(s.grown) + " training</i>");
+  return '<div class="stbox"><span>You start at</span><b>' +
+    (s.start > 0 ? "+" : s.start < 0 ? "&minus;" : "") +
+    fmt(Math.abs(s.start)) + "</b><em>" + bits.join("") + "</em></div>";
+}
+
 /* ───────── 4. si gioca ───────── */
 VIEWS.mGo = function (d) {
   var ph = d.ph, c = climateOf(phaseClim(ph));
   var n = (typeof phaseCap === "function") ? phaseCap(ph) : c.actions;
-  var shift = (typeof planShift === "function") ? planShift(ph) : 0;
   /* questo tempo e' gia' stato giocato: non si rientra */
   if (halfPlayed(ME.next.md, ph)) return swap("played", { ph:ph });
   barFlow(ph === "att" ? "Attack" : "Defence", ME.next.home + " vs " + ME.next.away, 0, false);
@@ -18139,7 +18264,8 @@ VIEWS.mGo = function (d) {
     "action takes it.</p>" +
     '<div class="wxbig"><div><span>Weather</span><b>' + c.label + "</b></div>" +
     "<div><span>" + (ph === "att" ? "Shots at most" : "Saves at most") +
-    "</span><b>" + n + "</b>" + (shift ? '<i class="shf">' + (shift > 0 ? "+1 " : "&minus;1 ") + planName() + "</i>" : "") + "</div></div>" +
+    "</span><b>" + n + "</b></div></div>" +
+    startBox(ph) +
     '<p class="lede">Write what you hear. Nothing is corrected on screen until the ' +
     "end — this is the match, not practice.</p>" +
     '<button class="btn" id="kick">' +
