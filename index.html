@@ -2482,6 +2482,22 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .flag .fgl.on{display:inline-block;padding:1px 5px;border-radius:4px;text-decoration:none;
   background:rgba(226,251,206,.16);color:var(--fog);
   font:800 9px/1.4 var(--brand);letter-spacing:.06em}
+.prc.shut{opacity:.78}
+.prshut{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:5px;
+  background:rgba(226,251,206,.16);color:var(--fog);text-decoration:none;
+  font:800 8.5px/1.4 var(--brand);letter-spacing:.1em}
+
+/* ═════════ la rosa a pagine ═════════ */
+.sqtrack{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:0;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sqtrack::-webkit-scrollbar{display:none;height:0}
+.sqpg{flex:0 0 100%;min-width:100%;scroll-snap-align:start}
+.sqdots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+.sqdots i{width:7px;height:7px;border-radius:50%;background:rgba(226,251,206,.22)}
+.sqdots i.on{background:var(--gold)}
+.sqslide{text-align:center;margin:7px 0 0}
+.pgnew{position:absolute;top:6px;left:7px;padding:2px 5px;border-radius:6px;
+  background:#C9553F;color:#FFFDEE;font:800 8px/1.4 var(--brand);letter-spacing:.08em}
 </style>
 </head>
 <body>
@@ -3126,7 +3142,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "70";
+var APPVER = "72";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8638,6 +8654,26 @@ var SQSORT = [
   { id:"c",    t:"CARDS",  k:"c" }
 ];
 
+/* ───────── la rosa intera ─────────
+   I dodici del club piu' chi e' arrivato dal mercato. I comprati
+   prendono il numero 13 in su, gli stessi che usa il foglio della
+   partita: se non si guardasse anche li', i loro gol non sarebbero di
+   nessuno. */
+function squadAll() {
+  var out = (ME.squad || []).slice();
+  (ME.signings || []).forEach(function (sg, i) {
+    out.push({ no:13 + i, name:sg.name, tag:sg.badge || "",
+               role:sg.role || "", nat:sg.country || "", city:"",
+               grown:((typeof GROUND !== "undefined" && GROUND.grown &&
+                        GROUND.grown[13 + i]) || 0),
+               bought:true, stars:sg.stars || 0 });
+  });
+  return out;
+}
+function playerOf(no) {
+  return squadAll().filter(function (x) { return x.no === no; })[0] || null;
+}
+
 /* i numeri di ogni giocatore in questa competizione: momenti giocati,
    gol, parate e cartellini. Vengono dai tempi registrati e dai
    risultati che il telefono conosce. */
@@ -8658,7 +8694,8 @@ function sqStats() {
     });
   });
   /* i gol: dai risultati chiusi, azione per azione */
-  var gk = (ME.squad || []).filter(function (p) { return p.role === "GK"; })[0];
+  var all = squadAll();
+  var gk = all.filter(function (p) { return p.role === "GK" || p.tag === "GK"; })[0];
   try {
     var pre = "footefl-live-" + scope() + "-md";
     for (i = 0; i < localStorage.length; i++) {
@@ -8668,15 +8705,22 @@ function sqStats() {
       var st = JSON.parse(localStorage.getItem(k) || "null");
       if (!st || !st.score) continue;
       var att = hs.filter(function (h) { return h.md === md && h.ph === "att"; })[0];
-      (st.score.mine.duels || []).forEach(function (d) {
-        if (!d.goal) return;
-        var no = att && att.slots ? att.slots[d.n - 1] : null;
-        if (no != null) row(no).g++;
-      });
-      /* il wonder goal e il rigore: li firma chi era stato chiamato */
       var sk = "footefl-sheet-" + scope() + "-" + (ME.club ? ME.club.id : "x") +
                "-md" + md;
       var sh = JSON.parse(localStorage.getItem(sk) || "null");
+      /* chi c'era sull'azione n: prima il tempo registrato, e se quello
+         non lo dice (partite giocate prima che esistessero le caselle)
+         il foglio della giornata, che e' rimasto li' */
+      function onAction(n) {
+        if (att && att.slots && att.slots[n - 1] != null) return att.slots[n - 1];
+        if (sh && sh.att && sh.att[n] != null) return sh.att[n];
+        return null;
+      }
+      (st.score.mine.duels || []).forEach(function (d) {
+        if (!d.goal) return;
+        var no = onAction(d.n);
+        if (no != null) row(no).g++;
+      });
       if (sh && sh.call && sh.call.att) {
         if (st.score.mine.sources && st.score.mine.sources.bdo &&
             sh.call.att.wonder != null) row(sh.call.att.wonder).g++;
@@ -8696,7 +8740,7 @@ function sqStats() {
 
 function sqList() {
   var st = sqStats();
-  var list = (ME.squad || []).slice().map(function (p) {
+  var list = squadAll().map(function (p) {
     var x = st[p.no] || { m:0, g:0, s:0, y:0, r:0, c:0 };
     return { p:p, m:x.m, g:x.g, s:x.s, y:x.y, r:x.r, c:x.c };
   });
@@ -8715,10 +8759,11 @@ function sqList() {
 function drawSquadCard() {
   var box = $("sqc");
   if (!box) return;
-  var grown = ME.squad.filter(function (p) { return p.grown; }).length;
+  var all = squadAll();
+  var grown = all.filter(function (p) { return p.grown; }).length;
   box.innerHTML = '<button class="sqhead" id="sqtog" type="button" aria-expanded="' +
     (SQOPEN ? "true" : "false") + '"><span class="sqt"><i>MY SQUAD</i><b>' +
-    ME.squad.length + " players</b><em>" +
+    all.length + " players</b><em>" +
     (grown ? grown + (grown === 1 ? " has grown" : " have grown") : "nobody has grown yet") +
     "</em></span><i class=\"sqtog\">" + (SQOPEN ? "&minus;" : "+") + "</i></button>" +
     (SQOPEN
@@ -8748,33 +8793,60 @@ function drawSquadCard() {
   drawShirts();
 }
 
+/* ───────── le maglie, dodici per schermata ─────────
+   Con il mercato la rosa cresce, ma una pagina di venti maglie non si
+   guarda: si scorre di lato, dodici alla volta, con i pallini sotto che
+   dicono a che pagina si e'. */
+var SQPAGE = 12;
 function drawShirts() {
-  var box = $("shirts"), per = 3, out = "", list = sqList();
+  var box = $("shirts"), per = 3, list = sqList();
   if (!box) return;
   if (!list.length) {
     box.innerHTML = '<p class="empty2">Nobody in this department.</p>';
     return;
   }
   var key = (SQSORT.filter(function (x) { return x.id === SQF.sort; })[0] || {}).k;
-  for (var i = 0; i < list.length; i += per) {
-    out += '<div class="row">' + list.slice(i, i + per).map(function (r) {
-      var tag = key ? (key === "c"
-        ? (r.y ? r.y + "Y" : "") + (r.r ? (r.y ? " " : "") + r.r + "R" : "") || "0"
-        : String(r[key])) : "";
-      return pegHtml(r.p).replace("</button>", (tag
-        ? '<span class="pgst' + (tag === "0" ? " nil" : "") + '">' + tag + "</span>"
-        : "") + "</button>");
-    }).join("") + "</div>";
+  function peg(r) {
+    var tag = key ? (key === "c"
+      ? ((r.y ? r.y + "Y" : "") + (r.r ? (r.y ? " " : "") + r.r + "R" : "")) || "0"
+      : String(r[key])) : "";
+    return pegHtml(r.p).replace("</button>", (tag
+      ? '<span class="pgst' + (tag === "0" ? " nil" : "") + '">' + tag + "</span>"
+      : "") + (r.p.bought ? '<span class="pgnew">NEW</span>' : "") + "</button>");
   }
-  box.innerHTML = out;
+  var pages = [], i, j;
+  for (i = 0; i < list.length; i += SQPAGE) {
+    var slice = list.slice(i, i + SQPAGE), rows = "";
+    for (j = 0; j < slice.length; j += per) {
+      rows += '<div class="row">' + slice.slice(j, j + per).map(peg).join("") + "</div>";
+    }
+    pages.push('<div class="sqpg">' + rows + "</div>");
+  }
+  box.innerHTML = '<div class="sqtrack" id="sqtrack">' + pages.join("") + "</div>" +
+    (pages.length > 1
+      ? '<div class="sqdots" id="sqdots">' + pages.map(function (x, k) {
+          return '<i class="' + (k ? "" : "on") + '"></i>';
+        }).join("") + "</div>" +
+        '<p class="hint sqslide">Slide sideways for the rest of the squad &rsaquo;</p>'
+      : "");
+
   Array.prototype.forEach.call(box.querySelectorAll(".peg"), function (b) {
     b.onclick = function () { go("player", { no:parseInt(b.dataset.no, 10) }); };
   });
+  var tr = $("sqtrack"), dots = $("sqdots");
+  if (tr && dots) {
+    tr.onscroll = function () {
+      var k = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth));
+      Array.prototype.forEach.call(dots.children, function (d, n) {
+        d.className = n === k ? "on" : "";
+      });
+    };
+  }
 }
 
 /* ───────── la scheda del giocatore ───────── */
 VIEWS.player = function (d) {
-  var no = d.no, p = (ME.squad || []).filter(function (x) { return x.no === no; })[0];
+  var no = d.no, p = playerOf(no);
   if (!p) return back();
   var st = sqStats()[no] || { m:0, g:0, s:0, y:0, r:0 };
   var ban = (typeof suspIs === "function") ? suspIs(no) : null;
@@ -14258,6 +14330,10 @@ function langOf(no) {
     return Math.max(1, Math.min(LANG_MAX, GROUND.lang[no]));
   }
   var p = (ME.squad || []).filter(function (x) { return x.no === no; })[0];
+  if (!p && no >= 13 && (ME.signings || [])[no - 13]) {
+    var sg = ME.signings[no - 13];
+    p = { name:sg.name, no:no, nat:sg.country };
+  }
   return langBase(p);
 }
 /* il valore si calcola PRIMA di aprire la cassa: langOf rilegge lo
@@ -14632,6 +14708,8 @@ function actBar() {
 function grownOf(no) {
   loadGround();
   if (GROUND.grown[no] !== undefined) return Math.min(GROWN_MAX, GROUND.grown[no]);
+  /* qui si guarda SOLO la rosa del club: passare da playerOf farebbe un
+     giro su se stesso, perche' la rosa intera chiede a sua volta i passi */
   var p = (ME.squad || []).filter(function (x) { return x.no === no; })[0];
   return Math.min(GROWN_MAX, (p && p.grown) || 0);
 }
@@ -14648,7 +14726,8 @@ function stepStr(n) { return "+" + (n * GROW_STEP).toFixed(2); }
 /* ───────── 1. quale esercizio ───────── */
 VIEWS.boost = function (d) {
   var no = d.no, what = d.what === "lang" ? "lang" : "body";
-  var p = (ME.squad || []).filter(function (x) { return x.no === no; })[0];
+  var p = (typeof playerOf === "function") ? playerOf(no)
+        : (ME.squad || []).filter(function (x) { return x.no === no; })[0];
   if (!p) return back();
   loadGround();
   var why = actWhy(no, what), at = what === "lang" ? langOf(no) : grownOf(no);
@@ -14727,7 +14806,8 @@ VIEWS.bxRun = function () {
   if (!BX) return back();
   if (BX.i >= BX.items.length) return swap("bxEnd");
   var it = BX.items[BX.i], n = BX.i + 1;
-  var p = (ME.squad || []).filter(function (x) { return x.no === BX.no; })[0] || {};
+  var p = ((typeof playerOf === "function") ? playerOf(BX.no)
+        : (ME.squad || []).filter(function (x) { return x.no === BX.no; })[0]) || {};
   paintClub(ME.club);
   barFlow(BX.what === "lang" ? "English" : "Gym",
           pName({ named:!!p.name, name:p.name, no:p.no }) + " · " + n + " of " +
@@ -14782,7 +14862,8 @@ VIEWS.bxEnd = function () {
   up = !!BX.up;
   at = BX.what === "lang" ? langOf(BX.no) : grownOf(BX.no);
   max = BX.what === "lang" ? LANG_MAX : GROWN_MAX;
-  var p = (ME.squad || []).filter(function (x) { return x.no === BX.no; })[0] || {};
+  var p = ((typeof playerOf === "function") ? playerOf(BX.no)
+        : (ME.squad || []).filter(function (x) { return x.no === BX.no; })[0]) || {};
   var who = pName({ named:!!p.name, name:p.name, no:p.no });
 
   paintClub(ME.club);
@@ -15286,11 +15367,8 @@ function answerFor(id, lev, bars) {
    quella domanda: chi ha giocato la giornata ha due biglietti nel
    cappello, perche' e' lui che i giornalisti cercano. */
 function confPool() {
-  var out = (ME.squad || []).filter(function (p) { return p.name; });
-  (ME.signings || []).forEach(function (c) {
-    if (c && c.name && !out.filter(function (p) { return p.no === c.no; }).length) out.push(c);
-  });
-  return out;
+  var all = (typeof squadAll === "function") ? squadAll() : (ME.squad || []);
+  return all.filter(function (p) { return p.name; });
 }
 /* ───────── chi ha gia' parlato ─────────
    Ogni volta che un giocatore risponde in conferenza, la sua
@@ -15355,22 +15433,34 @@ var CONF_SPOKEN = 3;          /* tre al giocatore, la quarta la scrive lui */
 pressCard = function () {
   if (!ME.club || !ME.next) return "";
   var md = ME.next.md, done = pressGet(md) || {}, ph = pressPhase();
+  var paper = paperFor(md, ph || (matchFacts(md).both ? "post" : "pre"));
+
+  /* la sala c'e' sempre, aperta o chiusa: un riquadro che sparisce non
+     insegna niente, e l'alunno deve sapere quando si riapre */
   if (!ph) {
+    var played = matchFacts(md).both;
     var said = (done.post || done.pre || []);
-    if (!said.length) return "";
-    var p0 = done.paper || "";
-    return '<section class="pad"><div class="prc done"><span class="prm">' + MIC_SVG +
-      "</span>" +
-      '<span class="prt"><i>' + esc(String(p0).toUpperCase()) + "</i>" +
-      "<b>The conference is over</b><em>" + said.length +
-      (said.length === 1 ? " answer" : " answers") + ", " +
-      money((done.paid || 0) / 1000) + " for the club.</em></span></div></section>";
+    var when = played
+      ? "It opens again on matchday " + (md + 1) + "."
+      : "It opens again the moment the match is over.";
+    return '<section class="pad"><div class="prc shut">' +
+      '<span class="prm">' + MIC_SVG + "</span>" +
+      '<span class="prt"><i>' + esc(String(done.paper || paper.name).toUpperCase()) +
+      ' <u class="prshut">CLOSED</u></i>' +
+      "<b>" + (said.length ? "You have faced the press" : "Nothing to say today") +
+      "</b><em>" + (said.length
+        ? said.length + (said.length === 1 ? " answer" : " answers") + ", " +
+          money((done.paid || 0) / 1000) + " for the club. " + when
+        : when) +
+      "</em></span></div></section>";
   }
-  var paper = paperFor(md, ph), pre = ph === "pre";
+
+  var pre = ph === "pre";
   return '<section class="pad"><button class="prc" id="prGo" type="button">' +
     '<span class="prm live">' + MIC_SVG + "</span>" +
     '<span class="prt"><i>' + esc(paper.name.toUpperCase()) +
-    ' <u class="prlive">' + (pre ? "BEFORE THE MATCH" : "AFTER THE MATCH") + "</u></i>" +
+    ' <u class="prlive">OPEN \u00b7 ' + (pre ? "BEFORE THE MATCH" : "AFTER THE MATCH") +
+    "</u></i>" +
     "<b>" + (pre ? "A paper is waiting for you" : "The press room is open") +
     "</b><em>" + starRow(paper.t) + " Four questions. Three go to your players, " +
     "the last one is yours. Up to " + money(paper.pay * 4 / 1000) +
