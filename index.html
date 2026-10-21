@@ -3164,7 +3164,7 @@ var SQUADS = {
     { n:"Noah Harbor",      r:"MF", a:23, c:"Ottawa",    q:"Canadian" },
     { n:"Aino Wave",        r:"MF", a:22, c:"Helsinki",  q:"Finnish" },
     { n:"Sami Shipyard",    r:"FW", a:25, c:"Cairo",     q:"Egyptian" },
-    { n:"Morgan Tide",      r:"FW", a:19, c:"Melbourne", q:"Australian" },
+    { n:"Morgan Tide",      r:"FW", a:19, c:"Melbourne", q:"Australian", gem:true },
     { n:"Valentina Rivers", r:"FW", a:34, c:"Popayán",   q:"Colombian" },
     { n:"Lukas Jute",       r:"FW", a:38, c:"Ulm",       q:"German" }
   ]
@@ -3186,13 +3186,13 @@ var LEAGUE = {
   /* qui dentro ci sta solo il mondo inglese. Le squadre francesi hanno il
      loro campionato e non entrano in questo, nemmeno marcate. */
   teams: [
-    { id:"ROP", name:"Ropewalkers",     student:"Luigi",    colour:"#B8823A", world:"en",
+    { id:"ROP", name:"Ropewalkers",     student:"",         colour:"#B8823A", world:"en",
       p:3, w:3, d:0, l:0, gf:7, ga:3, form:["W","W","W"] },
-    { id:"SHE", name:"Sherwood Rovers", student:"Diego",    colour:"#4A5D23", world:"en",
+    { id:"SHE", name:"Sherwood Rovers", student:"",         colour:"#4A5D23", world:"en",
       p:3, w:1, d:1, l:1, gf:4, ga:4, form:["W","D","L"] },
-    { id:"RAV", name:"Ravens FC",       student:"Giuseppe", colour:"#16233F", world:"en",
+    { id:"RAV", name:"Ravens FC",       student:"",         colour:"#16233F", world:"en",
       p:3, w:1, d:0, l:2, gf:4, ga:5, form:["L","L","W"] },
-    { id:"BRA", name:"Brass FC",        student:"Lorenzo",  colour:"#7A1B22", world:"en",
+    { id:"BRA", name:"Brass FC",        student:"",         colour:"#7A1B22", world:"en",
       p:3, w:0, d:1, l:2, gf:4, ga:7, form:["L","D","L"] }
   ],
   /* le tre classifiche individuali. I totali per squadra tornano con i gol fatti. */
@@ -3296,7 +3296,7 @@ function cupOf(id) {
 var ME = {
   world: "en",
   club: null,            /* si riempie scegliendo dalla home */
-  student: "Gianmarco",
+  student: "",
   level: "A1", levelBy: "",   /* lo mette il professore */
   squad: [], signings: [],
   table: [], cupPlaces: 2, mdPlayed: 3, mdTotal: 6,
@@ -3494,7 +3494,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "83";
+var APPVER = "84";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -3640,7 +3640,8 @@ function barClub() {
     '<button class="crest" id="crest" type="button" aria-label="Change club">' +
     initials(c.name) + "</button>" +
     '<div class="ti"><b>' + esc(c.name) + "</b><span>" + esc(c.city) +
-    " &middot; <em>" + esc(ME.student) + "</em></span></div></div>";
+    (ME.student ? " &middot; <em>" + esc(ME.student) + "</em>" : "") +
+    "</span></div></div>";
   $("crest").onclick = function () { go("home"); };
   prog(0);
 }
@@ -12888,6 +12889,12 @@ function phaseCap(ph) {
 
 VIEWS.mCall = function (d) {
   var ph = d.ph;
+  /* Il foglio si rilegge da capo: modulo e strategia lo ricaricano da
+     sotto (shapeOf, planOf, phaseCap passano tutti da loadSheet), e
+     chiedere a un foglio e scrivere su un altro vuol dire perdere
+     quello che si e' scritto. Si parte dal foglio buono e si va
+     sempre a riprenderselo — cur() — invece di tenerselo in mano. */
+  loadSheet();
   /* si arriva qui anche da una ripresa: il blocco delle chiamate deve
      esserci comunque, se no la schermata resta vuota senza dirlo */
   if (!SHEET.call) {
@@ -12896,6 +12903,7 @@ VIEWS.mCall = function (d) {
   if (!SHEET.call.att) SHEET.call.att = { side:null, taker:null, wonder:null };
   if (!SHEET.call.def) SHEET.call.def = { dive:null };
   var C = SHEET.call[ph];
+  function cur() { return SHEET.call[ph]; }   /* il foglio di adesso, non quello di prima */
   paintClub(ME.club);
   barFlow(ph === "att" ? "Before the attack" : "Before the defence",
           "Call it now · you cannot change it", 40, false);
@@ -12952,9 +12960,9 @@ VIEWS.mCall = function (d) {
       SHEET.call.plan = id; saveSheet(); swap("mCall", d);
     });
     drawExtra();
-    drawSides("sides", C.side, function (s) { C.side = s; saveSheet(); refresh(); });
-    wireRow("ptk", function (no) { C.taker = no; saveSheet(); refresh(); });
-    wireRow("pwn", function (no) { C.wonder = no; saveSheet(); refresh(); });
+    drawSides("sides", C.side, function (s) { cur().side = s; saveSheet(); refresh(); });
+    wireRow("ptk", function (no) { cur().taker = no; saveSheet(); refresh(); });
+    wireRow("pwn", function (no) { cur().wonder = no; saveSheet(); refresh(); });
     drawSides("dives", SHEET.call.def.dive, function (s) {
       SHEET.call.def.dive = s; saveSheet(); refresh();
     });
@@ -12971,7 +12979,7 @@ VIEWS.mCall = function (d) {
       '<h2 class="sec top">Which way does he dive?</h2>' +
       '<div class="sides" id="sides"></div>' +
       '<div id="callfoot"></div></div>');
-    drawSides("sides", C.dive, function (s) { C.dive = s; saveSheet(); refresh(); });
+    drawSides("sides", C.dive, function (s) { cur().dive = s; saveSheet(); refresh(); });
   }
   refresh();
 
@@ -12999,7 +13007,7 @@ VIEWS.mCall = function (d) {
   }
 
   function refresh() {
-    var D = SHEET.call.def;
+    var C = cur(), D = SHEET.call.def;
     var ok = ph === "att"
       ? (C.side && C.taker != null && C.wonder != null && D.dive)
       : !!C.dive;
