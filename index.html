@@ -2328,6 +2328,44 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .prow2 .rl.sx .nbi{width:10px;height:10px;margin-right:3px;stroke-width:2.4}
 .prow2{align-items:center}
 .prow2 .rl.sx.nbx .nbi{margin-right:4px}
+
+/* ═════════ il potenziamento: corpo e lingua ═════════ */
+.bxtop{display:flex;align-items:center;gap:14px;padding:14px 15px;border-radius:16px;
+  border:1px solid var(--edge);background:rgba(226,251,206,.05);margin-bottom:13px}
+.bxtop i{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;font-style:normal;
+  color:#8FC4AC}
+.bxtop b{display:block;margin-top:6px;font:800 22px/1 var(--brand);color:var(--gold)}
+.bxtop em{display:block;margin-top:5px;font-size:11px;font-weight:600;font-style:normal;
+  color:var(--fog)}
+.bxbars{display:flex;gap:5px;margin-left:auto}
+.bxbars i{width:14px;height:22px;border-radius:4px;background:rgba(226,251,206,.16)}
+.bxbars i.up{background:var(--gold)}
+.bxbars.big{justify-content:center;margin:14px 0}
+.bxbars.big i{width:34px;height:12px}
+.bxk{display:flex;flex-direction:column;gap:9px;margin:13px 0}
+.bxb{display:flex;align-items:center;gap:11px;width:100%;padding:14px;border-radius:15px;
+  border:1px solid var(--edge);background:rgba(226,251,206,.05);color:inherit;
+  text-align:left;cursor:pointer;font-family:inherit}
+.bxb b{flex:none;font:800 14px/1.2 var(--brand);color:#FFFDEE}
+.bxb span{flex:1;font-size:11.5px;font-weight:600;color:var(--fog);line-height:1.35}
+.bxb i{font-style:normal;font-size:17px;color:#8FC4AC}
+.bxq{margin:6px 0 16px;font:800 20px/1.3 var(--brand);letter-spacing:-.01em;color:#FFFDEE}
+.bxq.sit{font-family:var(--brand);font-size:15px;font-weight:600;line-height:1.5;
+  letter-spacing:0;color:var(--cream);padding:13px 14px;border-radius:13px;
+  background:rgba(226,251,206,.06);border:1px solid var(--edge)}
+.bxo{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.bxo.two{grid-template-columns:1fr}
+.bxa{padding:15px 13px;border-radius:13px;border:1px solid var(--edge);
+  background:rgba(226,251,206,.05);color:var(--cream);font-family:var(--brand);
+  font-size:14px;font-weight:700;line-height:1.35;text-align:left;cursor:pointer}
+.bxo.two .bxa{font-weight:600;font-size:13.5px;line-height:1.45}
+.bxa.good{border-color:var(--gold);background:rgba(227,239,38,.18);color:#FFFDEE}
+.bxa.bad{border-color:rgba(201,85,63,.6);background:rgba(201,85,63,.14);color:#E8A89A}
+.bxsay{min-height:20px;margin:12px 0 0;font-size:12.5px;font-weight:700}
+.bxsay.good{color:var(--gold)}
+.bxsay.bad{color:#E8A89A}
+.bxleft{margin:12px 2px 13px}
+.btn.gold2{background:transparent;border:1px solid var(--gold);color:var(--gold)}
 </style>
 </head>
 <body>
@@ -2972,7 +3010,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "66";
+var APPVER = "67";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8391,7 +8429,7 @@ function shirtOf(p) {
 }
 function pegHtml(p) {
   var st = "", kit = shirtOf(p);
-  for (var i = 0; i < 2; i++) st += '<i class="' + (i < p.grown ? "up" : "") + '"></i>';
+  for (var i = 0; i < 3; i++) st += '<i class="' + (i < p.grown ? "up" : "") + '"></i>';
   return '<button class="peg" data-no="' + p.no + '" type="button" aria-expanded="false" ' +
     'aria-label="' + esc(p.name || ("Shirt " + p.no)) + '">' +
     '<span class="shirt' + (kit ? " ph" : "") + '">' +
@@ -8409,9 +8447,9 @@ function cardHtml(p) {
   var rows = [["Matches", p.used], ["Goals", p.goals], ["Saves and stops", p.saves]];
   if (p.yellow || p.red) rows.push(["Cards", p.yellow + " yellow, " + p.red + " red"]);
   var note = p.grown >= 2
-    ? "<b>Fully grown.</b>Two steps, +0.20 to the department this player lines up in."
+    ? "<b>Fully grown.</b>Three sessions, +0.15 to the department this player lines up in."
     : p.grown === 1
-      ? "<b>One step taken.</b>+0.10 so far. One more step is still possible."
+      ? "<b>Work done.</b>+0.05 for each session. Three in all, then the body is at its best."
       : "<b>No steps yet.</b>Each step is worth +0.10, and a player can take two.";
   var FULL = { GK:"Goalkeeper", DF:"Defender", MF:"Midfielder", FW:"Forward" };
   var line = [
@@ -8591,10 +8629,18 @@ VIEWS.player = function (d) {
   var st = sqStats()[no] || { m:0, g:0, s:0, y:0, r:0 };
   var ban = (typeof suspIs === "function") ? suspIs(no) : null;
   var hurt = !ban && typeof injIs === "function" ? injIs(no) : null;
-  var grown = Math.min(2, p.grown || 0);
+  var grown = (typeof grownOf === "function") ? grownOf(no) : Math.min(3, p.grown || 0);
+  var lang = (typeof langOf === "function") ? langOf(no) : 1;
+  var left = (typeof boostLeft === "function") ? boostLeft() : 0;
   paintClub(ME.club);
   barFlow(pName({ named:!!p.name, name:p.name, no:p.no }), ME.club.name, 0);
 
+  function bar2(k, v, at, max, note) {
+    var o = "", i;
+    for (i = 0; i < max; i++) o += '<i class="' + (i < at ? "up" : "") + '"></i>';
+    return '<div class="pgrow"><span><i>' + k + "</i><b>" + v + "</b></span>" +
+      '<span class="pbars">' + o + "</span><em>" + esc(note) + "</em></div>";
+  }
   function cell(k, v, s2) {
     return '<div class="pst"><i>' + k + "</i><b>" + v + "</b>" +
       (s2 ? "<u>" + s2 + "</u>" : "") + "</div>";
@@ -8631,24 +8677,31 @@ VIEWS.player = function (d) {
       cell("CARDS", st.y + st.r, st.y + " yellow &middot; " + st.r + " red") +
     "</div>" +
 
-    '<div class="pgrow"><span><i>STRENGTH</i><b>' +
-      (grown ? "+0." + grown * 10 : "+0.00") + "</b></span>" +
-      '<span class="pbars">' + (function () {
-        var o = "";
-        for (var i = 0; i < 2; i++) o += '<i class="' + (i < grown ? "up" : "") + '"></i>';
-        return o;
-      })() + "</span>" +
-      "<em>" + (grown >= 2 ? "fully grown" : grown === 1 ? "one step taken"
-                                                         : "no steps yet") + "</em></div>" +
+    /* le due crescite, una sopra l'altra: il corpo e la lingua */
+    bar2("STRENGTH", stepStr(grown), grown, GROWN_MAX,
+         grown >= GROWN_MAX ? "fully grown"
+           : grown ? grown + (grown === 1 ? " session done" : " sessions done")
+                   : "no sessions yet") +
+    bar2("ENGLISH", lang + " of " + LANG_MAX, lang, LANG_MAX, LANGSAY[lang]) +
 
-    (grown < 2
-      ? '<button class="btn" id="pboost">Boost the player &middot; go to the exercises</button>'
-      : '<button class="btn ghost" disabled>He cannot grow any more</button>') +
+    '<p class="hint bxleft">' + (left > 0
+      ? left + (left === 1 ? " player" : " players") +
+        " can still work today, body or English."
+      : "Three players have worked today. The next session opens on the next matchday.") +
+    "</p>" +
+
+    (grown < GROWN_MAX
+      ? '<button class="btn" id="pboost">Boost the body &middot; the gym</button>'
+      : '<button class="btn ghost" disabled>The body is at its best</button>') +
+    (lang < LANG_MAX
+      ? '<button class="btn gold2" id="plang">Boost the English &middot; four exercises</button>'
+      : '<button class="btn ghost" disabled>This one speaks for the club</button>') +
     (ME.next && !ban && !hurt
       ? '<button class="btn ghost" id="psheet">Put the player on a moment</button>' : "") +
     '<button class="btn ghost" id="pbk">Back to the squad</button></div>');
 
-  if ($("pboost")) $("pboost").onclick = function () { go("ground", { tab:"squad" }); };
+  if ($("pboost")) $("pboost").onclick = function () { go("boost", { no:no, what:"body" }); };
+  if ($("plang")) $("plang").onclick = function () { go("boost", { no:no, what:"lang" }); };
   if ($("psheet")) $("psheet").onclick = function () { go("prep"); };
   $("pbk").onclick = back;
 };
@@ -12310,15 +12363,15 @@ var GROUP_NAME = { stand:"The stand", club:"The club", staff:"The staff" };
 
 /* ───────── la cassa ───────── */
 function grKey() { return "footefl-ground-" + (ME.club ? ME.club.id : "x"); }
-var GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{} };
+var GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{}, lang:{} };
 function loadGround() {
-  GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{} };
+  GROUND = { funds:0, built:{}, sess:{}, grown:{}, gate:{}, lang:{} };
   try {
     var s = JSON.parse(localStorage.getItem(grKey()));
     if (s) {
       GROUND.funds = s.funds || 0; GROUND.built = s.built || {};
       GROUND.sess = s.sess || {};  GROUND.grown = s.grown || {};
-      GROUND.gate = s.gate || {};
+      GROUND.gate = s.gate || {};  GROUND.lang = s.lang || {};
     }
   } catch (e) {}
   applyGrowth();
@@ -12330,7 +12383,7 @@ function saveGround() {
 /* i passi comprati nel ground si posano sulla rosa */
 function applyGrowth() {
   (ME.squad || []).forEach(function (p) {
-    if (GROUND.grown[p.no] !== undefined) p.grown = Math.min(2, GROUND.grown[p.no]);
+    if (GROUND.grown[p.no] !== undefined) p.grown = Math.min(3, GROUND.grown[p.no]);
   });
 }
 function built(id) { return !!GROUND.built[id]; }
@@ -12344,7 +12397,14 @@ function gatePerMatch() {
   BUILDS.forEach(function (b) { if (b.gate && built(b.id)) g += b.gate; });
   return g;
 }
-function money(k) { return "£" + k + "k"; }
+/* la cassa conta in migliaia, ma la conferenza stampa paga centinaia:
+   sotto il migliaio si scrive in sterline tonde, non "£0.4k" */
+function money(k) {
+  var n = Math.round((k || 0) * 1000) / 1000;
+  if (n && Math.abs(n) < 1) return "\u00a3" + Math.round(n * 1000);
+  var r = Math.round(n * 10) / 10;
+  return "\u00a3" + (r % 1 === 0 ? r : r.toFixed(1)) + "k";
+}
 
 /* ───────── le sessioni della giornata ───────── */
 function mdNow() { return ME.next ? ME.next.md : 1; }
@@ -12365,7 +12425,7 @@ function growLeft() {
 function useGrow(no) {
   var md = mdNow();
   GROUND.gate["grow" + md] = (GROUND.gate["grow" + md] || 0) + 1;
-  GROUND.grown[no] = Math.min(2, (GROUND.grown[no] || 0) + 1);
+  GROUND.grown[no] = Math.min(3, (GROUND.grown[no] || 0) + 1);
   saveGround(); applyGrowth();
 }
 /* l'incasso della partita: una volta per giornata, quando finisce la difesa */
@@ -12771,7 +12831,7 @@ VIEWS.gsEnd = function () {
         ? '<p class="lede">Three players have already grown this matchday. ' +
           "The step waits for the next one.</p>"
         : '<p class="lede">A session at <b>' + GROW_MIN +
-          "%</b> or better earns a player a step of +0.10. Not this time.</p>") +
+          "%</b> or better earns a player a step of +0.05. Not this time.</p>") +
     '<button class="btn ghost" id="gagain">Back to the ground</button></div>');
 
   if ($("grow")) $("grow").onclick = function () { go("gsGrow"); };
@@ -12783,21 +12843,21 @@ VIEWS.gsGrow = function () {
   loadGround();
   barFlow("Who grows?", growLeft() + " of " + GROW_PER_MD + " steps left today", 0);
   var pool = allPlayers().filter(function (p) { return p.named; });
-  html('<div class="pad"><p class="lede">One step is <b>+0.10</b> to the department ' +
-    "this player lines up in. A player can take two steps in all, no more.</p>" +
+  html('<div class="pad"><p class="lede">One step is <b>+0.05</b> to the department ' +
+    "this player lines up in. A player can take three steps in all, no more.</p>" +
     '<div class="plist">' + pool.map(function (p) {
-      var at = Math.min(2, GROUND.grown[p.no] !== undefined
+      var at = Math.min(3, GROUND.grown[p.no] !== undefined
         ? GROUND.grown[p.no] : (squadOf(p.no) ? squadOf(p.no).grown : 0));
-      var full = at >= 2;
+      var full = at >= 3;
       return '<button class="prow' + (full ? " used" : "") + '" data-no="' + p.no +
         '" type="button"' + (full ? " disabled" : "") + ">" +
         '<span class="shirt2"><svg viewBox="0 0 100 100"><use href="#jersey"/></svg>' +
         '<span class="sno">' + p.no + "</span></span>" +
         '<span class="smid"><b>' + esc(pName(p)) + "</b><span>" +
-        (full ? "fully grown, +0.20" : at === 1 ? "one step taken, +0.10"
-              : "no steps yet") + "</span></span>" +
+        (full ? "fully grown, +0.15" : at ? at + (at === 1 ? " step taken, " : " steps taken, ") +
+          "+" + (at * 0.05).toFixed(2) : "no steps yet") + "</span></span>" +
         '<span class="steps2">' + (function () {
-          var o = ""; for (var i = 0; i < 2; i++) o += '<i class="' +
+          var o = ""; for (var i = 0; i < 3; i++) o += '<i class="' +
             (i < at ? "up" : "") + '"></i>'; return o; })() + "</span></button>";
     }).join("") + "</div></div>");
 
@@ -13975,6 +14035,559 @@ function wireMailQ(list) {
     };
   });
 }
+
+
+/* ───── 56-lang.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   L'INGLESE DEI GIOCATORI
+
+   Ogni giocatore ha cinque barre di inglese. A una barra parla a fatica,
+   con qualche parola della sua lingua; a cinque parla bene — sempre
+   dentro il livello della competizione, perche' in un campionato A1
+   anche il piu' bravo dice frasi semplici.
+   Le barre contano in conferenza stampa: la risposta che esce e' quella
+   che il giocatore sa dare, e il giornale paga di conseguenza.
+
+   Si alzano qui, con quattro esercizi: sinonimi, definizioni,
+   traduzione e la frase giusta. Il fisico si alza in palestra, e i due
+   lavori pescano dallo stesso budget: tre giocatori a giornata, non uno
+   di piu'. Allenare la lingua di uno vuol dire non allenare il corpo di
+   un altro, ed e' li' che l'alunno sceglie.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var LANG_MAX = 5;          /* cinque barre, non di piu' */
+var GROWN_MAX = 3;         /* tre passi di palestra per giocatore */
+var GROW_STEP = 0.05;      /* ogni passo vale cinque centesimi */
+var BOOST_MIN = 80;        /* sotto l'ottanta per cento non si sale */
+var BOOST_N = 6;           /* sei domande per esercizio */
+var BOOST_PAY = 6;         /* e la cassa prende qualcosa lo stesso */
+
+/* ───────── quanto inglese sa, all'inizio ─────────
+   Chi e' cresciuto dove si parla inglese parte avanti, gli altri no:
+   non e' un giudizio sulla persona, e' il motivo per cui la rosa va
+   allenata anche nella lingua. Il numero di maglia fa il resto, cosi'
+   due compagni della stessa citta' non partono identici. */
+var HOME_EN = ["english", "scottish", "welsh", "northern irish", "british", "irish"];
+function langBase(p) {
+  if (!p || !p.name) return 1;
+  var q = String(p.nat || p.q || "").toLowerCase();
+  if (HOME_EN.indexOf(q) >= 0) return 4;
+  var h = 0, s = p.name + "|" + (p.no || 0);
+  for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9973;
+  return 1 + (h % 3);                       /* 1, 2 o 3 */
+}
+function langOf(no) {
+  loadGround();
+  if (GROUND.lang && GROUND.lang[no] !== undefined) {
+    return Math.max(1, Math.min(LANG_MAX, GROUND.lang[no]));
+  }
+  var p = (ME.squad || []).filter(function (x) { return x.no === no; })[0];
+  return langBase(p);
+}
+/* il valore si calcola PRIMA di aprire la cassa: langOf rilegge lo
+   stato dal telefono, e una riga scritta su un oggetto che poi viene
+   sostituito non arriva da nessuna parte */
+function langUp(no) {
+  var v = Math.min(LANG_MAX, langOf(no) + 1);
+  loadGround();
+  if (!GROUND.lang) GROUND.lang = {};
+  GROUND.lang[no] = v;
+  saveGround();
+  return v;
+}
+/* il nome delle barre, in inglese e senza giudizi sulla persona */
+var LANGSAY = ["", "A few words", "Getting by", "Clear enough",
+               "Speaks well", "Speaks for the club"];
+
+/* ═══════════════ IL BANCO DEGLI ESERCIZI ═══════════════ */
+
+/* 1. sinonimi: la parola che vuol dire quasi la stessa cosa */
+var LSYN = {
+A1: [
+ { q:"big",    o:["large","small","slow","late"], c:0 },
+ { q:"quick",  o:["fast","heavy","kind","wet"], c:0 },
+ { q:"happy",  o:["glad","tired","angry","busy"], c:0 },
+ { q:"start",  o:["begin","stop","lose","call"], c:0 },
+ { q:"end",    o:["finish","open","play","wait"], c:0 },
+ { q:"small",  o:["little","long","hard","full"], c:0 },
+ { q:"nice",   o:["kind","loud","cold","early"], c:0 },
+ { q:"hard",   o:["difficult","easy","free","clean"], c:0 },
+ { q:"shut",   o:["close","drink","walk","learn"], c:0 },
+ { q:"speak",  o:["talk","read","run","sit"], c:0 }
+],
+A2: [
+ { q:"choose", o:["pick","drop","build","follow"], c:0 },
+ { q:"shout",  o:["yell","whisper","listen","wave"], c:0 },
+ { q:"clever", o:["smart","lazy","polite","shy"], c:0 },
+ { q:"afraid", o:["scared","proud","calm","sure"], c:0 },
+ { q:"quiet",  o:["silent","noisy","fresh","deep"], c:0 },
+ { q:"repair", o:["fix","break","clean","move"], c:0 },
+ { q:"trip",   o:["journey","meal","rule","prize"], c:0 },
+ { q:"rich",   o:["wealthy","poor","young","brave"], c:0 },
+ { q:"keep",   o:["hold","give","sell","leave"], c:0 },
+ { q:"tired",  o:["sleepy","hungry","ready","safe"], c:0 }
+],
+B1: [
+ { q:"improve",   o:["get better","give up","slow down","stand still"], c:0 },
+ { q:"allow",     o:["let","force","refuse","warn"], c:0 },
+ { q:"reply",     o:["answer","ask","shout","repeat"], c:0 },
+ { q:"require",   o:["need","want","lend","avoid"], c:0 },
+ { q:"enormous",  o:["huge","narrow","gentle","empty"], c:0 },
+ { q:"reduce",    o:["cut down","build up","hold on","set off"], c:0 },
+ { q:"reliable",  o:["dependable","careless","sudden","strange"], c:0 },
+ { q:"exhausted", o:["worn out","wide awake","well paid","badly hurt"], c:0 },
+ { q:"purchase",  o:["buy","borrow","rent","order"], c:0 },
+ { q:"argue",     o:["disagree","agree","explain","apologise"], c:0 }
+],
+B2: [
+ { q:"reluctant",  o:["unwilling","eager","grateful","curious"], c:0 },
+ { q:"meticulous", o:["painstaking","careless","hasty","vague"], c:0 },
+ { q:"concede",    o:["admit","deny","boast","insist"], c:0 },
+ { q:"resilient",  o:["hard to break","easy to please","quick to leave","slow to learn"], c:0 },
+ { q:"inevitable", o:["bound to happen","easy to avoid","hard to believe","rarely seen"], c:0 },
+ { q:"ambiguous",  o:["open to two readings","perfectly clear","widely shared","strictly forbidden"], c:0 },
+ { q:"mitigate",   o:["soften","worsen","ignore","repeat"], c:0 },
+ { q:"candid",     o:["frank","secretive","polite","nervous"], c:0 },
+ { q:"pivotal",    o:["crucial","minor","usual","optional"], c:0 },
+ { q:"scrutinise", o:["examine closely","glance at","put aside","hand over"], c:0 }
+]
+};
+
+/* 2. traduzione: dall'italiano, la parola inglese */
+var LTRA = {
+A1: [
+ { q:"la finestra", o:["window","door","wall","floor"], c:0 },
+ { q:"il pane",     o:["bread","cheese","milk","meat"], c:0 },
+ { q:"correre",     o:["to run","to walk","to jump","to sit"], c:0 },
+ { q:"felice",      o:["happy","angry","tired","busy"], c:0 },
+ { q:"il portiere", o:["goalkeeper","defender","striker","referee"], c:0 },
+ { q:"la squadra",  o:["team","crowd","league","coach"], c:0 },
+ { q:"oggi",        o:["today","yesterday","tomorrow","never"], c:0 },
+ { q:"sempre",      o:["always","never","often","late"], c:0 },
+ { q:"la pioggia",  o:["rain","snow","wind","sun"], c:0 },
+ { q:"il campo",    o:["pitch","bench","stand","gate"], c:0 },
+ { q:"bere",        o:["to drink","to eat","to cook","to wash"], c:0 },
+ { q:"lento",       o:["slow","fast","strong","clean"], c:0 }
+],
+A2: [
+ { q:"allenarsi",   o:["to train","to travel","to try","to turn"], c:0 },
+ { q:"il tifoso",   o:["supporter","player","owner","writer"], c:0 },
+ { q:"vincere",     o:["to win","to lose","to draw","to leave"], c:0 },
+ { q:"la sconfitta",o:["defeat","victory","draw","match"], c:0 },
+ { q:"il pareggio", o:["draw","win","loss","goal"], c:0 },
+ { q:"stanco",      o:["tired","bored","worried","ready"], c:0 },
+ { q:"la stagione", o:["season","weather","month","holiday"], c:0 },
+ { q:"il pubblico", o:["crowd","queue","family","staff"], c:0 },
+ { q:"prestare",    o:["to lend","to borrow","to keep","to spend"], c:0 },
+ { q:"riuscire",    o:["to manage","to refuse","to forget","to repeat"], c:0 },
+ { q:"la maglia",   o:["shirt","boot","glove","sock"], c:0 },
+ { q:"il premio",   o:["prize","price","promise","problem"], c:0 }
+],
+B1: [
+ { q:"migliorare",   o:["to improve","to worsen","to remain","to replace"], c:0 },
+ { q:"l'infortunio", o:["injury","insult","interview","income"], c:0 },
+ { q:"la squalifica",o:["suspension","selection","substitution","subscription"], c:0 },
+ { q:"la fiducia",   o:["trust","fear","doubt","pride"], c:0 },
+ { q:"l'orgoglio",   o:["pride","anger","shame","hope"], c:0 },
+ { q:"sostituire",   o:["to replace","to reply","to repeat","to report"], c:0 },
+ { q:"raggiungere",  o:["to reach","to leave","to lose","to lower"], c:0 },
+ { q:"prevedere",    o:["to predict","to prevent","to prepare","to present"], c:0 },
+ { q:"rinviare",     o:["to postpone","to cancel","to attend","to begin"], c:0 },
+ { q:"resistere",    o:["to hold out","to give in","to run out","to turn up"], c:0 },
+ { q:"il sostenitore", o:["backer","beginner","builder","banker"], c:0 },
+ { q:"la trasferta", o:["away game","home game","training camp","day off"], c:0 }
+],
+B2: [
+ { q:"rinunciare",    o:["to give up","to take up","to put up","to show up"], c:0 },
+ { q:"convocare",     o:["to call up","to call off","to call in","to call out"], c:0 },
+ { q:"la trattativa", o:["negotiation","navigation","nomination","notification"], c:0 },
+ { q:"l'esordio",     o:["debut","decline","defeat","demand"], c:0 },
+ { q:"smentire",      o:["to deny","to delay","to depend","to deserve"], c:0 },
+ { q:"incolpare",     o:["to blame","to praise","to forgive","to forget"], c:0 },
+ { q:"consapevole",   o:["aware","unaware","careless","hopeless"], c:0 },
+ { q:"imprevedibile", o:["unpredictable","unbeatable","unbearable","unreliable"], c:0 },
+ { q:"la rimonta",    o:["comeback","breakdown","handover","walkout"], c:0 },
+ { q:"pretendere",    o:["to demand","to pretend","to prevent","to promise"], c:0 },
+ { q:"il vivaio",     o:["youth academy","transfer market","medical room","boardroom"], c:0 },
+ { q:"accogliente",   o:["welcoming","worrying","wandering","warning"], c:0 }
+]
+};
+
+/* 3. la frase giusta: la stessa cosa detta bene o detta male.
+   Questo banco serve due volte — qui per allenarsi, e in conferenza
+   stampa quando il giornale fa la domanda sul serio. */
+var LSAY = {
+A1: [
+ { s:"You lost 3–0 and the reporter asks if it was a bad day.",
+   ok:"Yes, it was a bad day. We will work and come back.",
+   bad:"Stupid question. You go away now." },
+ { s:"A young supporter asks you for a photo before the match.",
+   ok:"Of course. Come here, we take it together.",
+   bad:"No. I am busy, not now, go." },
+ { s:"The reporter says your goalkeeper made a mistake.",
+   ok:"He is my team-mate. We win together, we lose together.",
+   bad:"Yes, it is all his fault, he is very bad." },
+ { s:"You scored two goals and the reporter says you are the best.",
+   ok:"Thank you, but my team-mates helped me a lot.",
+   bad:"Yes, I am the best. The others are not good." },
+ { s:"The other team won and their captain comes to you.",
+   ok:"Well done. You played a good match today.",
+   bad:"You are lucky. You are not better than us." },
+ { s:"The reporter asks about the next match.",
+   ok:"We train every day. We are ready for Saturday.",
+   bad:"I don't know. Ask somebody else, not me." },
+ { s:"A child asks what he must do to play like you.",
+   ok:"Listen to your teacher, and play every day with your friends.",
+   bad:"Nothing. You cannot play like me, it is difficult." },
+ { s:"The reporter asks why you did not play last week.",
+   ok:"I was not well, but now I am fine. Thank you for asking.",
+   bad:"That is my business, not your business." }
+],
+A2: [
+ { s:"You have lost four matches in a row. Will you lose this one too?",
+   ok:"We have lost four, that's true, but we have been training hard and we want to change it.",
+   bad:"Maybe we lose, maybe we win, who cares, is only a game for you." },
+ { s:"The referee gave a penalty against you. The reporter asks what you think.",
+   ok:"I didn't see it well. The referee decided, and we have to accept it.",
+   bad:"The referee is blind, everybody in the stadium knows this." },
+ { s:"A reporter asks if your new team-mate is good enough.",
+   ok:"He has only played two matches. Give him time and you will see.",
+   bad:"No, he is slow and he doesn't understand anything." },
+ { s:"The club has no money for new players. What do you say?",
+   ok:"We work with what we have, and that is enough for us.",
+   bad:"The president never spend money, this club is a joke." },
+ { s:"You missed an easy goal in the last minute.",
+   ok:"It was my mistake and I am sorry. Next time it goes in.",
+   bad:"The ball was strange and the grass is terrible here." },
+ { s:"The reporter asks about the supporters who travelled far.",
+   ok:"They came a long way for us. We owe them a better match.",
+   bad:"Nobody asked them to come, it is their choice." },
+ { s:"Your captain is leaving the club at the end of the season.",
+   ok:"He gave a lot to this club. I hope people remember that.",
+   bad:"He goes away for money. Everybody goes away for money." },
+ { s:"A reporter asks if you are better than the other team.",
+   ok:"On Saturday we will find out. They are a good side.",
+   bad:"Of course we are better. They are nothing special." }
+],
+B1: [
+ { s:"Four defeats in a row. The reporter asks whether you will lose this one as well.",
+   ok:"I understand the question, but we've been working on exactly that all week. We'll find out on Saturday.",
+   bad:"If you already know the answer, why are you asking me? Write what you want." },
+ { s:"The manager left you on the bench for the whole match.",
+   ok:"That's his decision to make. My job is to be ready when he calls me.",
+   bad:"He doesn't know what he's doing, everybody can see that." },
+ { s:"A reporter asks about the mistake that cost you the match.",
+   ok:"It was mine, and I've watched it back twice. I'd rather make it now than in the final.",
+   bad:"One mistake, and that's all you want to talk about. Typical." },
+ { s:"The club has just sold your best friend in the team.",
+   ok:"I'll miss him, but football moves on and I wish him well.",
+   bad:"They sold him behind our backs, that tells you everything." },
+ { s:"The reporter says your supporters are losing patience.",
+   ok:"They have every right to be impatient. We haven't given them much this year.",
+   bad:"They should support us instead of complaining all the time." },
+ { s:"You have been chosen as captain for the first time.",
+   ok:"It's an honour, and it belongs to the whole dressing room, not just to me.",
+   bad:"Finally. It should have happened a long time ago." },
+ { s:"The other manager said your team was lucky to win.",
+   ok:"He's entitled to his opinion. We'll let the table do the talking.",
+   bad:"He always says that when he loses. Bad loser." },
+ { s:"A reporter asks what you say to the young players coming through.",
+   ok:"Train with people who are better than you, and listen more than you speak.",
+   bad:"Nothing. Either you have it or you don't." }
+],
+B2: [
+ { s:"Four straight defeats. The reporter asks whether another one is inevitable.",
+   ok:"Nothing is inevitable in this game. We've addressed what went wrong, and the response has to come on the pitch rather than in here.",
+   bad:"Inevitable? You lot decided we were finished weeks ago, so why bother asking." },
+ { s:"You have been linked with a move to a bigger club.",
+   ok:"I'm aware of the speculation, but I'm under contract here and that's where my attention is.",
+   bad:"If a big club pays, I'm gone tomorrow. Anyone would be." },
+ { s:"A journalist suggests the squad has lost faith in the manager.",
+   ok:"That's a strong claim, and it doesn't match what I see every morning at the training ground.",
+   bad:"Write whatever you like, you always do anyway." },
+ { s:"Your mistake in the last minute gave away the winning goal.",
+   ok:"I've gone over it, I know exactly what I got wrong, and I'd rather own it than hide behind the result.",
+   bad:"Eleven players lost that match, not one. Go and ask the others." },
+ { s:"The club's finances are in the papers and the reporter pushes you on it.",
+   ok:"I'm not the right person for the figures, but I can tell you nobody here is using them as an excuse.",
+   bad:"That's above my pay grade and frankly none of your concern." },
+ { s:"A rival manager has questioned your professionalism.",
+   ok:"I'd rather answer that with performances than with a quote in tomorrow's paper.",
+   bad:"He should worry about his own team before he opens his mouth." },
+ { s:"You are coming back from a long injury.",
+   ok:"It's been a frustrating few months, but the medical staff were patient with me and I'm grateful for it.",
+   bad:"The club rushed me back last time, that's why I was out so long." },
+ { s:"A reporter asks whether the title is now out of reach.",
+   ok:"Mathematically it isn't, and until it is we owe it to the supporters to keep going.",
+   bad:"Obviously it's gone. Anyone who can count knows that." }
+]
+};
+
+/* ───────── le quattro porte ───────── */
+var LKINDS = [
+  { id:"syn", n:"Synonyms",   s:"The word that means almost the same" },
+  { id:"def", n:"Definitions", s:"Read the meaning, find the word" },
+  { id:"tra", n:"Translation", s:"From Italian into English" },
+  { id:"say", n:"The right thing to say", s:"Same idea, said well or said badly" }
+];
+/* e i tre esercizi della palestra, per il corpo */
+var GKINDS = [
+  { id:"run",  n:"Shuttle runs",  s:"Short sprints, turn, sprint again" },
+  { id:"lift", n:"Weights",       s:"Legs and shoulders, twice a week" },
+  { id:"ball", n:"Ball work",     s:"First touch against the wall, a hundred times" }
+];
+
+function lvSafe() {
+  if (typeof loadLevel === "function") loadLevel();
+  var l = String(ME.level || "A1").toUpperCase();
+  return LSYN[l] ? l : "A1";
+}
+/* mescolare senza sorprese: le opzioni cambiano posto ogni volta */
+function shuf(a) {
+  var o = a.slice(), i, j, t;
+  for (i = o.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    t = o[i]; o[i] = o[j]; o[j] = t;
+  }
+  return o;
+}
+function pickN(list, n) { return shuf(list).slice(0, n); }
+
+/* le definizioni si costruiscono dalla parola del giorno: la definizione
+   c'e' gia', e le tre sbagliate sono parole dello stesso livello */
+function defItems(level, n) {
+  var pool = (typeof WORDS !== "undefined" && WORDS[level]) ? WORDS[level] : [];
+  if (pool.length < 4) return [];
+  return pickN(pool, n).map(function (w) {
+    var others = pickN(pool.filter(function (x) { return x.w !== w.w; }), 3);
+    var opts = shuf([w.w].concat(others.map(function (x) { return x.w; })));
+    return { q:w.d, o:opts, c:opts.indexOf(w.w), tag:w.k };
+  });
+}
+/* la frase giusta diventa una domanda a due */
+function sayItems(level, n) {
+  return pickN(LSAY[level] || LSAY.A1, n).map(function (x) {
+    var opts = shuf([x.ok, x.bad]);
+    return { q:x.s, o:opts, c:opts.indexOf(x.ok), two:true };
+  });
+}
+function boostItems(kind, level) {
+  if (kind === "def") return defItems(level, BOOST_N);
+  if (kind === "say") return sayItems(level, BOOST_N);
+  var bank = kind === "tra" ? LTRA[level] : LSYN[level];
+  return pickN(bank || [], BOOST_N).map(function (x) {
+    var right = x.o[x.c], opts = shuf(x.o);
+    return { q:x.q, o:opts, c:opts.indexOf(right) };
+  });
+}
+
+/* ═══════════════ IL POTENZIAMENTO ═══════════════
+   Si entra dalla scheda del giocatore: corpo o lingua. Tre giocatori a
+   giornata in tutto, e la scelta e' il gioco — allenare la lingua di
+   uno vuol dire lasciare fermo il corpo di un altro. Il posto si
+   consuma quando si comincia, non quando si riesce: altrimenti si
+   riproverebbe all'infinito, e scegliere non costerebbe niente. */
+
+var BX = null;
+
+function boostLeft() { return (typeof growLeft === "function") ? growLeft() : 0; }
+function boostBook() {
+  loadGround();
+  var md = mdNow();
+  GROUND.gate["grow" + md] = (GROUND.gate["grow" + md] || 0) + 1;
+  saveGround();
+}
+function grownOf(no) {
+  loadGround();
+  if (GROUND.grown[no] !== undefined) return Math.min(GROWN_MAX, GROUND.grown[no]);
+  var p = (ME.squad || []).filter(function (x) { return x.no === no; })[0];
+  return Math.min(GROWN_MAX, (p && p.grown) || 0);
+}
+function bodyUp(no) {
+  var v = Math.min(GROWN_MAX, grownOf(no) + 1);
+  loadGround();
+  GROUND.grown[no] = v;
+  saveGround();
+  if (typeof applyGrowth === "function") applyGrowth();
+  return GROUND.grown[no];
+}
+function stepStr(n) { return "+" + (n * GROW_STEP).toFixed(2); }
+
+/* ───────── 1. quale esercizio ───────── */
+VIEWS.boost = function (d) {
+  var no = d.no, what = d.what === "lang" ? "lang" : "body";
+  var p = (ME.squad || []).filter(function (x) { return x.no === no; })[0];
+  if (!p) return back();
+  loadGround();
+  var left = boostLeft(), at = what === "lang" ? langOf(no) : grownOf(no);
+  var max = what === "lang" ? LANG_MAX : GROWN_MAX;
+  var list = what === "lang" ? LKINDS : GKINDS;
+
+  paintClub(ME.club);
+  barFlow(what === "lang" ? "Boost the English" : "Boost the body",
+          pName({ named:!!p.name, name:p.name, no:p.no }) + " · " +
+          left + (left === 1 ? " player left today" : " players left today"), 0);
+
+  html('<div class="pad">' +
+    '<div class="bxtop"><span><i>' + (what === "lang" ? "ENGLISH" : "STRENGTH") +
+      "</i><b>" + (what === "lang" ? at + " of " + LANG_MAX : stepStr(at)) + "</b>" +
+      "<em>" + (what === "lang" ? LANGSAY[at] : at >= GROWN_MAX ? "fully grown"
+        : at + (at === 1 ? " session done" : " sessions done")) + "</em></span>" +
+      '<span class="bxbars">' + (function () {
+        var o = "", i;
+        for (i = 0; i < max; i++) o += '<i class="' + (i < at ? "up" : "") + '"></i>';
+        return o;
+      })() + "</span></div>" +
+
+    (at >= max
+      ? '<p class="lede">There is nothing left to teach here. ' +
+        (what === "lang" ? "This one speaks for the club." : "The body is at its best.") +
+        "</p>"
+      : left <= 0
+        ? '<p class="lede">Three players have already worked today. ' +
+          "The next session opens on the next matchday.</p>"
+        : '<p class="lede">Six questions. <b>' + BOOST_MIN +
+          "% or better</b> and the bar goes up by one. " +
+          "The place is taken the moment you start, so pick the exercise you can win.</p>" +
+          '<div class="bxk">' + list.map(function (k) {
+            return '<button class="bxb" data-k="' + k.id + '" type="button">' +
+              "<b>" + esc(k.n) + "</b><span>" + esc(k.s) + "</span><i>&#8250;</i></button>";
+          }).join("") + "</div>") +
+
+    '<button class="btn ghost" id="bxback">Back to the player</button></div>');
+
+  Array.prototype.forEach.call($("main").querySelectorAll(".bxb"), function (b) {
+    b.onclick = function () {
+      var items = what === "lang" ? boostItems(b.dataset.k, lvSafe()) : null;
+      if (what === "body") items = gymItems();
+      if (!items || !items.length) return;
+      boostBook();
+      BX = { no:no, what:what, kind:b.dataset.k, i:0, items:items, right:0, done:[] };
+      go("bxRun");
+    };
+  });
+  $("bxback").onclick = function () { go("player", { no:no }); };
+};
+
+/* la palestra: sei domande sul corpo e su come si tiene. Si allena il
+   giocatore e intanto si impara il lessico dello sport. */
+var GYM = [
+ { q:"Before a hard session a player should —", o:["warm up slowly","sprint at once","eat a big meal","sit down"], c:0 },
+ { q:"After the match the muscles need —", o:["water and rest","another match","cold wind","nothing at all"], c:0 },
+ { q:"Shuttle runs train —", o:["speed and turning","heading","free kicks","throw-ins"], c:0 },
+ { q:"A player who trains every single day without rest will —", o:["get injured","get faster","get taller","get lucky"], c:0 },
+ { q:"The best drink during training is —", o:["water","hot tea","fizzy drinks","nothing"], c:0 },
+ { q:"Stretching is done —", o:["before and after","only on Sundays","only when hurt","never"], c:0 },
+ { q:"Ball work against a wall improves your —", o:["first touch","voice","height","eyesight"], c:0 },
+ { q:"Weights for a footballer should be —", o:["legs and shoulders","hands only","neck only","none"], c:0 },
+ { q:"Eight hours of sleep before a match is —", o:["part of the training","a waste of time","bad for the legs","only for keepers"], c:0 },
+ { q:"If a muscle hurts during a sprint you —", o:["stop and tell the physio","run harder","hide it","change boots"], c:0 }
+];
+function gymItems() {
+  return pickN(GYM, BOOST_N).map(function (x) {
+    var right = x.o[x.c], opts = shuf(x.o);
+    return { q:x.q, o:opts, c:opts.indexOf(right) };
+  });
+}
+
+/* ───────── 2. le sei domande ───────── */
+VIEWS.bxRun = function () {
+  if (!BX) return back();
+  if (BX.i >= BX.items.length) return swap("bxEnd");
+  var it = BX.items[BX.i], n = BX.i + 1;
+  var p = (ME.squad || []).filter(function (x) { return x.no === BX.no; })[0] || {};
+  paintClub(ME.club);
+  barFlow(BX.what === "lang" ? "English" : "Gym",
+          pName({ named:!!p.name, name:p.name, no:p.no }) + " · " + n + " of " +
+          BX.items.length, Math.round((BX.i / BX.items.length) * 100), false);
+
+  html('<div class="pad">' +
+    '<p class="bxq' + (it.two ? " sit" : "") + '">' + esc(it.q) + "</p>" +
+    '<div class="bxo' + (it.two ? " two" : "") + '" id="bxo">' +
+      it.o.map(function (o, i) {
+        return '<button class="bxa" data-i="' + i + '" type="button">' + esc(o) + "</button>";
+      }).join("") + "</div>" +
+    '<p class="bxsay" id="bxsay"></p></div>');
+
+  Array.prototype.forEach.call($("bxo").querySelectorAll(".bxa"), function (b) {
+    b.onclick = function () {
+      var i = parseInt(b.dataset.i, 10), ok = i === it.c;
+      Array.prototype.forEach.call($("bxo").querySelectorAll(".bxa"), function (x) {
+        x.disabled = true;
+        var k = parseInt(x.dataset.i, 10);
+        if (k === it.c) x.className = "bxa good";
+        else if (k === i) x.className = "bxa bad";
+      });
+      if (ok) BX.right++;
+      BX.done.push({ w:it.o[it.c], g:it.o[i], ok:ok });
+      $("bxsay").className = "bxsay " + (ok ? "good" : "bad");
+      $("bxsay").textContent = ok ? "Right."
+        : "The good one was: " + it.o[it.c];
+      setTimeout(function () {
+        BX.i++;
+        if (HERE && HERE.name === "bxRun") reset("bxRun");
+      }, ok ? 650 : 1800);
+    };
+  });
+};
+
+/* ───────── 3. il passo ───────── */
+VIEWS.bxEnd = function () {
+  if (!BX) return back();
+  loadGround();
+  var pct = Math.round(BX.right / BX.items.length * 100);
+  var ok = pct >= BOOST_MIN, at, max, up = false;
+  if (!BX.paid) {
+    BX.paid = true;
+    GROUND.funds += Math.round(BOOST_PAY * pct / 100);
+    saveGround();
+    if (ok) {
+      up = true;
+      if (BX.what === "lang") langUp(BX.no); else bodyUp(BX.no);
+    }
+    BX.up = up;
+  }
+  up = !!BX.up;
+  at = BX.what === "lang" ? langOf(BX.no) : grownOf(BX.no);
+  max = BX.what === "lang" ? LANG_MAX : GROWN_MAX;
+  var p = (ME.squad || []).filter(function (x) { return x.no === BX.no; })[0] || {};
+  var who = pName({ named:!!p.name, name:p.name, no:p.no });
+
+  paintClub(ME.club);
+  barFlow("Session done", who, 100, false);
+  html('<div class="pad"><p class="bignum">' + pct + "<em>%</em></p>" +
+    '<div class="verdict"><b>' + (up
+      ? (BX.what === "lang"
+          ? who + " is now at " + at + " of " + LANG_MAX + " — " + LANGSAY[at]
+          : who + " is now at " + stepStr(at))
+      : "No step this time") + "</b>" +
+    (up
+      ? (BX.what === "lang"
+          ? "One bar more. In the press room it shows."
+          : "Five more hundredths in the department this player lines up in.")
+      : "You needed " + BOOST_MIN + "%. The place is spent, but nothing is lost: " +
+        "the words you missed are in your list.") + "</div>" +
+
+    '<div class="bxbars big">' + (function () {
+      var o = "", i;
+      for (i = 0; i < max; i++) o += '<i class="' + (i < at ? "up" : "") + '"></i>';
+      return o;
+    })() + "</div>" +
+
+    '<div class="panel wrongbox">' + (function () {
+      var bad = BX.done.filter(function (x) { return !x.ok; });
+      if (!bad.length) return '<div class="gr"><span class="gn">Six out of six.</span></div>';
+      return bad.map(function (x) {
+        return '<div class="wr"><b>' + esc(x.w) + "</b><s>" + esc(x.g) + "</s></div>";
+      }).join("");
+    })() + "</div>" +
+
+    '<button class="btn" id="bxp">Back to the player</button>' +
+    '<button class="btn ghost" id="bxs">Back to my squad</button></div>');
+
+  $("bxp").onclick = function () { reset("player", { no:BX.no }); };
+  $("bxs").onclick = function () { reset("squad"); };
+};
 
 
 /* ───── 70-league.js ───── */
