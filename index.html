@@ -2486,6 +2486,14 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .prshut{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:5px;
   background:rgba(226,251,206,.16);color:var(--fog);text-decoration:none;
   font:800 8.5px/1.4 var(--brand);letter-spacing:.1em}
+/* l'altro sta ancora scrivendo: la sala non e' chiusa, e' in attesa */
+.prwait{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:5px;
+  background:rgba(240,196,106,.22);color:#F0C46A;text-decoration:none;
+  font:800 8.5px/1.4 var(--brand);letter-spacing:.1em}
+.prc.mini .prwait{margin-left:0}
+.prc.wait{opacity:1}
+.prc.wait .prm{animation:prpulse 2.4s ease-in-out infinite}
+@keyframes prpulse{0%,100%{opacity:.45}50%{opacity:.9}}
 
 /* ═════════ la rosa a pagine ═════════ */
 .sqtrack{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:0;
@@ -3494,7 +3502,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "84";
+var APPVER = "85";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8831,7 +8839,12 @@ function pressSave(md, o) {
 function pressPhase() {
   if (!ME.club || !ME.next) return "";
   var md = ME.next.md, done = pressGet(md) || {};
-  if (matchFacts(md).both) return done.post ? "" : "post";
+  if (matchFacts(md).both) {
+    /* finita la mia parte, ma il risultato arriva quando ha finito anche
+       l'altro: prima di allora non c'e' una partita di cui parlare */
+    if (typeof matchSettled === "function" && !matchSettled(md)) return "";
+    return done.post ? "" : "post";
+  }
   return done.pre ? "" : "pre";
 }
 function pressOpen() { return !!pressPhase(); }
@@ -12999,11 +13012,16 @@ VIEWS.mCall = function (d) {
         : "";
       return;
     }
-    box.innerHTML = '<h2 class="sec top">Who takes the extra moment?</h2>' +
-      '<p class="lede sm2">Your plan opens moment number ' + cap +
-      " in attack. One more name.</p>" +
-      shirtRow("pxt", SHEET.att[cap] != null ? SHEET.att[cap] : null);
-    wireRow("pxt", function (no) { SHEET.att[cap] = no; saveSheet(); swap("mCall", d); });
+    /* Il momento in piu' non si chiama: lo prende il capitano, che e' gia'
+       uno dei tre che possono rientrare. Un nome in meno da scegliere
+       prima di aver sentito una parola. */
+    var cp = SHEET.roles.cap;
+    if (cp == null) cp = SHEET.att[1];
+    if (cp != null && SHEET.att[cap] !== cp) { SHEET.att[cap] = cp; saveSheet(); }
+    var who = cp != null ? playerNo(cp) : null;
+    box.innerHTML = '<p class="lede sm2">Your plan opens moment number ' + cap +
+      " in attack: " + (who ? "<b>" + esc(pName(who)) + "</b>" : "your captain") +
+      " takes it, as captain.</p>";
   }
 
   function refresh() {
@@ -16028,6 +16046,28 @@ var CONF_FAME = [0, -2, 0, 1, 2, 3];        /* quanto muove ogni risposta */
 var CF = null;
 var CONF_SPOKEN = 3;          /* tre al giocatore, la quarta la scrive lui */
 
+/* ───────── la sala aspetta che la partita sia finita davvero ─────────
+   I due tempi miei non bastano: finche' l'altro alunno sta ancora
+   scrivendo, il risultato non c'e' e non si puo' parlare di una partita
+   che nessuno ha ancora visto. Quindi la sala resta chiusa e il
+   giornalista aspetta in corridoio.
+   Senza cassetto — l'allenamento, una competizione senza rete — non
+   c'e' nessuno da aspettare e la sala si apre come prima. */
+function matchSettled(md) {
+  if (typeof liveGet !== "function") return true;
+  try { if (typeof loadDrop === "function") loadDrop(); } catch (e) {}
+  if (!(typeof DROP === "object" && DROP && DROP.url && DROP.key)) return true;
+  var st = liveGet(md);
+  return !!(st && st.score);
+}
+/* il nome di chi stiamo aspettando, se lo sappiamo */
+function waitingFor(md) {
+  var c = (typeof liveCard === "function") ? liveCard(md) : null;
+  var id = c && c.opp;
+  if (!id) return "";
+  return (typeof oppName === "function" && oppName(id)) || id;
+}
+
 /* la riga in home prende il posto di quella vecchia */
 pressCard = function () {
   if (!ME.club || !ME.next) return "";
@@ -16037,16 +16077,24 @@ pressCard = function () {
   /* una riga sola, come le altre: la sala c'e' sempre, aperta o chiusa */
   if (!ph) {
     var played = matchFacts(md).both;
+    var wait = played && !done.post && !matchSettled(md);
+    var who = wait ? waitingFor(md) : "";
     var said = (done.post || done.pre || []);
-    return '<section class="pad"><div class="prc mini shut">' +
+    return '<section class="pad"><div class="prc mini shut' +
+      (wait ? " wait" : "") + '">' +
       '<span class="prm sm">' + MIC_SVG + "</span>" +
-      '<span class="prt"><b>Press room<u class="prshut">CLOSED</u></b>' +
+      '<span class="prt"><b>Press room' +
+      (wait ? '<u class="prwait">WAITING</u>' : '<u class="prshut">CLOSED</u>') +
+      "</b>" +
       "<span>" + (said.length
         ? said.length + (said.length === 1 ? " answer" : " answers") + ", " +
           money((done.paid || 0) / 1000) + " for the club. "
         : "") +
-      (played ? "Opens on matchday " + (md + 1) + "."
-              : "Opens when the match is over.") +
+      (wait ? "Your half is written. " +
+              (who ? esc(who) + " is still playing" : "The other side is still playing") +
+              " &mdash; the room opens with the result."
+            : played ? "Opens on matchday " + (md + 1) + "."
+                     : "Opens when the match is over.") +
       "</span></span></div></section>";
   }
 
@@ -16138,7 +16186,7 @@ VIEWS.confOne = function () {
   var q = CF.qs[CF.i], three = confThree(CF.md, CF.i, CF.used);
   paintClub(ME.club); paintBg("bg-press", true);
   barFlow(CF.ph === "pre" ? "Before the match" : "Press room", CF.paper.name,
-          Math.round(CF.i / 4 * 100), false);
+          Math.round(CF.i / 4 * 100));
 
   html('<div class="pad prpad">' + confHead("Question " + (CF.i + 1) + " of 4") +
     '<p class="prq">&ldquo;' + esc(q.q) + "&rdquo;</p>" +
@@ -16187,7 +16235,7 @@ VIEWS.confSay = function () {
 
   paintClub(ME.club); paintBg("bg-press", true);
   barFlow(CF.ph === "pre" ? "Before the match" : "Press room", CF.paper.name,
-          Math.round((CF.i + 0.5) / 4 * 100), false);
+          Math.round((CF.i + 0.5) / 4 * 100));
 
   html('<div class="pad prpad">' + confHead("Question " + (CF.i + 1) + " of 4") +
     '<p class="prq small">&ldquo;' + esc(q.q) + "&rdquo;</p>" +
@@ -16229,7 +16277,7 @@ VIEWS.confWrite = function () {
     ? "And you, the one who picks the team — what are you asking of them today?"
     : "Last one, and it is for you, not for your players: what did you learn today?";
   paintClub(ME.club); paintBg("bg-press", true);
-  barFlow("Press room", CF.paper.name, 75, false);
+  barFlow("Press room", CF.paper.name, 75);
 
   html('<div class="pad prpad">' + confHead("Question 4 of 4 · yours") +
     '<p class="prq">&ldquo;' + esc(q) + "&rdquo;</p>" +
@@ -16281,7 +16329,7 @@ VIEWS.confEnd = function () {
   var v = (typeof fame === "function") ? fame() : 0;
   var band = (typeof fameBand === "function") ? fameBand(v) : { n:"" };
   paintClub(ME.club); paintBg("bg-press", true);
-  barFlow("Press room", CF.paper.name, 100, false);
+  barFlow("Press room", CF.paper.name, 100);
 
   html('<div class="pad prpad">' + confHead("That is all") +
     '<div class="cfpay big"><span><i>THE CLUB TAKES</i><b>' + money(CF.pay / 1000) +
