@@ -2498,6 +2498,73 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .sqslide{text-align:center;margin:7px 0 0}
 .pgnew{position:absolute;top:6px;left:7px;padding:2px 5px;border-radius:6px;
   background:#C9553F;color:#FFFDEE;font:800 8px/1.4 var(--brand);letter-spacing:.08em}
+
+/* ═════════ testata piu' stretta ═════════ */
+.hero{height:152px}
+.hin{padding:11px 16px 13px}
+.hlev{height:24px;padding:0 10px;border-radius:12px;font-size:11px;letter-spacing:.08em}
+.hbtns{display:flex;align-items:center;gap:7px}
+.hico{position:relative;display:inline-flex;align-items:center;gap:5px;height:30px;
+  padding:0 11px;border-radius:15px;background:rgba(4,23,15,.62);
+  border:1px solid rgba(226,251,206,.3);color:var(--fog);
+  font:800 13px inherit;cursor:pointer}
+.hico.star{border-color:rgba(227,239,38,.5);color:var(--gold)}
+.hdot{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;padding:0 4px;
+  border-radius:8px;display:grid;place-items:center;background:var(--gold);color:#06231D;
+  font:800 10px/1 var(--brand);font-style:normal}
+.hcrest{width:46px;height:46px}
+.hme .hcr{width:44px;height:44px}
+.hnm b{font-size:20px}
+.hnm span{font-size:11px}
+
+/* ═════════ il risultato, stretto e apribile ═════════ */
+.lvc.tight{padding:0;overflow:hidden}
+.lvrow{display:flex;align-items:center;gap:12px;width:100%;padding:11px 13px;border:0;
+  background:none;color:inherit;text-align:left;cursor:pointer;font-family:inherit}
+.lvc.tight .lvs{margin:0;flex:none;gap:5px}
+.lvc.tight .lvs b{font:800 26px/1 var(--brand);color:#FFFDEE}
+.lvc.tight .lvs i{font-style:normal;font-size:16px;color:#8FC4AC}
+.lvmid{flex:1;min-width:0}
+.lvmid i{display:block;font:800 8.5px/1 system-ui,sans-serif;letter-spacing:.14em;
+  font-style:normal;color:var(--gold)}
+.lvmid b{display:block;margin-top:5px;font:800 13px/1.2 var(--brand);color:#FFFDEE;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lvplus{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(226,251,206,.12);color:var(--fog);font:800 15px/1 var(--brand);
+  font-style:normal}
+.lvmore{padding:0 13px 13px}
+.lvmore p{margin:0 0 10px;font-size:12px;font-weight:600;color:var(--fog);line-height:1.5}
+
+/* ═════════ la sala stampa in una riga ═════════ */
+.prc.mini{display:flex;align-items:center;gap:11px;padding:11px 13px;min-height:0}
+.prc.mini .prm.sm{width:34px;height:34px;flex:none;border-radius:10px}
+.prc.mini .prm.sm svg{width:17px;height:17px}
+.prc.mini .prt{flex:1;min-width:0}
+.prc.mini .prt b{display:flex;align-items:center;gap:7px;font:800 14px/1.2 var(--brand);
+  color:#FFFDEE}
+.prc.mini .prt span{display:block;margin-top:4px;font-size:11px;font-weight:600;
+  color:var(--fog);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prc.mini .prst{flex:none;white-space:nowrap}
+.prc.mini .prst i{font-size:9px}
+.prc.mini .prlive{display:inline-block;padding:2px 6px;border-radius:5px;
+  background:var(--gold);color:#06231D;text-decoration:none;
+  font:800 8.5px/1.4 var(--brand);letter-spacing:.1em}
+.prc.mini .prshut{margin-left:0}
+
+/* ═════════ le porte nella testata ═════════ */
+.hero{height:auto;min-height:152px}
+.hrail{display:flex;gap:6px;margin-top:12px}
+.hdr{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:7px 2px 6px;border-radius:13px;border:1px solid rgba(226,251,206,.22);
+  background:rgba(4,23,15,.55);color:var(--fog);cursor:pointer;font-family:inherit}
+.hdi{position:relative;width:19px;height:19px;display:block;color:var(--gold)}
+.hdi svg{width:19px;height:19px}
+.hdi svg [fill="none"]{fill:none}
+.hdn{position:absolute;top:-6px;right:-8px;min-width:14px;height:14px;padding:0 3px;
+  border-radius:7px;display:grid;place-items:center;background:var(--gold);color:#06231D;
+  font:800 9px/1 var(--brand);font-style:normal}
+.hdr em{font:800 8.5px/1 var(--brand);letter-spacing:.04em;font-style:normal;
+  color:#CFE8D8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 </style>
 </head>
 <body>
@@ -3312,7 +3379,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "73";
+var APPVER = "75";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -6644,27 +6711,22 @@ VIEWS.home = function () {
   /* la pagina di UNA competizione: in cima l'ultimo risultato, poi la
      prossima partita, il riscaldamento e i numeri di qui dentro. Le
      competizioni, le porte e il codice stanno nella pagina dell'alunno. */
-  html('<div id="hwho"></div><div id="hlive"></div><div id="hpress"></div>' +
-       '<div id="hmail"></div><div id="hfame"></div><div id="hspn"></div>' +
+  html('<div id="hwho"></div><div id="hlive"></div>' +
        '<div id="hnext"></div>' +
-       '<div id="htab"></div>' +
        '<section class="pad" id="hsq"><div class="sqc" id="sqc"></div></section>' +
-       '<div id="hwarm"></div>' +
+       '<div id="htab"></div>' +
        '<div id="stadbar"></div>' +
-       '<div id="hnum"></div>' +
        '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p>');
 
-  drawWho(); drawLive(); drawPress(); drawHomeMail(); drawHomeFame(); drawHomeSpon();
-  drawNextUp(); drawHomeTable();
-  drawHomeSquad(); drawWarm(); drawHomeGround(); drawNumbers();
-  popIn(["hwho", "hlive", "hpress", "hmail", "hfame", "hspn", "hnext", "htab", "hsq",
-         "hwarm", "stadbar", "hnum"]);
+  drawWho(); drawLive(); drawNextUp(); drawHomeSquad(); drawHomeTable();
+  drawHomeGround();
+  popIn(["hwho", "hlive", "hnext", "hsq", "htab", "stadbar"]);
 
   /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
   if (ME.code && !ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
     pullOnline(function (err, mine) {
       if (err || !mine || !HERE || HERE.name !== "home") return;
-      drawNextUp(); drawMyComps(); drawNumbers();
+      drawNextUp(); drawHomeTable();
     });
   }
 };
@@ -6738,9 +6800,11 @@ function drawWho() {
     '<span class="hscrim" aria-hidden="true"></span>' +
     '<div class="hin">' +
       '<div class="htop">' +
-        '<span class="hlev">LEVEL ' + esc(ME.level) + "</span>" +
-        '<button class="hstar" id="hstar" type="button" aria-label="My stars">&#9733; ' +
-        starsLeft() + "</button>" +
+        '<span class="hlev">' + esc(ME.level) + "</span>" +
+        '<span class="hbtns">' +
+          '<button class="hico star" id="hstar" type="button" aria-label="My stars">&#9733; ' +
+          starsLeft() + "</button>" +
+        "</span>" +
       "</div>" +
       '<button class="hme" id="hme" type="button">' +
         (crest
@@ -6751,9 +6815,11 @@ function drawWho() {
           ? esc(act.clubName || "") + " &middot; " + esc(ME.code)
           : COMPS.length ? "Tap a competition to go in" : "Waiting for your teacher") +
         "</span></span></button>" +
+      doorRail() +
     "</div></div>";
   $("hme").onclick = function () { go("comps"); };
   $("hstar").onclick = function () { go("stars"); };
+  wireRail();
 }
 
 /* ───────── la prossima partita: la ragione per cui apre l'app ─────────
@@ -7010,6 +7076,81 @@ function drawHomeFame() {
   box.innerHTML = (typeof fameCard === "function") ? fameCard() : "";
 }
 
+/* ───────── le cinque porte della testata ─────────
+   Posta, sala stampa, sponsor, come ti vede la citta' e i numeri: sono
+   stanze, non cose da leggere di sfuggita, e stare in fila sotto il
+   nome le rende raggiungibili da ovunque senza allungare la pagina. */
+var RAIL_SVG = {
+  mail:'<svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5" ' +
+       'fill="none" stroke="currentColor" stroke-width="2"/>' +
+       '<path d="M3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" ' +
+       'stroke-linecap="round"/></svg>',
+  mic: '<svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="11" rx="3"/>' +
+       '<path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" fill="none" ' +
+       'stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  spon:'<svg viewBox="0 0 24 24"><path d="M12 2.6l2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 ' +
+       '16.9l-5.6 3 1.2-6.3L3 9.2l6.3-.8z" fill="none" stroke="currentColor" ' +
+       'stroke-width="2" stroke-linejoin="round"/></svg>',
+  city:'<svg viewBox="0 0 24 24"><path d="M21 12.2c0 4-4 7.2-9 7.2-1 0-2-.1-2.9-.4L4 ' +
+       '21l1.3-3.7C3.8 16 3 14.2 3 12.2 3 8.2 7 5 12 5s9 3.2 9 7.2z" fill="none" ' +
+       'stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+  nums:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" ' +
+       'stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+};
+function doorRail() {
+  if (!ME.code || !ME.club) return "";
+  var mail = (typeof mbList === "function") ? mbList().length : 0;
+  var unread = (typeof mbUnread === "function") ? mbUnread() : 0;
+  var open = (typeof pressPhase === "function") ? !!pressPhase() : false;
+  var free = (typeof spFree === "function" && typeof spCallsLeft === "function")
+    ? (spFree().length && spCallsLeft()) : false;
+  var doors = [
+    { id:"mail", ic:"mail", n:"Post",    dot:unread ? String(unread) : "" },
+    { id:"prss", ic:"mic",  n:"Press",   dot:open ? "\u25cf" : "" },
+    { id:"spns", ic:"spon", n:"Sponsors", dot:free ? "\u25cf" : "" },
+    { id:"city", ic:"city", n:"The city", dot:"" },
+    { id:"nmbs", ic:"nums", n:"Numbers",  dot:"" }
+  ];
+  return '<div class="hrail">' + doors.map(function (d) {
+    if (d.id === "mail" && !mail) return "";
+    return '<button class="hdr" id="hd-' + d.id + '" type="button">' +
+      '<span class="hdi">' + RAIL_SVG[d.ic] +
+      (d.dot ? '<i class="hdn">' + d.dot + "</i>" : "") + "</span>" +
+      "<em>" + d.n + "</em></button>";
+  }).join("") + "</div>";
+}
+function wireRail() {
+  function on(id, fn) { if ($(id)) $(id).onclick = fn; }
+  on("hd-mail", function () { go("inbox"); });
+  on("hd-prss", function () { go(pressPhase() ? "press" : "pressdoor"); });
+  on("hd-spns", function () { go("spon"); });
+  on("hd-city", function () { go("fame"); });
+  on("hd-nmbs", function () { go("nums"); });
+}
+
+/* ───────── le stanze dietro le porte ───────── */
+VIEWS.pressdoor = function () {
+  paintClub(ME.club); paintBg("bg-press", true);
+  barFlow("Press room", ME.club ? ME.club.name : "", 0);
+  html('<div class="pad" id="hpress"></div>');
+  drawPress();
+};
+VIEWS.fame = function () {
+  paintClub(ME.club);
+  barFlow("How the city sees you", ME.club ? ME.club.name : "", 0);
+  html('<div id="hfame"></div><div id="hspn"></div>' +
+    '<div class="pad"><p class="hint">Win, and the city talks. Answer well in the ' +
+    "press room, and it listens. The better it sees you, the bigger the paper that " +
+    "turns up and the bigger the company that answers the telephone.</p></div>");
+  drawHomeFame(); drawHomeSpon();
+};
+VIEWS.nums = function () {
+  paintClub(ME.club);
+  barFlow("Your numbers", ME.club ? ME.club.name : "", 0);
+  html('<div id="hnum"></div>');
+  drawNumbers();
+};
+
 /* ───────── chi mette i soldi ───────── */
 function drawHomeSpon() {
   var box = $("hspn");
@@ -7021,13 +7162,6 @@ function drawHomeSpon() {
 /* ───────── il centro messaggi ─────────
    Sotto la sala stampa: prima il giornale chiede, poi arriva la posta.
    Una riga sola, con il numero di lettere ancora chiuse. */
-function drawHomeMail() {
-  var box = $("hmail");
-  if (!box) return;
-  box.innerHTML = (typeof mailCard === "function") ? mailCard() : "";
-  if (typeof wireMail === "function") wireMail();
-}
-
 /* ───────── la rosa, dentro la competizione ─────────
    Sta sotto la classifica: prima si guarda dove si e' arrivati, poi si
    guarda con chi. Il riquadro e' lo stesso della pagina del club — si
@@ -10339,6 +10473,18 @@ function liveSetWhy(md, why) {
 }
 function liveReady() { return !!liveState(ME.next ? ME.next.md : 0); }
 
+var LVOPEN = false;
+/* una riga sola che riassume la partita: i due reparti a confronto */
+function lvLine(s) {
+  function tot(a) {
+    var n = 0;
+    (a || []).forEach(function (x) { if (x != null) n += x; });
+    return Math.round(n / 100 * 100) / 100;
+  }
+  var att = tot((s.mine.duels || []).map(function (d) { return d.shot; }));
+  var def = tot((s.their.duels || []).map(function (d) { return d.save; }));
+  return "Attack " + att + " \u00b7 defence " + def + ".";
+}
 function liveCardHtml() {
   var md = ME.next ? ME.next.md : 0, state = liveState(md);
   if (!state) return "";
@@ -10347,13 +10493,22 @@ function liveCardHtml() {
 
   if (state === "done") {
     var win = s.me > s.them, draw = s.me === s.them;
-    return '<section class="pad"><button class="lvc ' +
-      (win ? "win" : draw ? "draw" : "lost") + '" id="lvGo" type="button">' +
-      '<span class="lvk">FULL TIME &middot; MATCHDAY ' + md + "</span>" +
-      '<span class="lvs"><b>' + s.me + "</b><i>&ndash;</i><b>" + s.them + "</b></span>" +
-      '<span class="lvw">' + esc(ME.club.name) + " v " + esc(them) + "</span>" +
-      '<span class="lvn">' + (win ? "You won. " : draw ? "A point each. " : "They took it. ") +
-      "Tap for the whole match &rsaquo;</span></button></section>";
+    /* in cima basta il punteggio: chi vuole il resto apre col piu' */
+    return '<section class="pad"><div class="lvc tight ' +
+      (win ? "win" : draw ? "draw" : "lost") + (LVOPEN ? " open" : "") + '">' +
+      '<button class="lvrow" id="lvMore" type="button" aria-expanded="' +
+      (LVOPEN ? "true" : "false") + '">' +
+        '<span class="lvs"><b>' + s.me + "</b><i>&ndash;</i><b>" + s.them + "</b></span>" +
+        '<span class="lvmid"><i>FULL TIME &middot; MATCHDAY ' + md + "</i>" +
+        "<b>" + esc(ME.club.name) + " v " + esc(them) + "</b></span>" +
+        '<i class="lvplus">' + (LVOPEN ? "&minus;" : "+") + "</i></button>" +
+      (LVOPEN
+        ? '<div class="lvmore"><p>' +
+          (win ? "You won. " : draw ? "A point each. " : "They took it. ") +
+          esc(lvLine(s)) + "</p>" +
+          '<button class="btn" id="lvGo">See the whole match &rsaquo;</button></div>'
+        : "") +
+      "</div></section>";
   }
 
   var head = '<span class="lvk">MATCHDAY ' + md + " &middot; BOTH HALVES IN</span>";
@@ -10446,8 +10601,17 @@ function wireLive(boxId, viewName, quiet) {
       });
     });
   }
+  var more = $("lvMore");
+  if (more) {
+    more.onclick = function () {
+      LVOPEN = !LVOPEN;
+      var box = $(boxId || "hlive");
+      if (box) { box.innerHTML = liveCardHtml(); wireLive(boxId, viewName, true); }
+    };
+  }
   var b = $("lvGo");
   if (b) { b.onclick = function () { go("live"); }; return; }
+  if (more) return;
   var t = $("lvTry");
   if (t) t.onclick = function () {
     t.textContent = "Trying…";
@@ -15618,36 +15782,30 @@ pressCard = function () {
   var md = ME.next.md, done = pressGet(md) || {}, ph = pressPhase();
   var paper = paperFor(md, ph || (matchFacts(md).both ? "post" : "pre"));
 
-  /* la sala c'e' sempre, aperta o chiusa: un riquadro che sparisce non
-     insegna niente, e l'alunno deve sapere quando si riapre */
+  /* una riga sola, come le altre: la sala c'e' sempre, aperta o chiusa */
   if (!ph) {
     var played = matchFacts(md).both;
     var said = (done.post || done.pre || []);
-    var when = played
-      ? "It opens again on matchday " + (md + 1) + "."
-      : "It opens again the moment the match is over.";
-    return '<section class="pad"><div class="prc shut">' +
-      '<span class="prm">' + MIC_SVG + "</span>" +
-      '<span class="prt"><i>' + esc(String(done.paper || paper.name).toUpperCase()) +
-      ' <u class="prshut">CLOSED</u></i>' +
-      "<b>" + (said.length ? "You have faced the press" : "Nothing to say today") +
-      "</b><em>" + (said.length
+    return '<section class="pad"><div class="prc mini shut">' +
+      '<span class="prm sm">' + MIC_SVG + "</span>" +
+      '<span class="prt"><b>Press room<u class="prshut">CLOSED</u></b>' +
+      "<span>" + (said.length
         ? said.length + (said.length === 1 ? " answer" : " answers") + ", " +
-          money((done.paid || 0) / 1000) + " for the club. " + when
-        : when) +
-      "</em></span></div></section>";
+          money((done.paid || 0) / 1000) + " for the club. "
+        : "") +
+      (played ? "Opens on matchday " + (md + 1) + "."
+              : "Opens when the match is over.") +
+      "</span></span></div></section>";
   }
 
   var pre = ph === "pre";
-  return '<section class="pad"><button class="prc" id="prGo" type="button">' +
-    '<span class="prm live">' + MIC_SVG + "</span>" +
-    '<span class="prt"><i>' + esc(paper.name.toUpperCase()) +
-    ' <u class="prlive">OPEN \u00b7 ' + (pre ? "BEFORE THE MATCH" : "AFTER THE MATCH") +
-    "</u></i>" +
-    "<b>" + (pre ? "A paper is waiting for you" : "The press room is open") +
-    "</b><em>" + starRow(paper.t) + " Four questions. Three go to your players, " +
-    "the last one is yours. Up to " + money(paper.pay * 4 / 1000) +
-    " for the club.</em></span><i class=\"prgo\">&#8250;</i></button></section>";
+  return '<section class="pad"><button class="prc mini" id="prGo" type="button">' +
+    '<span class="prm sm live">' + MIC_SVG + "</span>" +
+    '<span class="prt"><b>Press room<u class="prlive">OPEN</u>' + starRow(paper.t) +
+    "</b><span>" + esc(paper.name) + " \u00b7 up to " +
+    money(paper.pay * 4 / 1000) + " \u00b7 " +
+    (pre ? "before the match" : "after the match") + "</span></span>" +
+    '<i class="prgo">&#8250;</i></button></section>';
 };
 wirePress = function () {
   var b = $("prGo");
