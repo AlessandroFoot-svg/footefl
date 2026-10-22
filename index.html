@@ -2906,6 +2906,18 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   border-top:1px solid var(--edge);background:none;color:var(--fog);
   font:700 11.5px var(--brand);cursor:pointer;text-align:left}
 .dmout:active{opacity:.7}
+.tgrow.one{grid-template-columns:1fr}
+.tgrow.one .tgd{height:104px}
+
+/* il cartello della prova */
+.dmtip{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:22px;
+  background:rgba(4,23,15,.82);backdrop-filter:blur(2px)}
+.dmtipc{max-width:340px;padding:20px 20px 18px;border-radius:17px;
+  border:1px solid var(--gold);background:var(--deep);color:var(--cream)}
+.dmtipc b{display:block;font:800 18px/1.25 var(--brand);color:var(--gold)}
+.dmtipc p{margin:9px 0 0;font-size:13px;font-weight:600;line-height:1.55;color:var(--fog)}
+.dmtipc p b{display:inline;font-size:inherit;color:var(--cream)}
+.dmtipc .btn{margin-top:16px}
 </style>
 </head>
 <body>
@@ -3794,7 +3806,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "96";
+var APPVER = "98";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -14212,23 +14224,35 @@ function drawStadium() {
       '<span class="tgl"><i>' + lab + "</i><b>" + sub + "</b></span></button>";
   }
 
+  /* nella prova non si costruisce niente: non c'e' una stagione in cui
+     uno stadio piu' grande renda, e la cassa non va da nessuna parte.
+     Resta la sola cosa che si puo' fare in un pomeriggio — allenare i
+     giocatori, nel corpo e nella lingua. */
+  var demo = (typeof demoOn === "function") && demoOn();
+
   box.innerHTML = '<section class="pad"><div class="tgc">' +
     '<img class="tgbg" src="' + imgOf("pitch") + '" alt="">' +
     '<span class="tgveil" aria-hidden="true"></span>' +
     '<div class="tgin">' +
-      '<span class="tgk">THE TRAINING GROUND &middot; MATCHDAY ' + mdNow() + "</span>" +
-      '<b class="tgt">Build the club</b>' +
-      '<div class="tgnum"><span><b>' + fmtCap(capacity()) + "</b><em>capacity</em></span>" +
-        "<span><b>" + money(GROUND.funds) + "</b><em>in the till</em></span>" +
+      '<span class="tgk">THE TRAINING GROUND' +
+      (demo ? "" : " &middot; MATCHDAY " + mdNow()) + "</span>" +
+      '<b class="tgt">' + (demo ? "Train your players" : "Build the club") + "</b>" +
+      '<div class="tgnum">' +
+        (demo ? "" :
+          "<span><b>" + fmtCap(capacity()) + "</b><em>capacity</em></span>" +
+          "<span><b>" + money(GROUND.funds) + "</b><em>in the till</em></span>") +
         "<span><b>" + left + "</b><em>" +
-        (left === 1 ? "session left" : "sessions left") + "</em></span></div>" +
-      '<div class="tgrow">' +
+        (left === 1 ? "session left" : "sessions left") + "</em></span>" +
+        (demo ? '<span><b>+0.10</b><em>a step, up to 0.15</em></span>' : "") +
+      "</div>" +
+      '<div class="tgrow' + (demo ? " one" : "") + '">' +
         door("squad", imgOf("pitch"), "SESSIONS",
              left ? left + (left === 1 ? " to play" : " to play") : "closed today") +
-        door("stand", imgOf("stadium"), "THE STADIUM",
-             nStand ? nStand + " to build" : "all built") +
-        door("club", crestOf(ME.club ? ME.club.id : "") || imgOf("ic-settings"),
-             "THE CLUB", nClub ? nClub + " to open" : "all done", true) +
+        (demo ? "" :
+          door("stand", imgOf("stadium"), "THE STADIUM",
+               nStand ? nStand + " to build" : "all built") +
+          door("club", crestOf(ME.club ? ME.club.id : "") || imgOf("ic-settings"),
+               "THE CLUB", nClub ? nClub + " to open" : "all done", true)) +
       "</div>" +
     "</div></div></section>";
 
@@ -14246,30 +14270,51 @@ VIEWS.ground = function (d) {
   loadGround(); loadLevel();
   paintClub(ME.club);
   if (d && d.tab) GTAB = d.tab;
+  /* nella prova esiste una stanza sola: le sessioni */
+  var demo = (typeof demoOn === "function") && demoOn();
+  if (demo) GTAB = "squad";
+  var tabs = demo ? GTABS.filter(function (t) { return t.id === "squad"; }) : GTABS;
   var left = sessLeft();
-  barFlow(GTABS.filter(function (t) { return t.id === GTAB; })[0].n,
-          ME.club.name + " · matchday " + mdNow(), 0);
+  barFlow(demo ? "Grow your squad"
+               : GTABS.filter(function (t) { return t.id === GTAB; })[0].n,
+          ME.club.name + (demo ? " · before the match"
+                               : " · matchday " + mdNow()), 0);
 
   var sq = GTAB === "squad";
   html('<div class="pad">' +
-    '<div class="gtabs">' + GTABS.map(function (t) {
-      return '<button class="gtab' + (t.id === GTAB ? " on" : "") + '" data-t="' +
-        t.id + '" type="button">' + t.n + "</button>";
-    }).join("") + "</div>" +
+    (demo ? "" :
+      '<div class="gtabs">' + tabs.map(function (t) {
+        return '<button class="gtab' + (t.id === GTAB ? " on" : "") + '" data-t="' +
+          t.id + '" type="button">' + t.n + "</button>";
+      }).join("") + "</div>" +
 
-    '<div class="till"><div><span>IN THE TILL</span><b>' + money(GROUND.funds) +
-    "</b></div><div><span>CAPACITY</span><b>" + fmtCap(capacity()) +
-    "</b></div><div><span>EVERY GATE</span><b>" + money(gatePerMatch()) +
-    "</b></div></div>" +
+      '<div class="till"><div><span>IN THE TILL</span><b>' + money(GROUND.funds) +
+      "</b></div><div><span>CAPACITY</span><b>" + fmtCap(capacity()) +
+      "</b></div><div><span>EVERY GATE</span><b>" + money(gatePerMatch()) +
+      "</b></div></div>") +
 
-    (sq
+    (sq && demo
+      ? '<h2 class="sec top">Grow your squad</h2>' +
+        '<p class="lede sm2">Tap a shirt, open the player, and train him — the ' +
+        "body in the gym, the English with the coach. <b>Six actions</b> in all, on " +
+        "no more than <b>four players</b>, and each step is worth <b>+0.05</b> " +
+        "up to <b>0.15</b> a player.</p>" +
+        (typeof actBar === "function" ? actBar() : "") +
+        '<div class="sqc" id="sqc"></div>'
+      : sq
       ? '<h2 class="sec top">Today at the ground</h2>' +
         '<p class="lede sm2">' + (left
           ? "<b>" + left + (left === 1 ? " session" : " sessions") + "</b> left before " +
-            "matchday " + mdNow() + ". Each one pays into the till, and a good one earns " +
-            "a player a step of <b>+0.10</b>."
-          : "Three sessions done. The ground closes until the next matchday — " +
-            "that is the whole point of a calendar.") + "</p>" +
+            (demo ? "the match" : "matchday " + mdNow()) + ". " +
+            (demo ? "A good one earns a player a step of <b>+0.10</b>, in the body or " +
+                    "in the language, up to <b>0.15</b> each."
+                  : "Each one pays into the till, and a good one earns " +
+                    "a player a step of <b>+0.10</b>.")
+          : demo
+            ? "Three sessions done. That is everything the ground can give you " +
+              "before this match."
+            : "Three sessions done. The ground closes until the next matchday — " +
+              "that is the whole point of a calendar.") + "</p>" +
         '<div id="sessbox"></div>'
       : (GTAB === "stand" ? '<div class="stadbig">' + stadiumSvg(false) + "</div>" : "") +
         '<h2 class="sec top">' + (GTAB === "stand" ? "The stand"
@@ -14285,9 +14330,18 @@ VIEWS.ground = function (d) {
               "the shop, though, pays at every match.") + "</p>" +
         '<div id="yard"></div>') +
 
-    '<button class="btn ghost" id="gbk">Back to the competition</button></div>');
+    '<button class="btn ghost" id="gbk">Back to ' + (demo ? "my squad" : "the competition") + '</button></div>');
 
-  if (sq) drawSessions();
+  if (sq && demo) {
+    SQOPEN = true;
+    drawSquadCard();
+    demoTell("grow", "Pick a player, then boost him.",
+      "Tap a shirt to open a player. Inside you can work on his body or on his " +
+      "English, and every exercise you win moves him up a step. You have " +
+      "<b>six actions</b> for the whole squad, so spend them where they will " +
+      "count on Saturday.");
+  }
+  else if (sq) drawSessions();
   else drawYard(GTAB === "stand" ? ["stand"] : GTAB === "staff" ? ["staff"] : ["club"]);
   Array.prototype.forEach.call($("main").querySelectorAll(".gtab"), function (b) {
     b.onclick = function () { GTAB = b.dataset.t; swap("ground"); };
@@ -15325,12 +15379,15 @@ function demoSteps() {
   } catch (e) {}
   var press = null;
   try { press = pressGet(md); } catch (e) {}
+  /* nella prova il campo non e' piu' la sessione di squadra: e' il
+     giocatore preso uno per uno. Si spunta alla prima azione spesa. */
   var ground = false;
   try {
     loadGround();
-    ground = Object.keys(GROUND.sess || {}).some(function (k) {
-      return (GROUND.sess[k] || []).length;
-    });
+    ground = (typeof actsUsed === "function" && actsUsed() > 0) ||
+      Object.keys(GROUND.sess || {}).some(function (k) {
+        return (GROUND.sess[k] || []).length;
+      });
   } catch (e) {}
   var spon = false;
   try { spon = Object.keys(spDeals() || {}).length > 0; } catch (e) {}
@@ -15346,8 +15403,8 @@ function demoSteps() {
       go:"market", ok:market },
     { id:"spon",   t:"A sponsor on the shirt", s:"one deal is enough",
       go:"spon",   ok:spon },
-    { id:"ground", t:"The training ground",
-      s:"one session: your players grow in body and in English",
+    { id:"ground", t:"Grow your squad",
+      s:"six actions to share out among your twelve",
       go:"ground", ok:ground },
     { id:"press",  t:"The press room", s:"before the match, they want a word",
       go:"pressdoor", ok:!!(press && Object.keys(press).length) },
@@ -15438,6 +15495,28 @@ function drawDemo() {
   if (!box) return;
   box.innerHTML = demoCard();
   wireDemo();
+}
+
+/* ───────── un cartello, una volta sola ─────────
+   Nella prova non c'e' un professore che spieghi la stanza: lo fa un
+   foglio che si apre sopra, si legge e si chiude. Una volta per prova:
+   la seconda volta che entri sai gia'. */
+function demoTold(k) { return !!(DEMO && DEMO.tips && DEMO.tips[k]); }
+function demoTell(k, title, body) {
+  if (!demoOn() || demoTold(k)) return;
+  DEMO.tips = DEMO.tips || {};
+  DEMO.tips[k] = 1;
+  demoSave();
+  var v = document.createElement("div");
+  v.className = "dmtip";
+  v.setAttribute("role", "dialog");
+  v.innerHTML = '<div class="dmtipc"><b>' + title + "</b><p>" + body + "</p>" +
+    '<button class="btn" type="button">Got it</button></div>';
+  document.body.appendChild(v);
+  function kill() { if (v.parentNode) v.parentNode.removeChild(v); }
+  v.querySelector("button").onclick = kill;
+  v.onclick = function (e) { if (e.target === v) kill(); };
+  setTimeout(function () { try { v.querySelector("button").focus(); } catch (e) {} }, 60);
 }
 
 /* ───────── uscire a meta' ─────────
@@ -16828,7 +16907,9 @@ function actBar() {
   for (i = 0; i < ACT_PER_MD; i++) o += '<i class="' + (i < left ? "up" : "") + '"></i>';
   return '<div class="actb"><span class="actn">' + o + "</span>" +
     "<span class=\"actt\"><b>" + left + " of " + ACT_PER_MD +
-    (left === 1 ? " action" : " actions") + " left</b><em>matchday " + mdNow() +
+    (left === 1 ? " action" : " actions") + " left</b><em>" +
+    (((typeof demoOn === "function") && demoOn())
+      ? "before the match" : "matchday " + mdNow()) +
     " \u00b7 " + n + " of " + ACT_PLAYERS + " players used</em></span></div>";
 }
 
