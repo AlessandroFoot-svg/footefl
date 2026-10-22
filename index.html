@@ -2925,6 +2925,53 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   font-style:normal;vertical-align:1px}
 .prow.used .pbo,.prow.ban .pbo{opacity:.45}
 .slot2 .pbo{margin-left:6px;font-size:10px}
+
+/* ═══════ L'INGRESSO IN CAMPO ═══════ */
+.wo{position:relative;min-height:78vh;display:grid;place-items:center;overflow:hidden}
+.wobg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.42}
+.woveil{position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 40%,
+  rgba(4,23,15,.25) 0%,rgba(4,23,15,.9) 72%)}
+.woin{position:relative;width:100%;padding:26px 20px 22px;text-align:center}
+.wok{display:block;font:800 9.5px/1 var(--brand);letter-spacing:.2em;color:var(--gold);
+  opacity:0;animation:wofade .5s ease .1s forwards}
+.worow{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px}
+.wocrest{width:84px;height:84px;display:grid;place-items:center;opacity:0}
+.wocrest img{width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.55))}
+.wocrest i{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;
+  font:800 22px var(--brand);font-style:normal;color:#fff}
+.wocrest.l{animation:woleft .62s cubic-bezier(.2,.9,.3,1.3) .15s forwards}
+.wocrest.r{animation:woright .62s cubic-bezier(.2,.9,.3,1.3) .15s forwards}
+.wov{font:800 15px var(--brand);color:var(--fog);opacity:0;
+  animation:wofade .4s ease .62s forwards}
+.wonames{display:flex;justify-content:center;gap:18px;margin-top:11px}
+.wonames b{flex:1;max-width:150px;font:800 14px/1.25 var(--brand);color:var(--cream);
+  opacity:0;animation:wofade .5s ease .7s forwards}
+.wotun{display:flex;align-items:flex-end;justify-content:center;gap:4px;
+  margin-top:24px;min-height:44px}
+.wom{width:28px;opacity:0;transform:translateY(16px);
+  animation:woup .45s cubic-bezier(.2,.9,.3,1.25) forwards}
+.wom:nth-child(odd){width:26px}
+.wom svg{width:100%;height:auto;display:block;
+  filter:drop-shadow(0 3px 7px rgba(0,0,0,.65)) brightness(1.25)}
+.wosay{margin:16px 0 0;font:600 12.5px/1.55 var(--brand);color:var(--fog);
+  opacity:0;animation:wofade .5s ease 1.1s forwards}
+.wogo{max-width:300px;margin:18px auto 0;opacity:0;pointer-events:none;
+  transition:opacity .4s ease}
+.wo.done .wogo{opacity:1;pointer-events:auto}
+.wo.done .wok,.wo.done .wov,.wo.done .wonames b,.wo.done .wosay,.wo.done .wom{
+  animation:none;opacity:1;transform:none}
+.wo.done .wocrest{animation:none;opacity:1;transform:none}
+@keyframes wofade{to{opacity:1}}
+@keyframes woleft{from{opacity:0;transform:translateX(-120px) rotate(-14deg)}
+  to{opacity:1;transform:none}}
+@keyframes woright{from{opacity:0;transform:translateX(120px) rotate(14deg)}
+  to{opacity:1;transform:none}}
+@keyframes woup{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .wok,.wov,.wonames b,.wosay,.wom,.wocrest{animation:none!important;opacity:1!important;
+    transform:none!important}
+}
 </style>
 </head>
 <body>
@@ -3813,7 +3860,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "99";
+var APPVER = "100";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -6566,7 +6613,7 @@ function clubMark(c, px) {
 function drawClubGrid() {
   var meId = ME.club ? ME.club.id : "";
   $("clubh").textContent = ME.code ? "The clubs of the league · " + CLUBS.length
-                                   : "Choose a club to test it with";
+                                   : "Choose a club to try it with";
 
   /* il mio, in cima e per intero: e' l'unico che mi riguarda davvero */
   var mine = CLUBS.filter(function (c) { return c.id === meId; })[0];
@@ -6652,10 +6699,10 @@ VIEWS.club = function (d) {
 
       (mine ? '<button class="btn" id="cgo">Back to my squad</button>'
        : ours ? '<button class="btn" id="cgo">Back into ' + esc(c.name) + "</button>"
-       : demo ? '<p class="cdemo">In this test you play <b>Ravens FC</b>. ' +
+       : demo ? '<p class="cdemo">Here you play <b>Ravens FC</b>. ' +
                 "In a real season your teacher gives you the club.</p>" +
                 '<button class="btn" id="cgo">Back to Ravens FC</button>'
-       : prac ? '<button class="btn" id="cgo">Test it with ' + esc(c.name) + "</button>"
+       : prac ? '<button class="btn" id="cgo">Try it with ' + esc(c.name) + "</button>"
        : "") +
     "</div>" +
 
@@ -7320,7 +7367,7 @@ VIEWS.gate = function (d) {
     "<span>The code is on the card your teacher gave you — it is also in the link " +
     "he sent, so if you open that link you are in without typing anything. " +
     "Meanwhile you can still work.</span>" +
-    '<button class="gthin" id="gpr" type="button">Test it &mdash; one whole match &#8250;</button>' +
+    '<button class="gthin" id="gpr" type="button">Try it &mdash; one whole match &#8250;</button>' +
     "</div>" +
     '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
 
@@ -7395,7 +7442,7 @@ VIEWS.home = function () {
       (dmo ? '<button class="lback" id="hout" type="button" ' +
              'aria-label="Leave the test">&#8592;</button>' : "") +
       '<div class="mk">FOOT<em>EFL</em></div>' +
-      "<p>" + (dmo ? "TEST IT" : "NO CODE") + "</p>" +
+      "<p>" + (dmo ? "TRY IT" : "NO CODE") + "</p>" +
       '<button class="purse" id="purse" type="button" aria-label="My stars">&#9733;' +
       "<b>" + starsLeft() + "</b></button></div>";
     prog(0);
@@ -7482,7 +7529,7 @@ function drawWho() {
       "competitions and nothing goes to your teacher. Everything you fix here stays " +
       "yours, and the day you put your code in you keep it.</span>" +
       (ME.club ? "" : '<button class="gthin" id="hpick" type="button">' +
-        "Test it &mdash; one whole match &#8250;</button>") +
+        "Try it &mdash; one whole match &#8250;</button>") +
       '<button class="gthin" id="hcode" type="button">I have my code now &#8250;</button>' +
       "</div></div>";
     if ($("hpick")) $("hpick").onclick = function () { go("tryit"); };
@@ -7772,7 +7819,13 @@ function drawLive() {
 function drawPress() {
   var box = $("hpress");
   if (!box) return;
-  box.innerHTML = (typeof pressCard === "function") ? pressCard() : "";
+  var card = (typeof pressCard === "function") ? pressCard() : "";
+  /* senza una domanda aperta la carta e' vuota, e una pagina bianca non
+     spiega niente: meglio dire perche' non c'e' niente da dire */
+  box.innerHTML = card ||
+    '<div class="mcnone"><b>Nothing to answer right now.</b>' +
+    "<span>They come before the match, and again when the result is in. " +
+    "Play your two halves and the room opens by itself.</span></div>";
   if (typeof wirePress === "function") wirePress();
 }
 
@@ -8032,7 +8085,7 @@ function drawBar() {
 /* ───────── la stanza "altro": quello che non sta nella barra ───────── */
 VIEWS.more = function () {
   if (ME.club) paintClub(ME.club); else paintNeutral();
-  barFlow("More", ME.code ? "Player " + ME.code : "Test it", 0);
+  barFlow("More", ME.code ? "Player " + ME.code : "Try it", 0);
   var rows = [
     { t:"My form", s:"Every half you have played", go:"form", need:"club" },
     { t:"All my statistics", s:"The language and the game", go:"me" },
@@ -8073,7 +8126,7 @@ function drawOut() {
 VIEWS.me = function () {
   var s = allStats(), g = gameStats();
   if (ME.club) paintClub(ME.club); else paintNeutral();
-  barFlow("My statistics", ME.code ? "Player " + ME.code : "Test it", 0);
+  barFlow("My statistics", ME.code ? "Player " + ME.code : "Try it", 0);
 
   var ups = topKinds(s.kinds, 6);
   var good = [
@@ -8194,7 +8247,7 @@ VIEWS.claim = function (d) {
   var c = CLUBS.filter(function (x) { return x.id === (d && d.id); })[0];
   if (!c) return back();
   paintNeutral();
-  barFlow("Test it", c.name, 0);
+  barFlow("Try it", c.name, 0);
   html('<div class="pad"><h1>' + esc(c.name) + "</h1>" +
     '<p class="lede">You are testing it, so this club is yours for as long as you ' +
     "want it. Put a name on the shirt and go in.</p>" +
@@ -10197,7 +10250,7 @@ function drawNext() {
     '<div class="nxin"><div class="nxhead solo">' +
       '<span class="nxk">' +
       (((typeof demoOn === "function") && demoOn())
-        ? "TEST IT &middot; ONE MATCH"
+        ? "TRY IT &middot; ONE MATCH"
         : (n.cup ? esc(n.cup).toUpperCase() + " &middot; " : "") + "MATCHDAY " + n.md) +
       "</span>" +
       side(meName, mine, ME.club && ME.club.colour, n.atHome ? "AT HOME" : "AWAY") +
@@ -10294,7 +10347,7 @@ function drawStarBar() {
 function drawFoot() {
   var demo = (typeof demoOn === "function") && demoOn();
   $("foot").innerHTML = (demo
-    ? "<b>One match, then that is the test</b>No season behind it and no table: " +
+    ? "<b>One match, and that is the whole of it</b>No season behind it and no table: " +
       "Ravens against the bot, once. Bring your team sheet filled in, and watch " +
       "the weather — it decides how many slots open."
     : "<b>Your next match</b>Matchday " + ME.next.md +
@@ -12357,8 +12410,8 @@ VIEWS.market = function () {
       '<p class="lede">The market opens <b>once a season</b>, before the first match, ' +
       "and yours is done. Your signings are in the squad under " +
       "<b>Signed in the market</b>, and your teacher can see them.</p>" +
-      '<button class="btn" id="bk2">Back to my squad</button></div>');
-    $("bk2").onclick = function () { reset("squad"); };
+      '<button class="btn" id="bk2">' + homeBackName() + "</button></div>");
+    $("bk2").onclick = function () { reset(homeBack()); };
     return;
   }
   html('<div class="pad"><h1>One market.<br>One season.</h1>' +
@@ -12604,15 +12657,15 @@ VIEWS.mkDone = function () {
         "before the first match. From here on your squad grows in the training " +
         "ground, one step at a time.</div>" +
         '<button class="btn" id="home2">See them in my squad</button></div>');
-      $("home2").onclick = function () { reset("squad"); };
+      $("home2").onclick = function () { reset(homeBack()); };
     });
 
   function nobody() {
     html('<div class="pad"><h1>They were all gone.</h1>' +
       '<p class="lede">Another team signed every name your scout brought back. ' +
       "It happens — and your market is done for this season.</p>" +
-      '<button class="btn" id="home3">Back to my squad</button></div>');
-    $("home3").onclick = function () { reset("squad"); };
+      '<button class="btn" id="home3">' + homeBackName() + "</button></div>");
+    $("home3").onclick = function () { reset(homeBack()); };
   }
 };
 
@@ -13791,7 +13844,7 @@ VIEWS.mCall = function (d) {
 
   /* la difesa non chiede piu' niente: il tuffo del portiere si chiama
      insieme al resto, prima dell'attacco */
-  if (ph === "def") { swap("mWrite", { ph:ph }); return; }
+  if (ph === "def") { swap("mGo", { ph:ph }); return; }
 
   if (ph === "att") {
     html('<div class="pad">' +
@@ -13887,9 +13940,8 @@ VIEWS.mCall = function (d) {
               "Called before a word was read, as it should be") + "</div>"
         : '<p class="bnote">Still to call: ' + miss.join(", ") + ".</p>") +
       '<button class="btn" id="cgo"' + (ok ? "" : " disabled") + ">" +
-      (ph === "att" ? "Locked in &mdash; start the dictation"
-                    : "Locked in &mdash; start the dictation") + "</button>";
-    if (ok) $("cgo").onclick = function () { saveSheet(); swap("mWrite", { ph:ph }); };
+      "Locked in &mdash; now the weather</button>";
+    if (ok) $("cgo").onclick = function () { saveSheet(); swap("mGo", { ph:ph }); };
   }
 };
 
@@ -14236,6 +14288,9 @@ function drawStadium() {
      Resta la sola cosa che si puo' fare in un pomeriggio — allenare i
      giocatori, nel corpo e nella lingua. */
   var demo = (typeof demoOn === "function") && demoOn();
+  /* nella prova questa carta non serve: al campo si va dalla lista degli
+     otto punti, che e' la sola guida che la prova ha */
+  if (demo) { box.innerHTML = ""; return; }
 
   box.innerHTML = '<section class="pad"><div class="tgc">' +
     '<img class="tgbg" src="' + imgOf("pitch") + '" alt="">' +
@@ -14337,7 +14392,8 @@ VIEWS.ground = function (d) {
               "the shop, though, pays at every match.") + "</p>" +
         '<div id="yard"></div>') +
 
-    '<button class="btn ghost" id="gbk">Back to ' + (demo ? "my squad" : "the competition") + '</button></div>');
+    '<button class="btn ghost" id="gbk">' +
+    (demo ? "Back to the homepage" : "Back to the competition") + "</button></div>");
 
   if (sq && demo) {
     SQOPEN = true;
@@ -14353,7 +14409,7 @@ VIEWS.ground = function (d) {
   Array.prototype.forEach.call($("main").querySelectorAll(".gtab"), function (b) {
     b.onclick = function () { GTAB = b.dataset.t; swap("ground"); };
   });
-  $("gbk").onclick = function () { reset(ME.code ? "home" : "squad"); };
+  $("gbk").onclick = function () { reset(ME.code ? "home" : homeBack()); };
 };
 
 function drawSessions() {
@@ -14412,6 +14468,102 @@ function drawYard(groups) {
       swap("ground");
     };
   });
+}
+
+
+/* ───── 45-walkout.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   L'INGRESSO IN CAMPO
+
+   Fra il meteo e la prima parola mancava il momento che, allo stadio,
+   e' quello che fa alzare la gente: le due squadre che escono dal
+   tunnel. Dura tre secondi e non cambia un numero — serve a far capire
+   al corpo che da adesso si gioca, e che quello che si scrive conta.
+
+   Come e' fatto: due stemmi che entrano dai lati e si guardano, undici
+   maglie che escono una dopo l'altra, e il bottone che compare quando
+   sono tutte fuori. Si tocca lo schermo e si salta: chi gioca la
+   quarta partita non vuole rivederla ogni volta.
+
+   Perche' finisce con un bottone e non da solo: il dettato parte con
+   l'audio, e l'audio sui telefoni vuole un dito che tocca poco prima.
+   Quel dito e' questo.
+   ═══════════════════════════════════════════════════════════════════ */
+
+VIEWS.walkout = function (d) {
+  var ph = (d && d.ph) === "def" ? "def" : "att";
+  var n = ME.next || {};
+  var mine = ME.club || {};
+  var oppId = n.oppId || "";
+  var opp = (CLUBS.filter(function (c) { return c.id === oppId; })[0]) || {};
+  var meFirst = n.atHome !== false;
+  var A = meFirst ? mine : opp, B = meFirst ? opp : mine;
+
+  paintClub(ME.club);
+  $("bar").innerHTML = "";
+  prog(ph === "att" ? 50 : 50);
+
+  function badge(c, side) {
+    var cr = (typeof crestOf === "function") ? crestOf(c.id) : "";
+    return '<span class="wocrest ' + side + '">' +
+      (cr ? '<img src="' + cr + '" alt="">'
+          : '<i style="background:' + esc(c.colour || "#0E3B2C") + '">' +
+            esc(initials(c.name || "?")) + "</i>") + "</span>";
+  }
+  /* undici maglie che escono dal tunnel, una ogni sessanta millesimi */
+  function tunnel() {
+    var o = "", i;
+    for (i = 0; i < 11; i++) {
+      o += '<span class="wom" style="animation-delay:' + (300 + i * 60) + 'ms">' +
+        '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#jersey"/></svg></span>';
+    }
+    return o;
+  }
+
+  html('<div class="wo" id="wo">' +
+    '<img class="wobg" src="' + imgOf("pitch") + '" alt="">' +
+    '<span class="woveil" aria-hidden="true"></span>' +
+    '<div class="woin">' +
+      '<span class="wok">' + (n.cup ? esc(n.cup).toUpperCase() + " &middot; " : "") +
+      (demoOnSafe() ? "ONE MATCH" : "MATCHDAY " + (n.md || 1)) + " &middot; " +
+      (ph === "att" ? "FIRST HALF" : "SECOND HALF") + "</span>" +
+
+      '<div class="worow">' + badge(A, "l") +
+        '<span class="wov">v</span>' + badge(B, "r") + "</div>" +
+
+      '<div class="wonames"><b>' + esc(A.name || n.home || "") + "</b>" +
+      "<b>" + esc(B.name || n.away || "") + "</b></div>" +
+
+      '<div class="wotun">' + tunnel() + "</div>" +
+
+      '<p class="wosay">' + (ph === "att"
+        ? "They are out. Listen, and write every word you hear."
+        : "Back out for the second half. Now you have to hold it.") + "</p>" +
+
+      '<button class="btn wogo" id="wogo">' +
+      (ph === "att" ? "Kick off" : "Take your place") + "</button>" +
+    "</div></div>");
+
+  var box = $("wo"), btn = $("wogo");
+  /* chi non vuole animazioni la salta del tutto, e chi tocca lo schermo
+     la taglia: in tutti e due i casi si arriva allo stesso punto */
+  var reduce = false;
+  try {
+    reduce = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch (e) {}
+  if (reduce) box.className = "wo done";
+  else setTimeout(function () { if ($("wo")) $("wo").className = "wo done"; }, 1500);
+
+  box.onclick = function (e) {
+    if (e.target === btn) return;
+    box.className = "wo done";
+  };
+  btn.onclick = function () { swap("mWrite", { ph:ph }); };
+};
+
+function demoOnSafe() {
+  return (typeof demoOn === "function") && demoOn();
 }
 
 
@@ -15284,7 +15436,7 @@ VIEWS.tlEnd = function () {
 
 /* ───── 52-demo.js ───── */
 /* ═══════════════════════════════════════════════════════════════════
-   TEST IT — LA PARTITA DI PROVA
+   TRY IT — LA PARTITA DI PROVA
 
    Chi arriva senza codice non deve vedere mezzo gioco: deve vederne
    uno intero, una volta. Sceglie tre cose e basta — il livello, quanto
@@ -15437,7 +15589,7 @@ function demoCard() {
 
   if (!left) {
     return '<section class="pad"><div class="dmend">' +
-      '<span class="dmk">TEST IT &middot; ' + esc(demoDiff().t.toUpperCase()) +
+      '<span class="dmk">TRY IT &middot; ' + esc(demoDiff().t.toUpperCase()) +
       " &middot; " + esc(DEMO.level) + "</span>" +
       "<b>Thank you and see you soon.</b>" +
       "<p>You have played a whole matchday of FootEFL: the market, the sheet, " +
@@ -15452,13 +15604,15 @@ function demoCard() {
     '<button class="dmhead" id="dmtog" type="button" aria-expanded="' +
     (LDEMO ? "true" : "false") + '">' +
     '<span class="dmn">' + done + "<i>/" + steps.length + "</i></span>" +
-    '<span class="dmt"><b>You are testing FootEFL</b><em>' +
+    '<span class="dmt"><b>You are trying FootEFL</b><em>' +
     esc(demoDiff().t) + " &middot; level " + esc(DEMO.level) +
     " &middot; Ravens FC v Brass FC</em></span>" +
     '<i class="dmar">' + (LDEMO ? "&minus;" : "+") + "</i></button>" +
     (LDEMO
       ? '<div class="dmlist">' + steps.map(function (s) {
-          var fermo = s.ok || s.wait;
+          /* una riga spuntata non si spegne: al mercato non si torna,
+             ma al campo si', e sei azioni non si spendono in una volta */
+          var fermo = !!s.wait;
           return '<button class="dmstep' + (s.ok ? " ok" : "") +
             '" data-go="' + s.go + '" type="button"' + (fermo ? " disabled" : "") + ">" +
             '<i class="dmtick">' + (s.ok ? "&#10003;" : "") + "</i>" +
@@ -15467,7 +15621,7 @@ function demoCard() {
         }).join("") +
         '<p class="dmnote">Nothing here reaches a teacher and nothing is kept: ' +
         "when the list is finished the phone goes back to the code screen empty.</p>" +
-        '<button class="dmout" id="dmgo" type="button">Leave the test now &#8250;</button>' +
+        '<button class="dmout" id="dmgo" type="button">Leave the try now &#8250;</button>' +
         "</div>"
       : "") +
     "</div></section>";
@@ -15502,6 +15656,17 @@ function drawDemo() {
   if (!box) return;
   box.innerHTML = demoCard();
   wireDemo();
+}
+
+/* ───────── dove si torna ─────────
+   Fuori dalla prova le stanze riportano alla squadra o alla
+   competizione. Dentro la prova c'e' una pagina sola che conta, quella
+   con gli otto punti: e' la lista che dice che cosa manca, e uscire da
+   una stanza vuol dire tornare li'. */
+function homeBack() { return (typeof demoOn === "function" && demoOn()) ? "home" : "squad"; }
+function homeBackName() {
+  return (typeof demoOn === "function" && demoOn())
+    ? "Back to the homepage" : "Back to my squad";
 }
 
 /* ───────── un cartello, una volta sola ─────────
@@ -15539,10 +15704,10 @@ function demoLeave() {
 VIEWS.dmout = function () {
   var steps = demoSteps(), left = demoLeft(), done = steps.length - left;
   paintNeutral();
-  barFlow("Leave the test", "nothing here is kept", 0);
-  html('<div class="pad gpad"><h1>Leave the test?</h1>' +
+  barFlow("Leave the try", "nothing here is kept", 0);
+  html('<div class="pad gpad"><h1>Leave the try?</h1>' +
     '<p class="lede">You have done <b>' + done + " of " + steps.length +
-    "</b>. Nothing in a test is written down: no report goes to a teacher, and " +
+    "</b>. Nothing here is written down: no report goes to a teacher, and " +
     "this phone keeps none of it. Leave now and next time you start a whole " +
     "match again, from the market.</p>" +
     '<button class="btn" id="dmoNo">Stay and finish</button>' +
@@ -15557,7 +15722,7 @@ function demoExitBtn(box) {
   if (!box || !demoOn() || box.querySelector(".dmx")) return;
   var b = document.createElement("button");
   b.className = "dmx"; b.type = "button";
-  b.setAttribute("aria-label", "Leave the test");
+  b.setAttribute("aria-label", "Leave the try");
   b.innerHTML = "&#10005;";
   b.onclick = demoLeave;
   box.appendChild(b);
@@ -15591,7 +15756,7 @@ var DPICK = { level:"A1", diff:"even" };
 VIEWS.tryit = function () {
   paintNeutral();
   $("bar").innerHTML = '<div class="mast"><div class="mk">FOOT<em>EFL</em></div>' +
-    "<p>TEST IT</p></div>";
+    "<p>TRY IT</p></div>";
   prog(0);
 
   html('<div class="pad gpad">' +
@@ -17111,7 +17276,7 @@ VIEWS.bxEnd = function () {
     })() + "</div>" +
 
     '<button class="btn" id="bxp">Back to the player</button>' +
-    '<button class="btn ghost" id="bxs">Back to my squad</button></div>');
+    '<button class="btn ghost" id="bxs">' + homeBackName() + "</button></div>");
 
   $("bxp").onclick = function () { reset("player", { no:BX.no }); };
   $("bxs").onclick = function () { toSquad(); };
@@ -17123,7 +17288,7 @@ VIEWS.bxEnd = function () {
    e la pagina gia' scesa fin dove sono le maglie. */
 function toSquad() {
   if (typeof SQOPEN !== "undefined") SQOPEN = true;
-  reset(ME.code ? "home" : "squad");
+  reset(ME.code ? "home" : homeBack());
   setTimeout(function () {
     var el = $("hsq");
     if (el && el.scrollIntoView) el.scrollIntoView({ block:"start" });
@@ -18118,7 +18283,9 @@ VIEWS.spon = function () {
         "Together they bring <b>" + money(spPerMatch()) + "</b> at every match.</p>") +
 
     '<div id="spbox"></div>' +
-    '<button class="btn ghost" id="spbk">Back</button></div>');
+    '<button class="btn ghost" id="spbk">' +
+    ((typeof demoOn === "function" && demoOn()) ? "Back to the homepage" : "Back") +
+    "</button></div>");
 
   if ($("spcall")) $("spcall").onclick = function () {
     spMarkCall();
@@ -20097,7 +20264,7 @@ VIEWS.played = function (d) {
     '<button class="btn' + (both ? "" : " ghost") + '" id="prep2">' +
     "See my language report</button>" +
     '<button class="btn ghost" id="pbk">Back to the competition</button></div>');
-  if ($("pgo")) $("pgo").onclick = function () { swap("mGo", { ph:halfNext(md) }); };
+  if ($("pgo")) $("pgo").onclick = function () { goHalf(halfNext(md)); };
   $("prep2").onclick = function () { swap("mReport"); };
   $("pbk").onclick = function () { reset("home"); };
   if (both && typeof wireLive === "function") {
@@ -20116,13 +20283,13 @@ VIEWS.lock = function () {
     html('<div class="pad"><h1>Your team sheet is in.</h1>' +
       '<p class="lede">' + phaseSlots("att") + " players in attack, " +
       phaseSlots("def") + " in defence. Nothing more to do at home.</p>" +
-      '<p class="lede">Next come your <b>calls</b> — the penalty and the keeper — ' +
-      "and then the dictation starts. Once it starts it does not stop, so do it " +
-      "when you are ready and somewhere quiet.</p>" +
+      '<p class="lede">Next come your <b>calls</b> — the penalty, the wonder goal, ' +
+      "the shape and the plan — then the weather, and then the dictation. Once it " +
+      "starts it does not stop, so do it when you are ready and somewhere quiet.</p>" +
       '<button class="btn" id="unl">Start the match</button>' +
       '<button class="btn ghost" id="bks">Change my team sheet</button></div>');
     $("unl").onclick = function () {
-      SHEET.locked = true; saveSheet(); swap("mGo", { ph:"att" });
+      SHEET.locked = true; saveSheet(); goHalf("att");
     };
     $("bks").onclick = function () { swap("prep"); };
     return;
@@ -20155,9 +20322,21 @@ VIEWS.lock = function () {
   function try1() {
     if (kc.value !== want) { $("kerr").hidden = false; kc.select(); return; }
     SHEET.locked = true; saveSheet();
-    swap("mGo", { ph:"att" });
+    goHalf("att");
   }
 };
+
+/* ───────── l'ordine dei tre passi prima di scrivere ─────────
+   1. le chiamate: rigore, wonder goal, modulo, strategia, tuffo.
+   2. il meteo, con i punti di partenza gia' fatti — e' il senso del
+      cambio: « you start at » non puo' aspettare una scelta che non e'
+      ancora stata fatta.
+   3. l'ingresso in campo, e poi la prima parola.
+   La difesa salta il primo passo: le sue chiamate sono gia' state
+   fatte prima dell'attacco, tutte insieme. */
+function goHalf(ph) {
+  return swap(ph === "att" ? "mCall" : "mGo", { ph:ph });
+}
 
 /* il tabellone prima della prima parola: da dove si comincia a contare.
    Non cambia quante azioni si aprono — quelle le detta il cielo — ma
@@ -20208,7 +20387,7 @@ VIEWS.mGo = function (d) {
     "end — this is the match, not practice.</p>" +
     '<button class="btn" id="kick">' +
     (ph === "att" ? "Kick off" : "Take your place") + "</button></div>");
-  $("kick").onclick = function () { swap("mCall", { ph:ph }); };
+  $("kick").onclick = function () { swap("walkout", { ph:ph }); };
 };
 
 var MT = { ph:"att", i:0, answers:[], el:[] };
@@ -20367,7 +20546,7 @@ VIEWS.words = function () {
   loadMem();
   var left = wordsLeft(), done = ME.words.length - left.length;
   /* chi si allena senza codice puo' non avere ancora una squadra */
-  barFlow("My words", ME.club ? ME.club.name : "Test it", 0);
+  barFlow("My words", ME.club ? ME.club.name : "Try it", 0);
   var byKind = {};
   left.forEach(function (x) { byKind[x.kind] = (byKind[x.kind] || 0) + 1; });
   var kinds = Object.keys(byKind).sort(function (a, b) { return byKind[b] - byKind[a]; });
@@ -20473,7 +20652,7 @@ VIEWS.wEnd = function () {
   var before = (loadStars(), starsEarned());
   noteFixedWords();
   var won = starsEarned() - before;
-  barFlow("Done for today", ME.club ? ME.club.name : "Test it", 100, false);
+  barFlow("Done for today", ME.club ? ME.club.name : "Try it", 100, false);
   html('<div class="pad"><h1>' + (WR.fixedNow
     ? WR.fixedNow + (WR.fixedNow === 1 ? " word fixed." : " words fixed.")
     : "Good work.") + "</h1>" +
