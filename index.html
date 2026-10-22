@@ -3794,7 +3794,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "95";
+var APPVER = "96";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -15545,9 +15545,14 @@ VIEWS.tryit = function () {
   voiceNote();
   Array.prototype.forEach.call($("dlv").querySelectorAll(".dmlv"), function (b) {
     b.onclick = function () {
+      if (DEMO_LEVELS.indexOf(b.dataset.l) < 0) return;
       DPICK.level = b.dataset.l;
+      /* si riscrive la classe di tutti: va rimesso anche « spento »,
+         se no B2, C1 e C2 si riaccendono al primo tocco su un altro */
       Array.prototype.forEach.call($("dlv").querySelectorAll(".dmlv"), function (x) {
-        x.className = "dmlv" + (x.dataset.l === DPICK.level ? " on" : "");
+        x.className = "dmlv" +
+          (x.dataset.l === DPICK.level ? " on" : "") +
+          (DEMO_LEVELS.indexOf(x.dataset.l) < 0 ? " off" : "");
       });
       voiceNote();
     };
