@@ -2918,6 +2918,13 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .dmtipc p{margin:9px 0 0;font-size:13px;font-weight:600;line-height:1.55;color:var(--fog)}
 .dmtipc p b{display:inline;font-size:inherit;color:var(--cream)}
 .dmtipc .btn{margin-top:16px}
+
+/* quello che un giocatore aggiunge al totale, accanto al nome */
+.pbo{display:inline-block;margin-left:7px;padding:1px 6px;border-radius:6px;
+  background:var(--gold);color:#06231D;font:800 10.5px/1.5 var(--brand);
+  font-style:normal;vertical-align:1px}
+.prow.used .pbo,.prow.ban .pbo{opacity:.45}
+.slot2 .pbo{margin-left:6px;font-size:10px}
 </style>
 </head>
 <body>
@@ -3806,7 +3813,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "98";
+var APPVER = "99";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -19765,6 +19772,28 @@ function drawRoles() {
    il gioiello). Le stesse sigle che l'alunno vede sulle maglie. */
 var TAG_WORD = { GK:"Goalkeeper", CAP:"Captain", GEM:"Gem" };
 var ROLE_WORD = { GK:"Goalkeeper", DF:"Defender", MF:"Midfielder", FW:"Forward" };
+/* ───────── quanto pesa un giocatore ─────────
+   Due strade portano punti alla partita: gli esercizi del campo
+   d'allenamento, che fanno crescere i dodici di casa, e la carta di chi
+   e' stato comprato al mercato, che porta la sua forza stampata sopra.
+   Il numero e' lo stesso che poi compare nel « you start at » prima dei
+   due tempi: qui si vede mentre si sceglie, che e' il momento in cui
+   serve saperlo. */
+function plusCents(no) {
+  if (no == null) return 0;
+  if (no >= 13) {
+    var s = (ME.signings || [])[no - 13];
+    return (s && s.cents) || 0;
+  }
+  return (typeof growCents === "function") ? growCents(no) : 0;
+}
+function plusChip(p) {
+  if (!p || p.wall) return "";
+  var c = plusCents(p.no);
+  if (!c) return "";
+  return '<i class="pbo" title="what he adds to your total">+' + fmt(c) + "</i>";
+}
+
 function pTags(p) {
   if (!p) return "";
   var out = "";
@@ -19814,7 +19843,8 @@ VIEWS.prole = function (d) {
         '" data-no="' + p.no + '" type="button">' +
         '<span class="shirt2"><svg viewBox="0 0 100 100"><use href="#jersey"/></svg>' +
         '<span class="sno">' + p.no + "</span></span>" +
-        '<span class="smid"><b>' + esc(pName(p)) + '</b><span class="sub2">' + pTags(p) +
+        '<span class="smid"><b>' + esc(pName(p)) + plusChip(p) +
+        '</b><span class="sub2">' + pTags(p) +
         (t ? "already your " + ROLE_NAME[t].toLowerCase()
            : p.bought ? "signed in the market"
            : p.named ? "in the squad" : "no name yet") + "</span></span>" +
@@ -19849,7 +19879,8 @@ function drawGrid() {
         (p
           ? '<span class="shirt2"><svg viewBox="0 0 100 100"><use href="#jersey"/></svg>' +
             '<span class="sno">' + p.no + "</span></span>" +
-            '<span class="smid"><b>' + esc(pShort(p)) + '</b><span class="sub2">' +
+            '<span class="smid"><b>' + esc(pShort(p)) + plusChip(p) +
+            '</b><span class="sub2">' +
             pTags(p) + (p.bought ? "signed in the market" :
              p.named ? "in the squad" : "no name yet") +
             "</span></span><span class='sx'>change</span>"
@@ -20007,7 +20038,8 @@ VIEWS.pslot = function (d) {
           ? '<span class="wallic">&#9632;&#9632;&#9632;</span>'
           : '<span class="shirt2"><svg viewBox="0 0 100 100"><use href="#jersey"/></svg>' +
             '<span class="sno">' + p.no + "</span></span>") +
-        '<span class="smid"><b>' + esc(pName(p)) + '</b><span class="sub2">' + pTags(p) +
+        '<span class="smid"><b>' + esc(pName(p)) + plusChip(p) +
+        '</b><span class="sub2">' + pTags(p) +
         esc(why) + "</span></span>" +
         (mine ? '<span class="sx">here</span>'
               : rk ? '<span class="sx">' + (max - used) + " left</span>" : "") +
