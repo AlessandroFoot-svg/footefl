@@ -2893,6 +2893,19 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .dmlv.off{opacity:.34;cursor:default;border-style:dashed}
 .dmlv.off b,.dmlv.off em{color:var(--fog)}
 .dmlv.off em{letter-spacing:.1em;text-transform:uppercase}
+
+/* la via d'uscita della prova, accanto alla casetta */
+.dmx{flex:none;width:34px;height:34px;margin-left:7px;border-radius:50%;
+  border:1px dashed var(--edge);background:none;color:var(--fog);
+  font:800 14px/1 var(--brand);cursor:pointer;padding:0}
+.dmx:active{transform:translateY(1px)}
+.dmx:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.band .dmx{width:36px;height:36px}
+.mast .dmx{position:absolute;left:58px;top:50%;transform:translateY(-50%)}
+.dmout{display:block;width:100%;margin:2px 0 0;padding:11px 0 2px;border:0;
+  border-top:1px solid var(--edge);background:none;color:var(--fog);
+  font:700 11.5px var(--brand);cursor:pointer;text-align:left}
+.dmout:active{opacity:.7}
 </style>
 </head>
 <body>
@@ -3781,7 +3794,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "94";
+var APPVER = "95";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -7277,7 +7290,7 @@ VIEWS.gate = function (d) {
     "knows you: the competitions he has entered you in, the club he gave you in each " +
     "one, and the words you have to fix.</p>" +
     '<div class="lock"><span>YOUR CODE</span>' +
-    "<b>Three letters, a dash, four signs. Like <i>ALE-QM34</i>.</b>" +
+    "<b>Three letters, a dash, four signs. Like <i>ABC&ndash;7KD3</i>.</b>" +
     '<input type="text" id="gin" maxlength="9" autocomplete="off" ' +
     'autocapitalize="characters" autocorrect="off" spellcheck="false" ' +
     'placeholder="XXX-0000" aria-label="Your code">' +
@@ -7289,8 +7302,7 @@ VIEWS.gate = function (d) {
     "he sent, so if you open that link you are in without typing anything. " +
     "Meanwhile you can still work.</span>" +
     '<button class="gthin" id="gpr" type="button">Test it &mdash; one whole match &#8250;</button>' +
-    '<button class="gthin" id="gfile" type="button">My teacher sent me a file &#8250;' +
-    "</button></div>" +
+    "</div>" +
     '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
 
   var inp = $("gin");
@@ -7321,7 +7333,6 @@ VIEWS.gate = function (d) {
     });
   };
   $("gpr").onclick = function () { go("tryit"); };
-  $("gfile").onclick = function () { setPract(true); go("bulletin"); };
   function bad(m) { $("gerr").hidden = false; $("gerr").textContent = m; }
   setTimeout(function () { try { inp.focus(); } catch (e) {} }, 90);
 };
@@ -7358,12 +7369,19 @@ VIEWS.home = function () {
     $("hback").onclick = function () { reset("land"); };
   }
   else {
-    $("bar").innerHTML = '<div class="mast"><div class="mk">FOOT<em>EFL</em></div>' +
-      "<p>" + ((typeof demoOn === "function" && demoOn()) ? "TEST IT" : "NO CODE") + "</p>" +
+    var dmo = (typeof demoOn === "function") && demoOn();
+    /* nella prova la freccia non torna a una stagione: porta fuori, alla
+       schermata del codice, che e' l'unico posto da cui si e' entrati */
+    $("bar").innerHTML = '<div class="mast' + (dmo ? " lmast" : "") + '">' +
+      (dmo ? '<button class="lback" id="hout" type="button" ' +
+             'aria-label="Leave the test">&#8592;</button>' : "") +
+      '<div class="mk">FOOT<em>EFL</em></div>' +
+      "<p>" + (dmo ? "TEST IT" : "NO CODE") + "</p>" +
       '<button class="purse" id="purse" type="button" aria-label="My stars">&#9733;' +
       "<b>" + starsLeft() + "</b></button></div>";
     prog(0);
     $("purse").onclick = function () { go("stars"); };
+    if ($("hout")) $("hout").onclick = demoLeave;
   }
 
   /* la pagina di UNA competizione: in cima l'ultimo risultato, poi la
@@ -7449,7 +7467,12 @@ function drawWho() {
       '<button class="gthin" id="hcode" type="button">I have my code now &#8250;</button>' +
       "</div></div>";
     if ($("hpick")) $("hpick").onclick = function () { go("tryit"); };
-    $("hcode").onclick = function () { setPract(false); reset("gate"); };
+    $("hcode").onclick = function () {
+      /* anche questa e' un'uscita: dalla prova non si esce lasciando
+         indietro una partita a meta' che poi riappare da sola */
+      if (prova) return demoLeave();
+      setPract(false); reset("gate");
+    };
     return;
   }
   /* lo stadio della sera: la foto, un velo che scurisce dove c'e' scritto,
@@ -8120,6 +8143,8 @@ function homeBtn(box) {
   b.innerHTML = HOME_SVG;
   b.onclick = function () { reset(homeView()); };
   box.appendChild(b);
+  /* nella prova, accanto alla casetta, la via d'uscita */
+  if (typeof demoExitBtn === "function") demoExitBtn(box);
 }
 var gatePrevFlow = barFlow;
 barFlow = function (title, sub, pct, canBack) {
@@ -15314,23 +15339,26 @@ function demoSteps() {
   var res = false;
   try { res = !!((liveGet(md) || {}).score); } catch (e) {}
 
+  /* l'ordine e' quello della settimana vera: prima si costruisce la
+     squadra, poi si parla, poi si gioca. */
   return [
     { id:"market", t:"The transfer market", s:"twenty questions, then a scout",
       go:"market", ok:market },
     { id:"spon",   t:"A sponsor on the shirt", s:"one deal is enough",
       go:"spon",   ok:spon },
+    { id:"ground", t:"The training ground",
+      s:"one session: your players grow in body and in English",
+      go:"ground", ok:ground },
+    { id:"press",  t:"The press room", s:"before the match, they want a word",
+      go:"pressdoor", ok:!!(press && Object.keys(press).length) },
     { id:"sheet",  t:"Your team sheet", s:"who shoots, who dives",
       go:"sheet",  ok:sheet },
-    { id:"att",    t:"The attacking half", s:"the dictation you play forward",
+    { id:"att",    t:"The attack", s:"the dictation you play forward",
       go:"play",   ok:halfPlayed(md, "att") },
-    { id:"def",    t:"The defending half", s:"the one you have to hold",
+    { id:"def",    t:"The defence", s:"the one you have to hold",
       go:"play",   ok:halfPlayed(md, "def") },
     { id:"res",    t:"The result", s:"it lands here when both halves are in",
-      go:"home",   ok:res, wait:true },
-    { id:"press",  t:"The press room", s:"answer for what happened",
-      go:"pressdoor", ok:!!(press && Object.keys(press).length) },
-    { id:"ground", t:"The training ground", s:"one session with your players",
-      go:"ground", ok:ground }
+      go:"home",   ok:res, wait:true }
   ];
 }
 function demoLeft() {
@@ -15375,6 +15403,7 @@ function demoCard() {
         }).join("") +
         '<p class="dmnote">Nothing here reaches a teacher and nothing is kept: ' +
         "when the list is finished the phone goes back to the code screen empty.</p>" +
+        '<button class="dmout" id="dmgo" type="button">Leave the test now &#8250;</button>' +
         "</div>"
       : "") +
     "</div></section>";
@@ -15389,6 +15418,7 @@ function wireDemo() {
     b.onclick = function () { demoGo(b.dataset.go); };
   });
   if ($("dmbye")) $("dmbye").onclick = demoBye;
+  if ($("dmgo")) $("dmgo").onclick = demoLeave;
 }
 /* dove porta ogni riga della lista: il foglio e i due tempi hanno la
    stessa porta del campionato vero, quella che sa a che punto sei */
@@ -15408,6 +15438,43 @@ function drawDemo() {
   if (!box) return;
   box.innerHTML = demoCard();
   wireDemo();
+}
+
+/* ───────── uscire a meta' ─────────
+   La prova non e' una stagione: non si « sospende », si lascia. Chi esce
+   torna alla schermata del codice e quello che ha fatto qui non resta,
+   cosi' la volta dopo c'e' di nuovo una partita intera da giocare. */
+function demoLeave() {
+  if (!demoOn()) return reset("gate");
+  if (!demoLeft()) return demoBye();       /* finita: e' il saluto, non un'uscita */
+  go("dmout");
+}
+
+VIEWS.dmout = function () {
+  var steps = demoSteps(), left = demoLeft(), done = steps.length - left;
+  paintNeutral();
+  barFlow("Leave the test", "nothing here is kept", 0);
+  html('<div class="pad gpad"><h1>Leave the test?</h1>' +
+    '<p class="lede">You have done <b>' + done + " of " + steps.length +
+    "</b>. Nothing in a test is written down: no report goes to a teacher, and " +
+    "this phone keeps none of it. Leave now and next time you start a whole " +
+    "match again, from the market.</p>" +
+    '<button class="btn" id="dmoNo">Stay and finish</button>' +
+    '<button class="btn ghost" id="dmoYes">Leave &mdash; back to the code screen</button>' +
+    "</div>");
+  $("dmoNo").onclick = function () { back(); };
+  $("dmoYes").onclick = demoBye;
+};
+
+/* la croce in alto: c'e' solo dentro la prova, accanto alla casetta */
+function demoExitBtn(box) {
+  if (!box || !demoOn() || box.querySelector(".dmx")) return;
+  var b = document.createElement("button");
+  b.className = "dmx"; b.type = "button";
+  b.setAttribute("aria-label", "Leave the test");
+  b.innerHTML = "&#10005;";
+  b.onclick = demoLeave;
+  box.appendChild(b);
 }
 
 /* ───────── il saluto, e il telefono torna pulito ───────── */
