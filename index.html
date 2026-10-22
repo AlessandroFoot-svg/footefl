@@ -2915,7 +2915,9 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .dmtipc{max-width:340px;padding:20px 20px 18px;border-radius:17px;
   border:1px solid var(--gold);background:var(--deep);color:var(--cream)}
 .dmtipc b{display:block;font:800 18px/1.25 var(--brand);color:var(--gold)}
-.dmtipc p{margin:9px 0 0;font-size:13px;font-weight:600;line-height:1.55;color:var(--fog)}
+.dmtipc p{margin:9px 0 0;font-size:13px;font-weight:600;line-height:1.55;color:var(--fog);
+  text-align:left}
+.dmtipc{max-height:82vh;overflow:auto}
 .dmtipc p b{display:inline;font-size:inherit;color:var(--cream)}
 .dmtipc .btn{margin-top:16px}
 
@@ -3857,7 +3859,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "101";
+var APPVER = "103";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -7147,7 +7149,7 @@ VIEWS.howto = function () {
     ["The transfer market opens once",
      "Twenty grammar questions at your level. Your score decides which scouts answer the " +
      "phone, and a better scout brings more players."],
-    ["Prepare the team sheet",
+    ["Set up your chances",
      "Before each match you pick where you shoot and where your keeper dives. The weather " +
      "of each half tells you how many moments you get."],
     ["Play the two halves",
@@ -7672,7 +7674,7 @@ function drawNextUp() {
         '<button class="nxgo" data-c="' + esc(n.id) + '" type="button">' + (n.halves >= 2
           ? "Matchday " + n.md + " is played &mdash; see it"
           : n.halves === 1 ? "Play the other half"
-          : esc(sheet || "Prepare my team sheet")) + " &rsaquo;</button>" +
+          : esc(sheet || "Set up my chances")) + " &rsaquo;</button>" +
         '<span class="nxs">' + (n.halves >= 2
           ? (n.md < (n.mdTotal || 1)
               ? "Waiting for your teacher to open matchday " + (n.md + 1) + "."
@@ -10274,9 +10276,9 @@ function sheetLabel() {
   if (md && matchPlayed(md)) return "Matchday " + md + " is played &mdash; see it";
   if (md && halfPlayed(md, "att")) return "Play the defence";
   if (SHEET.locked) return "Back into the match";
-  if (sheetReady())  return "My team sheet is ready &mdash; get the code";
+  if (sheetReady())  return "My chances are ready &mdash; get the code";
   var n = filled("att") + filled("def"), t = phaseSlots("att") + phaseSlots("def");
-  return n ? "Finish my team sheet (" + n + " of " + t + ")" : "Prepare my team sheet";
+  return n ? "Finish my chances (" + n + " of " + t + ")" : "Set up my chances";
 }
 function sheetDone() { loadSheet(); return sheetReady(); }
 
@@ -10345,10 +10347,10 @@ function drawFoot() {
   var demo = (typeof demoOn === "function") && demoOn();
   $("foot").innerHTML = (demo
     ? "<b>One match, and that is the whole of it</b>No season behind it and no table: " +
-      "Ravens against the bot, once. Bring your team sheet filled in, and watch " +
+      "Ravens against the bot, once. Bring your chances filled in, and watch " +
       "the weather — it decides how many slots open."
     : "<b>Your next match</b>Matchday " + ME.next.md +
-      ". Bring your team sheet filled in, and watch the weather: it decides how many " +
+      ". Bring your chances filled in, and watch the weather: it decides how many " +
       "slots open.") +
     '<span class="sig2">WATCH &mdash; WAIT &mdash; STRIKE</span>';
 }
@@ -13880,7 +13882,7 @@ VIEWS.mCall = function (d) {
 
       '<h2 class="sec top">2 &middot; Who takes it?</h2>' +
       '<p class="lede sm2">Anyone in the squad. This does not use up one of his ' +
-      "moments on the team sheet.</p>" + shirtRow("ptk", C.taker) +
+      "moments among your chances.</p>" + shirtRow("ptk", C.taker) +
 
       '<h2 class="sec top">3 &middot; Who signs the wonder goal?</h2>' +
       '<p class="lede sm2">If you write <b>the hard word</b> of the dictation ' +
@@ -15590,7 +15592,7 @@ function demoSteps() {
       go:"ground", ok:ground },
     { id:"press",  t:"The press room", s:"before the match, they want a word",
       go:"pressdoor", ok:!!(press && Object.keys(press).length) },
-    { id:"sheet",  t:"Your team sheet", s:"who shoots, who dives",
+    { id:"sheet",  t:"Your chances", s:"who is there when each one opens",
       go:"sheet",  ok:sheet },
     { id:"att",    t:"The attack", s:"the dictation you play forward",
       go:"play",   ok:halfPlayed(md, "att") },
@@ -16291,7 +16293,7 @@ function mbFixture() {
       ["You play " + opp + " " + where + ".",
        "The sky is " + climAdj(a.clim) + " in attack: " + a.slots +
        " moments. In defence it is " + climAdj(d.clim) + ": " + d.slots + " moments.",
-       "Fill in your team sheet before you play."],
+       "Fill in your chances before you play."],
       ["The league office confirms matchday " + ME.next.md + ": " + opp + ", " +
        where + ".",
        "The forecast gives " + climAdj(a.clim) +
@@ -16299,7 +16301,7 @@ function mbFixture() {
        " moments, and " + climAdj(d.clim) + " skies for the defensive half, " +
        "which opens " + d.slots + ". The two halves are never more than one step " +
        "apart on the scale, so plan your sheet around the smaller number.",
-       "Your team sheet must be filled in and locked before kick-off."]),
+       "Your chances must be filled in and locked before kick-off."]),
     q:{ t:lv("How many moments do you have in attack?",
              "How many moments does the weather open in the attacking half?"),
         o:mbNums(a.slots, d.slots), c:0 }
@@ -16365,7 +16367,7 @@ function mbSusp() {
            ((parseInt(k, 10) || 0) + 1) + ".",
            "His moments do not disappear: a team-mate who was not already busy " +
            "takes them, and the goals or the mistakes will be his. Choose that " +
-           "team-mate yourself on the team sheet, or the app will choose for you."]),
+           "team-mate yourself among your chances, or the app will choose for you."]),
         q:{ t:lv("Why can " + nm + " not play?",
                  "What is the reason for the suspension?"),
             o:x.why === "red"
@@ -18527,10 +18529,10 @@ function tourSteps() {
            "cidade e os teus n\u00fameros." } },
 
   { a:"sheet",
-    t:{ en:["Fill in the team sheet", "The team sheet comes before the match"],
-        it:"Prepara la distinta",
-        fr:"Pr\u00e9pare la feuille de match",
-        pt:"Prepara a ficha de jogo" },
+    t:{ en:["Fill in your chances", "Your chances come before the match"],
+        it:"Prepara le tue occasioni",
+        fr:"Pr\u00e9pare tes occasions",
+        pt:"Prepara as tuas ocasi\u00f5es" },
     x:{ en:["Before the match you say who takes each moment, where you shoot and where " +
             "your keeper dives. The weather says how many moments you get.",
             "Before kick-off you decide who takes each moment, which side you shoot and " +
@@ -19910,7 +19912,7 @@ VIEWS.prep = function (d) {
   if (!filled("att") && !filled("def") && !(d && d.tab)) PREP.tab = "att";
   paintClub(ME.club);
   var n = ME.next;
-  barFlow("My team sheet", "Matchday " + n.md + " · vs " + n.away,
+  barFlow("Your chances", "Matchday " + n.md + " · vs " + n.away,
           Math.round(((filled("att") + filled("def")) /
                       (phaseSlots("att") + phaseSlots("def"))) * 100));
 
@@ -19934,6 +19936,21 @@ VIEWS.prep = function (d) {
     b.onclick = function () { PREP.tab = b.dataset.p; swap("prep"); };
   });
   drawRoles(); drawGrid(); drawPrepFoot();
+
+  /* nella prova non c'e' un professore accanto: la cosa meno ovvia di
+     tutto il gioco e' proprio questa pagina, perche' sembra una
+     formazione e non lo e'. Si dice una volta, in chiaro. */
+  if (typeof demoTell === "function") {
+    demoTell("sheet", "It is not a formation.",
+      "The weather says how many <b>dangerous moments</b> this match will have. " +
+      "Here you say who is there when each one comes: in attack, who is in front " +
+      "of their goal when the chance opens; in defence, who is between them and " +
+      "yours.<br><br>Nobody plays ninety minutes. A player takes the moment you " +
+      "give him and then he is finished — only your keeper, your captain and " +
+      "your gem come back, up to four moments each." +
+      "<br><br>Going forward they are <b>your chances</b>; coming back they are " +
+      "<b>theirs</b>. Either way, what counts is who is there.");
+  }
 };
 
 function drawRoles() {
@@ -20104,7 +20121,7 @@ function drawPrepFoot() {
       ? '<button class="btn" id="nxt">Now the ' +
         (other === "att" ? "attack" : "defence") + "</button>"
       : "") +
-    (ready ? '<button class="btn" id="lock">My team sheet is ready</button>' : "") +
+    (ready ? '<button class="btn" id="lock">My chances are ready</button>' : "") +
     (!ready
       ? '<p class="lede">' + (phaseFull("att") && phaseFull("def") ? "" :
           "Still to fill: " +
@@ -20303,14 +20320,14 @@ VIEWS.lock = function () {
   barFlow(CODES_ON ? "The match is locked" : "Ready to play", "Matchday " + md, 100);
 
   if (!CODES_ON) {
-    html('<div class="pad"><h1>Your team sheet is in.</h1>' +
+    html('<div class="pad"><h1>Your chances are in.</h1>' +
       '<p class="lede">' + phaseSlots("att") + " players in attack, " +
       phaseSlots("def") + " in defence. Nothing more to do at home.</p>" +
       '<p class="lede">Next come your <b>calls</b> — the penalty, the wonder goal, ' +
       "the shape and the plan — then the weather, and then the dictation. Once it " +
       "starts it does not stop, so do it when you are ready and somewhere quiet.</p>" +
       '<button class="btn" id="unl">Start the match</button>' +
-      '<button class="btn ghost" id="bks">Change my team sheet</button></div>');
+      '<button class="btn ghost" id="bks">Change my chances</button></div>');
     $("unl").onclick = function () {
       SHEET.locked = true; saveSheet(); goHalf("att");
     };
@@ -20319,7 +20336,7 @@ VIEWS.lock = function () {
   }
 
   var want = matchCode(md);
-  html('<div class="pad"><h1>Your team sheet is in.</h1>' +
+  html('<div class="pad"><h1>Your chances are in.</h1>' +
     '<p class="lede">' + phaseSlots("att") + " players in attack, " + phaseSlots("def") +
     " in defence. Nothing more to do at home.</p>" +
     '<div class="lock"><span>MATCH CODE</span><b>The match opens with a code your ' +
@@ -20329,7 +20346,7 @@ VIEWS.lock = function () {
     '<p class="kerr" id="kerr" hidden>That is not the code for matchday ' + md + ".</p>" +
     "</div>" +
     '<button class="btn" id="unl" disabled>Unlock the match</button>' +
-    '<button class="btn ghost" id="bks">Change my team sheet</button></div>');
+    '<button class="btn ghost" id="bks">Change my chances</button></div>');
 
   var kc = $("kc"), unl = $("unl");
   kc.oninput = function () {
