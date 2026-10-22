@@ -2927,50 +2927,47 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .slot2 .pbo{margin-left:6px;font-size:10px}
 
 /* ═══════ L'INGRESSO IN CAMPO ═══════ */
-.wo{position:relative;min-height:78vh;display:grid;place-items:center;overflow:hidden}
-.wobg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.42}
-.woveil{position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 40%,
-  rgba(4,23,15,.25) 0%,rgba(4,23,15,.9) 72%)}
-.woin{position:relative;width:100%;padding:26px 20px 22px;text-align:center}
-.wok{display:block;font:800 9.5px/1 var(--brand);letter-spacing:.2em;color:var(--gold);
+/* la schermata e' il campo: niente riquadro, niente bordi, e gli stemmi
+   stanno in mezzo allo schermo, non in cima */
+.wo{position:relative;min-height:min(88vh,840px);display:grid;place-items:center;
+  overflow:hidden;background:var(--ink)}
+.wobg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.45}
+.woveil{position:absolute;inset:0;background:radial-gradient(130% 75% at 50% 46%,
+  rgba(4,23,15,.18) 0%,rgba(4,23,15,.88) 70%)}
+.woin{position:relative;width:100%;max-width:430px;padding:0 20px;text-align:center}
+.wok{display:block;font:800 10px/1 var(--brand);letter-spacing:.22em;color:var(--gold);
   opacity:0;animation:wofade .5s ease .1s forwards}
-.worow{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px}
-.wocrest{width:84px;height:84px;display:grid;place-items:center;opacity:0}
+.worow{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:26px}
+.wocrest{width:34vw;max-width:148px;height:34vw;max-height:148px;
+  display:grid;place-items:center;opacity:0}
 .wocrest img{width:100%;height:100%;object-fit:contain;
-  filter:drop-shadow(0 6px 14px rgba(0,0,0,.55))}
-.wocrest i{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;
-  font:800 22px var(--brand);font-style:normal;color:#fff}
-.wocrest.l{animation:woleft .62s cubic-bezier(.2,.9,.3,1.3) .15s forwards}
-.wocrest.r{animation:woright .62s cubic-bezier(.2,.9,.3,1.3) .15s forwards}
-.wov{font:800 15px var(--brand);color:var(--fog);opacity:0;
-  animation:wofade .4s ease .62s forwards}
-.wonames{display:flex;justify-content:center;gap:18px;margin-top:11px}
-.wonames b{flex:1;max-width:150px;font:800 14px/1.25 var(--brand);color:var(--cream);
-  opacity:0;animation:wofade .5s ease .7s forwards}
-.wotun{display:flex;align-items:flex-end;justify-content:center;gap:4px;
-  margin-top:24px;min-height:44px}
-.wom{width:28px;opacity:0;transform:translateY(16px);
-  animation:woup .45s cubic-bezier(.2,.9,.3,1.25) forwards}
-.wom:nth-child(odd){width:26px}
-.wom svg{width:100%;height:auto;display:block;
-  filter:drop-shadow(0 3px 7px rgba(0,0,0,.65)) brightness(1.25)}
-.wosay{margin:16px 0 0;font:600 12.5px/1.55 var(--brand);color:var(--fog);
-  opacity:0;animation:wofade .5s ease 1.1s forwards}
-.wogo{max-width:300px;margin:18px auto 0;opacity:0;pointer-events:none;
+  filter:drop-shadow(0 10px 22px rgba(0,0,0,.6))}
+.wocrest i{width:86%;height:86%;border-radius:50%;display:grid;place-items:center;
+  font:800 30px var(--brand);font-style:normal;color:#fff}
+.wocrest.l{animation:woleft .7s cubic-bezier(.2,.9,.3,1.3) .15s forwards}
+.wocrest.r{animation:woright .7s cubic-bezier(.2,.9,.3,1.3) .15s forwards}
+.wov{font:800 17px var(--brand);color:var(--fog);opacity:0;
+  animation:wofade .4s ease .66s forwards}
+.wonames{display:flex;justify-content:center;gap:16px;margin-top:16px}
+.wonames b{flex:1;max-width:160px;font:800 15px/1.25 var(--brand);color:var(--cream);
+  opacity:0;animation:wofade .5s ease .74s forwards}
+.wosay{margin:20px auto 0;max-width:320px;font:600 13px/1.55 var(--brand);
+  color:var(--fog);opacity:0;animation:wofade .5s ease 1s forwards}
+.wogo{max-width:300px;margin:20px auto 0;opacity:0;pointer-events:none;
   transition:opacity .4s ease}
 .wo.done .wogo{opacity:1;pointer-events:auto}
-.wo.done .wok,.wo.done .wov,.wo.done .wonames b,.wo.done .wosay,.wo.done .wom{
+.wo.done .wok,.wo.done .wov,.wo.done .wonames b,.wo.done .wosay{
   animation:none;opacity:1;transform:none}
 .wo.done .wocrest{animation:none;opacity:1;transform:none}
 @keyframes wofade{to{opacity:1}}
-@keyframes woleft{from{opacity:0;transform:translateX(-120px) rotate(-14deg)}
+@keyframes woleft{from{opacity:0;transform:translateX(-130px) rotate(-14deg) scale(.8)}
   to{opacity:1;transform:none}}
-@keyframes woright{from{opacity:0;transform:translateX(120px) rotate(14deg)}
+@keyframes woright{from{opacity:0;transform:translateX(130px) rotate(14deg) scale(.8)}
   to{opacity:1;transform:none}}
-@keyframes woup{to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){
-  .wok,.wov,.wonames b,.wosay,.wom,.wocrest{animation:none!important;opacity:1!important;
+  .wok,.wov,.wonames b,.wosay,.wocrest{animation:none!important;opacity:1!important;
     transform:none!important}
+}
 }
 </style>
 </head>
@@ -3860,7 +3857,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "100";
+var APPVER = "101";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -11895,7 +11892,9 @@ VIEWS.live = function () {
   var cmp = COMPS.filter(function (m) { return m.id === scope(); })[0];
   var tab = (typeof compGame === "function") ? compGame(scope(), ME.club.id) : null;
   if (typeof refreshTable === "function") refreshTable();
-  var row = (typeof leagueRows === "function")
+  /* nella prova la classifica non esiste: una partita sola non fa una
+     posizione, e mostrarne una sarebbe la stagione di nessuno */
+  var row = (!demoOnSafe() && typeof leagueRows === "function")
     ? leagueRows().filter(function (r) { return r.id === ME.club.id; })[0] : null;
   paintClub(ME.club);
   barFlow("Full time", ME.club.name + " v " + them, 100);
@@ -11931,16 +11930,30 @@ VIEWS.live = function () {
         "possession do not travel yet.</p>";
     }
     var wa = A.to ? A.ri / A.to : 0, wb = B.to ? B.ri / B.to : 0;
-    var pa = (wa + wb) ? Math.round(wa / (wa + wb) * 100) : 50;
-    pa = Math.max(5, Math.min(95, pa));
-    var pb = 100 - pa;
+    /* se nessuno dei due ha tenuto in piedi una parola non c'e' un
+       possesso da dividere: 50-50 sarebbe una bugia gentile, e una
+       partita senza una parola giusta non e' finita in parita' */
+    var vuoto = !A.to && !B.to;
+    var zero = (wa + wb) === 0;
+    var pa = zero ? 0 : Math.round(wa / (wa + wb) * 100);
+    if (!zero) pa = Math.max(5, Math.min(95, pa));
+    var pb = zero ? 0 : 100 - pa;
+
     return '<div class="qrw"><span class="qv">' + A.w +
       "<u>" + A.y + "Y &middot; " + A.r + "R</u></span>" +
       '<span class="ql">fouls</span><span class="qv">' + B.w +
       "<u>" + B.y + "Y &middot; " + B.r + "R</u></span></div>" +
-      '<div class="qrw"><span class="qv">' + pa + "%</span>" +
-      '<span class="ql">possession</span><span class="qv">' + pb + "%</span></div>" +
-      '<div class="posbar"><i style="width:' + pa + '%"></i></div>';
+      (vuoto
+        ? '<div class="qrw"><span class="qv">&mdash;</span>' +
+          '<span class="ql">possession</span><span class="qv">&mdash;</span></div>'
+        : zero
+        ? '<div class="qrw"><span class="qv">0%</span>' +
+          '<span class="ql">possession</span><span class="qv">0%</span></div>' +
+          '<p class="qn sm3">Neither side kept a single word standing, so nobody ' +
+          "had the ball.</p>"
+        : '<div class="qrw"><span class="qv">' + pa + "%</span>" +
+          '<span class="ql">possession</span><span class="qv">' + pb + "%</span></div>" +
+          '<div class="posbar"><i style="width:' + pa + '%"></i></div>');
   }
 
   var pts = win ? 3 : draw ? 1 : 0;
@@ -11988,8 +12001,12 @@ VIEWS.live = function () {
       "</span><span>" + esc(them) + "</span></div>" +
       qrow("attack", myAtt, thAtt) + qrow("defence", myDef, thDef) +
       pwrow() +
-      '<p class="qn">The points each side put together: every moment is worth ' +
+      '<p class="qn">The points each side put together \u2014 not the goals: ' +
+      "every moment is worth " +
       "0, 0,25, 0,50, 0,75 or 1, and here they are added up. " +
+      "<b>Fouls are the words that came out wrong</b> — a yellow is a word " +
+      "nearly right, a red one that was missed or far off — and " +
+      "<b>possession is the share of the dictation each side kept standing</b>. " +
       (s.mode === "rapide"
         ? "Quick rules: every shot the other side could not answer is a goal."
         : "In the match they go one against one: shot against save, and the " +
@@ -12004,13 +12021,19 @@ VIEWS.live = function () {
 
     '<button class="btn" id="ftrep">See my language report</button>' +
     '<button class="btn ghost" id="ftrun2">Watch it again</button>' +
-    '<button class="btn ghost" id="fttab">The whole table</button>' +
-    '<button class="btn ghost" id="lvbk">Back to the competition</button></div>');
+    /* nella prova non c'e' una classifica vera da aprire */
+    (demoOnSafe() ? ""
+      : '<button class="btn ghost" id="fttab">The whole table</button>') +
+    '<button class="btn ghost" id="lvbk">' +
+    (demoOnSafe() ? "Back to the homepage" : "Back to the competition") +
+    "</button></div>");
 
   $("ftrep").onclick = function () { go("mReport"); };
   $("ftrun2").onclick = function () { swap("ftRun"); };
-  $("fttab").onclick = function () { if (typeof LG === "object") LG.team = null;
-                                     go("league"); };
+  if ($("fttab")) $("fttab").onclick = function () {
+    if (typeof LG === "object") LG.team = null;
+    go("league");
+  };
   $("lvbk").onclick = function () { reset("home"); };
 };
 
@@ -14480,10 +14503,10 @@ function drawYard(groups) {
    tunnel. Dura tre secondi e non cambia un numero — serve a far capire
    al corpo che da adesso si gioca, e che quello che si scrive conta.
 
-   Come e' fatto: due stemmi che entrano dai lati e si guardano, undici
-   maglie che escono una dopo l'altra, e il bottone che compare quando
-   sono tutte fuori. Si tocca lo schermo e si salta: chi gioca la
-   quarta partita non vuole rivederla ogni volta.
+   Come e' fatto: i due stemmi entrano dai lati e si fronteggiano in
+   mezzo al campo, grandi, e poi compare il bottone. Si tocca lo schermo
+   e si salta: chi gioca la quarta partita non vuole rivederla ogni
+   volta.
 
    Perche' finisce con un bottone e non da solo: il dettato parte con
    l'audio, e l'audio sui telefoni vuole un dito che tocca poco prima.
@@ -14510,16 +14533,6 @@ VIEWS.walkout = function (d) {
           : '<i style="background:' + esc(c.colour || "#0E3B2C") + '">' +
             esc(initials(c.name || "?")) + "</i>") + "</span>";
   }
-  /* undici maglie che escono dal tunnel, una ogni sessanta millesimi */
-  function tunnel() {
-    var o = "", i;
-    for (i = 0; i < 11; i++) {
-      o += '<span class="wom" style="animation-delay:' + (300 + i * 60) + 'ms">' +
-        '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#jersey"/></svg></span>';
-    }
-    return o;
-  }
-
   html('<div class="wo" id="wo">' +
     '<img class="wobg" src="' + imgOf("pitch") + '" alt="">' +
     '<span class="woveil" aria-hidden="true"></span>' +
@@ -14533,8 +14546,6 @@ VIEWS.walkout = function (d) {
 
       '<div class="wonames"><b>' + esc(A.name || n.home || "") + "</b>" +
       "<b>" + esc(B.name || n.away || "") + "</b></div>" +
-
-      '<div class="wotun">' + tunnel() + "</div>" +
 
       '<p class="wosay">' + (ph === "att"
         ? "They are out. Listen, and write every word you hear."
@@ -15500,16 +15511,28 @@ function demoBotCard(mine) {
   var att = (ME.next && ME.next.attack) || {};
   var def = (ME.next && ME.next.defence) || {};
   var c = tlBotCard(skill, att.clim || "cloudy", def.clim || "rain");
-  var n = ((mine && mine.att.q) || []).length + ((mine && mine.def.q) || []).length;
   return {
     comp:(mine && mine.comp) || "demo", md:(mine && mine.md) || 1, club:DEMO_BOT,
     att:{ q:c.att.q, m:c.att.m, w:c.att.w, hm:c.att.hm },
     def:{ q:c.def.q, m:c.def.m, p:c.def.p, hm:c.def.hm },
     sh:c.sh, dv:c.dv,
-    /* le cifre che servono al possesso: il bot ne scrive quante ne ha
-       scritte l'alunno, sbagliandone secondo la sua forza */
-    stat:{ w:Math.round(n * (1 - skill) * 0.5), y:0, r:0,
-           ri:Math.round(n * skill * 3), to:Math.max(1, n * 3) }
+    /* ── le cifre del possesso ──
+       Il possesso nasce dalla quota di dettato tenuta in piedi, non dai
+       momenti aperti: percio' il bot deve avere un dettato della stessa
+       taglia di quello dell'alunno — gli elementi, non le azioni — e
+       sbagliarne una parte secondo la sua forza. Prima partiva dal
+       numero di azioni: se l'alunno non ne apriva nessuna, il bot si
+       ritrovava con un dettato di una parola e il possesso usciva
+       50-50 per forza, che e' la cosa che non tornava. */
+    stat:(function () {
+      var to = (mine && mine.stat && mine.stat.to) || 0;
+      if (!to) return { w:0, y:0, r:0, ri:0, to:0 };
+      var acc = 0.5 + skill * 0.45;          /* da ~0,70 a ~0,90 di parole giuste */
+      var ri = Math.round(to * acc);
+      var wrong = to - ri;
+      return { w:wrong, y:Math.round(wrong * 0.45), r:wrong - Math.round(wrong * 0.45),
+               ri:ri, to:to };
+    })()
   };
 }
 /* appena i due tempi sono chiusi, il bot risponde subito: nessuna attesa,
