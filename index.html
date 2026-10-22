@@ -2888,6 +2888,11 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .cdemo{margin:16px 0 0;padding:11px 13px;border-radius:11px;border:1px dashed var(--edge);
   font-size:12px;font-weight:600;line-height:1.5;color:var(--fog)}
 .cdemo b{color:var(--cream);font-weight:800}
+
+.stbox em i.later{opacity:.7;font-style:italic}
+.dmlv.off{opacity:.34;cursor:default;border-style:dashed}
+.dmlv.off b,.dmlv.off em{color:var(--fog)}
+.dmlv.off em{letter-spacing:.1em;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -3776,7 +3781,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "92";
+var APPVER = "94";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -9604,20 +9609,28 @@ VIEWS.squad = function () {
   barClub();
   setAction();
   openShirt = null;
+  /* nella prova non c'e' nessun campionato: una partita sola contro il
+     bot. Quindi niente classifica, niente « prossima », niente giornate
+     che restano — erano la stagione di qualcun altro. */
+  var demo = (typeof demoOn === "function") && demoOn();
   html('<div id="sqpress"></div><div id="band"></div>' +
     '<section class="pad"><div class="sqc" id="sqc"></div></section>' +
     '<div id="stadbar"></div>' +
     '<section class="pad" id="signs" hidden><h2 class="sec">Signed in the market</h2>' +
     '<div class="panel" id="signbox"></div></section>' +
-    '<section class="pad"><h2 class="sec">Where I stand</h2>' +
-    '<div class="panel" id="lad"></div></section>' +
-    '<section class="pad"><h2 class="sec">Next match</h2>' +
+    (demo ? "" :
+      '<section class="pad"><h2 class="sec">Where I stand</h2>' +
+      '<div class="panel" id="lad"></div></section>') +
+    '<section class="pad"><h2 class="sec">' +
+    (demo ? "Your match" : "Next match") + "</h2>" +
     '<div id="next"></div></section>' +
     '<section class="pad"><div id="starbar"></div></section>' +
     '<section class="pad"><h2 class="sec">More</h2>' +
     '<div class="tiles" id="tiles"></div></section>' +
     '<p class="foot" id="foot"></p>');
-  drawSqPress(); drawStadium(); drawBand(); drawSquadCard(); drawSignings(); drawTable(); drawNext();
+  drawSqPress(); drawStadium(); drawBand(); drawSquadCard(); drawSignings();
+  if (!demo) drawTable();
+  drawNext();
   drawStarBar(); drawTiles(); drawFoot();
 };
 
@@ -10138,8 +10151,11 @@ function drawNext() {
     '<img class="nxbg" src="' + imgOf("bg-next") + '" alt="">' +
     '<span class="nxveil" aria-hidden="true"></span>' +
     '<div class="nxin"><div class="nxhead solo">' +
-      '<span class="nxk">' + (n.cup ? esc(n.cup).toUpperCase() + " &middot; " : "") +
-      "MATCHDAY " + n.md + "</span>" +
+      '<span class="nxk">' +
+      (((typeof demoOn === "function") && demoOn())
+        ? "TEST IT &middot; ONE MATCH"
+        : (n.cup ? esc(n.cup).toUpperCase() + " &middot; " : "") + "MATCHDAY " + n.md) +
+      "</span>" +
       side(meName, mine, ME.club && ME.club.colour, n.atHome ? "AT HOME" : "AWAY") +
       '<span class="nxvs">versus</span>' +
       side(foe, theirs, "") +
@@ -10181,11 +10197,14 @@ function drawTiles() {
              return n ? "of your words were right" : "nothing played yet"; })(),
       go:"form" },
     { id:"words", name:"My words",     big:String(left), sub:"words to fix", go:"words" },
-    { id:"league",name:"The league",   big:me ? me.pos + "º" : "—",
-      sub:"of " + leagueRows().length + " teams", go:"league" },
     { id:"rules", name:"How it works", big:"6 steps", sub:"the game in short", quiet:true,
       soon:"Weather, slots, thresholds, cards: the rules of FOOTEFL in six short screens." }
   ];
+  /* la lega esiste solo se c'e' un campionato: nella prova no */
+  if (!((typeof demoOn === "function") && demoOn())) {
+    T.splice(2, 0, { id:"league", name:"The league", big:me ? me.pos + "º" : "—",
+      sub:"of " + leagueRows().length + " teams", go:"league" });
+  }
   var box = $("tiles"), openId = null;
   box.innerHTML = T.map(function (t) {
     return '<button class="tile' + (t.quiet ? " quiet" : "") + '" data-t="' + t.id +
@@ -10229,9 +10248,15 @@ function drawStarBar() {
 }
 
 function drawFoot() {
-  $("foot").innerHTML = "<b>Your next match</b>Matchday " + ME.next.md +
-    ". Bring your team sheet filled in, and watch the weather: it decides how many " +
-    "slots open." + '<span class="sig2">WATCH &mdash; WAIT &mdash; STRIKE</span>';
+  var demo = (typeof demoOn === "function") && demoOn();
+  $("foot").innerHTML = (demo
+    ? "<b>One match, then that is the test</b>No season behind it and no table: " +
+      "Ravens against the bot, once. Bring your team sheet filled in, and watch " +
+      "the weather — it decides how many slots open."
+    : "<b>Your next match</b>Matchday " + ME.next.md +
+      ". Bring your team sheet filled in, and watch the weather: it decides how many " +
+      "slots open.") +
+    '<span class="sig2">WATCH &mdash; WAIT &mdash; STRIKE</span>';
 }
 
 
@@ -11276,6 +11301,10 @@ function liveState(md) {
   if (!ME.club || !ME.next) return "";
   var c = liveCard(md);
   if (!c) return "";                       /* i due tempi non sono chiusi */
+  /* nella prova dall'altra parte non c'e' un telefono che deve ancora
+     finire: c'e' un bot, e gioca adesso. Qui, e non solo tornando in
+     casa, perche' il risultato lo si aspetta dove finisce la partita. */
+  if (typeof demoResolve === "function") demoResolve(md);
   if (!c.opp) return "noopp";
   var st = liveGet(md) || {};
   if (st.score) return "done";
@@ -13673,9 +13702,9 @@ var SHAPES = [
   { id:"532", t:"5-3-2", s:"five at the back, nothing gets through" }
 ];
 var PLANS = [
-  { id:"off", t:"Offensive", s:"+1 moment in attack, &minus;1 in defence" },
-  { id:"nat", t:"Balanced",  s:"the weather decides, nothing moves" },
-  { id:"def", t:"Defensive", s:"+1 moment in defence, &minus;1 in attack" }
+  { id:"off", t:"Offensive", s:"+1,00 to your total in attack, &minus;1,00 in defence" },
+  { id:"nat", t:"Balanced",  s:"nothing added, nothing taken away" },
+  { id:"def", t:"Defensive", s:"+1,00 to your total in defence, &minus;1,00 in attack" }
 ];
 function planOf() {
   loadSheet();
@@ -15194,6 +15223,11 @@ var DEMOKEY = "footefl-demo";
 var DEMO_CLUB = "RAV";              /* la squadra della prova */
 var DEMO_BOT  = "BRA";              /* e chi le sta di fronte */
 
+/* I livelli che si possono scegliere nella prova. Gli altri restano in
+   fila, spenti: si vede che il gioco arriva fin la', ma non si entra
+   in una stanza dove la voce non ha ancora letto niente. */
+var DEMO_LEVELS = ["A1", "A2", "B1"];
+
 var DEMO = null;
 function demoLoad() {
   try { DEMO = JSON.parse(localStorage.getItem(DEMOKEY) || "null"); }
@@ -15422,9 +15456,11 @@ VIEWS.tryit = function () {
     '<h2 class="sec">Your level</h2>' +
     '<p class="bnote">The dictations, the grammar and the transfer test all follow it.</p>' +
     '<div class="dmlvls" id="dlv">' + LEVELS.map(function (v) {
+      var pronto = DEMO_LEVELS.indexOf(v) >= 0;
       return '<button class="dmlv' + (DPICK.level === v ? " on" : "") +
-        '" data-l="' + v + '" type="button"><b>' + v + "</b><em>" +
-        esc(LEVEL_NAME[v] || "") + "</em></button>";
+        (pronto ? "" : " off") + '" data-l="' + v + '" type="button"' +
+        (pronto ? "" : ' disabled aria-disabled="true"') + "><b>" + v + "</b><em>" +
+        (pronto ? esc(LEVEL_NAME[v] || "") : "soon") + "</em></button>";
     }).join("") + "</div>" +
     '<p class="dmvoice" id="dvo"></p>' +
 
@@ -19944,16 +19980,26 @@ VIEWS.lock = function () {
 function startBox(ph) {
   if (typeof startParts !== "function") return "";
   var s = startParts(ph);
-  if (!s.strat && !s.pnl && !s.players) return "";
+  /* il piano si chiama dopo questa schermata, nell'attacco: finche' non
+     c'e' il suo punto non si puo' contare, e dirlo e' piu' onesto che
+     mostrare un numero che fra un minuto cambia da solo */
+  var called = false;
+  try { loadSheet(); called = !!(SHEET && SHEET.call && SHEET.call.plan); } catch (e) {}
+  var start = called ? s.start : s.start - s.strat;
+
   var bits = [];
-  if (s.strat) bits.push('<i>' + (s.strat > 0 ? "+" : "&minus;") +
+  if (called && s.strat) bits.push("<i>" + (s.strat > 0 ? "+" : "&minus;") +
     fmt(Math.abs(s.strat)) + " " + planName().toLowerCase() + "</i>");
   if (s.pnl) bits.push('<i class="bad">&minus;' + fmt(s.pnl) + " last cards</i>");
   if (s.buys) bits.push("<i>+" + fmt(s.buys) + " signings</i>");
   if (s.grown) bits.push("<i>+" + fmt(s.grown) + " training</i>");
+  if (!called) bits.push('<i class="later">&plusmn;' + fmt(100) +
+    " your plan, you call it next</i>");
+  if (!bits.length) bits.push("<i>nothing for you, nothing against you</i>");
+
   return '<div class="stbox"><span>You start at</span><b>' +
-    (s.start > 0 ? "+" : s.start < 0 ? "&minus;" : "") +
-    fmt(Math.abs(s.start)) + "</b><em>" + bits.join("") + "</em></div>";
+    (start > 0 ? "+" : start < 0 ? "&minus;" : "") +
+    fmt(Math.abs(start)) + "</b><em>" + bits.join("") + "</em></div>";
 }
 
 /* ───────── 4. si gioca ───────── */
