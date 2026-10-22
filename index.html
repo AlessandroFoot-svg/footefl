@@ -2821,6 +2821,73 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .ptfoot .btn{margin:0;width:auto;padding:10px 22px;font-size:13px}
 .ptsay{margin:8px 0 0;font-size:11.5px;font-weight:700;line-height:1.45;color:var(--fog)}
 .ptsay.bad{padding:8px 11px;border-radius:9px;background:rgba(232,97,76,.14);color:#FFC9BE}
+
+/* ═══════ TEST IT — LA PARTITA DI PROVA ═══════ */
+.dmfix{display:flex;align-items:center;gap:12px;margin:18px 0 6px;padding:14px;
+  border-radius:13px;border:1px solid var(--edge);background:var(--deep)}
+.dmside{flex:1;min-width:0}
+.dmside.right{text-align:right}
+.dmlab{display:block;font-size:8.5px;font-weight:800;letter-spacing:.14em;color:var(--gold)}
+.dmside b{display:block;margin-top:3px;font-size:16px;font-weight:800;color:var(--cream)}
+.dmside em{display:block;margin-top:3px;font-style:normal;font-size:10.5px;font-weight:600;
+  line-height:1.4;color:var(--fog)}
+.dmv{flex:none;font-size:13px;font-weight:800;color:var(--fog);opacity:.7}
+.dmlvls{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:4px}
+.dmlv{padding:10px 6px;border-radius:11px;border:1px solid var(--edge);background:var(--deep);
+  color:var(--cream);font:inherit;cursor:pointer;text-align:center}
+.dmlv b{display:block;font-size:16px;font-weight:800}
+.dmlv em{display:block;margin-top:2px;font-style:normal;font-size:9px;font-weight:700;
+  line-height:1.3;color:var(--fog)}
+.dmlv.on{background:var(--gold);border-color:var(--gold);color:#06231D}
+.dmlv.on em{color:rgba(6,35,29,.72)}
+.dmvoice{margin:9px 0 0;font-size:11px;font-weight:600;line-height:1.5;color:var(--fog)}
+.dmdiffs{display:grid;gap:7px;margin-top:4px}
+.dmdf{padding:11px 13px;border-radius:11px;border:1px solid var(--edge);background:var(--deep);
+  color:var(--cream);font:inherit;cursor:pointer;text-align:left}
+.dmdf b{display:block;font-size:14px;font-weight:800}
+.dmdf em{display:block;margin-top:2px;font-style:normal;font-size:11px;font-weight:600;
+  color:var(--fog)}
+.dmdf.on{background:var(--gold);border-color:var(--gold);color:#06231D}
+.dmdf.on em{color:rgba(6,35,29,.72)}
+
+.dmbox{border-radius:13px;border:1px solid var(--gold);background:var(--deep);overflow:hidden}
+.dmhead{display:flex;align-items:center;gap:11px;width:100%;padding:12px 14px;border:0;
+  background:none;color:var(--cream);font:inherit;text-align:left;cursor:pointer}
+.dmn{flex:none;font-size:20px;font-weight:800;color:var(--gold);line-height:1}
+.dmn i{font-style:normal;font-size:12px;font-weight:700;color:var(--fog)}
+.dmt{flex:1;min-width:0}
+.dmt b{display:block;font-size:13px;font-weight:800}
+.dmt em{display:block;margin-top:2px;font-style:normal;font-size:10.5px;font-weight:600;
+  color:var(--fog)}
+.dmar{flex:none;font-style:normal;font-size:18px;color:var(--gold)}
+.dmlist{padding:0 10px 10px}
+.dmstep{display:flex;align-items:center;gap:10px;width:100%;padding:9px 8px;border:0;
+  border-top:1px solid rgba(226,251,206,.08);background:none;color:var(--cream);
+  font:inherit;text-align:left;cursor:pointer}
+.dmstep span{flex:1;min-width:0}
+.dmstep b{display:block;font-size:12.5px;font-weight:800}
+.dmstep em{display:block;margin-top:1px;font-style:normal;font-size:10px;font-weight:600;
+  color:var(--fog)}
+.dmtick{flex:none;width:19px;height:19px;border-radius:50%;border:1.5px solid var(--edge);
+  font-style:normal;font-size:11px;line-height:17px;text-align:center;color:#06231D}
+.dmstep.ok .dmtick{background:var(--gold);border-color:var(--gold)}
+.dmstep.ok b,.dmstep.ok em{color:var(--fog);text-decoration:line-through;
+  text-decoration-color:rgba(168,212,190,.5)}
+.dmstep:disabled{cursor:default}
+.dmgo{flex:none;font-style:normal;font-size:16px;color:var(--gold)}
+.dmnote{margin:10px 8px 2px;font-size:10px;font-weight:600;line-height:1.5;color:var(--fog)}
+
+.dmend{padding:20px 17px;border-radius:14px;background:var(--gold);color:#06231D;text-align:center}
+.dmk{display:block;font-size:8.5px;font-weight:800;letter-spacing:.16em;opacity:.65}
+.dmend b{display:block;margin-top:9px;font-size:24px;font-weight:800;line-height:1.15;
+  letter-spacing:-.02em}
+.dmend p{margin:10px 0 0;font-size:12px;font-weight:600;line-height:1.6;color:rgba(6,35,29,.82)}
+.dmend .btn{margin-top:16px;background:#06231D;color:var(--gold)}
+.gthin.wide{display:block;width:100%;text-align:center;padding:10px;border:1px solid var(--edge);
+  border-radius:11px}
+.cdemo{margin:16px 0 0;padding:11px 13px;border-radius:11px;border:1px dashed var(--edge);
+  font-size:12px;font-weight:600;line-height:1.5;color:var(--fog)}
+.cdemo b{color:var(--cream);font-weight:800}
 </style>
 </head>
 <body>
@@ -3618,6 +3685,16 @@ function joinClub(id) {
     ME.next[k].word = cl.label; ME.next[k].slots = cl.actions;
   });
   if (typeof BULL !== "undefined" && BULL) refitNext();   /* il vero avversario */
+  /* nella prova l'avversario e' uno solo, e lo scrive un bot */
+  if (typeof demoOn === "function" && demoOn()) {
+    var bot = CLUBS.filter(function (x) { return x.id === DEMO_BOT; })[0];
+    ME.next.oppId = DEMO_BOT;
+    ME.next.away = (bot && bot.name) || "Brass FC";
+    ME.next.home = c.name;
+    ME.next.atHome = true;
+    ME.next.md = 1;              /* la prova e' sempre la prima giornata */
+    ME.mdPlayed = 0;
+  }
   setAction();
   /* la lista delle parole e' quella vera, scritta dai dettati */
   ME.words = (typeof wordList === "function") ? wordList() : [];
@@ -3699,7 +3776,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "91";
+var APPVER = "92";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -3914,7 +3991,7 @@ function html(s) { $("main").innerHTML = s; }
    Lo usano il transfer test (mercato) e il training ground.
    ═══════════════════════════════════════════════════════════════════ */
 
-var LEVELS = ["A1", "A2", "B1", "B2"];
+var LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
 var BANK = {
 
@@ -4024,6 +4101,60 @@ B2: [
  {t:"nuance",          q:"The crowd was ___ silent after the whistle.", o:["utterly","highly","strongly","deeply bad"], c:0},
  {t:"future perfect",  q:"By June they ___ six matches.",           o:["will have played","will play","are playing","would play"], c:0},
  {t:"emphasis",        q:"It ___ the keeper who saved the match.",  o:["was","is being","had","has"], c:0}
+],
+
+C1: [
+ {t:"inversion",       q:"Rarely ___ a defence hold out like that.",   o:["does","do","it does","is"], c:0},
+ {t:"inversion",       q:"Only after the match ___ what he had done.", o:["did he realise","he realised","he did realise","had he realise"], c:0},
+ {t:"cleft",           q:"___ he needs is a run of three wins.",       o:["What","Which","That what","The thing which"], c:0},
+ {t:"cleft",           q:"It was in Leeds ___ the club was founded.",  o:["that","where that","which","when that"], c:0},
+ {t:"fronting",        q:"So badly ___ that the referee stopped play.", o:["did it rain","it rained","rained it","was raining"], c:0},
+ {t:"hedging",         q:"The figures ___ suggest a slight recovery.", o:["would seem to","seem that","are seeming","seem of"], c:0},
+ {t:"nominalisation",  q:"The ___ of the stand took eleven months.",   o:["demolition","demolish","demolishing of it","demolished"], c:0},
+ {t:"participle",      q:"___ allowed for injuries, the squad is thin.", o:["Having","With having","Allowing having","Been"], c:0},
+ {t:"ellipsis",        q:"He said he would come, but I doubt ___.",    o:["it","that he","so it","of it"], c:0},
+ {t:"subjunctive",     q:"It is vital that every player ___ fit.",     o:["be","is being","will be","would be"], c:0},
+ {t:"unreal past",     q:"I would rather you ___ me before deciding.", o:["had asked","asked to","would ask","have asked"], c:0},
+ {t:"concession",      q:"___ as the result was, nobody lost heart.",  o:["Disappointing","Although disappointing it","Despite","However"], c:0},
+ {t:"discourse",       q:"The pitch was poor. ___, we played our game.", o:["Even so","Even if","Despite","Whereas"], c:0},
+ {t:"discourse",       q:"We lost; ___, the performance was our best.", o:["that said","that is said","said that","for all that said"], c:0},
+ {t:"modality",        q:"They ___ well have signed him by now.",      o:["may","might to","could to","should to"], c:0},
+ {t:"passive",         q:"The decision is ___ to have been political.", o:["thought","thinking","though","been thought"], c:0},
+ {t:"collocation",     q:"The manager ___ a heavy price for that gamble.", o:["paid","did","made","gave"], c:0},
+ {t:"collocation",     q:"Her remarks ___ a storm in the press.",      o:["provoked","did","made up","gave out"], c:0},
+ {t:"phrasal verbs",   q:"The deal fell ___ at the last minute.",      o:["through","down","off from","over"], c:0},
+ {t:"phrasal verbs",   q:"He played ___ the seriousness of the injury.", o:["down","under","off with","out of"], c:0},
+ {t:"prepositions",    q:"There is no substitute ___ hard work.",      o:["for","of","to","with"], c:0},
+ {t:"register",        q:"___ to the weather, the fixture was moved.", o:["Owing","Because","Due of","On account"], c:0},
+ {t:"nuance",          q:"The two accounts are ___ different.",        o:["markedly","heavily","strongly much","greatly more"], c:0},
+ {t:"future in past",  q:"He left in May; he ___ never play again.",   o:["would","will","shall","had"], c:0}
+],
+
+C2: [
+ {t:"idiom",           q:"The board decided to ___ the bullet and sell.", o:["bite","chew","swallow","take"], c:0},
+ {t:"idiom",           q:"That signing was a shot in the ___.",        o:["dark","night","blind","air"], c:0},
+ {t:"fixed phrase",    q:"___ and large, the season has gone well.",   o:["By","On","At","For"], c:0},
+ {t:"fixed phrase",    q:"The plan was abandoned ___ good.",           o:["for","to","in","at"], c:0},
+ {t:"inversion",       q:"Little ___ that the decision would cost him.", o:["did he suspect","he suspected","he did suspect","suspected he"], c:0},
+ {t:"inversion",       q:"Were it ___ for the keeper, we would be down.", o:["not","no","never","hardly"], c:0},
+ {t:"subjunctive",     q:"Far ___ me to question the referee.",        o:["be it from","is it from","from it be","it be from"], c:0},
+ {t:"ellipsis",        q:"Some players train hard; others, ___ so.",   o:["less","lesser","least","the less"], c:0},
+ {t:"nominalisation",  q:"His ___ to comment spoke volumes.",          o:["refusal","refuse","refusing of","refused"], c:0},
+ {t:"hedging",         q:"The club is, ___ it were, starting again.",  o:["as","like","so","such"], c:0},
+ {t:"concession",      q:"___ the criticism, he kept his method.",     o:["For all","For every","At all","With all of"], c:0},
+ {t:"discourse",       q:"The defence held. ___, the attack did not.", o:["Conversely","Contrarily","On the opposite","Inversely of"], c:0},
+ {t:"discourse",       q:"___ as it may, the table does not lie.",     o:["Be that","Being that","That be","However that"], c:0},
+ {t:"modality",        q:"You ___ as well admit the goal was offside.", o:["might","should","would","could have"], c:0},
+ {t:"collocation",     q:"The announcement ___ widespread dismay.",    o:["caused","did","made of","gave for"], c:0},
+ {t:"collocation",     q:"He bears no ___ towards his old club.",      o:["grudge","anger","hate","fault"], c:0},
+ {t:"phrasal verbs",   q:"The season fizzled ___ after Christmas.",    o:["out","off","down","away with"], c:0},
+ {t:"phrasal verbs",   q:"They were taken ___ by the early goal.",     o:["aback","back","over with","up at"], c:0},
+ {t:"register",        q:"___ the above, we recommend no change.",     o:["In light of","In the light at","On light of","By light of"], c:0},
+ {t:"register",        q:"The matter ___ further consideration.",      o:["warrants","warns","warranties","is warranting of"], c:0},
+ {t:"nuance",          q:"His apology was ___ rather than sincere.",   o:["perfunctory","quick much","shallow deep","smallish"], c:0},
+ {t:"nuance",          q:"The crowd grew ___ restless as time passed.", o:["increasingly","increasing","more increase","in increase"], c:0},
+ {t:"word grammar",    q:"He is not averse ___ a quiet season.",       o:["to","of","from","with"], c:0},
+ {t:"word grammar",    q:"She was prevailed ___ to stay one more year.", o:["upon","on to","over","with"], c:0}
 ]
 
 };
@@ -4076,7 +4207,7 @@ function bankSize(level) {
    le quattro all'ultimo momento.
    ═══════════════════════════════════════════════════════════════════ */
 
-var PACKS = { A1:[], A2:[], B1:[], B2:[] };
+var PACKS = { A1:[], A2:[], B1:[], B2:[], C1:[], C2:[] };
 
 PACKS.A1.push([
  {t:"to be",        q:"The ball ___ under the bench.",               o:["is","are","be","am"], c:0},
@@ -4607,6 +4738,192 @@ function packSize(level) {
   for (var i = 0; i < list.length; i++) n += list[i].length;
   return n;
 }
+
+
+/* ───── bk-c1.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   I PACCHETTI DI GRAMMATICA — C1
+   Inversione dopo avverbi negativi, frasi scisse, participiali, forme
+   passive riportate, congiuntivo formale, ellissi, nominalizzazione,
+   modalita' sfumata, connettivi del discorso, collocazioni e verbi
+   frasali che a questo livello non si evitano piu'.
+   Tre contesti: il consiglio e i conti, il mercato e i procuratori,
+   la stampa e la citta'.
+   ═══════════════════════════════════════════════════════════════════ */
+
+PACKS.C1.push([
+ {t:"inversion",      q:"Seldom ___ a board admit that it was wrong.",        o:["does","do","it does","is"], c:0},
+ {t:"inversion",      q:"Not until the audit ___ the scale of the debt.",     o:["did we see","we saw","we did see","had we see"], c:0},
+ {t:"cleft",          q:"___ worries the directors is the wage bill.",        o:["What","Which","That what","The thing which"], c:0},
+ {t:"cleft",          q:"It was the stand, not the squad, ___ ruined us.",    o:["that","what","which it","where"], c:0},
+ {t:"nominalisation", q:"The ___ of the accounts was delayed by a month.",    o:["publication","publish","publishing of them","published"], c:0},
+ {t:"passive report", q:"The chairman is ___ to have known all along.",       o:["believed","believing","belief","been believed"], c:0},
+ {t:"subjunctive",    q:"The auditors recommended that the club ___ its debt.", o:["restructure","restructures","restructured","will restructure"], c:0},
+ {t:"participle",     q:"___ the figures twice, she signed the report.",      o:["Having checked","Checked","Have checked","To have checked"], c:0},
+ {t:"participle",     q:"___ by three banks, the loan was never going to be cheap.", o:["Backed","Backing","To back","Having backing"], c:0},
+ {t:"hedging",        q:"The losses ___ to be smaller than last year.",       o:["appear","appear that","are appearing","appear of"], c:0},
+ {t:"modality",       q:"We ___ well end the season in profit.",              o:["may","might to","could to","should of"], c:0},
+ {t:"unreal past",    q:"I would sooner we ___ the ground than the players.", o:["sold","sell","would sell","have sold"], c:0},
+ {t:"concession",     q:"___ small, the surplus is the first in six years.",  o:["Though","Despite","However","Even"], c:0},
+ {t:"discourse",      q:"Revenue rose; ___, costs rose faster.",              o:["however","whereas","even so that","despite"], c:0},
+ {t:"discourse",      q:"The season was poor. ___, the books are balanced.",  o:["Even so","Even if","Whereas","Despite of"], c:0},
+ {t:"ellipsis",       q:"They promised to invest, but I doubt ___.",          o:["it","that they","so it","of it"], c:0},
+ {t:"collocation",    q:"The club ___ a heavy loss in the first quarter.",    o:["made","did","took out","gave"], c:0},
+ {t:"collocation",    q:"The treasurer ___ attention to the rising wages.",   o:["drew","made","put","gave out"], c:0},
+ {t:"phrasal verbs",  q:"The sponsorship deal fell ___ three days before kick-off.", o:["through","down","off from","over"], c:0},
+ {t:"phrasal verbs",  q:"They had to ___ up for the missing income.",         o:["make","take","bring","put"], c:0},
+ {t:"prepositions",   q:"The figures bear no relation ___ last year's.",      o:["to","with","of","at"], c:0},
+ {t:"register",       q:"___ the shortfall, the board has frozen all transfers.", o:["In view of","In view at","On view of","By view of"], c:0},
+ {t:"nuance",         q:"The improvement is ___ modest, but it is real.",     o:["admittedly","admitting","admitted of","in admission"], c:0},
+ {t:"future in past", q:"They signed in June; the deal ___ collapse by autumn.", o:["would","will","shall","had"], c:0}
+]);
+
+PACKS.C1.push([
+ {t:"inversion",      q:"Rarely ___ an agent concede that his client is finished.", o:["will","would to","does he","is"], c:0},
+ {t:"inversion",      q:"On no account ___ the release clause.",              o:["should we mention","we should mention","we mention","should mentioning"], c:0},
+ {t:"cleft",          q:"___ the club wanted was a left-footed centre back.", o:["What","Which","That what","All what"], c:0},
+ {t:"cleft",          q:"It is his attitude, ___ his talent, that worries us.", o:["not","no","nor of","neither"], c:0},
+ {t:"fronting",       q:"So reluctant ___ that the deal took nine weeks.",    o:["was he","he was","did he be","he had been"], c:0},
+ {t:"passive report", q:"He ___ to be weighing up two offers.",               o:["is understood","understands","is understanding","has understood"], c:0},
+ {t:"subjunctive",    q:"The agent demanded that the fee ___ in full.",       o:["be paid","is paid","was paid","will be paid"], c:0},
+ {t:"participle",     q:"___ for a medical, he was already on the plane.",    o:["Booked","Booking","To book","Having book"], c:0},
+ {t:"participle",     q:"___ no reply by Friday, we withdrew the offer.",     o:["Having received","Received","To receive","Receive"], c:0},
+ {t:"hedging",        q:"The move ___ to have been agreed weeks ago.",        o:["seems","seems that","is seeming","seems of"], c:0},
+ {t:"modality",       q:"He ___ have signed for twice the money elsewhere.",  o:["could","could to","can","would to"], c:0},
+ {t:"unreal past",    q:"It is high time the league ___ the agents' fees.",   o:["capped","caps","will cap","has capped"], c:0},
+ {t:"concession",     q:"___ expensive he is, he scores every week.",         o:["However","Whatever","Although","Despite"], c:0},
+ {t:"discourse",      q:"He is thirty-two. ___, he is the fittest in the squad.", o:["That said","That is said","Said that","For all said"], c:0},
+ {t:"ellipsis",       q:"Some clubs pay agents; ours ___ not.",               o:["does","do","is","has"], c:0},
+ {t:"collocation",    q:"The two clubs finally ___ an agreement.",            o:["reached","did","gave","took up"], c:0},
+ {t:"collocation",    q:"His agent ___ a hard bargain over the bonuses.",     o:["drove","did","made up","pushed out"], c:0},
+ {t:"phrasal verbs",  q:"The striker was talked ___ of leaving in January.",  o:["out","off","down from","away"], c:0},
+ {t:"phrasal verbs",  q:"They are holding ___ for a higher fee.",             o:["out","off with","up to","on at"], c:0},
+ {t:"prepositions",   q:"There is no substitute ___ a settled defence.",      o:["for","of","to","with"], c:0},
+ {t:"register",       q:"___ the player accept, the medical is on Monday.",   o:["Should","If will","Would","In case will"], c:0},
+ {t:"nuance",         q:"The interest is ___ genuine, whatever the agent says.", o:["hardly","hard","hardly not","not hardly"], c:0},
+ {t:"word grammar",   q:"The club is not averse ___ selling, at the right price.", o:["to","of","from","with"], c:0},
+ {t:"future perfect", q:"By Thursday the window ___ for ten weeks.",          o:["will have been shut","will shut","would shut","has shut"], c:0}
+]);
+
+PACKS.C1.push([
+ {t:"inversion",      q:"Never before ___ a local paper call for his sacking.", o:["had","has it","did it had","was"], c:0},
+ {t:"inversion",      q:"Only when the whistle went ___ what it meant.",      o:["did they grasp","they grasped","had they grasp","they did grasp"], c:0},
+ {t:"cleft",          q:"___ the supporters resent is the silence.",          o:["What","Which","That what","The what"], c:0},
+ {t:"cleft",          q:"It was on a wet Tuesday ___ the run began.",         o:["that","when that","where","which"], c:0},
+ {t:"nominalisation", q:"The ___ of the ticket prices caused a boycott.",     o:["doubling","double","doubled","to double"], c:0},
+ {t:"passive report", q:"The manager ___ to have lost the dressing room.",    o:["is reported","reports","is reporting","has reported"], c:0},
+ {t:"subjunctive",    q:"The trust asked that the badge ___ unchanged.",      o:["remain","remains","remained","will remain"], c:0},
+ {t:"participle",     q:"___ in 1889, the club has moved ground three times.", o:["Founded","Founding","To found","Having found"], c:0},
+ {t:"participle",     q:"___ the supporters' trust, the board met in private.", o:["Having ignored","Ignored","To ignore","Ignore"], c:0},
+ {t:"hedging",        q:"Attendances ___ to be falling across the division.", o:["would seem","would seem that","are seeming","seem of"], c:0},
+ {t:"modality",       q:"The club ___ have handled the news rather better.",  o:["might","might to","may to","should of"], c:0},
+ {t:"unreal past",    q:"I would rather the statement ___ before the match.", o:["had come","came to","would come","has come"], c:0},
+ {t:"concession",     q:"___ as the mood is, nobody has stopped going.",      o:["Sour","Although sour it","Despite","However"], c:0},
+ {t:"discourse",      q:"The team is improving. ___, the crowd is shrinking.", o:["Meanwhile","Meantime of","In the meanwhile that","By meanwhile"], c:0},
+ {t:"discourse",      q:"___, the city has never had much money to spare.",   o:["Historically","Historical","In history of","By history"], c:0},
+ {t:"ellipsis",       q:"He said he would resign, and ___ he did.",           o:["so","such","thus that","same"], c:0},
+ {t:"collocation",    q:"The article ___ a storm among the supporters.",      o:["provoked","did","made out","gave off"], c:0},
+ {t:"collocation",    q:"The chairman ___ a public apology on Monday.",       o:["issued","did","gave out of","put up"], c:0},
+ {t:"phrasal verbs",  q:"He played ___ the row as a misunderstanding.",       o:["down","under","off with","out of"], c:0},
+ {t:"phrasal verbs",  q:"The story was seized ___ by the national press.",    o:["upon","on to","over","with"], c:0},
+ {t:"prepositions",   q:"The paper stopped short ___ calling for his head.",  o:["of","from","at","to"], c:0},
+ {t:"register",       q:"___ to recent events, the club will hold a meeting.", o:["Owing","Because","Due of","On account"], c:0},
+ {t:"nuance",         q:"The two versions are ___ different.",                o:["markedly","heavily","strongly much","greatly more"], c:0},
+ {t:"future in past", q:"They cheered him in August; by May they ___ boo.",   o:["would","will","shall","had"], c:0}
+]);
+
+
+/* ───── bk-c2.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   I PACCHETTI DI GRAMMATICA — C2
+   Qui la grammatica non basta piu': servono l'idioma giusto, il
+   registro giusto e la parola esatta. Inversioni rare, congiuntivi
+   fossili, ellissi, locuzioni fisse, verbi con la loro preposizione,
+   sfumature che cambiano il senso della frase.
+   Tre contesti: l'inchiesta, il libro di memorie, la telecronaca e il
+   palazzo della lega.
+   ═══════════════════════════════════════════════════════════════════ */
+
+PACKS.C2.push([
+ {t:"inversion",      q:"Little ___ that the file would ever be read.",        o:["did they imagine","they imagined","they did imagine","imagined they"], c:0},
+ {t:"inversion",      q:"Were it ___ for one witness, the case would have collapsed.", o:["not","no","never","hardly"], c:0},
+ {t:"subjunctive",    q:"Far ___ me to accuse anyone without evidence.",       o:["be it from","is it from","from it be","it be from"], c:0},
+ {t:"subjunctive",    q:"Suffice ___ to say the accounts were incomplete.",    o:["it","that","it that","this"], c:0},
+ {t:"fixed phrase",   q:"___ and large, the inquiry confirmed what we knew.",  o:["By","On","At","For"], c:0},
+ {t:"fixed phrase",   q:"The files were destroyed ___ good.",                  o:["for","to","in","at"], c:0},
+ {t:"ellipsis",       q:"Two directors resigned; a third, ___ so.",            o:["very nearly","near very","nearly very much","most near"], c:0},
+ {t:"nominalisation", q:"His ___ to testify was noted by the panel.",          o:["refusal","refuse","refusing of","refused"], c:0},
+ {t:"hedging",        q:"The club was, ___ it were, running two sets of books.", o:["as","like","so","such"], c:0},
+ {t:"concession",     q:"___ the denials, the pattern is hard to miss.",       o:["For all","For every","At all","With all of"], c:0},
+ {t:"discourse",      q:"The income was declared. ___, the loans were not.",   o:["Conversely","Contrarily","On the opposite","Inversely of"], c:0},
+ {t:"discourse",      q:"___ as it may, the rules were broken.",               o:["Be that","Being that","That be","However that"], c:0},
+ {t:"modality",       q:"You ___ as well admit what everybody has read.",      o:["might","should","would","could have"], c:0},
+ {t:"modality",       q:"He cannot ___ have known; he signed every page.",     o:["but","only but","not but","except"], c:0},
+ {t:"collocation",    q:"The report ___ widespread dismay in the city.",       o:["caused","did","made of","gave for"], c:0},
+ {t:"collocation",    q:"The panel ___ serious doubt on his account.",         o:["cast","did","put down","gave over"], c:0},
+ {t:"phrasal verbs",  q:"The inquiry dragged ___ for two more years.",         o:["on","up","over with","at"], c:0},
+ {t:"phrasal verbs",  q:"They were taken ___ by the scale of it.",             o:["aback","back","over with","up at"], c:0},
+ {t:"word grammar",   q:"He was prevailed ___ to hand over the ledger.",       o:["upon","on to","over","with"], c:0},
+ {t:"word grammar",   q:"The findings are at odds ___ the club's statement.",  o:["with","to","from","against"], c:0},
+ {t:"register",       q:"___ the above, we recommend no further action.",      o:["In light of","In the light at","On light of","By light of"], c:0},
+ {t:"register",       q:"The matter ___ a full investigation.",                o:["warrants","warns","warranties","is warranting of"], c:0},
+ {t:"nuance",         q:"The apology was ___ rather than sincere.",            o:["perfunctory","quick much","shallow deep","smallish"], c:0},
+ {t:"nuance",         q:"The evidence is damning, if ___ circumstantial.",     o:["largely","large","in large","by largely"], c:0}
+]);
+
+PACKS.C2.push([
+ {t:"inversion",      q:"Not for one moment ___ I belong there.",              o:["did I feel","I felt","I did feel","felt I"], c:0},
+ {t:"inversion",      q:"Such ___ the noise that I missed the whistle.",       o:["was","it was","had","did"], c:0},
+ {t:"subjunctive",    q:"Come what ___, I would not have left that club.",     o:["may","might","will","would"], c:0},
+ {t:"fixed phrase",   q:"In ___ I should have gone a season earlier.",         o:["hindsight","hindsighting","the hindsight of","hindsights"], c:0},
+ {t:"fixed phrase",   q:"The move was, to all ___ and purposes, a demotion.",  o:["intents","intent","intentions","intending"], c:0},
+ {t:"idiom",          q:"At thirty-four I was living on borrowed ___.",        o:["time","hours","days","years"], c:0},
+ {t:"idiom",          q:"The transfer was a shot in the ___.",                 o:["dark","night","blind","air"], c:0},
+ {t:"idiom",          q:"The board decided to ___ the bullet and rebuild.",    o:["bite","chew","swallow","take"], c:0},
+ {t:"ellipsis",       q:"I trained as hard as ever, if not ___.",              o:["harder","hardest","more hard","the harder"], c:0},
+ {t:"nominalisation", q:"My ___ of the city never really faded.",              o:["affection for","affectionate","affecting","affect of"], c:0},
+ {t:"hedging",        q:"I was never, ___ speaking, a natural finisher.",      o:["strictly","strict","in strict","by strictly"], c:0},
+ {t:"concession",     q:"___ I knew about the offer, I said nothing.",         o:["Much as","Much that","So much as","As much that"], c:0},
+ {t:"discourse",      q:"I had the better season. ___, he got the contract.",  o:["Even so","Even if","Despite","Whereas of"], c:0},
+ {t:"unreal past",    q:"I wish I ___ listened to the physio that winter.",    o:["had","have","would have","did"], c:0},
+ {t:"unreal past",    q:"If only the knee ___ six months longer.",             o:["had lasted","lasted","would last","has lasted"], c:0},
+ {t:"modality",       q:"I ___ have retired at thirty and been happier.",      o:["might","might to","may to","should of"], c:0},
+ {t:"collocation",    q:"He bears no ___ towards the club that sold him.",     o:["grudge","anger","hate","fault"], c:0},
+ {t:"collocation",    q:"The injury ___ an end to a decent career.",           o:["put","did","made","gave"], c:0},
+ {t:"phrasal verbs",  q:"My last season fizzled ___ after Christmas.",         o:["out","off","down","away with"], c:0},
+ {t:"phrasal verbs",  q:"It took a year to come ___ terms with it.",           o:["to","at","over","into"], c:0},
+ {t:"word grammar",   q:"I am indebted ___ the physio who kept me playing.",   o:["to","of","with","for"], c:0},
+ {t:"register",       q:"I write this ___ bitterness, but with regret.",       o:["not out of","not from out","out not of","not of out"], c:0},
+ {t:"nuance",         q:"The crowd grew ___ restless as the half went on.",    o:["increasingly","increasing","more increase","in increase"], c:0},
+ {t:"nuance",         q:"It was a ___ victory: we were outplayed throughout.", o:["hollow","empty full","vacant","blank"], c:0}
+]);
+
+PACKS.C2.push([
+ {t:"inversion",      q:"No sooner ___ the ball than the whistle went.",       o:["had he struck","he had struck","did he strike","he struck"], c:0},
+ {t:"inversion",      q:"Scarcely ___ a corner better taken all season.",      o:["have we seen","we have seen","we had saw","did we have seen"], c:0},
+ {t:"fronting",       q:"Down the left ___ the youngest man on the pitch.",    o:["came","come","did came","was coming of"], c:0},
+ {t:"fixed phrase",   q:"___ all accounts, the dressing room is united.",      o:["By","On","At","For"], c:0},
+ {t:"fixed phrase",   q:"The league acted, ___ belatedly, on the new rule.",   o:["albeit","all be it that","although of","though of"], c:0},
+ {t:"idiom",          q:"The title race is going down to the ___.",            o:["wire","rope","string","line of ends"], c:0},
+ {t:"idiom",          q:"That result has thrown the group wide ___.",          o:["open","opened","opening","up open"], c:0},
+ {t:"subjunctive",    q:"The committee moved that the fixture ___ postponed.", o:["be","is","was being","will be"], c:0},
+ {t:"ellipsis",       q:"Three clubs voted against, and rightly ___.",         o:["so","such","thus that","same"], c:0},
+ {t:"nominalisation", q:"The ___ of video review split the division.",         o:["introduction","introduce","introducing of","introduced"], c:0},
+ {t:"hedging",        q:"The new rule is, ___, a compromise.",                 o:["in essence","in the essence at","by essence of","on essence"], c:0},
+ {t:"concession",     q:"___ unpopular, the decision will stand.",             o:["However","Whatever","Although of","Despite that"], c:0},
+ {t:"discourse",      q:"The vote was close. ___, it was decisive.",           o:["Nonetheless","Nonetheless that","None the less of","No less than"], c:0},
+ {t:"modality",       q:"They ___ have consulted the clubs; they chose not to.", o:["could","could to","can","would to"], c:0},
+ {t:"passive report", q:"The chairman ___ to be considering his position.",    o:["is thought","thinks","is thinking","has thought"], c:0},
+ {t:"collocation",    q:"The ruling ___ a precedent nobody wanted.",           o:["set","did","made up","gave out"], c:0},
+ {t:"collocation",    q:"The clubs ___ exception to the wording.",             o:["took","did","made of","gave at"], c:0},
+ {t:"phrasal verbs",  q:"The proposal was thrown ___ by eleven votes.",        o:["out","off","over with","down at"], c:0},
+ {t:"phrasal verbs",  q:"They have backed ___ from the wage cap.",             o:["down","under","off with","out at"], c:0},
+ {t:"word grammar",   q:"The rule is conducive ___ a faster game.",            o:["to","of","for","with"], c:0},
+ {t:"word grammar",   q:"Nobody is immune ___ criticism, least of all referees.", o:["from","of","at","against"], c:0},
+ {t:"register",       q:"___ the clubs object, the rule takes effect in July.", o:["Unless","If not","Except that","Save if"], c:0},
+ {t:"nuance",         q:"The change is ___ cosmetic and will fool nobody.",    o:["purely","pure","in pure","by purely"], c:0},
+ {t:"nuance",         q:"Attendances are down, ___ in the lower divisions.",   o:["notably","notable","of note that","by notice"], c:0}
+]);
 
 
 /* ───── 16-bulletin.js ───── */
@@ -5339,7 +5656,8 @@ function levelFromCode(code) {
   LEVELS.forEach(function (v) { if (levelCode(v) === code) hit = v; });
   return hit;
 }
-var LEVEL_NAME = { A1:"Beginner", A2:"Elementary", B1:"Intermediate", B2:"Upper intermediate" };
+var LEVEL_NAME = { A1:"Beginner", A2:"Elementary", B1:"Intermediate",
+                   B2:"Upper intermediate", C1:"Advanced", C2:"Proficient" };
 
 VIEWS.level = function () {
   loadLevel();
@@ -6211,7 +6529,7 @@ function clubMark(c, px) {
 function drawClubGrid() {
   var meId = ME.club ? ME.club.id : "";
   $("clubh").textContent = ME.code ? "The clubs of the league · " + CLUBS.length
-                                   : "Choose a club to practise with";
+                                   : "Choose a club to test it with";
 
   /* il mio, in cima e per intero: e' l'unico che mi riguarda davvero */
   var mine = CLUBS.filter(function (c) { return c.id === meId; })[0];
@@ -6261,7 +6579,10 @@ VIEWS.club = function (d) {
   var next = CLUBS[(at + 1) % CLUBS.length];
   var w = clubWho(c.id), kit = kitOf(c.id);
   var mine = ME.club && ME.club.id === c.id, ours = isMine(c.id);
-  var prac = !ME.code;
+  /* nella prova la squadra e' una sola, Ravens: le altre si guardano ma
+     non si prendono, come in campionato dove la da' il professore */
+  var demo = (typeof demoOn === "function") && demoOn();
+  var prac = !ME.code && !demo;
 
   paintNeutral();
   barFlow(c.name, (at + 1) + " of " + CLUBS.length, 0);
@@ -6294,7 +6615,10 @@ VIEWS.club = function (d) {
 
       (mine ? '<button class="btn" id="cgo">Back to my squad</button>'
        : ours ? '<button class="btn" id="cgo">Back into ' + esc(c.name) + "</button>"
-       : prac ? '<button class="btn" id="cgo">Practise with ' + esc(c.name) + "</button>"
+       : demo ? '<p class="cdemo">In this test you play <b>Ravens FC</b>. ' +
+                "In a real season your teacher gives you the club.</p>" +
+                '<button class="btn" id="cgo">Back to Ravens FC</button>'
+       : prac ? '<button class="btn" id="cgo">Test it with ' + esc(c.name) + "</button>"
        : "") +
     "</div>" +
 
@@ -6309,6 +6633,8 @@ VIEWS.club = function (d) {
 
   if ($("cgo")) {
     $("cgo").onclick = function () {
+      /* nella prova il bottone riporta a Ravens: non cambia squadra */
+      if (demo) { joinClub(DEMO_CLUB); paintClub(ME.club); return reset("squad"); }
       if (prac && !mine && !ours) { go("claim", { id:c.id }); return; }
       if (!mine) joinClub(c.id);
       paintClub(ME.club);
@@ -6957,7 +7283,7 @@ VIEWS.gate = function (d) {
     "<span>The code is on the card your teacher gave you — it is also in the link " +
     "he sent, so if you open that link you are in without typing anything. " +
     "Meanwhile you can still work.</span>" +
-    '<button class="gthin" id="gpr" type="button">I only want to practise &#8250;</button>' +
+    '<button class="gthin" id="gpr" type="button">Test it &mdash; one whole match &#8250;</button>' +
     '<button class="gthin" id="gfile" type="button">My teacher sent me a file &#8250;' +
     "</button></div>" +
     '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
@@ -6989,7 +7315,7 @@ VIEWS.gate = function (d) {
       landFromCode();
     });
   };
-  $("gpr").onclick = function () { setPract(true); reset("home"); };
+  $("gpr").onclick = function () { go("tryit"); };
   $("gfile").onclick = function () { setPract(true); go("bulletin"); };
   function bad(m) { $("gerr").hidden = false; $("gerr").textContent = m; }
   setTimeout(function () { try { inp.focus(); } catch (e) {} }, 90);
@@ -7028,7 +7354,7 @@ VIEWS.home = function () {
   }
   else {
     $("bar").innerHTML = '<div class="mast"><div class="mk">FOOT<em>EFL</em></div>' +
-      "<p>PRACTICE &middot; NO CODE</p>" +
+      "<p>" + ((typeof demoOn === "function" && demoOn()) ? "TEST IT" : "NO CODE") + "</p>" +
       '<button class="purse" id="purse" type="button" aria-label="My stars">&#9733;' +
       "<b>" + starsLeft() + "</b></button></div>";
     prog(0);
@@ -7038,16 +7364,17 @@ VIEWS.home = function () {
   /* la pagina di UNA competizione: in cima l'ultimo risultato, poi la
      prossima partita, il riscaldamento e i numeri di qui dentro. Le
      competizioni, le porte e il codice stanno nella pagina dell'alunno. */
-  html('<div id="hwho"></div><div id="hlive"></div>' +
+  if (typeof demoResolve === "function") demoResolve(ME.next ? ME.next.md : 1);
+  html('<div id="hwho"></div><div id="hdemo"></div><div id="hlive"></div>' +
        '<div id="hnext"></div>' +
        '<section class="pad" id="hsq"><div class="sqc" id="sqc"></div></section>' +
        '<div id="htab"></div>' +
        '<div id="stadbar"></div>' +
        '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p>');
 
-  drawWho(); drawLive(); drawNextUp(); drawHomeSquad(); drawHomeTable();
+  drawWho(); drawDemo(); drawLive(); drawNextUp(); drawHomeSquad(); drawHomeTable();
   drawHomeGround();
-  popIn(["hwho", "hlive", "hnext", "hsq", "htab", "stadbar"]);
+  popIn(["hwho", "hdemo", "hlive", "hnext", "hsq", "htab", "stadbar"]);
 
   /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
   if (ME.code && !ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
@@ -7103,15 +7430,20 @@ function drawWho() {
   var act = COMPS.filter(function (m) { return m.id === scope(); })[0];
   var nm = myName();
   if (!ME.code) {
-    $("hwho").innerHTML = '<div class="pad"><div class="hband prac">' +
-      "<b>You are practising</b><span>No code on this phone, so there are no " +
+    var prova = (typeof demoOn === "function") && demoOn();
+    /* nella prova la lista qui sotto dice gia' tutto: qui resta una riga */
+    $("hwho").innerHTML = prova
+      ? '<div class="pad"><button class="gthin wide" id="hcode" type="button">' +
+        "I have my code now &#8250;</button></div>"
+      : '<div class="pad"><div class="hband prac">' +
+      "<b>No code on this phone</b><span>So there are no " +
       "competitions and nothing goes to your teacher. Everything you fix here stays " +
       "yours, and the day you put your code in you keep it.</span>" +
       (ME.club ? "" : '<button class="gthin" id="hpick" type="button">' +
-        "Choose a club to practise with &#8250;</button>") +
+        "Test it &mdash; one whole match &#8250;</button>") +
       '<button class="gthin" id="hcode" type="button">I have my code now &#8250;</button>' +
       "</div></div>";
-    if ($("hpick")) $("hpick").onclick = function () { go("clubs"); };
+    if ($("hpick")) $("hpick").onclick = function () { go("tryit"); };
     $("hcode").onclick = function () { setPract(false); reset("gate"); };
     return;
   }
@@ -7653,7 +7985,7 @@ function drawBar() {
 /* ───────── la stanza "altro": quello che non sta nella barra ───────── */
 VIEWS.more = function () {
   if (ME.club) paintClub(ME.club); else paintNeutral();
-  barFlow("More", ME.code ? "Player " + ME.code : "Practice", 0);
+  barFlow("More", ME.code ? "Player " + ME.code : "Test it", 0);
   var rows = [
     { t:"My form", s:"Every half you have played", go:"form", need:"club" },
     { t:"All my statistics", s:"The language and the game", go:"me" },
@@ -7694,7 +8026,7 @@ function drawOut() {
 VIEWS.me = function () {
   var s = allStats(), g = gameStats();
   if (ME.club) paintClub(ME.club); else paintNeutral();
-  barFlow("My statistics", ME.code ? "Player " + ME.code : "Practice", 0);
+  barFlow("My statistics", ME.code ? "Player " + ME.code : "Test it", 0);
 
   var ups = topKinds(s.kinds, 6);
   var good = [
@@ -7813,9 +8145,9 @@ VIEWS.claim = function (d) {
   var c = CLUBS.filter(function (x) { return x.id === (d && d.id); })[0];
   if (!c) return back();
   paintNeutral();
-  barFlow("Practice", c.name, 0);
+  barFlow("Test it", c.name, 0);
   html('<div class="pad"><h1>' + esc(c.name) + "</h1>" +
-    '<p class="lede">You are practising, so this club is yours for as long as you ' +
+    '<p class="lede">You are testing it, so this club is yours for as long as you ' +
     "want it. Put a name on the shirt and go in.</p>" +
     '<div class="lock"><span>YOUR NAME</span>' +
     "<b>Only this phone sees it. Nothing leaves here.</b>" +
@@ -8223,6 +8555,43 @@ var WARMSETS = {
       { t:"Nothing would have changed if the referee had not been persuaded by the crowd", a:"warm-65" },
       { t:"Our results have improved considerably since the committee decided to invest in younger players", a:"warm-66" }
     ] }
+  ],
+  C1: [
+    /* non ancora incisi: li legge la voce del telefono */
+    { id:"c1-01", lines:[
+      { t:"Rarely does a season turn on a single afternoon, but that one did", a:"" },
+      { t:"Had the board acted in January, the relegation might have been avoided", a:"" },
+      { t:"What the supporters resented was not the defeat but the silence that followed", a:"" },
+      { t:"Owing to the condition of the pitch, the referee postponed the fixture twice", a:"" },
+      { t:"The chairman is understood to have known about the loan for several months", a:"" },
+      { t:"However hard the players worked, the gap at the top never really narrowed", a:"" }
+    ] },
+    { id:"c1-02", lines:[
+      { t:"Not until the final whistle did anybody realise what had been achieved", a:"" },
+      { t:"Having checked the figures twice, the treasurer refused to sign the report", a:"" },
+      { t:"The club would sooner sell the ground than break up the squad", a:"" },
+      { t:"It was on a wet Tuesday in November that the run finally began", a:"" },
+      { t:"Attendances would seem to be falling across the whole of the division", a:"" },
+      { t:"They cheered him in August; by the end of May they would boo", a:"" }
+    ] }
+  ],
+  C2: [
+    { id:"c2-01", lines:[
+      { t:"Little did they imagine that the file would ever be read aloud in court", a:"" },
+      { t:"Were it not for one witness, the whole case would have collapsed in a fortnight", a:"" },
+      { t:"Far be it from me to accuse anybody without the evidence in front of me", a:"" },
+      { t:"The club was, as it were, quietly running two separate sets of books", a:"" },
+      { t:"For all the denials, the pattern that emerges is remarkably hard to miss", a:"" },
+      { t:"Be that as it may, the rules were broken and somebody will have to answer", a:"" }
+    ] },
+    { id:"c2-02", lines:[
+      { t:"No sooner had he struck the ball than the whistle went for half time", a:"" },
+      { t:"Scarcely have we seen a corner better taken in the whole of this season", a:"" },
+      { t:"The committee moved that the fixture be postponed until the following Wednesday", a:"" },
+      { t:"The ruling set a precedent that nobody in the room appeared to want", a:"" },
+      { t:"Attendances are down, notably in the lower divisions, and nobody seems surprised", a:"" },
+      { t:"The change is purely cosmetic and it will fool absolutely nobody", a:"" }
+    ] }
   ]
 };
 /* i gruppi incisi per intero, nell'ordine in cui sono scritti */
@@ -8231,6 +8600,17 @@ function warmSets(level) {
     return (s.lines || []).length && s.lines.every(function (l) { return WARMAUD[l.a]; });
   });
 }
+/* tutti i gruppi, anche quelli che nessuno ha ancora inciso: li usa il
+   dettato, che la voce se la trova — registrata o del telefono. Il
+   riscaldamento invece resta sulle sole incisioni, perche' li' la voce
+   del professore e' meta' dell'esercizio. */
+function warmSetsAny(level) {
+  return (WARMSETS[level] || []).filter(function (s) {
+    return (s.lines || []).length;
+  });
+}
+/* c'e' qualcuno che legge, a questo livello? */
+function warmRecorded(level) { return warmSets(level).length > 0; }
 
 var WARM_N = 6;         /* frasi per giro */
 var WARM_ROUNDS = 3;    /* giri in una sessione, quando c'e' di che farli */
@@ -10839,7 +11219,11 @@ function liveLook(md, done) {
 
 function oppName(id) {
   var t = BULL ? (BULL.teams || []).filter(function (x) { return x.id === id; })[0] : null;
-  return (t && t.name) || id;
+  if (t && t.name) return t.name;
+  /* senza bollettino — la prova — il nome sta nell'elenco dei club */
+  var c = (typeof CLUBS !== "undefined")
+    ? CLUBS.filter(function (x) { return x.id === id; })[0] : null;
+  return (c && c.name) || id;
 }
 /* una lettura senza filtri: le ultime righe del cassetto, viste con la
    chiave pubblica. Serve a capire se il cassetto non si lascia leggere
@@ -12218,6 +12602,36 @@ B2: [
       "insisting that speculation of that kind rarely helped anybody. " +
       "Had the question been put more gently, he might have answered it; " +
       "instead he thanked the room and left." }
+],
+
+C1: [
+  { t:"The vote at the meeting",
+    x:"Rarely had the members' room been so full. " +
+      "What the supporters wanted was not an apology but an explanation, " +
+      "and the chairman, who had been advised to say as little as possible, " +
+      "gave them neither. Only when the vote was counted did he understand " +
+      "how much ground he had lost." },
+  { t:"The season that turned",
+    x:"Having lost four matches in a row, the club seemed certain to go down. " +
+      "Then, on a wet Tuesday in November, something changed. " +
+      "It was not a new signing, nor a change of system, " +
+      "but a decision to keep the ball that nobody outside the dressing room noticed " +
+      "until the table began to move." }
+],
+
+C2: [
+  { t:"The inquiry",
+    x:"Little did the directors imagine that their own minutes would be read aloud " +
+      "in a courtroom. Were it not for a single clerk who kept copies of everything, " +
+      "the matter would have been quietly settled years ago. " +
+      "Far be it from the panel to accuse anybody of dishonesty; " +
+      "be that as it may, the accounts do not add up, and somebody signed them." },
+  { t:"A farewell, of sorts",
+    x:"In hindsight I should have gone a season earlier. " +
+      "No sooner had I come back from the injury than the manager who wanted me left, " +
+      "and his replacement, to all intents and purposes, had made up his mind. " +
+      "I bear no grudge towards the club. " +
+      "I trained as hard as ever, if not harder, and it fizzled out all the same." }
 ]
 
 };
@@ -12336,6 +12750,24 @@ var DMATCH = [
    per tutti quelli che giocano quella giornata. La giornata 1 resta la
    coppia di sempre, cosi' le partite gia' giocate restano quelle. */
 function mdictOf(ph) {
+  /* nella prova il dettato segue il livello scelto: sopra A2 i testi
+     incisi non ci sono, e il testo giusto lo legge il telefono */
+  if (typeof demoOn === "function" && demoOn()) {
+    var lv = ME.level || "A1";
+    if (lv !== "A1" && lv !== "A2" && typeof DICTS !== "undefined" && DICTS[lv]) {
+      var list = DICTS[lv];
+      var t = list[(ph === "att" ? 0 : 1) % list.length];
+      var hard = "";
+      String(t.x).replace(/[A-Za-z']+/g, function (w) {
+        if (w.length > hard.length) hard = w;
+        return w;
+      });
+      var d = { id:"lvl-" + lv + "-" + ph, title:t.t, x:t.x, tts:true,
+                lines:chunksOf(t.x, 7) };
+      if (ph === "att") d.bdo = hard; else d.pen = hard;
+      return d;
+    }
+  }
   var md = (ME.next && ME.next.md) || 1;
   var i = ((md - 1) * 2) % DMATCH.length;
   return ph === "att" ? DMATCH[i] : DMATCH[(i + 1) % DMATCH.length];
@@ -12635,21 +13067,60 @@ function extraSecs() {
   return built("analy") ? 20 : EXTRA_S;
 }
 
-function playerHtml(src, id) {
+function playerHtml(src, id, tts) {
   return '<div class="aud once" id="' + id + 'box">' +
-    '<audio id="' + id + '" preload="auto" src="' + src + '"></audio>' +
+    (tts ? '<audio id="' + id + '" preload="none"></audio>'
+         : '<audio id="' + id + '" preload="auto" src="' + src + '"></audio>') +
     '<button class="apl" id="' + id + 'pp" type="button">' +
     '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>' +
     '<span class="astate" id="' + id + 'st"><b>Start the dictation</b>' +
-    "<em>It plays once, right through. No pause, no going back.</em></span>" +
+    "<em>" + (tts
+      ? "Read by this phone's voice, once, right through."
+      : "It plays once, right through. No pause, no going back.") + "</em></span>" +
     '<div class="abar" id="' + id + 'bar"><i></i></div>' +
     '<span class="atime" id="' + id + 'tm">0:00</span></div>';
 }
 
 /* onEnd scatta quando la voce ha finito; onFail se l'audio non parte */
-function wirePlayer(id, onEnd, onFail, onStart) {
+function wirePlayer(id, onEnd, onFail, onStart, lines) {
   var a = $(id), pp = $(id + "pp"), bar = $(id + "bar"), tm = $(id + "tm"),
       st = $(id + "st"), fill = bar.firstChild, going = false;
+  /* nessuna incisione: legge il telefono, una frase alla volta, con la
+     stessa barra e lo stesso « una volta sola » */
+  if (lines && lines.length) return wireSpoken();
+  function wireSpoken() {
+    var i = 0;
+    pp.onclick = function () {
+      if (going) return;
+      going = true; pp.disabled = true;
+      onStart && onStart(lines.length * 4);
+      $(id + "box").classList.add("live");
+      st.innerHTML = "<b>Listening</b><em>Write as you hear it.</em>";
+      step();
+    };
+    function step() {
+      tm.textContent = (i + 1) + " / " + lines.length;
+      fill.style.width = ((i / lines.length) * 100).toFixed(1) + "%";
+      if (typeof sayLine !== "function") return over(true);
+      sayLine(lines[i], function () {
+        i++;
+        fill.style.width = ((i / lines.length) * 100).toFixed(1) + "%";
+        if (i >= lines.length) return over(false);
+        setTimeout(step, 900);
+      }, function () { over(true); });
+    }
+    function over(broken) {
+      $(id + "box").classList.remove("live");
+      $(id + "box").classList.add("over");
+      if (broken) {
+        st.innerHTML = "<b>This phone has no voice</b>" +
+          "<em>You can still write and send.</em>";
+        return onFail && onFail();
+      }
+      st.innerHTML = "<b>The dictation is over</b><em>Last look.</em>";
+      onEnd && onEnd();
+    }
+  }
   function mmss(s) {
     s = Math.max(0, Math.floor(s || 0));
     return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2);
@@ -12704,7 +13175,7 @@ VIEWS.mWrite = function (d) {
     "no second listen. Write as you hear it &mdash; full stops, commas and capital " +
     "letters count. When the voice ends you get <b>" + extraSecs() +
     " seconds</b> to read it over.</p>" +
-    playerHtml(dictAudio(dict), "au") +
+    playerHtml(dict.tts ? "" : dictAudio(dict), "au", !!dict.tts) +
     '<div id="donebox"></div>' +
     '<div id="xtime"></div>' +
     '<textarea id="dw" rows="10" autocomplete="off" autocapitalize="off" ' +
@@ -12784,7 +13255,7 @@ VIEWS.mWrite = function (d) {
     wirePlayer("au", extraTime, letThemSend, function (dur) {
       startStamp(ph, dur || dict.dur || 300);
       showDone();
-    });
+    }, dict.tts ? dict.lines : null);
   } else if (back <= 0) {
     lockedOut(true);
   } else {
@@ -14061,7 +14532,7 @@ function tlDiff() {
 /* ───────── il dettato: sei frasi registrate, rimesse in fila ───────── */
 function tlLines(level) {
   var out = [];
-  (warmSets(level) || []).forEach(function (s) {
+  (warmSetsAny(level) || []).forEach(function (s) {
     (s.lines || []).forEach(function (l) { out.push(l); });
   });
   if (!out.length && level !== "A1") return tlLines("A1");
@@ -14111,10 +14582,14 @@ function tlWirePlayer(lines, onStart, onEnd) {
   function play() {
     tm.textContent = (i + 1) + " / " + lines.length;
     fill.style.width = ((i / lines.length) * 100).toFixed(1) + "%";
-    a.src = WARMAUD[lines[i].a] || "";
-    var pr = a.play();
-    if (pr && pr["catch"]) pr["catch"](function () { fail(); });
+    var src = WARMAUD[lines[i].a];
+    if (src) { a.src = src; var pr = a.play();
+      if (pr && pr["catch"]) pr["catch"](function () { fail(); });
+      return; }
+    /* nessuna incisione per questa frase: legge il telefono */
+    sayLine(lines[i].t, done, fail);
   }
+  function done() { if (a.onended) a.onended(); }
   a.onended = function () {
     i++;
     fill.style.width = ((i / lines.length) * 100).toFixed(1) + "%";
@@ -14688,6 +15163,320 @@ VIEWS.tlEnd = function () {
     if (!all.length) return "";
     return all.map(function (w) { return '<span class="chip">' + esc(w) + "</span>"; })
       .join("");
+  }
+};
+
+
+/* ───── 52-demo.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   TEST IT — LA PARTITA DI PROVA
+
+   Chi arriva senza codice non deve vedere mezzo gioco: deve vederne
+   uno intero, una volta. Sceglie tre cose e basta — il livello, quanto
+   forte e' l'avversario, e niente altro, perche' la squadra nel gioco
+   vero gliela da' il professore e qui gliela diamo noi: Ravens FC
+   contro Brass FC. Poi gioca tutto: il foglio, i due tempi, la sala
+   stampa, gli esercizi, il mercato, gli sponsor.
+
+   L'AVVERSARIO. In campionato il risultato nasce da due fogli veri, il
+   mio e quello di un altro alunno, che si incontrano nel cassetto. Qui
+   l'altro non c'e': al suo posto scrive un bot, con lo stesso motore
+   del campionato di allenamento. La difficolta' decide quanto scrive
+   bene.
+
+   QUANDO FINISCE. La prova ha una lista di cose da fare, che si vede.
+   Quando sono tutte fatte compare « Thank you and see you soon »: si
+   tocca, e il telefono torna pulito alla schermata del codice. Niente
+   resta: non e' una stagione, e' una dimostrazione.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var DEMOKEY = "footefl-demo";
+var DEMO_CLUB = "RAV";              /* la squadra della prova */
+var DEMO_BOT  = "BRA";              /* e chi le sta di fronte */
+
+var DEMO = null;
+function demoLoad() {
+  try { DEMO = JSON.parse(localStorage.getItem(DEMOKEY) || "null"); }
+  catch (e) { DEMO = null; }
+  return DEMO;
+}
+function demoSave() {
+  try { localStorage.setItem(DEMOKEY, JSON.stringify(DEMO)); } catch (e) {}
+}
+function demoOn() {
+  if (ME.code) return false;          /* col codice non e' piu' una prova */
+  if (!DEMO) demoLoad();
+  return !!(DEMO && DEMO.on);
+}
+function demoStart(level, diff) {
+  DEMO = { on:1, v:1, level:level, diff:diff, club:DEMO_CLUB, bot:DEMO_BOT,
+           made:new Date().toISOString() };
+  demoSave();
+}
+function demoDiff() {
+  var id = (DEMO && DEMO.diff) || "even";
+  var d = TDIFF.filter(function (x) { return x.id === id; })[0];
+  return d || TDIFF[1];
+}
+
+/* ───────── il bot che gioca contro ─────────
+   Non scrive davvero: produce le qualita' che un alunno di quella forza
+   produrrebbe, con lo stesso generatore del campionato di allenamento.
+   Cosi' il risultato esce dal motore vero, non da un numero inventato. */
+function demoBotCard(mine) {
+  var skill = demoDiff().skill;
+  var att = (ME.next && ME.next.attack) || {};
+  var def = (ME.next && ME.next.defence) || {};
+  var c = tlBotCard(skill, att.clim || "cloudy", def.clim || "rain");
+  var n = ((mine && mine.att.q) || []).length + ((mine && mine.def.q) || []).length;
+  return {
+    comp:(mine && mine.comp) || "demo", md:(mine && mine.md) || 1, club:DEMO_BOT,
+    att:{ q:c.att.q, m:c.att.m, w:c.att.w, hm:c.att.hm },
+    def:{ q:c.def.q, m:c.def.m, p:c.def.p, hm:c.def.hm },
+    sh:c.sh, dv:c.dv,
+    /* le cifre che servono al possesso: il bot ne scrive quante ne ha
+       scritte l'alunno, sbagliandone secondo la sua forza */
+    stat:{ w:Math.round(n * (1 - skill) * 0.5), y:0, r:0,
+           ri:Math.round(n * skill * 3), to:Math.max(1, n * 3) }
+  };
+}
+/* appena i due tempi sono chiusi, il bot risponde subito: nessuna attesa,
+   nessun cassetto. Si chiama prima di disegnare il risultato. */
+function demoResolve(md) {
+  if (!demoOn()) return false;
+  var st = liveGet(md) || {};
+  if (st.score) return false;
+  var mine = liveCard(md);
+  if (!mine) return false;
+  var s = liveScore(mine, demoBotCard(mine));
+  st.score = { me:s.me, them:s.them, mine:s.mine, their:s.their, mode:s.mode,
+               opp:DEMO_BOT, home:!!mine.home, when:Date.now(), bot:1 };
+  liveSave(md, st);
+  return true;
+}
+
+/* ═══════════════ LA LISTA DELLE COSE DA FARE ═══════════════ */
+function demoSteps() {
+  var md = (ME.next && ME.next.md) || 1;
+  var sheet = false;
+  try {
+    loadSheet();
+    sheet = !!(SHEET && SHEET.call &&
+      ((SHEET.call.att && SHEET.call.att.side) || (SHEET.call.def && SHEET.call.def.dive)));
+  } catch (e) {}
+  var press = null;
+  try { press = pressGet(md); } catch (e) {}
+  var ground = false;
+  try {
+    loadGround();
+    ground = Object.keys(GROUND.sess || {}).some(function (k) {
+      return (GROUND.sess[k] || []).length;
+    });
+  } catch (e) {}
+  var spon = false;
+  try { spon = Object.keys(spDeals() || {}).length > 0; } catch (e) {}
+  var market = false;
+  try { loadState(); market = !!ST.marketDone; } catch (e) {}
+  var res = false;
+  try { res = !!((liveGet(md) || {}).score); } catch (e) {}
+
+  return [
+    { id:"market", t:"The transfer market", s:"twenty questions, then a scout",
+      go:"market", ok:market },
+    { id:"spon",   t:"A sponsor on the shirt", s:"one deal is enough",
+      go:"spon",   ok:spon },
+    { id:"sheet",  t:"Your team sheet", s:"who shoots, who dives",
+      go:"sheet",  ok:sheet },
+    { id:"att",    t:"The attacking half", s:"the dictation you play forward",
+      go:"play",   ok:halfPlayed(md, "att") },
+    { id:"def",    t:"The defending half", s:"the one you have to hold",
+      go:"play",   ok:halfPlayed(md, "def") },
+    { id:"res",    t:"The result", s:"it lands here when both halves are in",
+      go:"home",   ok:res, wait:true },
+    { id:"press",  t:"The press room", s:"answer for what happened",
+      go:"pressdoor", ok:!!(press && Object.keys(press).length) },
+    { id:"ground", t:"The training ground", s:"one session with your players",
+      go:"ground", ok:ground }
+  ];
+}
+function demoLeft() {
+  return demoSteps().filter(function (s) { return !s.ok; }).length;
+}
+function demoOver() { return demoOn() && demoLeft() === 0; }
+
+/* ───────── la striscia in cima alla home ───────── */
+function demoCard() {
+  if (!demoOn()) return "";
+  var steps = demoSteps(), left = demoLeft(), done = steps.length - left;
+
+  if (!left) {
+    return '<section class="pad"><div class="dmend">' +
+      '<span class="dmk">TEST IT &middot; ' + esc(demoDiff().t.toUpperCase()) +
+      " &middot; " + esc(DEMO.level) + "</span>" +
+      "<b>Thank you and see you soon.</b>" +
+      "<p>You have played a whole matchday of FootEFL: the market, the sheet, " +
+      "both halves, the result, the press room and the ground. In a real season " +
+      "this is one week out of six, your club comes from your teacher, and the " +
+      "team on the other side is another pupil writing the same dictation.</p>" +
+      '<button class="btn" id="dmbye">Thank you and see you soon &rsaquo;</button>' +
+      "</div></section>";
+  }
+
+  return '<section class="pad"><div class="dmbox' + (LDEMO ? " open" : "") + '">' +
+    '<button class="dmhead" id="dmtog" type="button" aria-expanded="' +
+    (LDEMO ? "true" : "false") + '">' +
+    '<span class="dmn">' + done + "<i>/" + steps.length + "</i></span>" +
+    '<span class="dmt"><b>You are testing FootEFL</b><em>' +
+    esc(demoDiff().t) + " &middot; level " + esc(DEMO.level) +
+    " &middot; Ravens FC v Brass FC</em></span>" +
+    '<i class="dmar">' + (LDEMO ? "&minus;" : "+") + "</i></button>" +
+    (LDEMO
+      ? '<div class="dmlist">' + steps.map(function (s) {
+          var fermo = s.ok || s.wait;
+          return '<button class="dmstep' + (s.ok ? " ok" : "") +
+            '" data-go="' + s.go + '" type="button"' + (fermo ? " disabled" : "") + ">" +
+            '<i class="dmtick">' + (s.ok ? "&#10003;" : "") + "</i>" +
+            "<span><b>" + esc(s.t) + "</b><em>" + esc(s.s) + "</em></span>" +
+            (fermo ? "" : '<i class="dmgo">&#8250;</i>') + "</button>";
+        }).join("") +
+        '<p class="dmnote">Nothing here reaches a teacher and nothing is kept: ' +
+        "when the list is finished the phone goes back to the code screen empty.</p>" +
+        "</div>"
+      : "") +
+    "</div></section>";
+}
+var LDEMO = true;        /* la lista parte aperta: è la guida della prova */
+
+function wireDemo() {
+  if ($("dmtog")) {
+    $("dmtog").onclick = function () { LDEMO = !LDEMO; drawDemo(); };
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".dmstep"), function (b) {
+    b.onclick = function () { demoGo(b.dataset.go); };
+  });
+  if ($("dmbye")) $("dmbye").onclick = demoBye;
+}
+/* dove porta ogni riga della lista: il foglio e i due tempi hanno la
+   stessa porta del campionato vero, quella che sa a che punto sei */
+function demoGo(where) {
+  if (where === "home") return;
+  if (where !== "sheet" && where !== "play") return go(where);
+  var md = (ME.next && ME.next.md) || 1;
+  if (where === "play") {
+    if (matchPlayed(md)) return go("played", {});
+    if (halfPlayed(md, "att")) return go("mGo", { ph:"def" });
+  }
+  return go(sheetDone() ? "lock" : "prep");
+}
+
+function drawDemo() {
+  var box = $("hdemo");
+  if (!box) return;
+  box.innerHTML = demoCard();
+  wireDemo();
+}
+
+/* ───────── il saluto, e il telefono torna pulito ───────── */
+function demoBye() {
+  /* via tutto quello che la prova ha scritto: i fogli, i tempi, il
+     risultato, la cassa, il mercato, gli sponsor, la sala stampa, il
+     club scelto. Resta solo la lingua del telefono. */
+  var keep = { "footefl-dataurl":1, "footefl-world":1 };
+  var kill = [], i, k;
+  try {
+    for (i = 0; i < localStorage.length; i++) {
+      k = localStorage.key(i);
+      if (!k || k.indexOf("footefl") !== 0) continue;
+      if (keep[k]) continue;
+      kill.push(k);
+    }
+    kill.forEach(function (x) { try { localStorage.removeItem(x); } catch (e) {} });
+  } catch (e) {}
+  DEMO = null;
+  ME.club = null; ME.student = ""; ME.code = "";
+  try { setPract(false); } catch (e) {}
+  reset("gate", { hint:"" });
+}
+
+/* ═══════════════ LA SCHERMATA DELLA PROVA ═══════════════ */
+var DPICK = { level:"A1", diff:"even" };
+
+VIEWS.tryit = function () {
+  paintNeutral();
+  $("bar").innerHTML = '<div class="mast"><div class="mk">FOOT<em>EFL</em></div>' +
+    "<p>TEST IT</p></div>";
+  prog(0);
+
+  html('<div class="pad gpad">' +
+    "<h1>One whole matchday.</h1>" +
+    '<p class="lede">No code, no teacher, no season: one match from start to finish, ' +
+    "so you can see what the game is. Pick how hard you want it, and go.</p>" +
+
+    '<div class="dmfix"><div class="dmside">' +
+      '<span class="dmlab">YOU</span><b>Ravens FC</b>' +
+      "<em>In a real season your teacher gives you the club.</em></div>" +
+    '<span class="dmv">v</span>' +
+    '<div class="dmside right"><span class="dmlab">THEM</span><b>Brass FC</b>' +
+      "<em>A bot writes their dictation.</em></div></div>" +
+
+    '<h2 class="sec">Your level</h2>' +
+    '<p class="bnote">The dictations, the grammar and the transfer test all follow it.</p>' +
+    '<div class="dmlvls" id="dlv">' + LEVELS.map(function (v) {
+      return '<button class="dmlv' + (DPICK.level === v ? " on" : "") +
+        '" data-l="' + v + '" type="button"><b>' + v + "</b><em>" +
+        esc(LEVEL_NAME[v] || "") + "</em></button>";
+    }).join("") + "</div>" +
+    '<p class="dmvoice" id="dvo"></p>' +
+
+    '<h2 class="sec">How good is Brass FC?</h2>' +
+    '<div class="dmdiffs" id="ddf">' + TDIFF.map(function (d) {
+      return '<button class="dmdf' + (DPICK.diff === d.id ? " on" : "") +
+        '" data-d="' + d.id + '" type="button"><b>' + esc(d.t) + "</b><em>" +
+        esc(d.s) + "</em></button>";
+    }).join("") + "</div>" +
+
+    '<button class="btn" id="dgo">Play the match &rsaquo;</button>' +
+    '<button class="gthin" id="dback" type="button">I have a code after all &#8250;</button>' +
+    '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
+
+  voiceNote();
+  Array.prototype.forEach.call($("dlv").querySelectorAll(".dmlv"), function (b) {
+    b.onclick = function () {
+      DPICK.level = b.dataset.l;
+      Array.prototype.forEach.call($("dlv").querySelectorAll(".dmlv"), function (x) {
+        x.className = "dmlv" + (x.dataset.l === DPICK.level ? " on" : "");
+      });
+      voiceNote();
+    };
+  });
+  Array.prototype.forEach.call($("ddf").querySelectorAll(".dmdf"), function (b) {
+    b.onclick = function () {
+      DPICK.diff = b.dataset.d;
+      Array.prototype.forEach.call($("ddf").querySelectorAll(".dmdf"), function (x) {
+        x.className = "dmdf" + (x.dataset.d === DPICK.diff ? " on" : "");
+      });
+    };
+  });
+  $("dback").onclick = function () { setPract(false); reset("gate"); };
+  $("dgo").onclick = function () {
+    setPract(true);
+    setLevel(DPICK.level);
+    demoStart(DPICK.level, DPICK.diff);
+    ME.student = "You";
+    saveMyClaim(DEMO_CLUB, ME.student);
+    joinClub(DEMO_CLUB);
+    paintClub(ME.club);
+    reset("home");
+  };
+
+  /* chi legge il dettato, a questo livello */
+  function voiceNote() {
+    var rec = (typeof warmSets === "function" ? warmSets(DPICK.level) : []).length;
+    $("dvo").innerHTML = rec
+      ? "&#9679; At " + DPICK.level + " the dictation is read by your teacher's own " +
+        "recordings."
+      : "&#9679; Nobody has recorded " + DPICK.level +
+        " yet, so the phone's voice reads the dictation. Same words, same marking.";
   }
 };
 
@@ -19302,6 +20091,27 @@ function pickVoice() {
     || all.filter(function (v) { return v.default; })[0] || all[0];
 }
 if (CAN_SPEAK) { pickVoice(); window.speechSynthesis.onvoiceschanged = pickVoice; }
+/* una frase intera, letta piano come un dettato, con il modo di sapere
+   quando ha finito: serve ai livelli che nessuno ha ancora inciso. */
+function sayLine(text, done, fail) {
+  if (!CAN_SPEAK) return fail && fail();
+  try {
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(String(text || ""));
+    if (VOICE) { u.voice = VOICE; u.lang = VOICE.lang; }
+    else u.lang = (ME.world || "en") + "-GB";
+    u.rate = 0.78;
+    var closed = false;
+    u.onend = function () { if (!closed) { closed = true; done && done(); } };
+    u.onerror = function () { if (!closed) { closed = true; fail && fail(); } };
+    /* certi telefoni non mandano mai onend: si conta sulle parole */
+    var guess = 1200 + String(text || "").split(/\s+/).length * 620;
+    setTimeout(function () { if (!closed) { closed = true; done && done(); } }, guess);
+    window.speechSynthesis.speak(u);
+    return true;
+  } catch (e) { return fail && fail(); }
+}
+
 function say(word) {
   if (!CAN_SPEAK) return false;
   try {
@@ -19326,7 +20136,7 @@ VIEWS.words = function () {
   loadMem();
   var left = wordsLeft(), done = ME.words.length - left.length;
   /* chi si allena senza codice puo' non avere ancora una squadra */
-  barFlow("My words", ME.club ? ME.club.name : "Practice", 0);
+  barFlow("My words", ME.club ? ME.club.name : "Test it", 0);
   var byKind = {};
   left.forEach(function (x) { byKind[x.kind] = (byKind[x.kind] || 0) + 1; });
   var kinds = Object.keys(byKind).sort(function (a, b) { return byKind[b] - byKind[a]; });
@@ -19432,7 +20242,7 @@ VIEWS.wEnd = function () {
   var before = (loadStars(), starsEarned());
   noteFixedWords();
   var won = starsEarned() - before;
-  barFlow("Done for today", ME.club ? ME.club.name : "Practice", 100, false);
+  barFlow("Done for today", ME.club ? ME.club.name : "Test it", 100, false);
   html('<div class="pad"><h1>' + (WR.fixedNow
     ? WR.fixedNow + (WR.fixedNow === 1 ? " word fixed." : " words fixed.")
     : "Good work.") + "</h1>" +
