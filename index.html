@@ -2792,6 +2792,35 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .ledrow b{font:800 14px/1.1 var(--brand)}
 .ledrow em{font:400 11px/1.2 var(--body);font-style:normal;opacity:.65}
 .ledrow i{font:400 20px/1 var(--body);font-style:normal;opacity:.5}
+
+/* ═══════ LA POSTA DEL PROFESSORE ═══════ */
+.stbar.post .stn{font-size:18px}
+.stbar.post.nw{border-color:var(--gold)}
+.ptwarn{padding:11px 13px;border-radius:11px;border:1px dashed var(--edge);
+  background:rgba(226,251,206,.03);font-size:11.5px;font-weight:600;line-height:1.55;
+  color:var(--fog);margin-bottom:13px}
+.ptwarn b{color:var(--cream);font-weight:800}
+#ptlist{max-height:52vh;overflow:auto;padding:2px 1px}
+.ptm{max-width:86%;margin-bottom:9px;padding:9px 12px;border-radius:13px;
+  font-size:13px;font-weight:600;line-height:1.5}
+.ptm p{margin:0;white-space:pre-wrap;word-break:break-word}
+.ptm.his{background:var(--deep);border:1px solid var(--edge);color:var(--cream);
+  border-bottom-left-radius:4px}
+.ptm.mine{margin-left:auto;background:var(--gold);color:#06231D;border-bottom-right-radius:4px}
+.pttag{display:block;margin-bottom:3px;font-size:8.5px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;opacity:.75}
+.ptwhen{display:block;margin-top:4px;font-size:9.5px;font-weight:700;opacity:.6}
+.ptbox{margin-top:14px;padding-top:13px;border-top:1px solid var(--edge)}
+.ptin{display:block;width:100%;padding:11px 13px;border-radius:11px;border:1px solid var(--edge);
+  background:var(--deep);color:var(--cream);font:inherit;font-size:13.5px;font-weight:600;
+  resize:vertical}
+.ptin:focus{outline:2px solid var(--gold);outline-offset:1px}
+.ptin.bad{border-color:#E8614C}
+.ptfoot{display:flex;align-items:center;justify-content:space-between;gap:11px;margin-top:8px}
+.ptfoot #ptn{font-size:10.5px;font-weight:700;color:var(--fog)}
+.ptfoot .btn{margin:0;width:auto;padding:10px 22px;font-size:13px}
+.ptsay{margin:8px 0 0;font-size:11.5px;font-weight:700;line-height:1.45;color:var(--fog)}
+.ptsay.bad{padding:8px 11px;border-radius:9px;background:rgba(232,97,76,.14);color:#FFC9BE}
 </style>
 </head>
 <body>
@@ -3670,7 +3699,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "90";
+var APPVER = "91";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -6660,6 +6689,7 @@ VIEWS.land = function () {
 
   html('<div class="ldwrap">' +
        '<div id="ldhead"></div>' +
+       '<div class="pad" id="postbar"></div>' +
        '<div id="ldcomps"></div>' +
        '<div class="pad" id="ldword"></div>' +
        '<div class="pad" id="ldtrain"></div>' +
@@ -6671,6 +6701,7 @@ VIEWS.land = function () {
        '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
 
   landHead();
+  drawPostBar();      /* la posta del professore, prima delle competizioni */
   landComps();
   $("ldword").innerHTML = wotdCard();
   landTrain();
@@ -6683,14 +6714,14 @@ VIEWS.land = function () {
   $("ldall").onclick = function () { go("me"); };
   landDoors();
   drawOut();
-  popIn(["ldhead", "ldcomps", "ldword", "ldtrain", "ldnum", "ldsaid", "ldstat",
+  popIn(["ldhead", "postbar", "ldcomps", "ldword", "ldtrain", "ldnum", "ldsaid", "ldstat",
          "lddoors"]);
 
   /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
   if (!ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
     pullOnline(function (err, mine) {
       if (err || !mine || !HERE || HERE.name !== "land") return;
-      landHead(); landComps(); landNumbers();
+      landHead(); drawPostBar(); landComps(); landNumbers();
     });
   }
 };
@@ -14659,6 +14690,305 @@ VIEWS.tlEnd = function () {
       .join("");
   }
 };
+
+
+/* ───── 54-post.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   LA POSTA DEL PROFESSORE
+
+   Il centro messaggi (55-inbox) e' la lega che scrive: lettere che la
+   competizione si fabbrica da sola. Questa stanza e' un'altra cosa —
+   qui c'e' una persona dall'altra parte. Il professore scrive una
+   correzione spiegata, un consiglio; l'alunno risponde.
+
+   DA DOVE ARRIVANO. Dentro il file della competizione, accanto al
+   codice, in « post ». Quindi arrivano quando arriva tutto il resto:
+   nessuna coda da tenere in piedi, nessun indirizzo da sapere.
+
+   COME TORNANO INDIETRO. Per lo stesso cassetto dei referti, nella
+   tavola « posta ». Senza linea la risposta resta in tasca e riparte
+   da sola alla prima occasione, come i referti.
+
+   LE REGOLE DELLA RISPOSTA. Centoquaranta caratteri: una risposta, non
+   un tema — e il dettato resta il posto dove si scrive lungo. Solo
+   parole: niente foto, niente file. E un filtro sulla lingua: quello
+   che non va non parte, e si vede subito perche'.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var PT_MAX = 140;               /* quanto puo' essere lunga una risposta */
+var PTKEY = "footefl-post";
+
+/* ───────── quello che resta sul telefono ───────── */
+function ptAll() {
+  try { return JSON.parse(localStorage.getItem(PTKEY) || "{}") || {}; }
+  catch (e) { return {}; }
+}
+function ptPut(o) {
+  try { localStorage.setItem(PTKEY, JSON.stringify(o)); } catch (e) {}
+}
+function ptState() {
+  var a = ptAll(), c = String(ME.code || "").toUpperCase();
+  var s = a[c] || {};
+  if (!s.read) s.read = {};       /* i messaggi del prof gia' aperti */
+  if (!s.mine) s.mine = [];       /* le mie risposte, mandate o in tasca */
+  return s;
+}
+function ptSave(s) {
+  var a = ptAll();
+  a[String(ME.code || "").toUpperCase()] = s;
+  ptPut(a);
+}
+
+/* ───────── i messaggi del professore ─────────
+   Stanno dentro ogni bollettino salvato: si guardano tutti, perche' la
+   posta e' della persona, non della competizione. */
+function ptFromTeacher() {
+  var code = String(ME.code || "").toUpperCase();
+  if (!code) return [];
+  var out = [], visti = {}, i, k, b;
+  try {
+    for (i = 0; i < localStorage.length; i++) {
+      k = localStorage.key(i);
+      if (!k || k.indexOf("footefl-bulletin-") !== 0) continue;
+      try { b = JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { b = null; }
+      if (!b || !b.post) continue;
+      var mie = b.post[code] || b.post[String(code).toLowerCase()];
+      if (!mie || !mie.length) continue;
+      mie.forEach(function (m) {
+        if (!m || !m.i || visti[m.i]) return;
+        visti[m.i] = 1;
+        out.push({ id:m.i, from:"prof", t:unhide(m.t), when:m.q || "",
+                   tag:m.f || "", comp:b.compName || b.comp || "" });
+      });
+    }
+  } catch (e) {}
+  return out;
+}
+
+/* tutto il filo, in ordine di tempo: lui e io */
+function ptThread() {
+  var s = ptState();
+  var l = ptFromTeacher().concat(s.mine.map(function (m) {
+    return { id:m.id, from:"me", t:m.t, when:m.when, tag:m.tag || "",
+             sent:!!m.sent };
+  }));
+  l.sort(function (a, b) { return String(a.when).localeCompare(String(b.when)); });
+  return l;
+}
+function ptUnread() {
+  var s = ptState(), n = 0;
+  ptFromTeacher().forEach(function (m) { if (!s.read[m.id]) n++; });
+  return n;
+}
+function ptMarkRead() {
+  var s = ptState(), moved = false;
+  ptFromTeacher().forEach(function (m) {
+    if (!s.read[m.id]) { s.read[m.id] = 1; moved = true; }
+  });
+  if (moved) ptSave(s);
+}
+
+/* ───────── il filtro della lingua ─────────
+   Lo stesso della piattaforma, cosi' quello che qui non parte, li' non
+   arriva. Vale per l'inglese che si scrive in partita e per le lingue
+   di casa, che sono quelle che scappano quando ci si arrabbia. */
+var PT_BAD = (
+  "fuck,shit,bitch,bastard,asshole,arsehole,dickhead,motherfuck,cunt,whore,slut," +
+  "retard,faggot,nigger,wanker,bollocks,prick,twat,moron,stupid idiot,idiot," +
+  "cazz,merd,stronz,troi,putt,coglion,vaffanc,fanculo,bastard,porco dio,dio can," +
+  "minchi,fott,frocio,negro,mongoloid,ritardat,scem,cretin,imbecill,deficient," +
+  "zoccol,sfigat,ciccion," +
+  "putain,connard,connasse,salope,encule,ta gueule,bordel,pute,batard,debile," +
+  "cretin,nique,abruti,mierda,joder,puta,cabron,gilipollas,pendejo,caralho,porra"
+).split(",");
+
+function ptFlat(s) {
+  return String(s == null ? "" : s).toLowerCase()
+    .replace(/[àáâä]/g, "a").replace(/[èéêë]/g, "e").replace(/[ìíîï]/g, "i")
+    .replace(/[òóôö]/g, "o").replace(/[ùúûü]/g, "u").replace(/ç/g, "c")
+    .replace(/0/g, "o").replace(/[1!|]/g, "i").replace(/3/g, "e")
+    .replace(/[4@]/g, "a").replace(/[5$]/g, "s").replace(/7/g, "t")
+    .replace(/[^a-z\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/(^| )((?:[a-z] ){1,}[a-z])(?= |$)/g,
+      function (m, a, b) { return a + b.replace(/ /g, ""); })
+    .replace(/(.)\1+/g, "$1")
+    .replace(/\s+/g, " ");
+}
+function ptCheck(t) {
+  var p = " " + ptFlat(t) + " ", hit = [];
+  PT_BAD.forEach(function (r) {
+    r = ptFlat(r).trim();
+    if (!r) return;
+    var re = new RegExp("(^|\\s)" + r.replace(/ /g, "\\s*"), "");
+    if (re.test(p) && hit.indexOf(r) < 0) hit.push(r);
+  });
+  return { ok:!hit.length, words:hit };
+}
+function ptMask(w) {
+  return w.length < 3 ? "•••"
+       : w.charAt(0) + new Array(w.length).join("•");
+}
+
+/* ───────── mandare ─────────
+   Come i referti: prova subito, e se non c'e' linea resta in tasca. */
+function ptSend(text, tag, done) {
+  var t = String(text || "").trim().slice(0, PT_MAX);
+  if (!t) return done && done("empty");
+  var g = ptCheck(t);
+  if (!g.ok) return done && done("language");
+  var s = ptState();
+  var m = { id:"me-" + Date.now(), t:t, when:new Date().toISOString(),
+            tag:tag || "", sent:false };
+  s.mine.push(m);
+  s.mine = s.mine.slice(-60);
+  ptSave(s);
+  ptFlush(function () { done && done(null, m); });
+}
+function ptRow(m) {
+  return { code:String(ME.code || "").toUpperCase(), t:m.t, filo:m.tag || "" };
+}
+/* quelle non ancora partite riprovano: all'apertura e dopo ogni invio */
+function ptFlush(done) {
+  loadDrop();
+  var s = ptState();
+  var left = s.mine.filter(function (m) { return !m.sent; });
+  if (!left.length || !DROP || !DROP.url || !DROP.key) return done && done(0);
+  var url = DROP.url.replace(/\/+$/, "") + "/rest/v1/posta";
+  var sent = 0;
+  (function next() {
+    if (!left.length) { ptSave(s); return done && done(sent); }
+    var m = left.shift();
+    fetch(url, { method:"POST",
+      headers:{ "apikey":DROP.key, "Authorization":"Bearer " + DROP.key,
+                "Content-Type":"application/json", "Prefer":"return=minimal" },
+      body:JSON.stringify(ptRow(m)) })
+      .then(function (r) {
+        if (r.ok) { m.sent = true; sent++; setTimeout(next, 150); }
+        else { ptSave(s); done && done(sent); }
+      })["catch"](function () { ptSave(s); done && done(sent); });
+  })();
+}
+
+/* ───────── la riga in home ─────────
+   Sta sopra le competizioni: e' una persona che ti ha scritto, viene
+   prima della tabella. */
+function postCard() {
+  if (!ME.code) return "";
+  var all = ptThread(), n = ptUnread();
+  if (!all.length) return "";
+  var last = all[all.length - 1];
+  return '<button class="stbar post' + (n ? " nw" : "") + '" id="hpostb" type="button">' +
+    '<span class="stn">&#9998;</span>' +
+    '<span class="stt"><b>Your teacher' +
+    (n ? '<em class="mcn">' + n + "</em>" : "") + "</b><span>" +
+    (n ? (n === 1 ? "One message you have not read."
+                  : n + " messages you have not read.")
+       : (last.from === "me" ? "You: " : "") +
+         esc(String(last.t).slice(0, 60)) + (String(last.t).length > 60 ? "…" : "")) +
+    "</span></span><i>&#8250;</i></button>";
+}
+function wirePost() {
+  if ($("hpostb")) $("hpostb").onclick = function () { go("post"); };
+}
+/* la home la chiama dopo le competizioni: se non c'e' niente non occupa
+   nemmeno una riga */
+function drawPostBar() {
+  var box = $("postbar");
+  if (!box) return;
+  box.innerHTML = postCard();
+  wirePost();
+  /* quelle rimaste in tasca riprovano appena si apre la home */
+  ptFlush(function (n) { if (n) { box.innerHTML = postCard(); wirePost(); } });
+}
+
+/* ───────── la stanza ───────── */
+VIEWS.post = function () {
+  paintNeutral();
+  barFlow("Your teacher", "Messages about your dictations", 0);
+  html('<div class="pad">' +
+    '<div class="ptwarn"><b>Words only.</b> No photos, no files. ' +
+    "Write about the dictation, your mistakes, what you want to try next. " +
+    "Keep it to " + PT_MAX + " characters.</div>" +
+    '<div id="ptlist"></div>' +
+    '<div class="ptbox">' +
+      '<textarea id="ptin" class="ptin" rows="2" maxlength="' + PT_MAX + '" ' +
+      'placeholder="Write your answer…"></textarea>' +
+      '<div class="ptfoot"><span id="ptn">0 / ' + PT_MAX + "</span>" +
+      '<button class="btn go" id="ptgo" type="button">Send</button></div>' +
+      '<p class="ptsay" id="ptsay"></p>' +
+    "</div></div>");
+  ptMarkRead();
+  drawPost();
+  ptFlush(function (n) { if (n) drawPost(); });
+
+  var ta = $("ptin");
+  ta.oninput = function () {
+    var n = ta.value.length;
+    $("ptn").textContent = n + " / " + PT_MAX;
+    var g = ptCheck(ta.value);
+    $("ptsay").className = "ptsay" + (g.ok ? "" : " bad");
+    $("ptsay").textContent = g.ok ? ""
+      : "This will not be sent: " + g.words.map(ptMask).join(", ") +
+        ". Say it another way.";
+    ta.className = "ptin" + (g.ok ? "" : " bad");
+  };
+  $("ptgo").onclick = function () {
+    var v = ta.value;
+    if (!String(v).trim()) return;
+    ptSend(v, ptLastTag(), function (err) {
+      if (err === "language") {
+        $("ptsay").className = "ptsay bad";
+        $("ptsay").textContent = "Change those words and try again.";
+        return;
+      }
+      ta.value = ""; ta.className = "ptin";
+      $("ptn").textContent = "0 / " + PT_MAX;
+      $("ptsay").className = "ptsay"; $("ptsay").textContent = "";
+      drawPost();
+    });
+  };
+};
+
+/* una risposta parla dell'ultima cosa che lui ha scritto: cosi' il
+   professore la ritrova accanto alla correzione giusta */
+function ptLastTag() {
+  var l = ptFromTeacher(), last = null;
+  l.forEach(function (m) {
+    if (!last || String(m.when) > String(last.when)) last = m;
+  });
+  return last ? (last.tag || "") : "";
+}
+
+function drawPost() {
+  var box = $("ptlist");
+  if (!box) return;
+  var l = ptThread();
+  if (!l.length) {
+    box.innerHTML = '<div class="mcnone"><b>Nothing yet.</b>' +
+      "<span>When your teacher writes about one of your dictations, " +
+      "it arrives here with the competition.</span></div>";
+    return;
+  }
+  box.innerHTML = l.map(function (m) {
+    return '<div class="ptm ' + (m.from === "me" ? "mine" : "his") + '">' +
+      (m.tag ? '<span class="pttag">' + esc(m.tag) + "</span>" : "") +
+      "<p>" + esc(m.t) + "</p>" +
+      '<span class="ptwhen">' + (m.from === "me" ? "you" : "your teacher") +
+      (m.when ? " &middot; " + ptWhen(m.when) : "") +
+      (m.from === "me" && !m.sent ? " &middot; waiting for a line" : "") +
+      "</span></div>";
+  }).join("");
+  box.scrollTop = box.scrollHeight;
+}
+function ptWhen(iso) {
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  var n = new Date();
+  var same = d.toDateString() === n.toDateString();
+  var hh = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+  return same ? hh : (d.getDate() + "/" + (d.getMonth() + 1) + " " + hh);
+}
 
 
 /* ───── 55-inbox.js ───── */
