@@ -2988,6 +2988,24 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .scc:last-child b i{margin:0 6px 0 0}
 .gver{margin:18px 0 0;text-align:center;font:700 10px var(--brand);letter-spacing:.14em;
   text-transform:uppercase;color:var(--fog);opacity:.55}
+
+/* ═══════ LO SCAMBIO DEI CODICI ═══════ */
+.xcbox{padding:16px;border-radius:15px;border:1px solid var(--edge);background:var(--deep);
+  text-align:center}
+.xccode{display:block;font:800 19px/1.5 ui-monospace,"SF Mono",Menlo,monospace;
+  letter-spacing:.06em;color:var(--gold);word-break:break-all}
+.xcqr{margin:13px auto 10px;width:168px;padding:8px;background:#fff;border-radius:10px}
+.xcqr svg{display:block;width:100%;height:auto}
+.xcbox .hint{margin:0 0 4px}
+.xcbox .btn{margin-top:12px}
+.xcin{display:block;width:100%;margin-top:4px;padding:13px;border-radius:12px;
+  border:1px solid var(--edge);background:var(--deep);color:var(--gold);
+  font:800 18px/1.5 ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.06em;
+  text-transform:uppercase;resize:vertical}
+.xcin:focus{outline:2px solid var(--gold);outline-offset:1px}
+.xcsay{margin:9px 0 0;font-size:12px;font-weight:700;line-height:1.5;color:var(--fog)}
+.xcsay.bad{padding:9px 12px;border-radius:10px;background:rgba(232,97,76,.15);color:#FFC9BE}
+.stbar.xcgo2{margin-top:10px}
 </style>
 </head>
 <body>
@@ -3876,7 +3894,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "108";
+var APPVER = "109";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -11552,7 +11570,24 @@ function liveCardHtml() {
     '<span class="lvn">Your card is in and it reads back. The moment they close ' +
     "their second half, the result appears here.</span>" +
     liveKeysHtml(md) +
-    '<span class="lvtry" id="lvTry">Look again &rsaquo;</span></div></section>';
+    '<span class="lvtry" id="lvTry">Look again &rsaquo;</span></div>' +
+    xcBottone() + "</section>";
+}
+
+/* ───────── la via senza rete ─────────
+   Sotto ogni schermata d'attesa c'e' la stessa porta: se l'altro e' qui
+   accanto, non c'e' niente da aspettare — ci si scambia i codici e la
+   partita si gioca subito, anche in mezzo a un campo. */
+function xcBottone() {
+  if (typeof VIEWS !== "object" || !VIEWS.swap) return "";
+  return '<button class="stbar slim xcgo2" id="xcOpen" type="button">' +
+    '<span class="stn">&#9783;</span>' +
+    '<span class="stt"><b>Your opponent is here with you?</b><span>Swap your two ' +
+    "codes and play the match now, with no line at all.</span></span>" +
+    "<i>&#8250;</i></button>";
+}
+function xcWire() {
+  if ($("xcOpen")) $("xcOpen").onclick = function () { go("swap"); };
 }
 /* le tre chiavi con cui si cerca: servono al professore per confrontarle
    con le righe che vede nel cassetto */
@@ -11591,6 +11626,7 @@ function wireLive(boxId, viewName, quiet) {
       });
     });
   }
+  if (typeof xcWire === "function") xcWire();
   var more = $("lvMore");
   if (more) {
     more.onclick = function () {
@@ -11939,6 +11975,12 @@ function ftRunPage(cfg) {
   function score() { $("rA").textContent = A; $("rB").textContent = B; }
 
   function tick() {
+    /* se nel frattempo si e' usciti dalla cronaca, l'orologio si ferma:
+       se no continua a scrivere dentro una pagina che non c'e' piu' */
+    if (!$("tl") || !$("rmin")) {
+      if (FTRUN.t) { clearInterval(FTRUN.t); FTRUN.t = null; }
+      return;
+    }
     var p = Math.min(1, (Date.now() - t0) / DUR), min = Math.round(p * 90);
     $("rmin").innerHTML = min + "&prime;";
     $("rbar").style.width = (p * 100).toFixed(1) + "%";
@@ -12149,6 +12191,524 @@ VIEWS.live = function () {
   };
   $("lvbk").onclick = function () { reset("home"); };
 };
+
+
+/* ───── 39-qr.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   IL QUADRATO — un generatore di QR, scritto qui dentro
+
+   Perche' non una libreria: l'app deve funzionare senza rete, in una
+   palestra, e tutto quello che le serve sta dentro il suo unico file.
+   Un QR non e' un disegno, e' un conto: i byte si proteggono con un
+   codice di Reed-Solomon, si posano su una griglia secondo un percorso
+   fisso, e sopra si prova una maschera alla volta finche' non si trova
+   quella che rende il quadrato piu' leggibile.
+
+   Qui dentro c'e' solo quello che serve a noi: modalita' byte,
+   correzione L, versioni da 1 a 5 — fino a 108 byte, piu' del doppio
+   di quello che ci mettiamo. Fermarsi alla 5 vuol dire un blocco solo:
+   niente interlacciamento, niente informazioni di versione, meta' del
+   codice e meta' degli errori possibili.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ───────── l'aritmetica di Galois, GF(256) ─────────
+   Nel campo di Galois moltiplicare e' sommare logaritmi: due tabelle e
+   il resto viene da se'. */
+var QR_EXP = [], QR_LOG = [];
+(function () {
+  var x = 1, i;
+  for (i = 0; i < 255; i++) {
+    QR_EXP[i] = x;
+    QR_LOG[x] = i;
+    x <<= 1;
+    if (x & 0x100) x ^= 0x11d;          /* il polinomio dello standard */
+  }
+  for (i = 255; i < 512; i++) QR_EXP[i] = QR_EXP[i - 255];
+})();
+function qrMul(a, b) {
+  if (!a || !b) return 0;
+  return QR_EXP[QR_LOG[a] + QR_LOG[b]];
+}
+/* il polinomio generatore per n byte di correzione */
+function qrGen(n) {
+  var g = [1], i, j;
+  for (i = 0; i < n; i++) {
+    var ng = new Array(g.length + 1);
+    for (j = 0; j <= g.length; j++) ng[j] = 0;
+    for (j = 0; j < g.length; j++) {
+      ng[j] ^= qrMul(g[j], 1);
+      ng[j + 1] ^= qrMul(g[j], QR_EXP[i]);
+    }
+    g = ng;
+  }
+  return g;
+}
+function qrEcc(data, n) {
+  var g = qrGen(n), res = data.slice().concat(new Array(n)), i, j;
+  for (i = data.length; i < res.length; i++) res[i] = 0;
+  for (i = 0; i < data.length; i++) {
+    var f = res[i];
+    if (!f) continue;
+    for (j = 0; j < g.length; j++) res[i + j] ^= qrMul(g[j], f);
+  }
+  return res.slice(data.length);
+}
+
+/* ───────── quanto ci sta, versione per versione (correzione L) ─────────
+   [ byte di dati, byte di correzione ] */
+var QR_CAP = {
+  1:[19, 7], 2:[34, 10], 3:[55, 15], 4:[80, 20], 5:[108, 26]
+};
+/* il centro dell'unico quadratino di allineamento, dalla versione 2 */
+var QR_ALIGN = { 1:0, 2:18, 3:22, 4:26, 5:30 };
+
+/* ───────── il disegno ───────── */
+function qrMatrix(testo) {
+  /* 1. i byte del messaggio, in UTF-8 */
+  var u = unescape(encodeURIComponent(String(testo))), bytes = [], i;
+  for (i = 0; i < u.length; i++) bytes.push(u.charCodeAt(i) & 255);
+
+  /* 2. la versione piu' piccola che li contiene */
+  var ver = 0;
+  for (i = 1; i <= 5; i++) {
+    /* 4 bit di modalita' + 8 di lunghezza = 12 bit = 1,5 byte */
+    if (bytes.length + 2 <= QR_CAP[i][0]) { ver = i; break; }
+  }
+  if (!ver) return null;                /* piu' di 106 byte: non ci sta */
+  var nData = QR_CAP[ver][0], nEcc = QR_CAP[ver][1];
+
+  /* 3. i bit: modalita' byte (0100), lunghezza, dati, chiusura */
+  var bits = [];
+  function push(v, n) { for (var k = n - 1; k >= 0; k--) bits.push((v >> k) & 1); }
+  push(4, 4);
+  push(bytes.length, 8);
+  for (i = 0; i < bytes.length; i++) push(bytes[i], 8);
+  for (i = 0; i < 4 && bits.length < nData * 8; i++) bits.push(0);
+  while (bits.length % 8) bits.push(0);
+  var dati = [];
+  for (i = 0; i < bits.length; i += 8) {
+    dati.push(parseInt(bits.slice(i, i + 8).join(""), 2));
+  }
+  /* il riempimento alterna due byte fissi, come dice lo standard */
+  var pad = [0xEC, 0x11], p = 0;
+  while (dati.length < nData) dati.push(pad[p++ % 2]);
+  var tutto = dati.concat(qrEcc(dati, nEcc));
+
+  /* 4. la griglia, con le cose fisse */
+  var n = 17 + ver * 4;
+  var m = [], riservato = [];
+  for (i = 0; i < n; i++) {
+    m.push(new Array(n));
+    riservato.push(new Array(n));
+    for (var j = 0; j < n; j++) { m[i][j] = 0; riservato[i][j] = 0; }
+  }
+  function metti(r, c, v) { if (r >= 0 && c >= 0 && r < n && c < n) { m[r][c] = v; riservato[r][c] = 1; } }
+  function occhio(r, c) {
+    var a, b;
+    for (a = -1; a <= 7; a++) for (b = -1; b <= 7; b++) {
+      var dentro = a >= 0 && a <= 6 && b >= 0 && b <= 6;
+      var bordo = dentro && (a === 0 || a === 6 || b === 0 || b === 6);
+      var cuore = dentro && a >= 2 && a <= 4 && b >= 2 && b <= 4;
+      metti(r + a, c + b, (bordo || cuore) ? 1 : 0);
+    }
+  }
+  occhio(0, 0); occhio(0, n - 7); occhio(n - 7, 0);
+  /* le righe di cadenza */
+  for (i = 8; i < n - 8; i++) {
+    metti(6, i, i % 2 === 0 ? 1 : 0);
+    metti(i, 6, i % 2 === 0 ? 1 : 0);
+  }
+  /* il quadratino di allineamento, dalla versione 2 in poi */
+  if (QR_ALIGN[ver]) {
+    var ac = QR_ALIGN[ver];
+    for (var a2 = -2; a2 <= 2; a2++) for (var b2 = -2; b2 <= 2; b2++) {
+      var bordo2 = Math.max(Math.abs(a2), Math.abs(b2)) !== 1;
+      metti(ac + a2, ac + b2, bordo2 ? 1 : 0);
+    }
+  }
+  /* il modulo sempre nero, e i posti riservati al formato */
+  metti(n - 8, 8, 1);
+  for (i = 0; i <= 8; i++) {
+    if (i !== 6) { riservato[8][i] = 1; riservato[i][8] = 1; }
+  }
+  for (i = 0; i < 8; i++) { riservato[8][n - 1 - i] = 1; riservato[n - 1 - i][8] = 1; }
+
+  /* 5. i byte posati a zigzag, dal basso a destra */
+  var bit = [], k;
+  for (i = 0; i < tutto.length; i++) for (k = 7; k >= 0; k--) bit.push((tutto[i] >> k) & 1);
+  var bi = 0, su = true;
+  for (var col = n - 1; col > 0; col -= 2) {
+    if (col === 6) col--;                /* la colonna della cadenza si salta */
+    for (var q = 0; q < n; q++) {
+      var r = su ? n - 1 - q : q;
+      for (var d = 0; d < 2; d++) {
+        var c = col - d;
+        if (riservato[r][c]) continue;
+        m[r][c] = bi < bit.length ? bit[bi++] : 0;
+      }
+    }
+    su = !su;
+  }
+
+  /* 6. la maschera: si provano tutte e otto e si tiene la meno peggio */
+  function masc(k2, r, c) {
+    switch (k2) {
+      case 0: return (r + c) % 2 === 0;
+      case 1: return r % 2 === 0;
+      case 2: return c % 3 === 0;
+      case 3: return (r + c) % 3 === 0;
+      case 4: return (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0;
+      case 5: return (r * c) % 2 + (r * c) % 3 === 0;
+      case 6: return ((r * c) % 2 + (r * c) % 3) % 2 === 0;
+      default: return ((r + c) % 2 + (r * c) % 3) % 2 === 0;
+    }
+  }
+  /* il formato: correzione L (01) e maschera, protetti con un BCH */
+  function formato(k2) {
+    var v = (0x01 << 3) | k2, d = v << 10, i2;
+    for (i2 = 4; i2 >= 0; i2--) if (d & (1 << (i2 + 10))) d ^= 0x537 << i2;
+    return ((v << 10) | d) ^ 0x5412;
+  }
+  function pena(g) {
+    var p2 = 0, r, c, run, i2, scuri = 0;
+    for (r = 0; r < n; r++) {
+      run = 1;
+      for (c = 1; c < n; c++) {
+        if (g[r][c] === g[r][c - 1]) { run++; } else { if (run >= 5) p2 += 3 + (run - 5); run = 1; }
+      }
+      if (run >= 5) p2 += 3 + (run - 5);
+    }
+    for (c = 0; c < n; c++) {
+      run = 1;
+      for (r = 1; r < n; r++) {
+        if (g[r][c] === g[r - 1][c]) { run++; } else { if (run >= 5) p2 += 3 + (run - 5); run = 1; }
+      }
+      if (run >= 5) p2 += 3 + (run - 5);
+    }
+    for (r = 0; r < n - 1; r++) for (c = 0; c < n - 1; c++) {
+      var s = g[r][c] + g[r][c + 1] + g[r + 1][c] + g[r + 1][c + 1];
+      if (s === 0 || s === 4) p2 += 3;
+    }
+    var mod = [1, 0, 1, 1, 1, 0, 1];
+    for (r = 0; r < n; r++) for (c = 0; c + 6 < n; c++) {
+      var ok = true;
+      for (i2 = 0; i2 < 7; i2++) if (g[r][c + i2] !== mod[i2]) { ok = false; break; }
+      if (ok) p2 += 40;
+    }
+    for (c = 0; c < n; c++) for (r = 0; r + 6 < n; r++) {
+      var ok2 = true;
+      for (i2 = 0; i2 < 7; i2++) if (g[r + i2][c] !== mod[i2]) { ok2 = false; break; }
+      if (ok2) p2 += 40;
+    }
+    for (r = 0; r < n; r++) for (c = 0; c < n; c++) if (g[r][c]) scuri++;
+    var perc = Math.abs(scuri * 100 / (n * n) - 50);
+    p2 += Math.floor(perc / 5) * 10;
+    return p2;
+  }
+
+  var best = null, bestP = Infinity;
+  for (k = 0; k < 8; k++) {
+    var g2 = [], r2, c2;
+    for (r2 = 0; r2 < n; r2++) {
+      g2.push(m[r2].slice());
+      for (c2 = 0; c2 < n; c2++) {
+        if (!riservato[r2][c2] && masc(k, r2, c2)) g2[r2][c2] ^= 1;
+      }
+    }
+    /* il formato va scritto prima di giudicare: fa parte del quadrato */
+    /* il formato sta tutto in colonna 8 e in riga 8 — ma non come
+       verrebbe da scrivere: i primi sei bit scendono lungo la colonna,
+       gli ultimi sei corrono lungo la riga, e la seconda copia fa il
+       contrario. Righe e colonne qui si scambiano facilmente, ed e'
+       l'errore che rende il quadrato illeggibile pur sembrando giusto. */
+    var f = formato(k);
+    for (i = 0; i <= 5; i++) g2[i][8] = (f >> i) & 1;
+    g2[7][8] = (f >> 6) & 1; g2[8][8] = (f >> 7) & 1; g2[8][7] = (f >> 8) & 1;
+    for (i = 9; i <= 14; i++) g2[8][14 - i] = (f >> i) & 1;
+    for (i = 0; i <= 7; i++) g2[8][n - 1 - i] = (f >> i) & 1;
+    for (i = 8; i <= 14; i++) g2[n - 15 + i][8] = (f >> i) & 1;
+    g2[n - 8][8] = 1;
+    var p3 = pena(g2);
+    if (p3 < bestP) { bestP = p3; best = g2; }
+  }
+  return best;
+}
+
+/* il quadrato come SVG: nessuna immagine, nessun carattere, solo
+   rettangoli — si stampa, si ingrandisce e non pesa niente */
+function qrSvg(testo, lato) {
+  var m = qrMatrix(testo);
+  if (!m) return "";
+  var n = m.length, q = 4, tot = n + q * 2;
+  var d = "", r, c;
+  for (r = 0; r < n; r++) {
+    c = 0;
+    while (c < n) {
+      if (!m[r][c]) { c++; continue; }
+      var w = 0;
+      while (c + w < n && m[r][c + w]) w++;
+      d += "M" + (c + q) + " " + (r + q) + "h" + w + "v1h-" + w + "z";
+      c += w;
+    }
+  }
+  return '<svg class="qr" viewBox="0 0 ' + tot + " " + tot + '" width="' + (lato || 190) +
+    '" height="' + (lato || 190) + '" shape-rendering="crispEdges" aria-hidden="true">' +
+    '<rect width="' + tot + '" height="' + tot + '" fill="#fff"/>' +
+    '<path d="' + d + '" fill="#000"/></svg>';
+}
+
+
+/* ───── 39-code.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   IL CODICE DELLA PARTITA
+
+   Due telefoni, nessuna rete, una partita da giocare. Il problema non
+   e' il conto — il motore ce l'hanno tutti e due identico — ma far
+   arrivare all'altro i numeri del mio tempo.
+
+   Quei numeri sono pochi: quante azioni ho aperto e con che qualita',
+   se ho scritto bene la parola difficile, da che parte tiro e da che
+   parte si tuffa il mio portiere, e quanto dettato ho tenuto in piedi.
+   Tutto il resto — i minuti, i nomi, le parole — non serve a chi
+   calcola: serve solo a chi racconta, e si rifa' da questa parte.
+
+   Impacchettati bit per bit vengono una ventina di caratteri. Si
+   leggono ad alta voce senza sbagliare perche' l'alfabeto non ha
+   I ne' L ne' O ne' U: niente che si confonda con 1 e con 0, e nessuna
+   parola che esca per caso. In fondo c'e' una cifra di controllo: una
+   lettera sbagliata non produce una partita sbagliata, produce un
+   messaggio che dice di ricontrollare.
+
+   E lo stesso codice sta dentro un QR, che e' l'indirizzo dell'app con
+   il codice attaccato: si inquadra con la fotocamera normale del
+   telefono, senza permessi e senza app da scaricare.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var XC_ALF = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";   /* 32 segni, senza I L O U */
+var XC_MAXQ = 15;                                  /* azioni per tempo, al massimo */
+
+/* ───────── i bit ───────── */
+function xcScrivi() {
+  var b = [];
+  return {
+    metti: function (v, n) {
+      for (var k = n - 1; k >= 0; k--) b.push((v >> k) & 1);
+      return this;
+    },
+    bit: b
+  };
+}
+function xcLeggi(b) {
+  var i = 0;
+  return {
+    prendi: function (n) {
+      var v = 0;
+      for (var k = 0; k < n; k++) { v = (v << 1) | (b[i] || 0); i++; }
+      return v;
+    },
+    resta: function () { return b.length - i; }
+  };
+}
+/* la qualita' di un'azione sta in cinque stati: 0 · 0,25 · 0,50 · 0,75 · 1 */
+function xcQ(v) { return Math.max(0, Math.min(4, Math.round((v || 0) / 25))); }
+function xcLato(s) { return s === "G" ? 0 : s === "C" ? 1 : s === "D" ? 2 : 3; }
+function xcLatoRi(n) { return ["G", "C", "D", null][n] || null; }
+
+/* ───────── da carta a codice ───────── */
+function cardCode(card) {
+  if (!card) return "";
+  var aq = (card.att.q || []).slice(0, XC_MAXQ);
+  var dq = (card.def.q || []).slice(0, XC_MAXQ);
+  var st = card.stat || {};
+  var poss = st.to ? Math.round(st.ri / st.to * 100) : 0;
+  var ci = 0, k;
+  for (k = 0; k < CLUBS.length; k++) if (CLUBS[k].id === card.club) ci = k + 1;
+
+  var w = xcScrivi();
+  w.metti(1, 3);                       /* versione del codice */
+  w.metti(ci, 5);                      /* il club, 0 = non lo so */
+  w.metti(Math.min(15, card.md || 1), 4);
+  w.metti(aq.length, 4);
+  w.metti(dq.length, 4);
+  for (k = 0; k < aq.length; k++) w.metti(xcQ(aq[k]), 3);
+  for (k = 0; k < dq.length; k++) w.metti(xcQ(dq[k]), 3);
+  w.metti(card.att.w ? 1 : 0, 1);      /* la parola difficile, in attacco */
+  w.metti(card.def.p ? 1 : 0, 1);      /* il rigore regalato, in difesa */
+  w.metti(xcLato(card.sh), 2);
+  w.metti(xcLato(card.dv), 2);
+  w.metti(Math.max(0, Math.min(100, poss)), 7);
+  w.metti(Math.min(31, st.y || 0), 5);
+  w.metti(Math.min(31, st.r || 0), 5);
+
+  /* la cifra di controllo: cinque bit su tutto quello che precede */
+  var som = 0;
+  for (k = 0; k < w.bit.length; k++) som = (som * 2 + w.bit[k]) % 31;
+  w.metti(som, 5);
+
+  /* dai bit alle lettere, cinque bit per volta */
+  var s = "";
+  for (k = 0; k < w.bit.length; k += 5) {
+    var v = 0, j;
+    for (j = 0; j < 5; j++) v = (v << 1) | (w.bit[k + j] || 0);
+    s += XC_ALF.charAt(v);
+  }
+  /* a gruppi di quattro: si leggono ad alta voce senza perdere il segno */
+  return s.replace(/(.{4})(?=.)/g, "$1-");
+}
+
+/* ───────── da codice a carta ───────── */
+function codeCard(testo) {
+  var s = String(testo == null ? "" : testo).toUpperCase()
+    .replace(/[^0-9A-Z]/g, "")
+    /* chi legge ad alta voce confonde queste: si accettano lo stesso */
+    .replace(/I/g, "1").replace(/L/g, "1").replace(/O/g, "0").replace(/U/g, "V");
+  if (s.length < 8) return { err:"That code is too short \u2014 read it again." };
+  var b = [], k, j;
+  for (k = 0; k < s.length; k++) {
+    var v = XC_ALF.indexOf(s.charAt(k));
+    if (v < 0) return { err:"There is no \u201c" + s.charAt(k) + "\u201d in a FootEFL code." };
+    for (j = 4; j >= 0; j--) b.push((v >> j) & 1);
+  }
+  var r = xcLeggi(b);
+  if (r.prendi(3) !== 1) return { err:"That code comes from another version of the game." };
+  var ci = r.prendi(5), md = r.prendi(4), na = r.prendi(4), nd = r.prendi(4);
+  if (na > XC_MAXQ || nd > XC_MAXQ) return { err:"That code does not read: check it again." };
+  var aq = [], dq = [];
+  for (k = 0; k < na; k++) aq.push(r.prendi(3) * 25);
+  for (k = 0; k < nd; k++) dq.push(r.prendi(3) * 25);
+  var w = r.prendi(1), p = r.prendi(1);
+  var sh = xcLatoRi(r.prendi(2)), dv = xcLatoRi(r.prendi(2));
+  var poss = r.prendi(7), y = r.prendi(5), rr = r.prendi(5);
+  if (r.resta() < 5) return { err:"That code is incomplete \u2014 a piece is missing." };
+  var atteso = r.prendi(5);
+
+  /* la somma si rifa' su tutto quello che precede la cifra di controllo */
+  var som = 0;
+  var usati = 3 + 5 + 4 + 4 + 4 + na * 3 + nd * 3 + 1 + 1 + 2 + 2 + 7 + 5 + 5;
+  for (k = 0; k < usati; k++) som = (som * 2 + b[k]) % 31;
+  if (som !== atteso) {
+    return { err:"That code does not add up. Check every sign: one wrong letter is enough." };
+  }
+
+  var club = ci > 0 && CLUBS[ci - 1] ? CLUBS[ci - 1].id : "";
+  var to = 100, ri = Math.round(poss);
+  return {
+    ok:true,
+    card:{
+      v:1, comp:"code", md:md, club:club, opp:(ME.club ? ME.club.id : ""),
+      home:false,
+      stat:{ w:y + rr, y:y, r:rr, ri:ri, to:to },
+      att:{ q:aq, m:xcMinuti(aq.length), w:!!w, hm:xcMin(1, 40) },
+      def:{ q:dq, m:xcMinuti(dq.length), p:!!p, hm:xcMin(2, 70) },
+      sh:sh, dv:dv
+    }
+  };
+}
+/* i minuti non viaggiano: non servono al conto, solo al racconto, e si
+   rifanno qui distribuiti lungo i novanta */
+function xcMinuti(n) {
+  var o = [], k;
+  for (k = 0; k < n; k++) o.push(xcMin(k + 1, Math.round(6 + (k + 1) * 84 / (n + 1))));
+  return o;
+}
+function xcMin(seme, base) {
+  var v = (base + ((seme * 37) % 7) - 3);
+  return Math.max(1, Math.min(90, v));
+}
+
+/* ═══════════════ LA STANZA DELLO SCAMBIO ═══════════════ */
+var XCIN = "";
+
+VIEWS.swap = function (d) {
+  var md = (ME.next && ME.next.md) || 1;
+  var mia = (typeof liveCard === "function") ? liveCard(md) : null;
+  paintClub(ME.club);
+  barFlow("Swap your codes", ME.club ? ME.club.name : "", 0);
+
+  if (!mia) {
+    html('<div class="pad"><h1>Play both halves first.</h1>' +
+      '<p class="lede">Your code is made of what you wrote: it exists only when the ' +
+      "attack and the defence are both in.</p>" +
+      '<button class="btn" id="xcbk">Back</button></div>');
+    $("xcbk").onclick = back;
+    return;
+  }
+
+  var mio = cardCode(mia);
+  var url = xcLink(mio);
+
+  html('<div class="pad">' +
+    '<p class="lede">No teacher, no line, no waiting: your two phones have the same ' +
+    "engine, so each of you only needs the other's numbers. " +
+    "<b>Show yours, and type in theirs.</b></p>" +
+    '<h2 class="sec top">Your code</h2>' +
+    '<div class="xcbox"><code class="xccode" id="xcmio">' + esc(mio) + "</code>" +
+    '<div class="xcqr">' + (typeof qrSvg === "function" ? qrSvg(url, 168) : "") + "</div>" +
+    '<p class="hint">Point any camera at the square, or read the letters out loud ' +
+    "&mdash; there is no <b>I</b>, no <b>L</b>, no <b>O</b> and no <b>U</b>, so nothing " +
+    "can be mistaken for a one or a zero.</p>" +
+    '<button class="btn ghost" id="xccopy">Copy my code</button></div>' +
+
+    '<h2 class="sec top">Their code</h2>' +
+    '<textarea class="xcin" id="xcin" rows="2" autocapitalize="characters" ' +
+    'autocorrect="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX">' +
+    esc(XCIN) + "</textarea>" +
+    '<p class="xcsay" id="xcsay"></p>' +
+    '<button class="btn" id="xcgo">Play the match</button>' +
+    '<button class="btn ghost" id="xcbk">Back</button></div>');
+
+  $("xcbk").onclick = back;
+  $("xccopy").onclick = function () {
+    try { navigator.clipboard.writeText(mio); dillo2("Copied."); }
+    catch (e) { dillo2("Read it out loud instead."); }
+  };
+  var ta = $("xcin");
+  ta.oninput = function () { XCIN = ta.value; $("xcsay").className = "xcsay"; $("xcsay").textContent = ""; };
+  $("xcgo").onclick = function () {
+    var r = codeCard(ta.value);
+    if (r.err) {
+      $("xcsay").className = "xcsay bad";
+      $("xcsay").textContent = r.err;
+      return;
+    }
+    if (cardCode(r.card) === mio) {
+      $("xcsay").className = "xcsay bad";
+      $("xcsay").textContent = "That is your own code. You need your opponent's.";
+      return;
+    }
+    xcGioca(md, mia, r.card);
+  };
+  function dillo2(t) { $("xcsay").className = "xcsay"; $("xcsay").textContent = t; }
+};
+
+/* l'indirizzo che finisce dentro il quadrato */
+function xcLink(code) {
+  var u = String(location.href).split("#")[0].split("?")[0];
+  return u + "#x=" + code.replace(/-/g, "");
+}
+
+/* il conto, con il motore di sempre */
+function xcGioca(md, mia, loro) {
+  var s = liveScore(mia, loro);
+  var st = liveGet(md) || {};
+  st.score = { me:s.me, them:s.them, mine:s.mine, their:s.their, mode:s.mode,
+               opp:loro.club || "", home:!!mia.home, when:Date.now(), code:1 };
+  st.shown = false;
+  liveSave(md, st);
+  XCIN = "";
+  swap("ftRun");
+}
+
+/* ───────── il codice che arriva dalla fotocamera ─────────
+   La fotocamera del telefono apre l'indirizzo, e noi lo raccogliamo. */
+function xcDalLink() {
+  var h = "";
+  try { h = String(location.hash || ""); } catch (e) {}
+  var m = h.match(/[#&]x=([0-9A-Za-z-]+)/);
+  if (!m) return null;
+  try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+  return m[1];
+}
 
 
 /* ───── 37-pdf.js ───── */
@@ -20882,6 +21442,9 @@ loadLevel();
 /* il codice puo' arrivare dal link: va letto prima di tutto il resto,
    cosi' il primo disegno della home lo sa gia' */
 var fromLink = codeFromLink();
+/* e cosi' il codice di una partita, se qualcuno ha inquadrato il QR
+   dell'avversario con la fotocamera del telefono */
+var daQuadrato = (typeof xcDalLink === "function") ? xcDalLink() : null;
 loadCode(); loadComps(); loadDrop();
 loadBulletin();
 /* la lavagna del professore non vive piu' qui: stava nella stessa app
@@ -20903,6 +21466,12 @@ if (fromLink) {
      non ha competizioni da scegliere e va dritto al cruscotto */
   reset(ME.code ? "land" : "home");
   flushOutbox();
+}
+/* il codice della partita arriva dopo: la stanza dello scambio si apre
+   sopra a quello che c'era, con il campo dell'avversario gia' pieno */
+if (daQuadrato) {
+  XCIN = String(daQuadrato).replace(/(.{4})(?=.)/g, "$1-");
+  setTimeout(function () { go("swap"); }, 60);
 }
 
 </script>
