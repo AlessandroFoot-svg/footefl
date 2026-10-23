@@ -2971,6 +2971,21 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
     transform:none!important}
 }
 }
+
+/* i marcatori, sotto il punteggio della cronaca */
+.scbox{margin-top:12px;padding-top:11px;border-top:1px solid rgba(226,251,206,.16)}
+.sck{display:block;font:800 8.5px var(--brand);letter-spacing:.2em;color:var(--gold);
+  margin-bottom:7px}
+.scrow{display:flex;gap:12px}
+.scc{flex:1;min-width:0}
+.scc em{display:block;font:800 9.5px var(--brand);font-style:normal;letter-spacing:.06em;
+  color:var(--fog);opacity:.8;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.scc b{display:block;font:700 12.5px/1.45 var(--brand);color:var(--cream)}
+.scc b i{font-style:normal;font-weight:600;font-size:11px;color:var(--fog);margin-left:6px}
+.scc span{font:600 11.5px var(--brand);color:var(--fog);opacity:.65}
+.scc:last-child{text-align:right}
+.scc:last-child b i{margin:0 6px 0 0}
 </style>
 </head>
 <body>
@@ -3859,7 +3874,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "103";
+var APPVER = "106";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -7463,6 +7478,28 @@ VIEWS.home = function () {
   drawWho(); drawDemo(); drawLive(); drawNextUp(); drawHomeSquad(); drawHomeTable();
   drawHomeGround();
   popIn(["hwho", "hdemo", "hlive", "hnext", "hsq", "htab", "stadbar"]);
+
+  /* il saluto, quando gli otto punti sono tutti fatti: si apre qui,
+     sopra la lista finita, e il suo bottone chiude la prova */
+  if (typeof demoOver === "function" && demoOver()) {
+    demoTell("bye", "Thank you and see you soon.",
+      "You have played a whole matchday of FootEFL: the market, the sponsor, the " +
+      "training ground, the press room, your chances, both halves and the result." +
+      "<br><br>In a real season this is one week out of six, your club comes from " +
+      "your teacher, and the side facing you is another pupil writing the same " +
+      "dictation — not a bot.",
+      "Back to the code screen", demoBye);
+  }
+  /* il benvenuto della prova: si apre una volta, appena si arriva qui,
+     e dice che cosa e' questa stanza prima che uno cominci a toccare */
+  else if (typeof demoTell === "function") {
+    demoTell("hello", "This is a tutorial.",
+      "One whole match, from the transfer market to the final whistle, so you can " +
+      "see how FootEFL works. The list below has the <b>eight steps of a " +
+      "matchday</b>: open them in order or jump about, but they all have to be " +
+      "done before the result arrives.<br><br>Nothing here reaches a teacher and " +
+      "nothing is kept on this phone. <b>Have fun!</b>");
+  }
 
   /* si guarda da soli se e' arrivato qualcosa di nuovo, senza chiedere */
   if (ME.code && !ONL.busy && (!ONL.when || Date.now() - ONL.when > 60000)) {
@@ -11650,11 +11687,21 @@ function ftEvents(md, s, them, o) {
           (d.save == null ? ", nobody on the line" : " against your " + fmt(d.save)),
         tag:"GOAL", cls:"out" });
     } else {
+      /* ── chi ha fermato il tiro ──
+         Non e' sempre il portiere: sulla casella di difesa c'e' chi ci
+         hai messo tu. Se e' il numero uno e' una parata; se e' un altro
+         il pallone non arriva fin la', e' un'intercettazione. La parola
+         cambia perche' cambia il gesto, e perche' l'alunno impari che
+         in inglese si dice in due modi diversi. */
+      var wd = who("def", d.n);
+      var isGk = wd && (wd.tag === "GK" || wd.role === "GK" ||
+        (SHEET && SHEET.roles && SHEET.roles.gk === wd.no));
+      if (!wd) { wd = gk; isGk = !!gk; }
       ev.push({ min:m, crest:myC, ini:myI,
-        name:gk ? gk.name : "Your keeper", role:"GK",
-        note:"stopped their shot " + d.n + " &middot; " + fmt(d.save) +
-          " against " + fmt(d.shot),
-        tag:"SAVED", cls:"kp" });
+        name:wd ? wd.name : "Your defence", role:ftRole(wd),
+        note:(isGk ? "stopped their shot " : "cut out their shot ") + d.n +
+          " &middot; " + fmt(d.save) + " against " + fmt(d.shot),
+        tag:isGk ? "SAVED" : "INTERCEPTED", cls:"kp" });
     }
   });
   if (s.their.sources.bdo) {
@@ -11721,6 +11768,59 @@ function ftEvents(md, s, them, o) {
   return ev;
 }
 
+/* ───────── i marcatori, come sul giornale ─────────
+   « Morgan Fog » diventa « Fog M. »: il cognome davanti e l'iniziale
+   con il punto, che e' come si leggono i tabellini. Chi segna due volte
+   compare una volta sola, con i suoi minuti in fila. */
+function shortScorer(nm) {
+  var a = String(nm == null ? "" : nm).trim().split(/\s+/);
+  if (a.length < 2) return a[0] || "";
+  return a.slice(1).join(" ") + " " + a[0].charAt(0).toUpperCase() + ".";
+}
+function ftScorers(ev) {
+  var side = { me:[], them:[] };
+  (ev || []).forEach(function (e) {
+    if (e.tag !== "GOAL" && e.tag !== "WONDER") return;
+    var out = e.cls && e.cls.indexOf("out") === 0;
+    var nm = String(e.name || "");
+    /* « Penalty for Ravens FC » non e' il nome di nessuno: in tabellino
+       quel gol va al rigorista, se lo conosciamo */
+    if (/^Penalty for /.test(nm)) {
+      var tk = (!out && SHEET && SHEET.call && SHEET.call.att &&
+                SHEET.call.att.taker != null && typeof playerNo === "function")
+        ? playerNo(SHEET.call.att.taker) : null;
+      nm = tk ? pName(tk) : nm.replace(/^Penalty for /, "");
+    }
+    var l = out ? side.them : side.me, hit = null;
+    l.forEach(function (x) { if (x.name === nm) hit = x; });
+    if (!hit) { hit = { name:nm, mins:[], wnd:false }; l.push(hit); }
+    hit.mins.push(e.min || null);
+    if (e.tag === "WONDER") hit.wnd = true;
+  });
+  return side;
+}
+function ftScorersHtml(ev, myName, them) {
+  var sc = ftScorers(ev);
+  if (!sc.me.length && !sc.them.length) return "";
+  /* a sinistra i tuoi, e si abbreviano. A destra c'e' solo il nome del
+     club: di chi segna dall'altra parte non sappiamo niente, e « Brass
+     FC » abbreviato diventerebbe « FC B. » */
+  function col(list, club, corto) {
+    return '<div class="scc"><em>' + esc(club) + "</em>" +
+      (list.length
+        ? list.map(function (x) {
+            return "<b>" + esc(corto ? shortScorer(x.name) : x.name) +
+              (x.wnd ? " ★" : "") +
+              "<i>" + x.mins.map(function (m) {
+                return m ? m + "′" : "—"; }).join(", ") + "</i></b>";
+          }).join("")
+        : "<span>no scorer</span>") + "</div>";
+  }
+  return '<div class="scbox"><span class="sck">SCORERS</span>' +
+    '<div class="scrow">' + col(sc.me, myName, true) +
+    col(sc.them, them, false) + "</div></div>";
+}
+
 function ftRowHtml(e) {
   return '<div class="ftr' + (e.cls ? " " + e.cls : "") + '">' +
     '<span class="ftm">' + (e.min ? e.min + "′" : "&mdash;") + "</span>" +
@@ -11777,6 +11877,7 @@ function ftRunPage(cfg) {
           "<b>" + esc(them) + "</b></span>" +
       "</div>" +
       '<div class="rnbar"><i id="rbar"></i></div>' +
+      '<div id="rsco"></div>' +
     "</div>" +
     '<div class="ftl run" id="tl"></div>' +
     '<button class="btn ghost" id="rskip">Skip to the result</button></div>');
@@ -11856,6 +11957,10 @@ function ftRunPage(cfg) {
   function over() {
     $("rph").textContent = "FULL TIME";
     mark("FULL TIME", A + " &ndash; " + B);
+    /* il tabellino dei marcatori, sotto il punteggio: e' la prima cosa
+       che si cerca quando la partita finisce */
+    var sc = $("rsco");
+    if (sc) sc.innerHTML = ftScorersHtml(ev, myName, them);
     /* finita: la finestra si apre e torna tutta la partita, dal primo
        minuto all'ultimo. Il tabellone resta appiccicato in alto mentre
        il dito scorre. */
@@ -13685,6 +13790,19 @@ VIEWS.mEnd2 = function () {
   if (ph === "def" && typeof wireLive === "function") {
     $("ftbox").innerHTML = (typeof liveCardHtml === "function") ? liveCardHtml() : "";
     wireLive("ftbox", "mEnd2");
+    /* ── il fischio finale ──
+       Chiusa la difesa la partita e' finita. Se il risultato c'e' gia'
+       — nella prova sempre, in campionato quando anche l'altro ha
+       consegnato — non si resta su un riepilogo da leggere: parte la
+       cronaca, con l'orologio che corre e le azioni che salgono. Il
+       riepilogo del tempo resta dietro, lo si ritrova tornando indietro. */
+    var md0 = ME.next ? ME.next.md : 0;
+    if (typeof liveState === "function" && liveState(md0) === "done" &&
+        !((typeof liveGet === "function" && liveGet(md0)) || {}).shown) {
+      setTimeout(function () {
+        if (HERE && HERE.name === "mEnd2") swap("ftRun");
+      }, 900);
+    }
   }
 };
 
@@ -13759,11 +13877,16 @@ VIEWS.mReport = function () {
     '<p class="lede">Your language report for this matchday is ready in ' +
     "<b>My form</b>, with every word and every kind of mistake. You can download it " +
     "as a PDF and take it home.</p>" +
-    '<button class="btn" id="rpf">Go to My form</button>' +
-    '<button class="btn ghost" id="rpb">Back to my squad</button></div>');
+    /* nella prova da qui si torna in un posto solo: la pagina degli otto
+       punti, dove aspetta il saluto */
+    (demoOnSafe()
+      ? '<button class="btn" id="rpb">Homepage</button>'
+      : '<button class="btn" id="rpf">Go to My form</button>' +
+        '<button class="btn ghost" id="rpb">Back to my squad</button>') +
+    "</div>");
   wireReport(md, "rsend");
-  $("rpf").onclick = function () { reset("form"); };
-  $("rpb").onclick = function () { reset("squad"); };
+  if ($("rpf")) $("rpf").onclick = function () { reset("form"); };
+  $("rpb").onclick = function () { reset(demoOnSafe() ? "home" : "squad"); };
 };
 
 
@@ -15699,7 +15822,7 @@ function homeBackName() {
    foglio che si apre sopra, si legge e si chiude. Una volta per prova:
    la seconda volta che entri sai gia'. */
 function demoTold(k) { return !!(DEMO && DEMO.tips && DEMO.tips[k]); }
-function demoTell(k, title, body) {
+function demoTell(k, title, body, cta, act) {
   if (!demoOn() || demoTold(k)) return;
   DEMO.tips = DEMO.tips || {};
   DEMO.tips[k] = 1;
@@ -15708,11 +15831,16 @@ function demoTell(k, title, body) {
   v.className = "dmtip";
   v.setAttribute("role", "dialog");
   v.innerHTML = '<div class="dmtipc"><b>' + title + "</b><p>" + body + "</p>" +
-    '<button class="btn" type="button">Got it</button></div>';
+    '<button class="btn" type="button">' + (cta || "Got it") + "</button></div>";
   document.body.appendChild(v);
   function kill() { if (v.parentNode) v.parentNode.removeChild(v); }
-  v.querySelector("button").onclick = kill;
-  v.onclick = function (e) { if (e.target === v) kill(); };
+  v.querySelector("button").onclick = function () {
+    kill();
+    if (typeof act === "function") act();
+  };
+  /* un cartello che porta un'azione non si chiude toccando fuori:
+     quella scelta la si fa col bottone, non per sbaglio */
+  if (!act) v.onclick = function (e) { if (e.target === v) kill(); };
   setTimeout(function () { try { v.querySelector("button").focus(); } catch (e) {} }, 60);
 }
 
