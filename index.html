@@ -2986,6 +2986,8 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .scc span{font:600 11.5px var(--brand);color:var(--fog);opacity:.65}
 .scc:last-child{text-align:right}
 .scc:last-child b i{margin:0 6px 0 0}
+.gver{margin:18px 0 0;text-align:center;font:700 10px var(--brand);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--fog);opacity:.55}
 </style>
 </head>
 <body>
@@ -3874,7 +3876,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "106";
+var APPVER = "107";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -7383,6 +7385,10 @@ VIEWS.gate = function (d) {
     "Meanwhile you can still work.</span>" +
     '<button class="gthin" id="gpr" type="button">Try it &mdash; one whole match &#8250;</button>' +
     "</div>" +
+    /* il numero di versione, in fondo alla porta: serve a te quando un
+       alunno dice « non mi funziona » — si guarda qui e si sa subito se
+       quel telefono ha l'app di oggi o quella di tre settimane fa */
+    '<p class="gver">app ' + esc(APPVER) + "</p>" +
     '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
 
   var inp = $("gin");
