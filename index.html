@@ -3876,7 +3876,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "107";
+var APPVER = "108";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -20286,6 +20286,17 @@ function drawPrepFoot() {
    Non "il primo libero": prima i giocatori normali, i tre uomini sparsi
    fra i momenti invece che tutti di fila, e il portiere tenuto per la
    difesa finche' si puo'. Resta tutto cambiabile a mano. */
+/* l'ordine di preferenza per reparto: piu' basso, piu' adatto */
+var ROLE_FIT = {
+  att: { FW:0, MF:1, DF:2, GK:3 },
+  def: { GK:0, DF:1, MF:2, FW:3 }
+};
+function roleFit(ph, p) {
+  var m = ROLE_FIT[ph === "att" ? "att" : "def"];
+  var r = (p && (p.role || p.tag)) || "";
+  return m[r] != null ? m[r] : 2;      /* senza ruolo: in mezzo, come un MF */
+}
+
 function autoFill(ph) {
   var slots = [], i;
   for (i = 1; i <= phaseSlots(ph); i++) if (SHEET[ph][i] == null) slots.push(i);
@@ -20294,8 +20305,19 @@ function autoFill(ph) {
   var other = ph === "att" ? "def" : "att", otherNeed = 0;
   for (i = 1; i <= phaseSlots(other); i++) if (SHEET[other][i] == null) otherNeed++;
 
+  /* ── chi sta bene dove ──
+     Il motore non guarda il ruolo: un terzino in attacco vale quanto
+     una punta. Ma una formazione scelta dall'app deve somigliare a una
+     formazione vera, se no si legge come un sorteggio. Quindi avanti si
+     mandano le punte, poi i centrocampisti, e un difensore solo se non
+     e' rimasto nessun altro; dietro si parte dal portiere e dai
+     difensori, e le punte sono l'ultima risorsa. */
   var ord = allPlayers().filter(function (p) {
     return !roleOf(p.no) && placedCount(p.no) === 0;
+  });
+  ord.forEach(function (p, k) { p._ord = k; });
+  ord = ord.sort(function (a, b) {
+    return roleFit(ph, a) - roleFit(ph, b) || a._ord - b._ord;
   }).map(function (p) { return p.no; });
 
   var room = {}, spec = [];
@@ -20324,8 +20346,12 @@ function autoFill(ph) {
     var no = null;
     if (atSpecial[k] && used < specHere) {
       /* fra i tre, quello con piu' spazio; in attacco il portiere per ultimo */
+      /* fra i tre, quello con piu' spazio; il portiere per ultimo in
+         attacco e per primo in difesa, dove e' il suo mestiere */
       var pick = spec.slice().sort(function (a, b) {
-        if (ph === "att" && (a === gk) !== (b === gk)) return a === gk ? 1 : -1;
+        if ((a === gk) !== (b === gk)) {
+          return (a === gk) === (ph === "def") ? -1 : 1;
+        }
         return room[b] - room[a];
       })[0];
       if (pick != null && room[pick] > 0) { no = pick; room[pick]--; used++; }
