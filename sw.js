@@ -13,7 +13,7 @@
    vecchia viene buttata e il telefono riparte pulito.
    ═══════════════════════════════════════════════════════════════════ */
 
-var VER = "109";
+var VER = "115";
 var BOX = "footefl-" + VER;
 var SHELL = ["./", "./index.html", "./manifest.webmanifest",
              "./icon-192.png", "./icon-512.png"];
@@ -133,6 +133,18 @@ self.addEventListener("fetch", function (e) {
   if (req.method !== "GET") return;
   var url = new URL(req.url);
   if (url.origin !== location.origin) return;
+
+  /* ───────── chi chiede « che versione sei? » ─────────
+     L'app, all'avvio, viene a leggere qui dentro per sapere se la copia
+     che ha in tasca e' ancora quella del sito. A una domanda del genere
+     si risponde solo con la rete: servire la copia in dispensa vorrebbe
+     dire rispondere « sono aggiornato » guardandosi allo specchio.
+     E non si tiene da parte niente, se no la dispensa si riempie di una
+     briciola per ogni avvio. */
+  if (url.pathname.indexOf("sw.js") > -1) {
+    e.respondWith(fetch(req, { cache:"no-store" }));
+    return;
+  }
 
   /* i dati del professore: prima la rete, poi quello che c'e' */
   if (url.pathname.indexOf("/d/") >= 0) {

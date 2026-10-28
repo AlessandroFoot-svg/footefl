@@ -3006,6 +3006,175 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .xcsay{margin:9px 0 0;font-size:12px;font-weight:700;line-height:1.5;color:var(--fog)}
 .xcsay.bad{padding:9px 12px;border-radius:10px;background:rgba(232,97,76,.15);color:#FFC9BE}
 .stbar.xcgo2{margin-top:10px}
+
+/* ═══════ il bilancio: le soglie e il confronto ═══════ */
+/* il bilancio e' un foglio chiaro, non una schermata scura: qui si usa
+   l'inchiostro, non la crema */
+.lgsgs{display:grid;gap:4px;margin:0 0 14px}
+.lgsg{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;
+  background:#FFFDF8;border:1px solid rgba(28,42,32,.16)}
+.lgsg.ko{border-color:rgba(155,48,40,.5);background:#FBF0EE}
+.lgsg.next{border-style:dashed;background:transparent;opacity:.62}
+.lgsn{flex:none;width:22px;height:22px;border-radius:50%;background:#C8922F;
+  color:#fff;font:800 11px/22px var(--brand);text-align:center}
+.lgsg.ko .lgsn{background:#9B3028}
+.lgsg.next .lgsn{background:none;border:1px dashed rgba(28,42,32,.35);
+  color:rgba(28,42,32,.5);line-height:20px}
+.lgsw{flex:1;min-width:0}
+.lgsw b{display:block;font:800 13.5px var(--brand);color:#1C2A20}
+.lgsw em{display:block;font:600 10.5px var(--brand);font-style:normal;
+  color:rgba(28,42,32,.6)}
+.lgsv{flex:none;text-align:right;font:800 13px var(--brand);color:#8A6A2F}
+.lgsv i{display:block;font:600 10px var(--brand);font-style:normal;
+  color:rgba(28,42,32,.55)}
+
+.lgduel{border:1px solid rgba(28,42,32,.2);border-radius:13px;overflow:hidden;
+  margin-bottom:10px;background:#FFFDF8}
+.lgdh{display:flex;align-items:center;gap:10px;padding:11px 13px;background:#1C2A20}
+.lgdh span{flex:1;font:800 11.5px var(--brand);color:#E7E0CF;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lgdh span:last-child{text-align:right}
+.lgdh b{flex:none;font:800 18px var(--brand);color:#E3EF26}
+.lgdr{display:flex;align-items:center;gap:10px;padding:9px 13px;
+  border-top:1px solid rgba(28,42,32,.12)}
+.lgdr.thin{padding:6px 13px}
+.lgdv{flex:0 0 72px;font:800 15px var(--brand);color:#1C2A20}
+.lgdv.up{color:#8A6A2F}
+.lgdv i{display:block;font:600 9.5px var(--brand);font-style:normal;
+  color:rgba(28,42,32,.55)}
+.lgdr .lgdv:last-child{text-align:right}
+.lgdl{flex:1;text-align:center;font:700 10.5px var(--brand);letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(28,42,32,.6)}
+.lgdr.thin .lgdv{font-size:13px}
+
+/* ═════════ i due in panchina ═════════ */
+.stfrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stf{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:0;
+  padding:14px 13px 12px;border-radius:16px;border:1px solid var(--edge);
+  background:rgba(226,251,206,.05);color:inherit;text-align:left;cursor:pointer;
+  font-family:inherit}
+.stf.on{border-color:var(--gold);background:rgba(227,239,38,.1)}
+.stf.off{opacity:.62}
+.stf b{margin-top:10px;font:800 13.5px/1.2 var(--brand);color:#FFFDEE}
+.stf em{margin-top:4px;font:800 8.5px/1 var(--brand);letter-spacing:.13em;font-style:normal;
+  color:#8FC4AC}
+.stf .stfb{margin-top:9px;font:800 9px/1 var(--brand);letter-spacing:.1em;font-style:normal;
+  text-transform:uppercase;color:var(--fog)}
+.stf.on .stfb{color:var(--gold)}
+.stfi{display:block;width:30px;height:30px;color:var(--gold)}
+.stfi svg{width:100%;height:100%;display:block}
+.stfi.big{width:46px;height:46px}
+.stftab{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 14px}
+.stftb{padding:11px 10px;border-radius:12px;border:1px solid var(--edge);
+  background:rgba(226,251,206,.05);color:var(--fog);font:800 12px/1.2 var(--brand);
+  cursor:pointer}
+.stftb.on{border-color:var(--gold);background:rgba(227,239,38,.12);color:#FFFDEE}
+.stfbig{padding:17px 16px;border-radius:18px;border:1px solid var(--edge);
+  background:linear-gradient(180deg,rgba(226,251,206,.07),rgba(4,23,15,.5))}
+.stfbig i{display:block;margin-top:12px;font:800 9px/1 var(--brand);letter-spacing:.14em;
+  font-style:normal;color:#8FC4AC}
+.stfbig b{display:block;margin-top:7px;font:800 21px/1.1 var(--brand);color:#FFFDEE}
+.stfbig p{margin:9px 0 0;font-size:12.5px;font-weight:600;line-height:1.5;color:var(--cream)}
+
+/* ═════════ la percezione, in cima alla rosa ═════════ */
+.fmchip{display:flex;align-items:center;gap:12px;width:100%;padding:11px 13px;
+  border-radius:13px;border:1px solid var(--edge);background:rgba(226,251,206,.05);
+  color:inherit;text-align:left;cursor:pointer;font-family:inherit}
+.fmcv{flex:none;font:800 23px/1 var(--brand);color:var(--gold)}
+.fmcv em{font:800 10px/1 var(--brand);font-style:normal;color:#8FC4AC}
+.fmct{flex:1;min-width:0}
+.fmct b{display:block;font:800 12.5px/1.2 var(--brand);color:#FFFDEE}
+.fmcb{display:block;height:5px;margin-top:6px;border-radius:3px;
+  background:rgba(226,251,206,.14);overflow:hidden}
+.fmcb i{display:block;height:100%;border-radius:3px;background:var(--gold)}
+.fmcs{flex:none;display:flex;gap:1px}
+.fmcs i{font-style:normal;font-size:9.5px;color:rgba(226,251,206,.22)}
+.fmcs i.on{color:var(--gold)}
+
+/* ═════════ le meccaniche nuove ═════════ */
+.bxagain{margin:0 0 13px;padding:10px 12px;border-radius:11px;
+  border:1px solid rgba(226,251,206,.2);background:rgba(226,251,206,.05);
+  font-size:11.5px;font-weight:600;line-height:1.45;color:var(--fog)}
+/* 1 · l'orologio delle shuttle runs */
+.spbar{height:6px;margin:2px 0 16px;border-radius:4px;background:rgba(226,251,206,.13);
+  overflow:hidden}
+.spbar i{display:block;height:100%;width:100%;border-radius:4px;background:var(--gold)}
+/* 2 · la frase da costruire */
+.orline{display:flex;flex-wrap:wrap;gap:7px;min-height:52px;padding:11px;
+  border-radius:13px;border:1px dashed rgba(226,251,206,.26);
+  background:rgba(226,251,206,.04);margin-bottom:14px}
+.orempty{font:800 15px/1.6 var(--brand);color:rgba(226,251,206,.3)}
+.orpool{display:flex;flex-wrap:wrap;gap:7px}
+.orw{padding:9px 12px;border-radius:10px;border:1px solid var(--gold);
+  background:rgba(227,239,38,.12);color:#FFFDEE;font:700 14px/1.2 var(--brand);
+  cursor:pointer}
+.orw.pool{border-color:var(--edge);background:rgba(226,251,206,.06);color:var(--cream)}
+.orw.done{border-color:var(--gold);cursor:default}
+.orw.done.bad{border-color:rgba(201,85,63,.6);background:rgba(201,85,63,.14);
+  color:#E8A89A}
+/* 3 e 4 · si scrive */
+.tyhint{margin:0 0 12px;font:800 17px/1 var(--brand);letter-spacing:.22em;
+  color:var(--gold)}
+.tyhint em{margin-left:6px;font:800 11px/1 var(--brand);font-style:normal;
+  letter-spacing:0;color:#8FC4AC}
+.tyin{display:block;width:100%;padding:14px 13px;margin-bottom:11px;border-radius:13px;
+  border:1px solid var(--edge);background:rgba(4,23,15,.45);color:#FFFDEE;
+  font:700 17px/1.2 var(--brand);-webkit-appearance:none}
+.tyin:focus{outline:none;border-color:var(--gold)}
+.tyin:disabled{opacity:.7}
+.earb{display:flex;align-items:center;gap:13px;width:100%;padding:17px 15px;
+  margin-bottom:14px;border-radius:16px;border:1px solid var(--gold);
+  background:rgba(227,239,38,.1);color:inherit;text-align:left;cursor:pointer;
+  font-family:inherit;flex-wrap:wrap}
+.earb .eari{flex:none;width:34px;height:34px;border-radius:50%;display:grid;
+  place-items:center;background:var(--gold);color:#06231D;font-size:13px}
+.earb b{font:800 16px/1 var(--brand);color:#FFFDEE}
+.earb em{flex-basis:100%;font-size:11px;font-weight:600;font-style:normal;
+  color:#8FC4AC}
+.earb:disabled{opacity:.55}
+.stfr{display:flex;align-items:baseline;gap:10px;padding:11px 14px;font-size:11.5px;
+  font-weight:600;line-height:1.45;color:var(--cream);
+  border-bottom:1px solid var(--edge)}
+.panel>.stfr:last-child{border-bottom:0}
+.stfr span{flex:1;min-width:0}
+.stfr span b{color:#FFFDEE;font-weight:800}
+.stfr em{flex:none;font:800 10px/1 var(--brand);font-style:normal;color:var(--gold);
+  white-space:nowrap}
+
+/* ═════════ il consiglio sulla tastiera ═════════ */
+.gkbd{margin:16px 2px 0;font-size:11.5px;font-weight:600;line-height:1.5;
+  color:var(--fog)}
+.gkbd b{color:var(--cream);font-weight:800}
+.kbd{margin:0 0 16px;padding:15px;border-radius:16px;border:1px solid var(--gold);
+  background:linear-gradient(180deg,rgba(227,239,38,.1),rgba(4,23,15,.5))}
+.kbdk{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;color:var(--gold)}
+.kbd b{display:block;margin-top:7px;font:800 19px/1.15 var(--brand);color:#FFFDEE}
+.kbd>p{margin:9px 0 0;font-size:12px;font-weight:600;line-height:1.5;color:var(--cream)}
+.kbd>p b{display:inline;font:inherit;font-weight:800;color:#FFFDEE}
+.kbdh{display:flex;flex-direction:column;gap:8px;margin:13px 0 0}
+.kbdh span{display:block;padding:11px 12px;border-radius:12px;
+  border:1px solid var(--edge);background:rgba(4,23,15,.4);
+  font-size:11.5px;font-weight:600;line-height:1.45;color:var(--cream)}
+.kbdh i{display:block;margin-bottom:4px;font:800 9px/1 var(--brand);
+  letter-spacing:.13em;font-style:normal;color:#8FC4AC}
+.kbdh b{display:inline;font:inherit;font-weight:800;color:#FFFDEE}
+.kbds{margin:11px 0 13px;font-size:11px;font-weight:600;line-height:1.45;
+  color:#8FC4AC}
+.kbdlater{display:block;width:100%;margin-top:8px;padding:10px;background:none;
+  border:0;color:var(--fog);font:700 12px/1 var(--brand);cursor:pointer}
+
+/* ═════════ l'app vecchia lo dice ═════════ */
+.frs{margin:14px 0 0;padding:15px;border-radius:16px;
+  border:1px solid rgba(201,85,63,.75);
+  background:linear-gradient(180deg,rgba(201,85,63,.18),rgba(4,23,15,.5))}
+.frsk{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;color:#E8A89A}
+.frs b{display:block;margin-top:7px;font:800 17px/1.2 var(--brand);color:#FFFDEE}
+.frs p{margin:8px 0 13px;font-size:11.5px;font-weight:600;line-height:1.5;
+  color:var(--cream)}
+.frs.half{border-color:rgba(226,251,206,.35);
+  background:linear-gradient(180deg,rgba(226,251,206,.08),rgba(4,23,15,.5))}
+.frs.half .frsk{color:#8FC4AC}
+.frs p b{display:inline;font:inherit;font-weight:800;color:#FFFDEE}
 </style>
 </head>
 <body>
@@ -3796,8 +3965,11 @@ function joinClub(id) {
   var foe = rivals[mine === 0 ? Math.min(1, rivals.length - 1) : 0] ||
             rivals[0] || { name: "—" };
   /* il meteo della giornata: decide quante azioni si aprono per reparto */
+  /* nella prova il cielo lo ha estratto la prova stessa, una volta sola */
+  var wx = (typeof demoOn === "function" && demoOn() && DEMO && DEMO.wx)
+    ? DEMO.wx : { att:"cloudy", def:"rain" };
   ME.next = { md:LEAGUE.md + 1, home:c.name, away:foe.name, atHome:true,
-              attack:{ clim:"cloudy" }, defence:{ clim:"rain" } };
+              attack:{ clim:wx.att }, defence:{ clim:wx.def } };
   ["attack","defence"].forEach(function (k) {
     var cl = climateOf(ME.next[k].clim);
     ME.next[k].word = cl.label; ME.next[k].slots = cl.actions;
@@ -3894,7 +4066,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "109";
+var APPVER = "115";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -4098,6 +4270,185 @@ function toTop() {
   document.documentElement.scrollTop = 0;
 }
 function html(s) { $("main").innerHTML = s; }
+
+
+/* ───── 11-fresh.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   L'APP SI ACCORGE DI ESSERE VECCHIA
+
+   Il guardiano e' fatto bene: quando si apre l'app chiede prima alla
+   rete, e il guardiano nuovo prende il comando subito. In teoria basta.
+   In pratica no, e per una ragione che non sta nel codice: fra il
+   momento in cui il professore costruisce una versione e il momento in
+   cui quella versione sta davvero sul sito c'e' un caricamento a mano,
+   e un caricamento a mano puo' non essere arrivato. Allora il telefono
+   mostra fedelmente una versione vecchia, e nessuno lo sa.
+
+   Con una classe di venticinque telefoni questo e' il guasto peggiore
+   che ci sia, perche' non assomiglia a un guasto: l'app funziona, e
+   funziona male in modo diverso su ogni banco.
+
+   Allora l'app lo chiede. All'avvio va a leggere la versione che sta
+   sul sito in questo momento e la confronta con la propria. Se sono
+   diverse lo scrive, con tutti e due i numeri, e offre il bottone che
+   butta la dispensa e ricarica.
+
+   Due accorgimenti, piccoli ma necessari:
+
+   La coda `?fresh=<istante>` serve a non farsi rispondere dalla
+   dispensa: il guardiano, per tutto quello che non e' una navigazione,
+   serve prima la copia che ha in casa, e la copia che ha in casa e'
+   proprio quella vecchia che stiamo cercando di smascherare. Un
+   indirizzo mai visto in dispensa non c'e', e la richiesta va in rete.
+
+   E subito dopo si fa pulizia: quelle richieste, una per avvio, il
+   guardiano se le tiene. Da questa versione in poi non se le tiene piu'
+   (c'e' la regola nel guardiano), ma chi ha in tasca un guardiano
+   vecchio continuerebbe ad accumularle, quindi le togliamo da qui.
+
+   Se la rete non c'e', non succede niente: nessuna riga, nessun errore.
+   Un'app che in corriera dicesse « non riesco a controllare » sarebbe
+   peggio di un'app che tace.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var FRESH = { live:"", done:false, busy:false };
+
+/* la versione che sta sul sito adesso */
+function freshCheck(then) {
+  if (FRESH.busy || FRESH.done) return;
+  if (typeof fetch !== "function") return;
+  FRESH.busy = true;
+  var url = "./sw.js?fresh=" + Date.now();
+  fetch(url, { cache:"no-store" }).then(function (r) {
+    return (r && r.ok) ? r.text() : "";
+  }).then(function (t) {
+    var m = String(t || "").match(/var\s+VER\s*=\s*"([^"]+)"/);
+    FRESH.live = m ? m[1] : "";
+    FRESH.done = true; FRESH.busy = false;
+    freshTidy();
+    if (then) then();
+  })["catch"](function () {
+    /* offline, o il sito non risponde: si tace e si riprovera' al
+       prossimo avvio */
+    FRESH.busy = false;
+  });
+}
+/* le briciole del controllo, via dalla dispensa */
+function freshTidy() {
+  if (typeof caches === "undefined") return;
+  try {
+    caches.keys().then(function (ks) {
+      ks.forEach(function (k) {
+        caches.open(k).then(function (c) {
+          c.keys().then(function (reqs) {
+            reqs.forEach(function (rq) {
+              if (String(rq.url).indexOf("sw.js?fresh=") > -1) c["delete"](rq);
+            });
+          });
+        });
+      });
+    });
+  } catch (e) {}
+}
+function freshVer() {
+  return (typeof APPVER === "undefined") ? "" : String(APPVER);
+}
+function freshStale() {
+  return !!(FRESH.done && FRESH.live && FRESH.live !== freshVer());
+}
+
+/* ───────── quando aggiornare non basta ─────────
+   La versione viva la dice il guardiano (sw.js); la versione che gira
+   la dice la pagina (index.html). Sono due file, e vanno caricati
+   insieme: se ne arriva uno solo, il sito dichiara una versione che non
+   ha. Allora si pulisce la dispensa, si ricarica, e si torna identici a
+   prima — per sempre, a ogni avvio.
+   Si ricorda quale versione si e' gia' tentata: se dopo il giro siamo
+   ancora qui, il guasto non e' del telefono, e vale la pena dire quale
+   e' invece che ripetere lo stesso bottone. */
+var FRESH_KEY = "footefl-fresh";
+function freshTried() {
+  try { return (JSON.parse(localStorage.getItem(FRESH_KEY) || "null") || {}).t || ""; }
+  catch (e) { return ""; }
+}
+function freshMarkTried(v) {
+  try { localStorage.setItem(FRESH_KEY, JSON.stringify({ t:String(v || "") })); }
+  catch (e) {}
+}
+function freshHalf() { return freshStale() && freshTried() === FRESH.live; }
+
+/* ───────── buttare la dispensa e ricominciare ─────────
+   Si svuotano tutte le dispense, si chiede al guardiano di rileggersi,
+   e si ricarica. Quello che l'alunno ha scritto non sta li' dentro —
+   sta nelle sue impostazioni, che non si toccano. */
+function freshUpdate(btn) {
+  if (btn) { btn.disabled = true; btn.textContent = "Fetching the new one…"; }
+  freshMarkTried(FRESH.live);
+  function reload() {
+    try { location.reload(); } catch (e) {}
+  }
+  var jobs = [];
+  if (typeof caches !== "undefined") {
+    jobs.push(caches.keys().then(function (ks) {
+      return Promise.all(ks.map(function (k) { return caches["delete"](k); }));
+    })["catch"](function () {}));
+  }
+  if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+    jobs.push(navigator.serviceWorker.getRegistrations().then(function (rs) {
+      return Promise.all((rs || []).map(function (r) {
+        return r.update()["catch"](function () {});
+      }));
+    })["catch"](function () {}));
+  }
+  /* se qualcosa si pianta, fra tre secondi si ricarica lo stesso */
+  setTimeout(reload, 3000);
+  Promise.all(jobs).then(reload)["catch"](reload);
+}
+
+/* ───────── la riga ───────── */
+function freshBar() {
+  if (!freshStale()) return "";
+  /* ci abbiamo gia' provato e siamo ancora qui: non e' il telefono */
+  if (freshHalf()) {
+    return '<div class="frs half" id="frsbox">' +
+      '<span class="frsk">SHOW THIS TO YOUR TEACHER</span>' +
+      "<b>The site says " + esc(FRESH.live) + ", but it is still serving " +
+      esc(freshVer()) + ".</b>" +
+      "<p>This phone has already thrown its copy away and asked again, and the " +
+      "same version came back. That happens when only one of the two files " +
+      "reached the site: <b>index.html</b> and <b>sw.js</b> have to go up " +
+      "together. Until then the app works, but it is the older one.</p>" +
+      '<button class="btn ghost" id="frsgo" type="button">Try once more</button>' +
+      "</div>";
+  }
+  return '<div class="frs" id="frsbox">' +
+    '<span class="frsk">THIS APP IS OUT OF DATE</span>' +
+    "<b>Version " + esc(FRESH.live) + " is on the site. You have " +
+    esc(freshVer()) + ".</b>" +
+    "<p>Your phone kept the old copy. Nothing you have written is lost: " +
+    "your code, your squad and your words stay where they are.</p>" +
+    '<button class="btn" id="frsgo" type="button">Get version ' +
+    esc(FRESH.live) + "</button></div>";
+}
+function wireFresh() {
+  if ($("frsgo")) {
+    $("frsgo").onclick = function () { freshUpdate($("frsgo")); };
+  }
+}
+function drawFresh(id) {
+  var box = $(id || "freshbar");
+  if (!box) return;
+  box.innerHTML = freshBar();
+  wireFresh();
+}
+/* all'avvio: si chiede, e se c'e' da dire qualcosa si ridisegna la
+   pagina su cui l'alunno e' atterrato */
+function freshBoot() {
+  freshCheck(function () {
+    if (!freshStale() || !HERE) return;
+    if (HERE.name === "land" || HERE.name === "gate") draw();
+  });
+}
 
 
 /* ───── bank.js ───── */
@@ -7132,6 +7483,10 @@ VIEWS.land = function () {
   $("bar").innerHTML = ""; prog(0);
 
   html('<div class="ldwrap">' +
+       /* se il telefono ha una copia vecchia, lo deve sapere prima di
+          qualunque altra cosa: di sotto si gioca una partita che il
+          professore correggera' con un'app diversa */
+       '<div class="pad" id="freshbar"></div>' +
        '<div id="ldhead"></div>' +
        '<div class="pad" id="postbar"></div>' +
        '<div id="ldcomps"></div>' +
@@ -7144,6 +7499,7 @@ VIEWS.land = function () {
        '<div id="hout"></div>' +
        '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
 
+  if (typeof drawFresh === "function") drawFresh();
   landHead();
   drawPostBar();      /* la posta del professore, prima delle competizioni */
   landComps();
@@ -7403,11 +7759,22 @@ VIEWS.gate = function (d) {
     "Meanwhile you can still work.</span>" +
     '<button class="gthin" id="gpr" type="button">Try it &mdash; one whole match &#8250;</button>' +
     "</div>" +
+    /* il consiglio sulla tastiera, gia' qui alla porta: la spiegazione
+       intera arriva davanti al dettato, dove serve, ma chi apre l'app
+       per la prima volta ha il telefono in mano adesso ed e' adesso che
+       conviene andare nelle impostazioni */
+    '<p class="gkbd">Before you play, turn off your keyboard’s ' +
+    "<b>auto-correction</b> and <b>word suggestions</b>. The words should be " +
+    "yours — the game is better that way, and the app can tell the " +
+    "difference.</p>" +
     /* il numero di versione, in fondo alla porta: serve a te quando un
        alunno dice « non mi funziona » — si guarda qui e si sa subito se
        quel telefono ha l'app di oggi o quella di tre settimane fa */
     '<p class="gver">app ' + esc(APPVER) + "</p>" +
+    '<div id="freshbar"></div>' +
     '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
+
+  if (typeof drawFresh === "function") drawFresh();
 
   var inp = $("gin");
   inp.oninput = function () {
@@ -7928,7 +8295,11 @@ function doorRail() {
     { id:"mail", ic:"mail", n:"Post",    dot:unread ? String(unread) : "" },
     { id:"prss", ic:"mic",  n:"Press",   dot:open ? "\u25cf" : "" },
     { id:"spns", ic:"spon", n:"Sponsors", dot:free ? "\u25cf" : "" },
-    { id:"city", ic:"city", n:"The city", dot:"" },
+    /* sulla porta della citta' il numero, non un pallino: e' quello che
+       decide chi si presenta in conferenza e chi risponde agli sponsor,
+       e va letto di sfuggita senza entrare */
+    { id:"city", ic:"city", n:"The city",
+      dot:(typeof fame === "function") ? String(fame()) : "" },
     { id:"nmbs", ic:"nums", n:"Numbers",  dot:"" }
   ];
   return '<div class="hrail">' + doors.map(function (d) {
@@ -9771,7 +10142,11 @@ VIEWS.squad = function () {
      che restano — erano la stagione di qualcun altro. */
   var demo = (typeof demoOn === "function") && demoOn();
   html('<div id="sqpress"></div><div id="band"></div>' +
+    /* la percezione, in alto e sempre: comanda chi si presenta in
+       conferenza e chi risponde agli sponsor, e stava dietro una porta */
+    '<section class="pad" id="fmbar"></section>' +
     '<section class="pad"><div class="sqc" id="sqc"></div></section>' +
+    '<div id="staffbar"></div>' +
     '<div id="stadbar"></div>' +
     '<section class="pad" id="signs" hidden><h2 class="sec">Signed in the market</h2>' +
     '<div class="panel" id="signbox"></div></section>' +
@@ -9785,7 +10160,9 @@ VIEWS.squad = function () {
     '<section class="pad"><h2 class="sec">More</h2>' +
     '<div class="tiles" id="tiles"></div></section>' +
     '<p class="foot" id="foot"></p>');
-  drawSqPress(); drawStadium(); drawBand(); drawSquadCard(); drawSignings();
+  drawSqPress(); drawFameBar(); drawStadium(); drawBand(); drawSquadCard();
+  if (typeof drawStaff === "function") drawStaff();
+  drawSignings();
   if (!demo) drawTable();
   drawNext();
   drawStarBar(); drawTiles(); drawFoot();
@@ -9801,6 +10178,17 @@ function drawSqPress() {
   if (!box) return;
   box.innerHTML = (typeof pressCard === "function") ? pressCard() : "";
   if (typeof wirePress === "function") wirePress();
+}
+
+/* ───────── la percezione, in cima alla rosa ─────────
+   Un numero che muove la conferenza e gli sponsor non puo' stare solo
+   dietro una porta della competizione: nella prova quella porta non
+   c'e' nemmeno, e l'alunno non sapeva di avere un numero. */
+function drawFameBar() {
+  var box = $("fmbar");
+  if (!box) return;
+  box.innerHTML = (typeof fameChip === "function") ? fameChip() : "";
+  if ($("fmchip")) $("fmchip").onclick = function () { go("fame"); };
 }
 
 function drawBand() {
@@ -11704,8 +12092,10 @@ function ftEvents(md, s, them, o) {
     ev.push({ min:(s.mine.mins || [])[d.n - 1] || null, crest:myC, ini:myI,
       name:w ? w.name : "Nobody on this action", role:ftRole(w),
       note:"our shot " + d.n + " &middot; " + fmt(d.shot) +
-        (d.save == null ? ", no keeper" : " against " + fmt(d.save)),
-      tag:d.goal ? "GOAL" : "SAVED", cls:d.goal ? "in" : "" });
+        (d.save == null ? ", nobody in the way" : " against their " + fmt(d.save)),
+      /* « SAVED » e' del portiere, e qui il nome e' quello di chi tira:
+         un tiro mio che non entra e' fermato, non parato da lui */
+      tag:d.goal ? "GOAL" : "STOPPED", cls:d.goal ? "in" : "" });
   });
 
   if (s.mine.sources.bdo) {
@@ -11717,7 +12107,7 @@ function ftEvents(md, s, them, o) {
     ev.push({ min:s.mine.penMin || null, crest:myC, ini:myI,
       name:"Penalty for " + myName, role:"",
       note:esc(them) + " conceded it",
-      tag:s.mine.penalty.outcome === "goal" ? "GOAL" : "SAVED",
+      tag:s.mine.penalty.outcome === "goal" ? "GOAL" : "STOPPED",
       cls:s.mine.penalty.outcome === "goal" ? "in" : "" });
   }
 
@@ -12090,8 +12480,12 @@ VIEWS.live = function () {
        partita senza una parola giusta non e' finita in parita' */
     var vuoto = !A.to && !B.to;
     var zero = (wa + wb) === 0;
+    /* niente scorciatoie di comodo: la percentuale e' quella vera.
+       Prima la si teneva fra 5 e 95 perche' una barra vuota sembrava
+       un difetto — ma chi non ha scritto una parola giusta non ha
+       tenuto il cinque per cento della palla, ne ha tenuto zero, e il
+       numero deve dirlo. */
     var pa = zero ? 0 : Math.round(wa / (wa + wb) * 100);
-    if (!zero) pa = Math.max(5, Math.min(95, pa));
     var pb = zero ? 0 : 100 - pa;
 
     return '<div class="qrw"><span class="qv">' + A.w +
@@ -13607,6 +14001,78 @@ function dictAudio(d) {
    Quello che resta fuori dalla nostra portata e' la striscia dei
    suggerimenti della tastiera: quella la decide il telefono, e si toglie
    dalle sue impostazioni. */
+/* ═══════════════ LA STRISCIA CHE LA PAGINA NON PUO' SPEGNERE ═══════════
+
+   Di tutto quello che aiuta a scrivere, uno solo resta fuori dalla
+   nostra portata: la striscia di parole sopra i tasti, e lo scorrimento
+   del dito. Quella la decide il telefono, e si toglie dalle sue
+   impostazioni — quindi l'unica cosa sensata e' dirlo, e dirlo nel
+   momento in cui serve: non alla prima apertura, dove si dimentica,
+   ma davanti al dettato.
+
+   Il tono non e' un divieto. Un alunno che tocca un suggerimento non
+   sta imbrogliando, sta facendo quello che il telefono gli propone: si
+   spiega che cosa si perde, che l'app se ne accorge e lo conta, e che
+   senza quella striscia il gioco e' piu' suo.
+
+   Quando riappare: la prima volta sempre; dopo, solo se il telefono ha
+   davvero messo dentro qualche parola, e al massimo una volta per
+   giornata. Un avviso che torna a ogni dettato non lo legge piu'
+   nessuno. */
+var KBD_KEY = "footefl-kbd";
+function kbdAll() {
+  try { return JSON.parse(localStorage.getItem(KBD_KEY) || "null") || { seen:0, md:0 }; }
+  catch (e) { return { seen:0, md:0 }; }
+}
+function kbdSave(o) { try { localStorage.setItem(KBD_KEY, JSON.stringify(o)); } catch (e) {} }
+/* quante volte, finora, la parola l'ha messa il telefono */
+function kbdHelped() {
+  try { return (statsOf(allHalves()) || {}).help || 0; }
+  catch (e) { return 0; }
+}
+function kbdDue() {
+  var a = kbdAll(), md = (typeof mdNow === "function") ? mdNow() : 1;
+  if (!a.seen) return true;
+  return kbdHelped() > 0 && a.md !== md;
+}
+function kbdDone() {
+  kbdSave({ seen:1, md:(typeof mdNow === "function") ? mdNow() : 1 });
+}
+function kbdCard() {
+  if (!kbdDue()) return "";
+  var n = kbdHelped();
+  return '<div class="kbd" id="kbdbox">' +
+    '<span class="kbdk">BEFORE YOU WRITE</span>' +
+    "<b>Turn your keyboard's help off</b>" +
+    "<p>This page has already switched off everything a page can switch off: " +
+    "auto-correction, capitals, the spellchecker, and pasting. The one thing it " +
+    "cannot reach is your own keyboard — the strip of words above the letters, " +
+    "and writing by sliding your finger. Tap one of those words and the phone has " +
+    "spelt it, not you" +
+    (n ? ". <b>It has done that " + n + (n === 1 ? " time" : " times") +
+         " for you so far</b>, and your teacher sees the number." :
+         " — and the app notices: it counts them, and your teacher sees the number.") +
+    "</p>" +
+    '<div class="kbdh"><span><i>iPhone</i>Settings › General › Keyboard: ' +
+    "turn off <b>Auto-Correction</b> and <b>Predictive</b>.</span>" +
+    "<span><i>Android</i>Gboard: hold the comma key › Settings › " +
+    "Text correction: turn off <b>Auto-correction</b>, <b>Show suggestion strip</b> " +
+    "and <b>Glide typing</b>.</span></div>" +
+    '<p class="kbds">On your phone they may be called something slightly different. ' +
+    "It is a better game this way: the words are yours, and so is the score.</p>" +
+    '<button class="btn" id="kbdok" type="button">Done — my keyboard is quiet</button>' +
+    '<button class="kbdlater" id="kbdlater" type="button">Not now</button></div>';
+}
+function wireKbd(after) {
+  function shut() {
+    var b = $("kbdbox");
+    if (b) b.parentNode.removeChild(b);
+    if (after) after();
+  }
+  if ($("kbdok")) $("kbdok").onclick = function () { kbdDone(); shut(); };
+  if ($("kbdlater")) $("kbdlater").onclick = shut;
+}
+
 /* ───────── uscire dalla finestra costa ─────────
    Dieci centesimi per volta, su quel dettato. Non tocca la qualita' delle
    singole azioni — quella resta sulla scala del campionato — ma viaggia
@@ -13856,7 +14322,11 @@ function correctHalf(ph, written, opt) {
     var matured = (run > 0 && step > 0) ? Math.min(cap, Math.floor(run / step)) : 0;
     while (matured > done) {
       done++;
-      shots.push({ n:done, quality:(e.t === "ponct" ? 100 : v), at:k });
+      /* « at » e' la parola che ha fatto scattare la soglia e « run »
+         il totale in quel momento: con questi due il bilancio puo'
+         mostrare dove si e' aperta ogni azione, invece di dare solo il
+         conto finale */
+      shots.push({ n:done, quality:(e.t === "ponct" ? 100 : v), at:k, run:run });
     }
   });
 
@@ -13993,6 +14463,7 @@ VIEWS.mWrite = function (d) {
           (ph === "att" ? " shots at most" : " saves at most"), 50, false);
 
   html('<div class="pad">' +
+    kbdCard() +
     '<p class="lede">Press play and <b>it does not stop</b>: no pause, no going back, ' +
     "no second listen. Write as you hear it &mdash; full stops, commas and capital " +
     "letters count. When the voice ends you get <b>" + extraSecs() +
@@ -14009,6 +14480,7 @@ VIEWS.mWrite = function (d) {
 
   var ta = $("dw"), sent = false, tick = null;
   MT.help = 0;
+  wireKbd();
 
   /* ───── chi esce dalla finestra ─────
      Il dettato si scrive qui dentro. Ogni volta che la pagina passa in
@@ -14244,6 +14716,9 @@ VIEWS.mEnd2 = function () {
        riportato su novanta minuti. Stessa formula del campionato, cosi'
        il tabellino del telefono e quello ufficiale dicono lo stesso. */
     mins:r.shots.map(function (x) { return matMinute(x.at, r.els.length); }),
+    /* dove e con quanto si e' aperta ogni azione: la parola e il totale */
+    ats:r.shots.map(function (x) { return x.at; }),
+    runs:r.shots.map(function (x) { return x.run; }),
     hardMin:matMinute(r.hardIndex, r.els.length),
     slots:(function () {
       var a = [];
@@ -16005,7 +16480,8 @@ VIEWS.tlResolve = function () {
   var C = TL.cur;
   if (!C || !C.att || !C.def) return swap("train");
   var skill = tlDiff().skill;
-  var bot = tlBotCard(skill, C.attClim, C.defClim);
+  /* i cieli incrociati: il bot attacca nel tempo in cui io difendo */
+  var bot = tlBotCard(skill, C.defClim, C.attClim);
 
   var ha = ftHalf({ qualities:C.att.q, butDeOuf:C.att.w },
                   { qualities:bot.def.q, penaltyConceded:bot.def.p },
@@ -16183,7 +16659,10 @@ function demoOn() {
   return !!(DEMO && DEMO.on);
 }
 function demoStart(level, diff) {
+  /* il cielo della prova si estrae all'inizio e resta quello: se si
+     ritirasse a ogni schermata, la partita cambierebbe sotto i piedi */
   DEMO = { on:1, v:1, level:level, diff:diff, club:DEMO_CLUB, bot:DEMO_BOT,
+           wx:(typeof climPair === "function") ? climPair() : { att:"cloudy", def:"rain" },
            made:new Date().toISOString() };
   demoSave();
 }
@@ -16201,7 +16680,13 @@ function demoBotCard(mine) {
   var skill = demoDiff().skill;
   var att = (ME.next && ME.next.attack) || {};
   var def = (ME.next && ME.next.defence) || {};
-  var c = tlBotCard(skill, att.clim || "cloudy", def.clim || "rain");
+  /* ── i due cieli vanno incrociati ──
+     Quando il bot attacca, io difendo: quel tempo ha il cielo della MIA
+     difesa, non quello del mio attacco. Scambiarli vuol dire dare al bot
+     piu' tiri di quante parate il cielo concede a me, e allora anche una
+     difesa scritta perfetta si becca un gol « senza opposizione », che e'
+     esattamente la cosa che non torna. */
+  var c = tlBotCard(skill, def.clim || "rain", att.clim || "cloudy");
   return {
     comp:(mine && mine.comp) || "demo", md:(mine && mine.md) || 1, club:DEMO_BOT,
     att:{ q:c.att.q, m:c.att.m, w:c.att.w, hm:c.att.hm },
@@ -16262,8 +16747,14 @@ function demoSteps() {
         return (GROUND.sess[k] || []).length;
       });
   } catch (e) {}
+  /* lo sponsor si spunta con la TELEFONATA, non col contratto: qualche
+     volta non risponde nessuno, ed e' previsto. Se no la riga resterebbe
+     grigia per sempre, perche' di chiamate ce n'e' una per giornata. */
   var spon = false;
-  try { spon = Object.keys(spDeals() || {}).length > 0; } catch (e) {}
+  try {
+    spon = Object.keys(spDeals() || {}).length > 0 ||
+      ((typeof spCalled === "function") && spCalled());
+  } catch (e) {}
   var market = false;
   try { loadState(); market = !!ST.marketDone; } catch (e) {}
   var res = false;
@@ -16274,7 +16765,7 @@ function demoSteps() {
   return [
     { id:"market", t:"The transfer market", s:"twenty questions, then a scout",
       go:"market", ok:market },
-    { id:"spon",   t:"A sponsor on the shirt", s:"one deal is enough",
+    { id:"spon",   t:"A sponsor on the shirt", s:"make the call — somebody may say no",
       go:"spon",   ok:spon },
     { id:"ground", t:"Grow your squad",
       s:"six actions to share out among your twelve",
@@ -17744,6 +18235,17 @@ function boostItems(kind, level) {
 var ACT_PER_MD = 6;        /* sei azioni per giornata */
 var ACT_PLAYERS = 4;       /* su non piu' di quattro giocatori */
 var ACT_SECTION = 2;       /* e due per reparto, per giocatore */
+/* ───────── e quelle sono le cifre di chi non ha nessuno in panchina ─────
+   Col responsabile dell'allenamento diventano otto su sei: sta tutto in
+   43-staff.js, e qui si chiede a lui invece di tenere il numero scritto
+   in cinque punti. Se il file non c'e', le costanti di sopra valgono
+   ancora e niente si rompe. */
+function actCap() {
+  return (typeof actCapNow === "function") ? actCapNow() : ACT_PER_MD;
+}
+function actMen() {
+  return (typeof actPlayersNow === "function") ? actPlayersNow() : ACT_PLAYERS;
+}
 
 var BX = null;
 
@@ -17759,7 +18261,7 @@ function actsUsed() {
   for (k in a) n += a[k] || 0;
   return n;
 }
-function actsLeft() { return Math.max(0, ACT_PER_MD - actsUsed()); }
+function actsLeft() { return Math.max(0, actCap() - actsUsed()); }
 function actPlayers() {
   var a = actsAll(), seen = [], k, no;
   for (k in a) {
@@ -17772,14 +18274,16 @@ function actPlayers() {
 function actOn(no, what) { return actsAll()[no + ":" + what] || 0; }
 /* perche' non si puo': la ragione si dice, non si lascia indovinare */
 function actWhy(no, what) {
-  if (actsLeft() <= 0) return "No actions left today. Six a matchday, and they are gone.";
+  if (actsLeft() <= 0) {
+    return "No actions left today. " + actCap() + " a matchday, and they are gone.";
+  }
   if (actOn(no, what) >= ACT_SECTION) {
     return "Two sessions of " + (what === "lang" ? "English" : "the gym") +
       " for this player today. That is the limit.";
   }
   var seen = actPlayers();
-  if (seen.indexOf(String(no)) < 0 && seen.length >= ACT_PLAYERS) {
-    return "Four players have already worked today. Spend what is left on them.";
+  if (seen.indexOf(String(no)) < 0 && seen.length >= actMen()) {
+    return actMen() + " players have already worked today. Spend what is left on them.";
   }
   return "";
 }
@@ -17794,14 +18298,15 @@ function actBook(no, what) {
 }
 /* il contatore, da mettere in cima dove serve */
 function actBar() {
+  var cap = actCap(), men = actMen();
   var left = actsLeft(), n = actPlayers().length, o = "", i;
-  for (i = 0; i < ACT_PER_MD; i++) o += '<i class="' + (i < left ? "up" : "") + '"></i>';
+  for (i = 0; i < cap; i++) o += '<i class="' + (i < left ? "up" : "") + '"></i>';
   return '<div class="actb"><span class="actn">' + o + "</span>" +
-    "<span class=\"actt\"><b>" + left + " of " + ACT_PER_MD +
+    "<span class=\"actt\"><b>" + left + " of " + cap +
     (left === 1 ? " action" : " actions") + " left</b><em>" +
     (((typeof demoOn === "function") && demoOn())
       ? "before the match" : "matchday " + mdNow()) +
-    " \u00b7 " + n + " of " + ACT_PLAYERS + " players used</em></span></div>";
+    " \u00b7 " + n + " of " + men + " players used</em></span></div>";
 }
 
 function grownOf(no) {
@@ -17831,7 +18336,22 @@ VIEWS.boost = function (d) {
   loadGround();
   var why = actWhy(no, what), at = what === "lang" ? langOf(no) : grownOf(no);
   var max = what === "lang" ? LANG_MAX : GROWN_MAX;
-  var list = what === "lang" ? LKINDS : GKINDS;
+  /* ───────── le porte ─────────
+     Le quattro scritte dell'inglese restano quelle di sempre (sei
+     domande, quattro risposte). Accanto, le stanze con una meccanica
+     propria: le tre della palestra per tutti, l'ascolto solo se in
+     panchina c'e' l'allenatore. `old` dice quale strada prendere. */
+  var rooms = (typeof drillRooms === "function") ? drillRooms(what) : [];
+  var list;
+  if (what === "lang") {
+    list = LKINDS.map(function (k) {
+      return { id:k.id, n:k.n, s:k.s, old:1 };
+    }).concat(rooms.map(function (r) { return { id:r.id, n:r.n, s:r.s, old:0 }; }));
+  } else {
+    list = rooms.length
+      ? rooms.map(function (r) { return { id:r.id, n:r.n, s:r.s, old:0 }; })
+      : GKINDS.map(function (k) { return { id:k.id, n:k.n, s:k.s, old:1 }; });
+  }
 
   paintClub(ME.club);
   barFlow(what === "lang" ? "Boost the English" : "Boost the body",
@@ -17855,11 +18375,12 @@ VIEWS.boost = function (d) {
         "</p>"
       : why
         ? '<p class="lede">' + esc(why) + "</p>"
-        : '<p class="lede">One action. Six questions. <b>' + BOOST_MIN +
+        : '<p class="lede">One action, one room. <b>' + BOOST_MIN +
           "% or better</b> and the bar goes up by one. " +
-          "The place is taken the moment you start, so pick the exercise you can win.</p>" +
+          "The place is taken the moment you start, so pick the one you can win.</p>" +
           '<div class="bxk">' + list.map(function (k) {
-            return '<button class="bxb" data-k="' + k.id + '" type="button">' +
+            return '<button class="bxb" data-k="' + k.id + '" data-old="' +
+              (k.old ? 1 : 0) + '" type="button">' +
               "<b>" + esc(k.n) + "</b><span>" + esc(k.s) + "</span><i>&#8250;</i></button>";
           }).join("") + "</div>") +
 
@@ -17867,8 +18388,11 @@ VIEWS.boost = function (d) {
 
   Array.prototype.forEach.call($("main").querySelectorAll(".bxb"), function (b) {
     b.onclick = function () {
-      var items = what === "lang" ? boostItems(b.dataset.k, lvSafe()) : null;
-      if (what === "body") items = gymItems();
+      /* le stanze nuove hanno la loro porta e il loro registro */
+      if (b.dataset.old !== "1" && typeof drillStart === "function") {
+        return void drillStart(no, what, b.dataset.k);
+      }
+      var items = what === "lang" ? boostItems(b.dataset.k, lvSafe()) : gymItems();
       if (!items || !items.length) return;
       if (!actCan(no, what)) return;
       actBook(no, what);
@@ -17988,7 +18512,10 @@ VIEWS.bxEnd = function () {
 
     '<div class="panel wrongbox">' + (function () {
       var bad = BX.done.filter(function (x) { return !x.ok; });
-      if (!bad.length) return '<div class="gr"><span class="gn">Six out of six.</span></div>';
+      if (!bad.length) {
+        return '<div class="gr"><span class="gn">' + BX.items.length + " out of " +
+          BX.items.length + ".</span></div>";
+      }
       return bad.map(function (x) {
         return '<div class="wr"><b>' + esc(x.w) + "</b><s>" + esc(x.g) + "</s></div>";
       }).join("");
@@ -18012,6 +18539,891 @@ function toSquad() {
     var el = $("hsq");
     if (el && el.scrollIntoView) el.scrollIntoView({ block:"start" });
   }, 120);
+}
+
+
+/* ───── 43-drills.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   I BANCHI DEI QUATTRO ESERCIZI NUOVI
+
+   Fino a ieri ogni esercizio dell'app era lo stesso esercizio: sei
+   domande, quattro risposte, si tocca. Cambiava il contenuto, non il
+   gesto — e un alunno dopo venti minuti lo sa.
+
+   Qui dentro ci sono quattro mestieri diversi, perche' il dettato ne
+   chiede quattro:
+
+     DSPEED  riconoscere in fretta        ·  si tocca, ma il tempo scorre
+     DORDER  mettere le parole in fila    ·  si costruisce, non si scegli
+     DTYPE   scrivere la parola giusta    ·  si digita, e l'ortografia conta
+     DEAR    capire una voce              ·  non c'e' niente da leggere
+
+   Il campo lessicale e' lo sport visto da dentro: il movimento, la
+   forza, il tocco. Chi fa questi esercizi non impara "l'inglese in
+   generale", impara le parole che gli servono quando il professore
+   legge il dettato della partita.
+
+   Quanto ce n'e' e quanto ce ne vorrebbe: qui sono una quindicina per
+   stanza e per livello. Il bersaglio vero e' quaranta, perche' con il
+   responsabile dell'allenamento si arriva a otto azioni a giornata e
+   in tre giornate si bruciano in fretta. Il registro di 43-staff.js
+   tiene il conto di quello che e' gia' uscito e lo dice senza mentire
+   quando il banco e' finito.
+   B2, C1 e C2 ricadono su B1 finche' non hanno il loro.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ───────── 1. SHUTTLE RUNS · il significato, prima che scada ─────────
+   Frasi cortissime: la lentezza qui e' l'errore, quindi non c'e' niente
+   da rileggere due volte. */
+var DSPEED = {
+A1: [
+ { q:"go back towards your own goal",        o:["drop back","push up","cut inside","stay wide"], c:0 },
+ { q:"run forward, away from your goal",     o:["push up","drop back","turn round","sit down"], c:0 },
+ { q:"move towards the middle of the pitch", o:["cut inside","stay wide","drop back","go long"], c:0 },
+ { q:"stay near the touchline",              o:["stay wide","cut inside","push up","drop back"], c:0 },
+ { q:"run as fast as you can, for a short way", o:["sprint","jog","walk","stop"], c:0 },
+ { q:"run slowly, to keep warm",             o:["jog","sprint","dive","jump"], c:0 },
+ { q:"stop and go the other way",            o:["turn","kneel","wait","stand"], c:0 },
+ { q:"follow the player you must watch",     o:["track him","leave him","call him","pass him"], c:0 },
+ { q:"kick the ball a long way forward",     o:["go long","go short","hold on","turn back"], c:0 },
+ { q:"keep the ball at your feet and run",   o:["dribble","head it","throw it","catch it"], c:0 },
+ { q:"put your body between him and the ball", o:["block him","wave at him","shout at him","rest"], c:0 },
+ { q:"jump and hit the ball with your head", o:["head it","kick it","catch it","carry it"], c:0 },
+ { q:"give the ball to a team-mate",         o:["pass","shoot","foul","dive"], c:0 },
+ { q:"kick the ball at the goal",            o:["shoot","pass","clear","throw"], c:0 },
+ { q:"kick the ball away from danger",       o:["clear it","keep it","drop it","lose it"], c:0 },
+ { q:"the keeper throws himself at the ball", o:["he dives","he waits","he walks","he sleeps"], c:0 },
+ { q:"get up quickly after you fall",        o:["get up","lie down","sit back","give in"], c:0 },
+ { q:"take a short rest between two runs",   o:["recover","argue","shout","leave"], c:0 }
+],
+A2: [
+ { q:"run into the space behind the defence", o:["make a run","hold the line","drop off","stand still"], c:0 },
+ { q:"stay in line with the other defenders", o:["hold the line","break away","cut inside","go long"], c:0 },
+ { q:"get away from the man marking you",     o:["lose your marker","find your marker","mark him","follow him"], c:0 },
+ { q:"run past your own team-mate on the outside", o:["overlap","overload","over-hit","overturn"], c:0 },
+ { q:"slow the game down on purpose",         o:["waste time","speed up","press high","dive in"], c:0 },
+ { q:"win the ball with your foot, cleanly",  o:["make a tackle","commit a foul","give a corner","take a throw"], c:0 },
+ { q:"chase the man with the ball to force a mistake", o:["press him","ignore him","hold back","drop off"], c:0 },
+ { q:"pass the ball back to your own keeper", o:["play it back","play it long","play it out","play it safe"], c:0 },
+ { q:"stretch gently before the work starts", o:["warm up","cool down","knock off","stand by"], c:0 },
+ { q:"stretch gently once the work is over",  o:["cool down","warm up","build up","set off"], c:0 },
+ { q:"breathe hard because you are tired",    o:["be out of breath","be out of order","be out of time","be out of reach"], c:0 },
+ { q:"a muscle tears a little",               o:["pull a muscle","push a muscle","press a muscle","pass a muscle"], c:0 },
+ { q:"be fit enough to last ninety minutes",  o:["have stamina","have talent","have a chance","have a go"], c:0 },
+ { q:"do the same movement again and again",  o:["repetitions","reparations","reputations","repairs"], c:0 },
+ { q:"lift weights to get stronger",          o:["strength work","speed work","paper work","net work"], c:0 },
+ { q:"run between two cones, there and back", o:["a shuttle run","a long run","a free run","a dry run"], c:0 },
+ { q:"the one who looks after fitness",       o:["the fitness coach","the referee","the chairman","the steward"], c:0 },
+ { q:"the one who treats an injury",          o:["the physio","the keeper","the captain","the scout"], c:0 }
+],
+B1: [
+ { q:"a run that drags a defender away to make room", o:["a decoy run","a dummy pass","a late tackle","a loose touch"], c:0 },
+ { q:"the whole back four moves up together", o:["the line pushes up","the line breaks down","the line gives way","the line falls in"], c:0 },
+ { q:"put them under pressure near their own goal", o:["press high","sit deep","drop off","clear long"], c:0 },
+ { q:"defend close to your own penalty area", o:["sit deep","press high","go long","spread out"], c:0 },
+ { q:"keep the ball and wait for help",       o:["hold the ball up","give the ball away","knock it long","hoof it clear"], c:0 },
+ { q:"the touch that brings the ball under control at once", o:["a clean first touch","a heavy touch","a lucky touch","a soft foul"], c:0 },
+ { q:"a pass into the space a team-mate is running into", o:["a through ball","a back pass","a goal kick","a square ball"], c:0 },
+ { q:"to run out of energy late in the game", o:["to fade","to flourish","to settle","to surge"], c:0 },
+ { q:"the work you do before the season starts", o:["pre-season","off-season","mid-season","close season"], c:0 },
+ { q:"the ability to keep going for ninety minutes", o:["endurance","endeavour","enjoyment","enclosure"], c:0 },
+ { q:"to get your breath back",               o:["to recover","to retire","to resign","to recall"], c:0 },
+ { q:"an injury that keeps coming back",      o:["a recurring injury","a running injury","a rough injury","a raw injury"], c:0 },
+ { q:"to be chosen to play from the first minute", o:["to start","to sit out","to stand down","to sign off"], c:0 },
+ { q:"to be taken off during the match",      o:["to be substituted","to be suspended","to be selected","to be supported"], c:0 },
+ { q:"how muscles feel the day after weights", o:["sore","sour","sure","sworn"], c:0 },
+ { q:"training done with the ball at your feet", o:["ball work","head work","foot note","net work"], c:0 },
+ { q:"a sudden burst at full speed",          o:["a sprint","a stroll","a stride","a stand"], c:0 },
+ { q:"to lose your place in the starting eleven", o:["to be dropped","to be dragged","to be drafted","to be drawn"], c:0 }
+]
+};
+
+/* ───────── 2. WEIGHTS · la frase da rimettere in piedi ─────────
+   Si tocca una parola per volta e si costruisce. Non c'e' la risposta
+   fra quattro: c'e' l'ordine, che e' esattamente quello che nel dettato
+   fa perdere i quarti di punto. */
+var DORDER = {
+A1: [
+ { s:"We warm up before every match" },
+ { s:"The goalkeeper wears long sleeves" },
+ { s:"My legs hurt after a hard session" },
+ { s:"He drinks water every ten minutes" },
+ { s:"She can run faster than me" },
+ { s:"I do not lift weights at home" },
+ { s:"Our coach is never late" },
+ { s:"They sleep eight hours before a match" },
+ { s:"The physio puts ice on my knee" },
+ { s:"He stretches his legs for ten minutes" },
+ { s:"We run between the cones twice" },
+ { s:"There are eleven players in a team" }
+],
+A2: [
+ { s:"The trainer told us to cool down slowly" },
+ { s:"I pulled a muscle in the second half" },
+ { s:"She was out of breath after the shuttle runs" },
+ { s:"We did twenty repetitions with the weights" },
+ { s:"He has never missed a training session" },
+ { s:"The pitch was too wet for ball work" },
+ { s:"They were fitter than us at the end" },
+ { s:"You should not train on an empty stomach" },
+ { s:"Our new coach has changed the warm-up" },
+ { s:"I could not feel my legs that evening" },
+ { s:"He was taken off because of his knee" },
+ { s:"Nobody wanted to run in that rain" }
+],
+B1: [
+ { s:"If you train every day you will get injured" },
+ { s:"The session had already started when I arrived" },
+ { s:"He has been working on his first touch all week" },
+ { s:"She would have played if her ankle had healed" },
+ { s:"The weights were heavier than I had expected" },
+ { s:"We were told to press high from the first minute" },
+ { s:"The coach says that endurance cannot be bought" },
+ { s:"My shoulder has been sore since the pre-season" },
+ { s:"The drill was designed to improve our turning" },
+ { s:"Not one of them complained about the heat" },
+ { s:"Unless we recover quickly we will fade again" },
+ { s:"He is expected to start on Saturday afternoon" }
+]
+};
+
+/* ───────── 3. BALL WORK · la parola si scrive ─────────
+   Una sola parola, ma digitata: l'ortografia conta, come nel dettato.
+   Si da' la prima lettera e la lunghezza, cosi' la memoria ha un
+   appiglio e l'alunno non resta davanti al vuoto. */
+var DTYPE = {
+A1: [
+ { s:"He stopped the ball with his first ___.",      w:"touch" },
+ { s:"The keeper caught the ___ with two hands.",     w:"ball" },
+ { s:"Hit it with your ___, not with your hand.",     w:"head" },
+ { s:"We play on grass, on a ___.",                   w:"pitch" },
+ { s:"The man with the whistle is the ___.",          w:"referee" },
+ { s:"Eleven players make one ___.",                  w:"team" },
+ { s:"He wears number one: he is the ___.",           w:"goalkeeper" },
+ { s:"You score when the ball goes into the ___.",    w:"goal" },
+ { s:"After ninety ___ the match is over.",           w:"minutes" },
+ { s:"I drink ___ when I am thirsty.",                w:"water" },
+ { s:"My ___ are tired after the run.",               w:"legs" },
+ { s:"Before the match we always ___ up.",            w:"warm" },
+ { s:"She kicked it with her left ___.",              w:"foot" },
+ { s:"The ball went over the ___ and out.",           w:"line" }
+],
+A2: [
+ { s:"She has a very clean first ___.",               w:"touch" },
+ { s:"After the session we always cool ___.",         w:"down" },
+ { s:"I pulled a ___ in my right leg.",               w:"muscle" },
+ { s:"Running between cones is a ___ run.",           w:"shuttle" },
+ { s:"He was out of ___ after two minutes.",          w:"breath" },
+ { s:"Twenty lifts of the bar is twenty ___.",        w:"repetitions" },
+ { s:"The ___ looks after the injured players.",      w:"physio" },
+ { s:"Lifting weights is ___ work.",                  w:"strength" },
+ { s:"You need ___ to last the whole match.",         w:"stamina" },
+ { s:"The coach made us ___ up for ten minutes.",     w:"warm" },
+ { s:"My knee is ___ the day after weights.",         w:"sore" },
+ { s:"He ___ his legs before every session.",         w:"stretches" },
+ { s:"She can run ___ than anyone in the squad.",     w:"faster" },
+ { s:"He has not ___ a single training session.",     w:"missed" }
+],
+B1: [
+ { s:"His touch was heavy, so he lost ___ of the ball.", w:"control" },
+ { s:"Pre-season is where you build your ___.",       w:"endurance" },
+ { s:"An injury that keeps coming back is a ___ one.", w:"recurring" },
+ { s:"He was ___ off after sixty minutes.",           w:"taken" },
+ { s:"You must ___ properly or the muscle will tear.", w:"stretch" },
+ { s:"The physio said the ankle had not ___ yet.",    w:"healed" },
+ { s:"We were told to ___ high and win it back.",     w:"press" },
+ { s:"Running out of energy late on is called ___.",  w:"fading" },
+ { s:"He has been ___ on his weaker foot all week.",  w:"working" },
+ { s:"Eight hours of ___ is part of the training.",   w:"sleep" },
+ { s:"A sudden burst at full speed is a ___.",        w:"sprint" },
+ { s:"Muscles need ___ as much as they need work.",   w:"rest" },
+ { s:"She trains to improve her ___ when turning.",   w:"balance" },
+ { s:"The drill was ___ to make us quicker.",         w:"designed" }
+]
+};
+
+/* ───────── 4. L'ORECCHIO DELL'ALLENATORE · si ascolta e si scrive ─────
+   Niente sullo schermo: parla la voce del telefono e si scrive quello
+   che si e' sentito. E' il dettato della partita in miniatura, ed e'
+   la ragione per cui questa stanza appartiene all'allenatore e non al
+   preparatore: lui allena l'orecchio, non le gambe. */
+var DEAR = {
+A1: [
+ "Pass the ball to me",
+ "The match starts at three",
+ "My boots are in the bag",
+ "He is our goalkeeper",
+ "We play at home on Saturday",
+ "The pitch is very wet today",
+ "I am not tired",
+ "Where is the referee",
+ "She can run very fast",
+ "The coach is angry today",
+ "We won two one",
+ "Drink some water now"
+],
+A2: [
+ "We cooled down after the session",
+ "He pulled a muscle last week",
+ "I was out of breath",
+ "The physio looked at my knee",
+ "They were fitter than us",
+ "She has never missed a training session",
+ "We did twenty repetitions",
+ "He was taken off at half time",
+ "The weights were too heavy",
+ "Our coach changed the warm up",
+ "Nobody wanted to run today",
+ "It was too wet for ball work"
+],
+B1: [
+ "If you do not rest you will break down",
+ "He has been working on his first touch",
+ "The session had already started",
+ "We were told to press high",
+ "My shoulder has been sore since pre season",
+ "She would have played with a healthy ankle",
+ "Endurance cannot be bought in a week",
+ "The drill was designed to improve our turning",
+ "Unless we recover we will fade",
+ "He is expected to start on Saturday",
+ "Not one of them complained",
+ "The ball was played into the space behind"
+]
+};
+
+
+/* ───── 43-staff.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   I DUE IN PANCHINA
+
+   Una squadra non la fa solo chi gioca. Fino a ieri l'alunno era da
+   solo: scriveva, premiava un giocatore, giocava. Adesso in panchina
+   c'e' qualcuno, e si puo' averne UNO.
+
+     IL RESPONSABILE DELL'ALLENAMENTO decide quanto lavoro regge la
+     squadra in una settimana: otto azioni invece di sei, su sei
+     giocatori invece di quattro. Non rende nessuno piu' forte — il
+     tetto per giocatore resta 0,15 — fa arrivare a piu' dei dodici.
+
+     L'ALLENATORE non allena le gambe: allena l'orecchio e l'occhio.
+     Porta una stanza che prima non c'era, l'ascolto, e la nota sul
+     prossimo avversario.
+
+   Uno solo, e la scelta si chiude quando comincia il primo dettato
+   della competizione: se si potesse cambiare a meta' strada non sarebbe
+   una decisione, sarebbe un menu. Nella prova si cambia sempre, perche'
+   la prova e' fatta per guardare dentro.
+
+   Che cosa NON fanno, e va detto perche' e' la regola che tiene in
+   piedi il gioco: nessuno dei due aggiunge o sposta caselle. Le caselle
+   le detta il meteo e basta — sta scritto in 49-calls.js e resta vero.
+   Se lo staff spostasse i momenti, il risultato smetterebbe di misurare
+   l'inglese e comincerebbe a misurare gli acquisti.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════ IL REGISTRO DI QUELLO CHE E' GIA' USCITO ═══════════════
+
+   «Ogni esercizio non si ripete mai, a meno che non si sia sbagliato:
+   quello torna piu' avanti.» E' la regola giusta, ed e' la stessa che
+   c'e' gia' nelle parole sbagliate del dettato — due volte giusta e
+   lascia la lista per sempre. Una regola sola in tutta l'app.
+
+   Tre stati per ogni domanda: mai vista, fatta giusta, in debito. Il
+   debito non torna subito (sarebbe ripasso, non apprendimento): torna
+   dopo due esercizi. E un esercizio non e' mai tutto di ripasso: meta'
+   al massimo, se no si gira in tondo sui propri errori.
+
+   L'identificativo si ricava dal testo della domanda, non da un numero
+   scritto a mano: i banchi si possono allungare senza rinumerare niente
+   e senza perdere quello che un alunno ha gia' fatto.
+
+   Il cassetto e' quello della stagione, come i giocatori: tre
+   campionati da tre giornate nello stesso anno si sommano, e l'alunno
+   non ricomincia da zero ogni volta che il professore apre una coppa.
+*/
+var DRILL_BACK = 2;        /* un debito torna dopo due esercizi */
+var DRILL_FIX = 2;         /* e se ne va dopo due risposte giuste */
+
+var SEEN = null, SEENK = "";
+function seenKey() {
+  var s = (typeof seasonId === "function") ? seasonId() : "s1";
+  var c = (typeof baseId === "function") ? baseId() : "x";
+  return "footefl-seen-" + s + "-" + c;
+}
+function seenLoad() {
+  var k = seenKey();
+  /* il cassetto puo' cambiare sotto i piedi — stagione nuova, club
+     nuovo: si rilegge quando la chiave non e' piu' quella di prima */
+  if (SEEN && SEENK === k) return SEEN;
+  SEEN = null;
+  try { SEEN = JSON.parse(localStorage.getItem(k) || "null"); } catch (e) {}
+  if (!SEEN || typeof SEEN !== "object") SEEN = { k:0, d:{}, o:{} };
+  SEEN.d = SEEN.d || {}; SEEN.o = SEEN.o || {}; SEEN.k = SEEN.k || 0;
+  SEENK = k;
+  return SEEN;
+}
+function seenSave() {
+  try { localStorage.setItem(seenKey(), JSON.stringify(seenLoad())); } catch (e) {}
+}
+/* il testo che identifica una voce, qualunque forma abbia il banco */
+function drillText(it) {
+  if (it == null) return "";
+  if (typeof it === "string") return it;
+  return String(it.q || it.s || it.w || "");
+}
+function drillId(kind, level, it) {
+  var s = kind + "|" + level + "|" + drillText(it), h = 5381, i;
+  for (i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+  return kind + h.toString(36);
+}
+/* ───────── il pescaggio ─────────
+   Prima i debiti scaduti, poi le mai viste. Le gia' fatte si ripescano
+   solo quando il banco e' finito, e in quel caso lo si dice. */
+function drillPick(kind, level, bank, n) {
+  var S = seenLoad(), owed = [], fresh = [], old = [], i, id, o, e;
+  for (i = 0; i < bank.length; i++) {
+    id = drillId(kind, level, bank[i]);
+    e = { it:bank[i], id:id };
+    o = S.o[id];
+    if (o) { if ((o.due || 0) <= S.k) owed.push(e); }
+    else if (S.d[id]) old.push(e);
+    else fresh.push(e);
+  }
+  owed = shuf(owed); fresh = shuf(fresh); old = shuf(old);
+
+  var half = Math.max(1, Math.floor(n / 2));
+  var out = owed.slice(0, half);
+  out = out.concat(fresh.slice(0, Math.max(0, n - out.length)));
+  if (out.length < n) out = out.concat(owed.slice(half, half + (n - out.length)));
+  var again = false;
+  if (out.length < n) {
+    again = out.length > 0;
+    out = out.concat(old.slice(0, n - out.length));
+  }
+  if (!out.length) { again = true; out = old.slice(0, n); }
+  return { items:shuf(out), again:again, fresh:fresh.length, owed:owed.length };
+}
+function drillMark(id, ok) {
+  var S = seenLoad(), o = S.o[id];
+  if (ok) {
+    if (o) {
+      o.n = (o.n || DRILL_FIX) - 1;
+      if (o.n <= 0) { delete S.o[id]; S.d[id] = 1; }
+    } else S.d[id] = 1;
+  } else {
+    delete S.d[id];
+    S.o[id] = { n:DRILL_FIX, due:(S.k || 0) + DRILL_BACK };
+  }
+  seenSave();
+}
+function drillBump() { var S = seenLoad(); S.k = (S.k || 0) + 1; seenSave(); }
+/* quante voci nuove restano in una stanza: serve a dirlo prima di
+   entrare, invece di farlo scoprire a esercizio cominciato */
+function drillFresh(kind, level, bank) {
+  var S = seenLoad(), n = 0, i, id;
+  for (i = 0; i < bank.length; i++) {
+    id = drillId(kind, level, bank[i]);
+    if (!S.d[id] && !S.o[id]) n++;
+  }
+  return n;
+}
+
+/* ═══════════════ CHI SONO I DUE ═══════════════ */
+var STAFF = [
+  { id:"fit", n:"Head of training", k:"THE GYM",
+    s:"He decides how much work the squad can take in a week — and he is "
+    + "the reason the gym has three real rooms instead of one door.",
+    g:["Eight actions a matchday instead of six",
+       "Six players can work instead of four",
+       "He makes nobody stronger: the ceiling stays at 0.15 a player"] },
+  { id:"gaf", n:"Head coach", k:"THE EAR",
+    s:"He does not train legs. He trains what you hear and what you notice "
+    + "before a ball is kicked.",
+    g:["A listening room: the voice reads, you write what you heard",
+       "A scouting note on the match in front of you",
+       "He never changes how many chances open — the weather does that"] }
+];
+function staffOne(id) {
+  return STAFF.filter(function (m) { return m.id === id; })[0] || null;
+}
+var STAFF_SVG = {
+  fit:'<svg viewBox="0 0 24 24" aria-hidden="true">' +
+      '<path d="M3 9.5v5M6 7v10M18 7v10M21 9.5v5M6 12h12" fill="none" ' +
+      'stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  gaf:'<svg viewBox="0 0 24 24" aria-hidden="true">' +
+      '<rect x="3.2" y="3.2" width="17.6" height="17.6" rx="3" fill="none" ' +
+      'stroke="currentColor" stroke-width="2"/>' +
+      '<path d="M7 16.5c1.6-5 4.6-6.6 9-8.2" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2.6"/>' +
+      '<path d="M13.2 7.6l3-.9.1 3.1" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<circle cx="7" cy="16.5" r="1.8" fill="currentColor"/></svg>'
+};
+
+/* ───────── il cassetto: uno per competizione, come la cassa ───────── */
+function stfKey() {
+  var c = (typeof baseId === "function") ? baseId() : "x";
+  return "footefl-staff-" + ((typeof scope === "function") ? scope() : "x") + "-" + c;
+}
+function stfAll() {
+  try { return JSON.parse(localStorage.getItem(stfKey()) || "null") || { who:"", md:0 }; }
+  catch (e) { return { who:"", md:0 }; }
+}
+function stfSave(o) { try { localStorage.setItem(stfKey(), JSON.stringify(o)); } catch (e) {} }
+function staffWho() { return stfAll().who || ""; }
+function staffIs(id) { return staffWho() === id; }
+/* la scelta si chiude col primo dettato della competizione */
+function staffLocked() {
+  if ((typeof demoOn === "function") && demoOn()) return false;
+  if (!staffWho()) return false;
+  if (typeof halfPlayed !== "function") return false;
+  var i, top = (typeof mdNow === "function") ? (mdNow() || 1) : 1;
+  for (i = 1; i <= top; i++) {
+    if (halfPlayed(i, "att") || halfPlayed(i, "def")) return true;
+  }
+  return false;
+}
+function staffPick(id) {
+  if (staffLocked()) return false;
+  if (!staffOne(id)) return false;
+  var a = stfAll();
+  a.who = id;
+  a.md = (typeof mdNow === "function") ? mdNow() : 1;
+  stfSave(a);
+  return true;
+}
+
+/* ───────── che cosa cambia, in numeri ─────────
+   Un posto solo dove si legge il budget di giornata: 56-lang.js chiede
+   qui invece di guardare le costanti, cosi' la riga « 6 azioni su 4
+   giocatori » non resta scritta in tre punti diversi. */
+function actCapNow() {
+  return staffIs("fit") ? 8 : ((typeof ACT_PER_MD === "number") ? ACT_PER_MD : 6);
+}
+function actPlayersNow() {
+  return staffIs("fit") ? 6 : ((typeof ACT_PLAYERS === "number") ? ACT_PLAYERS : 4);
+}
+
+/* ═══════════════ LE TRE STANZE DELLA PALESTRA ═══════════════
+   Le tre porte esistevano gia' in GKINDS, ma dietro c'era un banco solo
+   da dieci domande a risposta multipla: tre nomi, una scatola. Adesso
+   dietro ognuna c'e' un gesto diverso. */
+var GYM_ROOMS = [
+  /* dodici e non diciotto: con diciotto una sola sessione svuotava il
+     banco di un livello, e la seconda era tutta ripasso */
+  { id:"run",  n:"Shuttle runs", s:"Twelve meanings, and the clock is running",
+    view:"bxSpeed", bank:"DSPEED", qn:12 },
+  { id:"lift", n:"Weights",      s:"Build the sentence word by word",
+    view:"bxOrder", bank:"DORDER", qn:6 },
+  { id:"ball", n:"Ball work",    s:"Type the missing word — spelling counts",
+    view:"bxType",  bank:"DTYPE",  qn:6 }
+];
+var EAR_ROOM = { id:"ear", n:"The coach's ear", s:"Listen, then write what you heard",
+                 view:"bxEar", bank:"DEAR", qn:6 };
+
+function bankOf(name, level) {
+  var b = (name === "DSPEED") ? DSPEED : (name === "DORDER") ? DORDER
+        : (name === "DTYPE") ? DTYPE : DEAR;
+  return b[level] || b.B1 || b.A1 || [];
+}
+/* le porte da mostrare in una sezione, con lo staff di adesso */
+function drillRooms(what) {
+  if (what === "body") return GYM_ROOMS;
+  return staffIs("gaf") ? [EAR_ROOM] : [];
+}
+function roomOf(id) {
+  var all = GYM_ROOMS.concat([EAR_ROOM]), i;
+  for (i = 0; i < all.length; i++) if (all[i].id === id) return all[i];
+  return null;
+}
+/* apre un esercizio: una sola porta per tutte e quattro le meccaniche */
+function drillStart(no, what, id) {
+  var r = roomOf(id);
+  if (!r) return false;
+  var lv = (typeof lvSafe === "function") ? lvSafe() : "A1";
+  var got = drillPick(r.id, lv, bankOf(r.bank, lv), r.qn);
+  if (!got.items.length) return false;
+  if (typeof actCan === "function" && !actCan(no, what)) return false;
+  if (typeof actBook === "function") actBook(no, what);
+  BX = { no:no, what:what, kind:r.id, room:r, level:lv, i:0,
+         items:got.items, again:got.again, right:0, done:[] };
+  go(r.view);
+  return true;
+}
+/* la riga onesta quando il banco e' finito */
+function againNote() {
+  return (BX && BX.again)
+    ? '<p class="bxagain">You have seen every new question in this room at ' +
+      "level " + esc(BX.level) + ". These are coming round again.</p>"
+    : "";
+}
+/* la testata comune ai quattro esercizi */
+function drillBar(label) {
+  var p = ((typeof playerOf === "function") ? playerOf(BX.no) : null) || {};
+  barFlow(label, ((typeof pName === "function")
+      ? pName({ named:!!p.name, name:p.name, no:p.no }) : ("Shirt " + BX.no)) +
+    " · " + (BX.i + 1) + " of " + BX.items.length,
+    Math.round((BX.i / BX.items.length) * 100), false);
+}
+/* un passo fatto: si segna nel registro e si va avanti */
+function drillStep(ok, right, given) {
+  var e = BX.items[BX.i];
+  drillMark(e.id, ok);
+  if (ok) BX.right++;
+  BX.done.push({ ok:ok, w:right, g:given == null ? "—" : given });
+  BX.i++;
+  setTimeout(function () {
+    if (!BX) return;
+    if (BX.i >= BX.items.length) { drillBump(); return swap("bxEnd"); }
+    swap(BX.room.view);
+  }, ok ? 620 : 1250);
+}
+
+/* ───────── 1. SHUTTLE RUNS · a tempo ─────────
+   La barra scende. Non e' crudelta': il dettato non si ferma ad
+   aspettare, e riconoscere in fretta e' una cosa che si allena. */
+var SPEED_MS = 6500;
+var SPTIMER = null;
+function spStop() { if (SPTIMER) { clearInterval(SPTIMER); SPTIMER = null; } }
+
+VIEWS.bxSpeed = function () {
+  if (!BX) return back();
+  spStop();
+  var e = BX.items[BX.i], it = e.it;
+  var right = it.o[it.c], opts = shuf(it.o);
+  paintClub(ME.club);
+  drillBar("Shuttle runs");
+
+  html('<div class="pad">' + againNote() +
+    '<div class="spbar"><i id="spb"></i></div>' +
+    '<p class="bxq">' + esc(it.q) + "</p>" +
+    '<div class="bxo" id="bxo">' + opts.map(function (o, i) {
+      return '<button class="bxa" data-i="' + i + '" type="button">' + esc(o) + "</button>";
+    }).join("") + "</div>" +
+    '<p class="bxsay" id="bxsay"></p></div>');
+
+  var closed = false;
+  function shut(ok, given) {
+    if (closed) return;
+    closed = true; spStop();
+    Array.prototype.forEach.call($("bxo").querySelectorAll(".bxa"), function (x) {
+      x.disabled = true;
+      if (x.textContent === right) x.className = "bxa good";
+      else if (given != null && x.textContent === given) x.className = "bxa bad";
+    });
+    $("bxsay").className = "bxsay " + (ok ? "good" : "bad");
+    $("bxsay").textContent = ok ? "Yes." : (given == null ? "Too slow." : "No.");
+    drillStep(ok, right, given);
+  }
+  Array.prototype.forEach.call($("bxo").querySelectorAll(".bxa"), function (b) {
+    b.onclick = function () { shut(b.textContent === right, b.textContent); };
+  });
+
+  /* l'orologio. Il controllo in testa al tick e' la lezione del replay:
+     se la pagina e' cambiata sotto, si spegne e non scrive su niente. */
+  var t0 = Date.now();
+  SPTIMER = setInterval(function () {
+    var bar = $("spb");
+    if (!bar || !BX) { spStop(); return; }
+    var left = Math.max(0, SPEED_MS - (Date.now() - t0));
+    bar.style.width = (left / SPEED_MS * 100) + "%";
+    if (left <= 0) shut(false, null);
+  }, 60);
+};
+
+/* ───────── 2. WEIGHTS · la frase si costruisce ─────────
+   Niente quattro risposte: si tocca una parola per volta e la frase si
+   alza da sola. E' l'ordine delle parole, che e' quello che nel dettato
+   fa perdere i quarti di punto senza che l'alunno capisca perche'. */
+VIEWS.bxOrder = function () {
+  if (!BX) return back();
+  var e = BX.items[BX.i], words = String(e.it.s).split(/\s+/);
+  var pool = shuf(words.map(function (w, i) { return { w:w, i:i }; }));
+  var put = [];
+  paintClub(ME.club);
+  drillBar("Weights");
+
+  html('<div class="pad">' + againNote() +
+    '<p class="hint">Tap the words in the right order. Tap one you have placed ' +
+    "to take it back.</p>" +
+    '<div class="orline" id="orline"></div>' +
+    '<div class="orpool" id="orpool"></div>' +
+    '<p class="bxsay" id="bxsay"></p></div>');
+
+  function paint() {
+    $("orline").innerHTML = put.length
+      ? put.map(function (p, k) {
+          return '<button class="orw" data-k="' + k + '" type="button">' +
+            esc(p.w) + "</button>";
+        }).join("")
+      : '<span class="orempty">—</span>';
+    $("orpool").innerHTML = pool.map(function (p, k) {
+      return '<button class="orw pool" data-p="' + k + '" type="button">' +
+        esc(p.w) + "</button>";
+    }).join("");
+    Array.prototype.forEach.call($("orpool").querySelectorAll(".orw"), function (b) {
+      b.onclick = function () {
+        put.push(pool.splice(parseInt(b.dataset.p, 10), 1)[0]);
+        if (!pool.length) return check();
+        paint();
+      };
+    });
+    Array.prototype.forEach.call($("orline").querySelectorAll(".orw"), function (b) {
+      b.onclick = function () {
+        pool.push(put.splice(parseInt(b.dataset.k, 10), 1)[0]);
+        paint();
+      };
+    });
+  }
+  function check() {
+    var mine = put.map(function (p) { return p.w; }).join(" ");
+    var ok = mine === words.join(" ");
+    $("orline").innerHTML = put.map(function (p, k) {
+      return '<span class="orw done' + (p.w === words[k] ? "" : " bad") + '">' +
+        esc(p.w) + "</span>";
+    }).join("");
+    $("orpool").innerHTML = "";
+    $("bxsay").className = "bxsay " + (ok ? "good" : "bad");
+    $("bxsay").innerHTML = ok ? "That is the sentence."
+      : "It goes: <b>" + esc(words.join(" ")) + "</b>";
+    drillStep(ok, words.join(" "), mine);
+  }
+  paint();
+};
+
+/* ───────── 3. BALL WORK · la parola si scrive ─────────
+   Si digita, e l'ortografia conta — come nel dettato. La prima lettera
+   e la lunghezza si danno: un indizio non e' la risposta, e davanti al
+   vuoto assoluto si impara di meno. */
+VIEWS.bxType = function () {
+  if (!BX) return back();
+  var e = BX.items[BX.i], it = e.it, right = String(it.w);
+  var hint = right.charAt(0) + " _".repeat(Math.max(0, right.length - 1));
+  paintClub(ME.club);
+  drillBar("Ball work");
+
+  html('<div class="pad">' + againNote() +
+    '<p class="bxq sit">' + esc(it.s) + "</p>" +
+    '<p class="tyhint">' + esc(hint) + " <em>(" + right.length + ")</em></p>" +
+    '<input class="tyin" id="tyin" type="text" autocapitalize="off" autocorrect="off" ' +
+    'spellcheck="false" autocomplete="off" placeholder="the missing word">' +
+    '<button class="btn" id="tygo">Put it in</button>' +
+    '<p class="bxsay" id="bxsay"></p></div>');
+
+  var box = $("tyin");
+  try { box.focus(); } catch (er) {}
+  function go2() {
+    var mine = String(box.value || "").trim();
+    if (!mine) return;
+    var ok = mine.toLowerCase() === right.toLowerCase();
+    box.disabled = true; $("tygo").disabled = true;
+    $("bxsay").className = "bxsay " + (ok ? "good" : "bad");
+    $("bxsay").innerHTML = ok ? "Exactly that."
+      : "It was <b>" + esc(right) + "</b>";
+    drillStep(ok, right, mine);
+  }
+  $("tygo").onclick = go2;
+  box.onkeydown = function (ev) { if (ev.key === "Enter") go2(); };
+};
+
+/* ───────── 4. L'ORECCHIO · si ascolta e si scrive ─────────
+   Lo schermo non dice niente. E' il dettato in miniatura, ed e' la
+   ragione per cui questa stanza e' dell'allenatore.
+   Se il telefono non ha una voce inglese non si finge: lo si dice e la
+   frase si legge, cosi' l'azione non va persa per colpa del telefono. */
+VIEWS.bxEar = function () {
+  if (!BX) return back();
+  var e = BX.items[BX.i], line = String(e.it);
+  var mute = !(typeof CAN_SPEAK !== "undefined" && CAN_SPEAK);
+  paintClub(ME.club);
+  drillBar("The coach's ear");
+
+  html('<div class="pad">' + againNote() +
+    (mute
+      ? '<p class="lede">This phone has no English voice, so the words are on ' +
+        "the screen. Read them once, then write them from memory.</p>" +
+        '<p class="bxq sit" id="earsee">' + esc(line) + "</p>"
+      : '<button class="earb" id="earb" type="button">' +
+        '<span class="eari">▶</span><b>Listen</b>' +
+        "<em>Tap again to hear it a second time</em></button>") +
+    '<input class="tyin" id="tyin" type="text" autocapitalize="off" autocorrect="off" ' +
+    'spellcheck="false" autocomplete="off" placeholder="write what you heard">' +
+    '<button class="btn" id="tygo">That is what I heard</button>' +
+    '<p class="bxsay" id="bxsay"></p></div>');
+
+  if (!mute && $("earb")) {
+    $("earb").onclick = function () {
+      if (typeof sayLine === "function") sayLine(line, null, null);
+      else if (typeof say === "function") say(line);
+    };
+    /* la prima lettura parte da sola: un orecchio che aspetta un tocco
+       in piu' perde il filo */
+    setTimeout(function () {
+      if (HERE && HERE.name === "bxEar" && typeof sayLine === "function") {
+        sayLine(line, null, null);
+      }
+    }, 420);
+  }
+  /* parola per parola, senza punteggiatura e senza maiuscole: si misura
+     l'orecchio, non la virgola */
+  function plain(t) {
+    return String(t || "").toLowerCase().replace(/[^a-z0-9' ]+/g, " ")
+      .replace(/\s+/g, " ").trim();
+  }
+  var box = $("tyin");
+  try { box.focus(); } catch (er) {}
+  function go2() {
+    var mine = String(box.value || "").trim();
+    if (!mine) return;
+    var ok = plain(mine) === plain(line);
+    box.disabled = true; $("tygo").disabled = true;
+    if ($("earb")) $("earb").disabled = true;
+    $("bxsay").className = "bxsay " + (ok ? "good" : "bad");
+    $("bxsay").innerHTML = ok ? "Word for word."
+      : "He said: <b>" + esc(line) + "</b>";
+    drillStep(ok, line, mine);
+  }
+  $("tygo").onclick = go2;
+  box.onkeydown = function (ev) { if (ev.key === "Enter") go2(); };
+};
+
+/* ═══════════════ LA CARTA NELLA ROSA ═══════════════
+   Le due icone stanno qui, nella pagina della squadra, perche' e' la
+   pagina che l'alunno apre per prima e perche' lo staff e' parte della
+   squadra quanto i dodici. */
+function staffCard() {
+  if (!ME.club) return "";
+  var who = staffWho(), lock = staffLocked();
+  return '<section class="pad"><h2 class="sec">The two on the touchline' +
+    (who ? '<span class="cnt thin">one hired</span>'
+         : '<span class="cnt thin">pick one</span>') + "</h2>" +
+    '<div class="stfrow">' + STAFF.map(function (m) {
+      var mine = who === m.id;
+      return '<button class="stf' + (mine ? " on" : (who ? " off" : "")) +
+        '" data-id="' + m.id + '" type="button">' +
+        '<span class="stfi">' + STAFF_SVG[m.id] + "</span>" +
+        "<b>" + esc(m.n) + "</b><em>" + esc(m.k) + "</em>" +
+        '<i class="stfb">' + (mine ? "ON THE BENCH" : who ? "not hired" : "free") +
+        "</i></button>";
+    }).join("") + "</div>" +
+    '<p class="hint">' + (who
+      ? (lock ? "The match has started, so the bench is settled for this competition."
+              : "You can still change your mind: nothing is played yet.")
+      : "You can have one of the two, and only one. Tap a face to see what he brings.") +
+    "</p></section>";
+}
+function wireStaff() {
+  Array.prototype.forEach.call(document.querySelectorAll(".stf"), function (b) {
+    b.onclick = function () { go("staff", { id:b.dataset.id }); };
+  });
+}
+function drawStaff() {
+  var box = $("staffbar");
+  if (!box) return;
+  box.innerHTML = staffCard();
+  wireStaff();
+}
+
+/* ───────── la stanza dello staff ───────── */
+VIEWS.staff = function (d) {
+  var pick = (d && d.id) || staffWho() || "fit";
+  var who = staffWho(), lock = staffLocked();
+  paintClub(ME.club);
+  barFlow("The bench", ME.club ? ME.club.name : "", 0);
+
+  var m = staffOne(pick) || STAFF[0];
+  var mine = who === m.id;
+  var lv = (typeof lvSafe === "function") ? lvSafe() : "A1";
+
+  html('<div class="pad">' +
+    '<div class="stftab">' + STAFF.map(function (x) {
+      return '<button class="stftb' + (x.id === pick ? " on" : "") +
+        '" data-id="' + x.id + '" type="button">' + esc(x.n) + "</button>";
+    }).join("") + "</div>" +
+
+    '<div class="stfbig"><span class="stfi big">' + STAFF_SVG[m.id] + "</span>" +
+    "<i>" + esc(m.k) + "</i><b>" + esc(m.n) + "</b>" +
+    "<p>" + esc(m.s) + "</p></div>" +
+
+    '<h2 class="sec top">What he brings</h2><div class="panel">' +
+    m.g.map(function (g) {
+      return '<div class="stfr"><span>' + esc(g) + "</span></div>";
+    }).join("") + "</div>" +
+
+    (m.id === "fit"
+      ? '<h2 class="sec top">The three rooms in the gym</h2><div class="panel">' +
+        GYM_ROOMS.map(function (r) {
+          var n = drillFresh(r.id, lv, bankOf(r.bank, lv));
+          return '<div class="stfr"><span><b>' + esc(r.n) + "</b> · " +
+            esc(r.s) + "</span><em>" + n + " new</em></div>";
+        }).join("") + "</div>" +
+        '<p class="hint">These three are open to everybody, hired or not: ' +
+        "three names over one box of questions was a defect, not a reward. " +
+        "What he gives you is the <b>room to use them</b> — eight actions a " +
+        "matchday on six players instead of six on four.</p>"
+      : '<h2 class="sec top">His room</h2><div class="panel">' +
+        '<div class="stfr"><span><b>' + esc(EAR_ROOM.n) + "</b> · " +
+        esc(EAR_ROOM.s) + "</span><em>" +
+        drillFresh(EAR_ROOM.id, lv, bankOf(EAR_ROOM.bank, lv)) + " new</em></div>" +
+        "</div>" +
+        '<p class="hint">It opens inside <b>Boost the English</b>, next to the ' +
+        "four written exercises, and it is the only one of them that nobody " +
+        "else has.</p>" +
+        (mine ? scoutBox() : "")) +
+
+    (mine
+      ? '<p class="lede top">' +
+        (lock ? "He is on your bench for this competition."
+              : "He is on your bench. You can still swap him until the first dictation.") +
+        "</p>"
+      : lock
+        ? '<p class="lede top">The competition has started, so the bench is ' +
+          "settled. " + esc((staffOne(who) || {}).n || "") + " stays.</p>"
+        : '<button class="btn" id="stfgo">' +
+          (who ? "Swap: bring in " + esc(m.n) : "Hire " + esc(m.n)) + "</button>") +
+
+    '<button class="btn ghost" id="stfbk">' +
+    ((typeof homeBackName === "function") ? homeBackName() : "Back") + "</button></div>");
+
+  Array.prototype.forEach.call($("main").querySelectorAll(".stftb"), function (b) {
+    b.onclick = function () { swap("staff", { id:b.dataset.id }); };
+  });
+  if ($("stfgo")) {
+    $("stfgo").onclick = function () {
+      if (staffPick(m.id)) swap("staff", { id:m.id });
+    };
+  }
+  $("stfbk").onclick = function () {
+    if (typeof toSquad === "function") return toSquad();
+    go("squad");
+  };
+};
+
+/* ───────── la nota dello scout ─────────
+   Informazione, non punti: i due cieli e quante caselle aprono. Niente
+   che l'allenatore possa aggiungere al risultato — solo quello che un
+   allenatore vero sa prima di cominciare. */
+function scoutBox() {
+  if (typeof phaseClim !== "function" || typeof climateOf !== "function") return "";
+  var a, b;
+  try { a = climateOf(phaseClim("att")); b = climateOf(phaseClim("def")); }
+  catch (e) { return ""; }
+  if (!a || !b) return "";
+  var same = a.id === b.id, gap = Math.abs(a.actions - b.actions);
+  var chance = gap === 1 ? " chance" : " chances";
+  return '<h2 class="sec top">His note on this one</h2><div class="panel">' +
+    '<div class="stfr"><span>Going forward · <b>' + esc(a.label) +
+    "</b></span><em>" + a.actions + " chances</em></div>" +
+    '<div class="stfr"><span>Holding on · <b>' + esc(b.label) +
+    "</b></span><em>" + b.actions + " chances</em></div></div>" +
+    '<p class="hint">' + (same
+      ? "Same sky both halves: what you can do going forward you can do holding on."
+      : a.actions > b.actions
+        ? "The weather turns against you after the break: " + gap + chance +
+          " fewer to hold on than to attack. Spend the first half well."
+        : "The weather eases after the break: " + gap + chance +
+          " more to hold on than to attack.") + "</p>";
 }
 
 
@@ -18090,8 +19502,15 @@ function fameLog(n) {
    Si guarda ogni volta che si apre la pagina: i risultati chiusi sul
    telefono che non hanno ancora mosso la percezione la muovono adesso. */
 function fameCatchUp() {
-  if (!ME.club || typeof mbPlayed !== "function") return;
-  mbPlayed().forEach(function (md) {
+  if (!ME.club) return;
+  var days = [];
+  if (typeof mbPlayed === "function") { try { days = mbPlayed() || []; } catch (e) {} }
+  /* nella prova non c'e' bollettino, e mbPlayed non ha da dove leggere:
+     la giornata e' una e il risultato sta comunque nel telefono. Senza
+     questa riga il numero, nella prova, non si muoverebbe mai — e un
+     numero che non si muove l'alunno lo prende per finto. */
+  if ((typeof demoOn === "function") && demoOn()) days = [1, 2, 3];
+  days.forEach(function (md) {
     var st = liveGet(md);
     if (!st || !st.score) return;
     var s = st.score, n = s.me > s.them ? FAME_WIN : s.me === s.them ? FAME_DRAW : FAME_LOSS;
@@ -18099,9 +19518,29 @@ function fameCatchUp() {
   });
 }
 
+/* ═══════════════ IL NUMERO, SEMPRE IN VISTA ═══════════════
+   La percezione comanda due cose che l'alunno sente subito — chi si
+   presenta in conferenza e chi risponde al telefono degli sponsor — ma
+   stava dietro una porta, e nella prova non si vedeva affatto perche'
+   la carta si rifiutava di uscire senza un codice d'alunno.
+   Adesso: il numero sulla porta della citta', la striscia in cima alla
+   rosa, e la carta intera dentro. Tre posti, un numero solo, e nessuno
+   deve cercarlo. */
+function fameChip() {
+  if (!ME.club) return "";
+  fameCatchUp();
+  var v = fame(), b = fameBand(v), t = fameTier(v), stars = "", i;
+  for (i = 0; i < 5; i++) stars += '<i class="' + (i < t ? "on" : "") + '">★</i>';
+  return '<button class="fmchip" id="fmchip" type="button">' +
+    '<span class="fmcv">' + v + "<em>/100</em></span>" +
+    '<span class="fmct"><b>' + esc(b.n) + "</b>" +
+    '<span class="fmcb"><i style="width:' + v + '%"></i></span></span>' +
+    '<span class="fmcs">' + stars + "</span></button>";
+}
+
 /* ───────── la riga nella home ───────── */
 function fameCard() {
-  if (!ME.code || !ME.club) return "";
+  if (!ME.club) return "";
   fameCatchUp();
   var v = fame(), b = fameBand(v), t = fameTier(v);
   var stars = "";
@@ -18916,6 +20355,18 @@ function spMarkCall() {
   a.calls = a.calls || {};
   a.calls["md" + mdNow()] = 1;
   spSave(a);
+}
+/* ───────── la chiamata fatta vale come fatta ─────────
+   Il silenzio e' un esito del gioco, non un errore dell'alunno: con la
+   percezione bassa non risponde nessuno quasi una volta su due. Finche'
+   il compito si considerava assolto solo col contratto firmato, chi
+   chiamava e non trovava nessuno restava con la riga grigia e nessuna
+   chiamata in mano — una strada chiusa, perche' di chiamate ce n'e' una
+   a giornata. Si e' telefonato: il compito e' fatto. */
+function spCalled() {
+  var c = spAll().calls || {}, k;
+  for (k in c) if (c[k]) return true;
+  return false;
 }
 /* il bonus a partita di tutti i contratti messi insieme */
 function spPerMatch() {
@@ -20104,6 +21555,86 @@ function lgSeason() {
 }
 
 /* ═══════════════ la pagina ═══════════════ */
+
+/* ───────── dove e' scattata ogni soglia ─────────
+   Il conto delle azioni, fino a ieri, era una scatola chiusa: alla fine
+   si leggeva « 7 tiri » e non si sapeva da dove venissero. Qui si apre:
+   ogni azione con la parola che l'ha fatta scattare e il totale in quel
+   momento. E' la cosa che un alunno puo' davvero guardare per capire
+   che cosa gli e' costato un tiro. */
+function lgSoglie(h, ph) {
+  if (!h || !(h.ats && h.ats.length)) return "";
+  var els = h.items || [];
+  var step = h.step || 0;
+  var righe = h.ats.map(function (at, k) {
+    var w = (els[at] && els[at].w) || "?";
+    var sbagliata = els[at] && els[at].k;
+    var run = (h.runs && h.runs[k] != null) ? h.runs[k] : null;
+    return '<div class="lgsg' + (sbagliata ? " ko" : "") + '">' +
+      '<span class="lgsn">' + (k + 1) + "</span>" +
+      '<span class="lgsw"><b>' + esc(w) + "</b>" +
+      "<em>word " + (at + 1) + " of " + els.length +
+      (sbagliata ? " &middot; " + esc(String(sbagliata)) : "") + "</em></span>" +
+      '<span class="lgsv">' + (run != null ? fmt(run) : "") +
+      "<i>" + fmt((h.quals && h.quals[k] != null) ? h.quals[k] : 0) + "</i></span>" +
+      "</div>";
+  }).join("");
+  var manca = step * ((h.open || 0) + 1) - (h.run || 0);
+  return '<h4 class="lgdep">' + (ph === "att" ? "ATTACK" : "DEFENCE") +
+    "<span>ONE EVERY " + fmt(step) + "</span><i>" + (h.open || 0) + "</i></h4>" +
+    '<div class="lgsgs">' + righe +
+    ((h.open || 0) < (h.max || 0)
+      ? '<div class="lgsg next"><span class="lgsn">&middot;</span>' +
+        '<span class="lgsw"><b>the next one never came</b><em>you were ' +
+        fmt(Math.max(0, manca)) + " short of it</em></span>" +
+        '<span class="lgsv">&mdash;</span></div>'
+      : "") +
+    "</div>";
+}
+
+/* ───────── le due squadre, una accanto all'altra ─────────
+   Il risultato dice chi ha vinto; questo dice perche'. Gli stessi
+   numeri che si vedono a fine partita, ma scritti dove restano. */
+function lgDuello(md, sc) {
+  if (!sc || !sc.mine || !sc.their) return "";
+  function somma(a) {
+    var v = 0, n = 0;
+    (a || []).forEach(function (x) { if (x != null) { v += x; n++; } });
+    return { v:v, n:n };
+  }
+  var miaA = somma(sc.mine.duels.map(function (d) { return d.shot; }));
+  var miaD = somma(sc.their.duels.map(function (d) { return d.save; }));
+  var loroA = somma(sc.their.duels.map(function (d) { return d.shot; }));
+  var loroD = somma(sc.mine.duels.map(function (d) { return d.save; }));
+  var io = ME.club ? ME.club.name : "You", lui = lgFoe(sc.opp);
+
+  function riga(lab, a, b) {
+    var piu = a.v > b.v, meno = a.v < b.v;
+    return '<div class="lgdr"><span class="lgdv' + (piu ? " up" : "") + '">' +
+      fmt(a.v) + "<i>" + a.n + (a.n === 1 ? " moment" : " moments") + "</i></span>" +
+      '<span class="lgdl">' + lab + "</span>" +
+      '<span class="lgdv' + (meno ? " up" : "") + '">' + fmt(b.v) +
+      "<i>" + b.n + (b.n === 1 ? " moment" : " moments") + "</i></span></div>";
+  }
+  var sA = sc.mine.sources || {}, sB = sc.their.sources || {};
+  return '<div class="lgduel"><div class="lgdh"><span>' + esc(io) + "</span>" +
+    "<b>" + sc.me + " &ndash; " + sc.them + "</b><span>" + esc(lui) + "</span></div>" +
+    riga("attack", miaA, loroA) +
+    riga("defence", miaD, loroD) +
+    '<div class="lgdr thin"><span class="lgdv">' + (sA.play || 0) + "</span>" +
+    '<span class="lgdl">goals from play</span><span class="lgdv">' +
+    (sB.play || 0) + "</span></div>" +
+    '<div class="lgdr thin"><span class="lgdv">' + (sA.bdo || 0) + "</span>" +
+    '<span class="lgdl">wonder goals</span><span class="lgdv">' +
+    (sB.bdo || 0) + "</span></div>" +
+    '<div class="lgdr thin"><span class="lgdv">' + (sA.penalty || 0) + "</span>" +
+    '<span class="lgdl">penalties scored</span><span class="lgdv">' +
+    (sB.penalty || 0) + "</span></div></div>" +
+    '<p class="lgfoot">Every moment is worth 0 &middot; 0,25 &middot; 0,50 &middot; ' +
+    "0,75 or 1, and here they are added up: these are points, not goals. " +
+    "Your attack met their defence, moment by moment, and the better number won.</p>";
+}
+
 VIEWS.ledger = function (d) {
   var md = (d && d.md) || (ME.next ? ME.next.md : 1);
   loadForm(); loadSheet(); loadGround();
@@ -20159,6 +21690,15 @@ VIEWS.ledger = function (d) {
     "</div>" +
 
     '<div class="lgcols">' + lgHalf(att, "att") + lgHalf(def, "def") + "</div>" +
+
+    (sc ? lgSec("THE TWO SIDES") + lgDuello(md, sc) : "") +
+
+    lgSec("WHERE EACH ACTION OPENED") +
+    lgSoglie(att, "att") + lgSoglie(def, "def") +
+    '<p class="lgfoot">A threshold is the total you need to open one more ' +
+    "action. Every word adds its points \u2014 1,00 when it is perfect, less when " +
+    "it is not \u2014 and the word that takes you past the line is the one that " +
+    "opens the shot or the save.</p>" +
 
     lgSec("THE TEAM YOU FIELDED") +
     lgPitch(att, "att") + lgPitch(def, "def") +
@@ -20437,13 +21977,28 @@ function climNear(fix, want) {
   if (w < 0) w = a;
   return CLIMATES[Math.max(a - 1, Math.min(a + 1, w))].id;
 }
-/* una coppia estratta a caso, gia' dentro la scala */
+/* ───────── una coppia estratta a caso ─────────
+   La casella di scarto resta la regola: fra i due cieli passa al massimo
+   un gradino. Ma i due gradini non pesano uguale. Difendere e' gia' la
+   meta' piu' ingrata — si scrive per non prendere, non per segnare — e
+   un cielo peggiore anche li' rende certe giornate senza scampo. Quindi
+   sei volte su dieci la difesa ha lo stesso cielo dell'attacco o uno
+   piu' aperto, e solo quattro su dieci uno piu' chiuso.
+   Attenzione all'indice: nella scala piu' in basso vuol dire meno
+   caselle, quindi « piu' facile » e' un indice piu' piccolo. */
 function climPair() {
-  var a = Math.floor(Math.random() * CLIMATES.length);
-  var d = Math.max(0, Math.min(CLIMATES.length - 1,
-            a + Math.floor(Math.random() * 3) - 1));
-  return { att:CLIMATES[a].id, def:CLIMATES[d].id };
+  var n = CLIMATES.length, r = Math.random();
+  /* prima si decide il rapporto fra i due cieli, poi si sceglie dove
+     metterlo sulla scala: cosi' la proporzione e' esatta e non la
+     sporcano i due estremi, dove un gradino non c'e'. */
+  var rel = r < 0.30 ? 0 : r < 0.60 ? -1 : 1;   /* 0 uguale · -1 piu' facile · +1 piu' dura */
+  var a;
+  if (rel === 0) a = Math.floor(Math.random() * n);
+  else if (rel === -1) a = 1 + Math.floor(Math.random() * (n - 1));
+  else a = Math.floor(Math.random() * (n - 1));
+  return { att:CLIMATES[a].id, def:CLIMATES[a + rel].id };
 }
+
 /* quello che arriva dal bollettino passa comunque di qui: se in un file
    pubblicato sono finiti due cieli lontani, la difesa si avvicina */
 function climFix(att, def) {
@@ -21467,6 +23022,10 @@ if (fromLink) {
   reset(ME.code ? "land" : "home");
   flushOutbox();
 }
+/* e intanto si chiede al sito se questa copia e' ancora quella buona:
+   non blocca niente, e se la rete non c'e' non si fa sentire */
+if (typeof freshBoot === "function") setTimeout(freshBoot, 900);
+
 /* il codice della partita arriva dopo: la stanza dello scambio si apre
    sopra a quello che c'era, con il campo dell'avversario gia' pieno */
 if (daQuadrato) {
