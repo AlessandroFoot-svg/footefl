@@ -3187,6 +3187,56 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   letter-spacing:.06em;color:var(--fog);text-transform:uppercase}
 .stfst.on{color:var(--gold);font-weight:800}
 .stfpeg.on .pname{color:#FFFDEE}
+
+/* ═════════ lo spogliatoio ═════════ */
+.drtalk{padding:16px;border-radius:18px;border:1px solid var(--gold);
+  background:linear-gradient(180deg,rgba(227,239,38,.12),rgba(4,23,15,.5))}
+.drk{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;color:var(--gold)}
+.drtalk b{display:block;margin-top:8px;font:800 19px/1.2 var(--brand);color:#FFFDEE}
+.drtalk p{margin:9px 0 0;font-size:12.5px;font-weight:600;line-height:1.5;
+  color:var(--cream)}
+.drw{display:flex;flex-wrap:wrap;gap:7px}
+.drw i{padding:6px 11px;border-radius:9px;border:1px solid rgba(201,85,63,.55);
+  background:rgba(201,85,63,.16);font:800 13px/1 var(--brand);font-style:normal;
+  color:#E8A89A}
+.drgone{margin-top:13px;padding:14px;border-radius:15px;
+  border:1px solid rgba(201,85,63,.6);background:rgba(201,85,63,.12)}
+.drgone b{display:block;font:800 14px/1.3 var(--brand);color:#E8A89A}
+.drgone p{margin:7px 0 0;font-size:11.5px;font-weight:600;line-height:1.5;
+  color:var(--cream)}
+.drhead{display:flex;align-items:center;gap:14px;margin:17px 0 11px;padding:13px 14px;
+  border-radius:15px;border:1px solid var(--edge);background:rgba(226,251,206,.05)}
+.drhead i{display:block;font:800 8.5px/1 var(--brand);letter-spacing:.13em;
+  font-style:normal;color:#8FC4AC}
+.drhead b{display:block;margin-top:6px;font:800 26px/1 var(--brand);color:var(--gold)}
+.drhead em{flex:1;font-size:11px;font-weight:600;font-style:normal;line-height:1.45;
+  color:var(--fog)}
+.drhead em b{display:inline;font:inherit;font-weight:800;color:#FFFDEE}
+.drhead span:first-child{flex:none;text-align:center}
+.drlist{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.drslot{border-radius:14px;border:1px solid var(--edge);
+  background:rgba(226,251,206,.04);overflow:hidden}
+.drslot.open{border-color:var(--gold)}
+.drrow{display:flex;align-items:center;gap:12px;width:100%;padding:12px 13px;
+  background:none;border:0;color:inherit;text-align:left;cursor:pointer;
+  font-family:inherit}
+.drn{flex:none;width:26px;height:26px;border-radius:50%;display:grid;
+  place-items:center;background:rgba(226,251,206,.12);
+  font:800 12px/1 var(--brand);color:var(--cream)}
+.drwho{flex:1;min-width:0;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.drwho b{font:800 14px/1.2 var(--brand);color:#FFFDEE}
+.dry{font:800 8.5px/1 var(--brand);letter-spacing:.1em;font-style:normal;
+  padding:4px 6px;border-radius:5px;background:rgba(227,239,38,.9);color:#06231D}
+.drr{font:800 8.5px/1 var(--brand);letter-spacing:.1em;font-style:normal;
+  color:#8FC4AC}
+.drgo{flex:none;font:800 10px/1 var(--brand);font-style:normal;color:var(--gold);
+  text-transform:uppercase;letter-spacing:.08em}
+.drpick{display:flex;flex-wrap:wrap;gap:7px;padding:0 13px 13px}
+.drp{padding:9px 12px;border-radius:10px;border:1px solid var(--edge);
+  background:rgba(226,251,206,.06);color:var(--cream);
+  font:700 13px/1 var(--brand);cursor:pointer}
+.drp.on{border-color:var(--gold);background:rgba(227,239,38,.16);color:#FFFDEE}
+.drp.none{border-style:dashed;color:var(--fog)}
 </style>
 </head>
 <body>
@@ -4090,7 +4140,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "117";
+var APPVER = "118";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -11390,7 +11440,33 @@ function discHalf(ph, r) {
         return;
       }
       D.y[no] = (D.y[no] || 0) + 1;
-      if (D.y[no] === 2 && !discOff(no)) { ev.kind = "red"; ev.second = true; }
+      if (D.y[no] === 2 && !discOff(no)) {
+        /* ───── la testa fredda dell'allenatore ─────
+           Un allenatore vero, al sessantesimo, toglie l'ammonito prima
+           che prenda il secondo. Qui succede lo stesso, una volta per
+           partita e solo se e' lui quello in panchina.
+           Che cosa NON cambia: il giallo resta scritto, la parola resta
+           sbagliata, la qualita' di quell'azione non si muove di un
+           centesimo. Cambia una cosa sola — non si resta in dieci.
+           Chi esce non rientra, come nel calcio: va in D.off, ma con
+           il segno « calm », cosi' non conta come rosso (D.n non si
+           tocca) e non porta squalifica alla giornata dopo. */
+        if (typeof staffIs === "function" && staffIs("gaf") && !D.calm) {
+          D.calm = { no:no, min:c.min, name:ev.name };
+          D.y[no] = 1;
+          ev.calm = true;
+          out.events.push(ev);
+          D.off.push({ no:no, min:c.min, ph:ph, name:ev.name, calm:true });
+          var cs = swapFrom(no, seg + 1);
+          out.events.push(cs
+            ? { min:c.min, kind:"sub", no:cs.no, name:pName(cs),
+                role:cs.role || "", forNo:no, forName:ev.name, calm:true }
+            : { min:c.min, kind:"short", forName:ev.name, calm:true });
+          saveSheet();
+          return;
+        }
+        ev.kind = "red"; ev.second = true;
+      }
     }
 
     if (ev.kind === "red" && no != null && hasVar() && varUse("red")) {
@@ -11498,13 +11574,16 @@ function discRow(x) {
   var tag = x.kind === "varY" ? "VAR \u00b7 NO CARD"
           : x.kind === "varR" ? "VAR \u00b7 NO RED"
           : x.kind === "red" ? (x.off ? "SENT OFF" : x.second ? "SECOND YELLOW" : "RED")
-          : x.kind === "yellow" ? "YELLOW"
+          : x.kind === "yellow" ? (x.calm ? "TAKEN OFF" : "YELLOW")
           : x.kind === "sub" ? "ON" : x.kind === "short" ? "TEN MEN" : "FOUL";
   var note = x.kind === "varY" || x.kind === "varR"
       ? "on \u201c" + esc(x.word || "") + "\u201d &middot; the screen says no card"
-    : x.kind === "sub" ? "in for " + esc(x.forName || "")
+    : x.kind === "sub" ? "in for " + esc(x.forName || "") +
+      (x.calm ? " &middot; your coach took him off in time" : "")
     : x.kind === "short" ? "nobody left to take over from " + esc(x.forName || "")
     : "on “" + esc(x.word || "") + "”" +
+      (x.calm ? " &middot; booked once already — the coach took him off before "
+              + "the second" : "") +
       (x.second ? " &middot; second yellow" : "") +
       (x.noted ? " &middot; written down, the eleven stay on" : "");
   return '<div class="dsr ' + esc(x.kind) + '">' +
@@ -14846,11 +14925,22 @@ VIEWS.mEnd2 = function () {
     }).join("") + "</div>" +
 
     (ph === "att"
-      ? '<button class="btn" id="go2d">Now the defence</button>'
+      ? '<button class="btn" id="go2d">' +
+        ((typeof staffIs === "function" && staffIs("gaf"))
+          ? "Into the dressing room" : "Now the defence") + "</button>"
       : '<button class="btn" id="fin2">See the full report</button>') +
     "</div>");
 
-  if ($("go2d")) $("go2d").onclick = function () { swap("mGo", { ph:"def" }); };
+  /* con l'allenatore in panchina si passa dallo spogliatoio: il discorso
+     e i cinque cambi. Senza, si va in campo come sempre. */
+  if ($("go2d")) {
+    $("go2d").onclick = function () {
+      if (typeof staffIs === "function" && staffIs("gaf") && VIEWS.dressing) {
+        return swap("dressing");
+      }
+      swap("mGo", { ph:"def" });
+    };
+  }
   if ($("fin2")) $("fin2").onclick = function () { swap("mReport"); };
 
   /* chiusa la difesa la partita e' finita: la riga parte subito e, se
@@ -19520,30 +19610,311 @@ function drawStaffBody(id) {
   };
 }
 
+/* ═══════════════ LO SPOGLIATOIO ═══════════════
+
+   Fra il primo tempo e il secondo, oggi, non succede niente: si legge
+   un riepilogo e si va a scrivere la difesa. Ed e' l'unico momento in
+   cui un'informazione puo' ancora cambiare il risultato — dopo, c'e'
+   solo da prenderne atto.
+
+   Qui l'allenatore fa le due cose che fa un allenatore vero: parla, e
+   cambia gli uomini.
+
+   IL DISCORSO. Non un complimento: il tipo di errore che e' costato di
+   piu' nel primo tempo, con le parole vere davanti. Chi legge « hai
+   perso tre parole sui plurali: boxes, matches, countries » scrive la
+   difesa con un'attenzione che prima non aveva.
+
+   I CAMBI. Fino a cinque caselle della difesa si possono rifare adesso,
+   sapendo quello che prima non si sapeva: chi ha preso il giallo e chi
+   e' stato espulso.
+
+   E QUI LA REGOLA, che e' quella del calcio e che il motore aveva gia'
+   deciso per conto suo — sta scritto in 51-cards.js: « l'espulso non si
+   rimpiazza con uno di fuori ».
+
+     · ESPULSO  → non si sostituisce. Esce dal foglio della difesa e non
+       ci rientra. Le sue caselle restano vuote, e se le vuoi coperte
+       devi spenderci dei cambi: il rosso ti mangia le sostituzioni. E'
+       il prezzo, e si deve sentire.
+     · AMMONITO → si puo' togliere, ed e' esattamente la mossa: resta in
+       campo e il secondo giallo lo manda fuori.
+     · TUTTI GLI ALTRI → si cambiano per scelta, dentro i cinque.
+
+   Cinque e non liberi: se si potesse rifare tutto, il foglio scritto
+   prima della partita non varrebbe piu' niente, e scegliere prima e'
+   meta' del gioco.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var DRESS_MAX = 5;
+var DRESSPICK = null;          /* la casella che si sta cambiando */
+
+function dressKey() {
+  return "footefl-dress-" + ((typeof scope === "function") ? scope() : "x") +
+    "-" + (ME.club ? ME.club.id : "x") + "-md" + (ME.next ? ME.next.md : 0);
+}
+function dressUsed() {
+  try { return parseInt(localStorage.getItem(dressKey()) || "0", 10) || 0; }
+  catch (e) { return 0; }
+}
+function dressLeft() { return Math.max(0, DRESS_MAX - dressUsed()); }
+function dressBump() {
+  try { localStorage.setItem(dressKey(), String(dressUsed() + 1)); } catch (e) {}
+}
+/* chi e' fuori dalla partita: espulso dal rosso, oppure tolto
+   dall'allenatore prima del secondo giallo. In tutti e due i casi non
+   gioca il secondo tempo. */
+function dressOut() {
+  var D = (typeof discInit === "function") ? discInit() : { off:[] };
+  return (D.off || []).slice();
+}
+function dressBooked(no) {
+  var D = (typeof discInit === "function") ? discInit() : { y:{} };
+  return (D.y && D.y[no]) || 0;
+}
+/* chi puo' entrare in quella casella */
+function dressFree(slot) {
+  var out = [];
+  (allPlayers() || []).forEach(function (p) {
+    if (!p.named) return;
+    if (typeof discOff === "function" && discOff(p.no)) return;
+    if (typeof suspIs === "function" && suspIs(p.no)) return;
+    if (SHEET.roles && p.no === SHEET.roles.gk) return;
+    var n = placedCount(p.no) - (SHEET.def[slot] === p.no ? 1 : 0);
+    if (n >= maxFor(p.no)) return;
+    out.push(p);
+  });
+  return out;
+}
+/* l'espulso esce dal foglio della difesa, e non ci torna */
+function dressClean() {
+  var gone = [], k, no;
+  var off = dressOut();
+  if (!off.length) return gone;
+  /* un nome per uomo, non uno per casella: chi occupava due posti
+     usciva due volte, e la riga diceva « Tanner, Tanner sono fuori » */
+  var visti = {};
+  for (k = 1; k <= phaseSlots("def"); k++) {
+    no = SHEET.def[k];
+    if (no == null) continue;
+    for (var j = 0; j < off.length; j++) {
+      if (off[j].no !== no) continue;
+      SHEET.def[k] = null;
+      if (visti[no]) { visti[no].slots++; break; }
+      visti[no] = { no:no, name:off[j].name || "", slots:1, calm:!!off[j].calm };
+      gone.push(visti[no]);
+      break;
+    }
+  }
+  if (gone.length) saveSheet();
+  return gone;
+}
+
+/* ───────── il discorso ─────────
+   L'errore che e' costato di piu', con le parole. Si guarda il tempo
+   appena finito, non la stagione: a meta' partita serve quello. */
+function dressTalk() {
+  var items = null;
+  if (typeof MT !== "undefined" && MT && MT.res && MT.res.els && MT.res.answers) {
+    items = MT.res.els.map(function (e, k) {
+      return { w:e.w, k:classify(e.w, MT.res.answers[k].written, e.t) };
+    });
+  }
+  if (!items) {
+    var hs = (typeof formHalves === "function" && ME.club)
+      ? formHalves(scope(), ME.club.id) : [];
+    var h = hs.filter(function (x) {
+      return x.md === (ME.next ? ME.next.md : 1) && x.ph === "att";
+    })[0];
+    items = h ? (h.items || []) : [];
+  }
+  var kinds = {}, worst = "", top = 0, k;
+  items.forEach(function (it) { if (it.k) kinds[it.k] = (kinds[it.k] || 0) + 1; });
+  for (k in kinds) if (kinds[k] > top) { top = kinds[k]; worst = k; }
+  var words = items.filter(function (it) { return it.k === worst; })
+    .slice(0, 3).map(function (it) { return it.w; });
+  return { worst:worst, n:top, words:words, clean:!top };
+}
+function dressTalkBox() {
+  var t = dressTalk();
+  if (t.clean) {
+    return '<div class="drtalk"><span class="drk">THE TEAM TALK</span>' +
+      "<b>Nothing to correct.</b><p>You did not drop a single word in the first " +
+      "half. Go out and do it again — the second half is the one you have to " +
+      "hold.</p></div>";
+  }
+  var tip = (typeof TIPS !== "undefined" && TIPS[t.worst]) ? String(TIPS[t.worst]) : "";
+  return '<div class="drtalk"><span class="drk">THE TEAM TALK</span>' +
+    "<b>" + t.n + (t.n === 1 ? " word" : " words") + " went the same way: " +
+    esc(t.worst) + ".</b>" +
+    (t.words.length
+      ? '<p class="drw">' + t.words.map(function (w) {
+          return "<i>" + esc(w) + "</i>";
+        }).join("") + "</p>"
+      : "") +
+    (tip ? "<p>" + esc(tip) + "</p>" : "") +
+    "<p><b>Watch for that one in the second half.</b></p></div>";
+}
+
+VIEWS.dressing = function () {
+  /* loadSheetIfNeeded e non loadSheet: qui dentro servono i cartellini
+     del primo tempo, e ricaricare il foglio da zero li buttava via */
+  if (typeof loadSheetIfNeeded === "function") loadSheetIfNeeded();
+  else if (!SHEET || !SHEET.roles) loadSheet();
+  var gone = dressClean();
+  var left = dressLeft(), n = phaseSlots("def"), k;
+  paintClub(ME.club);
+  barFlow("The dressing room", "Half time", 50, false);
+
+  var rows = "";
+  for (k = 1; k <= n; k++) {
+    var no = SHEET.def[k];
+    var p = no != null ? playerNo(no) : null;
+    var y = no != null ? dressBooked(no) : 0;
+    var open = DRESSPICK === k;
+    rows += '<div class="drslot' + (open ? " open" : "") + '">' +
+      '<button class="drrow" data-k="' + k + '" type="button">' +
+      '<span class="drn">' + k + "</span>" +
+      '<span class="drwho"><b>' + (p ? esc(pShort(p)) : "— empty —") + "</b>" +
+      (y ? '<i class="dry">BOOKED</i>' : "") +
+      (p && p.role ? '<i class="drr">' + esc(p.role) + "</i>" : "") + "</span>" +
+      '<i class="drgo">' + (open ? "−" : "change") + "</i></button>" +
+      (open ? '<div class="drpick">' + dressFree(k).map(function (q) {
+          return '<button class="drp' + (SHEET.def[k] === q.no ? " on" : "") +
+            '" data-k="' + k + '" data-no="' + q.no + '" type="button">' +
+            esc(pShort(q)) + (dressBooked(q.no) ? " ⚠" : "") + "</button>";
+        }).join("") +
+        '<button class="drp none" data-k="' + k + '" data-no="" type="button">' +
+        "leave it empty</button></div>" : "") +
+      "</div>";
+  }
+
+  html('<div class="pad">' +
+    dressTalkBox() +
+
+    (gone.length
+      ? '<div class="drgone"><b>' + gone.map(function (g) {
+          return esc(g.name || ("Shirt " + g.no));
+        }).join(", ") + (gone.length === 1 ? " is out of the match." : " are out of the match.") +
+        "</b><p>" + (gone.some(function (g) { return !g.calm; })
+          ? "A sent-off player is not replaced — that is what a red card costs. "
+          : "A player taken off cannot come back on. ") +
+        (function () {
+          var n = 0;
+          gone.forEach(function (g) { n += g.slots || 1; });
+          return n === 1
+            ? "His place in the second half is empty. You can cover it, but that "
+              + "will use a change."
+            : n + " places in the second half are empty. You can cover them, but "
+              + "every one will use a change.";
+        })() + "</p></div>"
+      : "") +
+
+    '<div class="drhead"><span><i>CHANGES LEFT</i><b>' + left + "<em>/" +
+    DRESS_MAX + "</em></b></span>" +
+    "<em>Tap a place to put somebody else there. A player with " +
+    "<b>BOOKED</b> next to his name is one yellow from being sent off: " +
+    "taking him off now is the safe move.</em></div>" +
+
+    '<div class="drlist">' + rows + "</div>" +
+
+    '<button class="btn" id="drgo">Out for the second half</button></div>');
+
+  Array.prototype.forEach.call($("main").querySelectorAll(".drrow"), function (b) {
+    b.onclick = function () {
+      var kk = parseInt(b.dataset.k, 10);
+      if (dressLeft() <= 0 && DRESSPICK !== kk) return;
+      DRESSPICK = (DRESSPICK === kk) ? null : kk;
+      swap("dressing");
+    };
+  });
+  Array.prototype.forEach.call($("main").querySelectorAll(".drp"), function (b) {
+    b.onclick = function () {
+      var kk = parseInt(b.dataset.k, 10);
+      var nn = b.dataset.no === "" ? null : parseInt(b.dataset.no, 10);
+      if (SHEET.def[kk] === nn) { DRESSPICK = null; return swap("dressing"); }
+      if (dressLeft() <= 0) return;
+      SHEET.def[kk] = nn;
+      saveSheet();
+      dressBump();
+      DRESSPICK = null;
+      swap("dressing");
+    };
+  });
+  $("drgo").onclick = function () { DRESSPICK = null; swap("mGo", { ph:"def" }); };
+};
+
 /* ───────── la nota dello scout ─────────
-   Informazione, non punti: i due cieli e quante caselle aprono. Niente
-   che l'allenatore possa aggiungere al risultato — solo quello che un
-   allenatore vero sa prima di cominciare. */
+   Prima qui c'era il meteo. Ma il meteo sta gia' scritto sulla carta
+   della prossima partita, due dita piu' sotto: una « informazione » che
+   ripete quello che hai gia' davanti non vale niente, e l'alunno se ne
+   accorge subito.
+   Quello che davvero non si vede da nessun'altra parte e' l'avversario:
+   come sta andando, quanto segna, quanto prende. Resta informazione —
+   nessun punto, nessuna casella — ma e' informazione nuova, ed e' la
+   sola cosa che un allenatore ha in mano prima del fischio. */
+function scoutOpp() {
+  var id = (ME.next && ME.next.oppId) || "";
+  var name = (ME.next && ME.next.away) || "";
+  var rows = (typeof leagueRows === "function") ? leagueRows() : [];
+  var r = null, i;
+  for (i = 0; i < rows.length; i++) {
+    if (id ? rows[i].id === id : rows[i].name === name) { r = rows[i]; break; }
+  }
+  return { id:id, name:name, row:r };
+}
 function scoutBox() {
-  if (typeof phaseClim !== "function" || typeof climateOf !== "function") return "";
-  var a, b;
-  try { a = climateOf(phaseClim("att")); b = climateOf(phaseClim("def")); }
-  catch (e) { return ""; }
-  if (!a || !b) return "";
-  var same = a.id === b.id, gap = Math.abs(a.actions - b.actions);
-  var chance = gap === 1 ? " chance" : " chances";
-  return '<h2 class="sec top">His note on this one</h2><div class="panel">' +
-    '<div class="stfr"><span>Going forward · <b>' + esc(a.label) +
-    "</b></span><em>" + a.actions + " chances</em></div>" +
-    '<div class="stfr"><span>Holding on · <b>' + esc(b.label) +
-    "</b></span><em>" + b.actions + " chances</em></div></div>" +
-    '<p class="hint">' + (same
-      ? "Same sky both halves: what you can do going forward you can do holding on."
-      : a.actions > b.actions
-        ? "The weather turns against you after the break: " + gap + chance +
-          " fewer to hold on than to attack. Spend the first half well."
-        : "The weather eases after the break: " + gap + chance +
-          " more to hold on than to attack.") + "</p>";
+  var o = scoutOpp();
+  if (!o.name) return "";
+
+  /* nella prova dall'altra parte c'e' una macchina, e la sua forza la
+     sai perche' l'hai scelta tu: lo scout dice che cosa vuol dire */
+  if ((typeof demoOn === "function") && demoOn()) {
+    var d = (typeof demoDiff === "function") ? demoDiff() : null;
+    var pc = d ? Math.round(d.skill * 100) : 0;
+    return '<h2 class="sec top">His note on ' + esc(o.name) + "</h2>" +
+      '<div class="panel">' +
+      '<div class="stfr"><span>How they write</span><em>' +
+      esc(d ? d.t : "—") + "</em></div>" +
+      '<div class="stfr"><span>Words they keep standing, out of ten</span><em>' +
+      Math.round((d ? d.skill : 0) * 10) + "</em></div></div>" +
+      '<p class="hint">' + (pc >= 80
+        ? "They will hardly drop a word. You will not win this by waiting for "
+          + "their mistakes — you have to make your own half count."
+        : pc >= 60
+          ? "About as good as you are. The half you write better is the half "
+            + "that decides it."
+          : "They drop words. Hold your defence together and their attack will "
+            + "give you the match.") + "</p>";
+  }
+
+  var r = o.row;
+  if (!r || !r.p) {
+    return '<h2 class="sec top">His note on ' + esc(o.name) + "</h2>" +
+      '<p class="hint">Nothing on them yet — they have not played a match in ' +
+      "this competition either. You both go in blind.</p>";
+  }
+  var avgF = Math.round(r.gf / r.p * 10) / 10;
+  var avgA = Math.round(r.ga / r.p * 10) / 10;
+  var form = (r.form || []).slice(-5).join(" ");
+  return '<h2 class="sec top">His note on ' + esc(o.name) + "</h2>" +
+    '<div class="panel">' +
+    '<div class="stfr"><span>Played</span><em>' + r.p + "</em></div>" +
+    '<div class="stfr"><span>Won · drawn · lost</span><em>' +
+    r.w + " · " + r.d + " · " + r.l + "</em></div>" +
+    '<div class="stfr"><span>They score</span><em>' + avgF + " a match</em></div>" +
+    '<div class="stfr"><span>They let in</span><em>' + avgA + " a match</em></div>" +
+    (form ? '<div class="stfr"><span>Last matches</span><em>' + esc(form) +
+      "</em></div>" : "") + "</div>" +
+    '<p class="hint">' + (avgF > avgA + 1
+      ? "They score more than they concede by some way: expect to be under "
+        + "pressure, and write your defence as if it decided the match — "
+        + "because it will."
+      : avgA > avgF + 1
+        ? "They let in more than they score. Your attack is where this one is "
+          + "won: every chance you open is one they probably cannot answer."
+        : "Evenly matched on paper. It will come down to which of you keeps "
+          + "more words standing.") + "</p>";
 }
 
 
@@ -22169,6 +22540,17 @@ function loadSheet() {
       SHEET.att = s.att || {}; SHEET.def = s.def || {}; SHEET.roles = s.roles || null;
       SHEET.call = s.call || null;
       SHEET.locked = !!s.locked; SHEET.done = s.done || { att:false, def:false };
+      /* ───── i cartellini sopravvivono alla rilettura ─────
+         Finora questa riga non c'era: chiunque richiamasse loadSheet()
+         dopo il primo tempo azzerava gialli, espulsioni e subentri.
+         In discInit() c'e' il segno di quella volta che e' successo
+         («ricaricava il foglio da capo e buttava via le espulsioni»), e
+         li' lo si era aggirato non chiamandolo. Adesso lo spogliatoio
+         sta in mezzo ai due tempi e quei dati gli servono: meglio
+         sistemare la causa che girarci intorno una seconda volta.
+         Il foglio e' per giornata (la chiave finisce con -md<n>), quindi
+         una giornata nuova riparte pulita da sola. */
+      if (s.disc) SHEET.disc = s.disc;
     }
   } catch (e) {}
   if (!SHEET.roles) SHEET.roles = defaultRoles();
