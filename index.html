@@ -3279,6 +3279,41 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 }
 .rngo{font-size:22px}
 .rngo em{opacity:.85}
+
+/* ═════════ la reputazione in grande, con la scala ═════════ */
+.fmbig{margin:14px 0 18px;padding:16px;border-radius:18px;border:1px solid var(--edge);
+  background:linear-gradient(180deg,rgba(226,251,206,.08),rgba(4,23,15,.5))}
+.fmk{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;color:#8FC4AC}
+.fmbr{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+  margin-top:9px}
+.fmbr>b{font:800 46px/1 var(--brand);color:var(--gold)}
+.fmbr>b em{font:800 14px/1 var(--brand);font-style:normal;color:#8FC4AC}
+.fmbw{text-align:right;font:800 15px/1.2 var(--brand);color:#FFFDEE}
+.fmbw .fmst{display:block;margin-top:5px}
+.fmbar.big{height:9px;margin:12px 0 10px}
+.fmbig>p{margin:0 0 14px;font-size:12.5px;font-weight:600;color:var(--cream)}
+.fmlad{display:flex;flex-direction:column;gap:5px}
+.fmst2{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:11px;
+  border:1px solid transparent;background:rgba(4,23,15,.35);opacity:.6}
+.fmst2.on{opacity:1;border-color:var(--gold);background:rgba(227,239,38,.1)}
+.fmsn{flex:none;width:46px;font:800 10.5px/1 var(--brand);color:#8FC4AC}
+.fmst2.on .fmsn{color:var(--gold)}
+.fmsb{flex:1;min-width:0}
+.fmsb b{display:block;font:800 12.5px/1.2 var(--brand);color:#FFFDEE}
+.fmsb em{display:block;margin-top:2px;font-size:10px;font-weight:600;font-style:normal;
+  line-height:1.35;color:var(--fog)}
+.fmsp{flex:none;text-align:right;font:800 13px/1 var(--brand);color:#E8A89A}
+.fmsp i{display:block;margin-top:3px;font:700 8px/1 var(--brand);font-style:normal;
+  letter-spacing:.07em;color:#8FC4AC}
+.fmwhy{margin:15px 0 8px;font:800 9px/1 var(--brand);letter-spacing:.14em;
+  color:#8FC4AC}
+.fmmvs{display:flex;flex-wrap:wrap;gap:7px}
+.fmmv{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:10px;
+  background:rgba(4,23,15,.4);border:1px solid var(--edge);flex:1 1 44%}
+.fmmv b{flex:none;font:800 15px/1 var(--brand);color:var(--fog)}
+.fmmv b.up{color:var(--gold)}
+.fmmv b.dn{color:#E8A89A}
+.fmmv span{font-size:10.5px;font-weight:600;line-height:1.35;color:var(--cream)}
 </style>
 </head>
 <body>
@@ -4182,7 +4217,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "119";
+var APPVER = "120";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -20213,6 +20248,68 @@ function fameChip() {
     '<span class="fmcs">' + stars + "</span></button>";
 }
 
+/* ═══════════════ LA SCALA: CHE COSA SI GUADAGNA E CHE COSA SI PERDE ═══
+
+   Il numero da solo non insegna niente. Un alunno che legge « 42 » non
+   sa se e' tanto o poco, ne' che cosa deve fare per muoverlo, ne' a
+   che cosa gli serve. Allora si scrive tutto:
+
+     · i cinque gradini, con quello dove sta adesso acceso;
+     · accanto a ciascuno, che cosa cambia davvero — quante volte il
+       telefono squilla a vuoto quando cerchi uno sponsor e che giro di
+       aziende risponde;
+     · e sotto, il listino: quanto si prende vincendo, pareggiando,
+       perdendo, e quanto costa non presentarsi in sala stampa.
+
+   Sono i numeri veri del motore (FAME_WIN e compagni, e la tabella
+   dei silenzi di spCall): se un giorno si cambiano li', questa scala
+   cambia da sola. Una tabella scritta a mano che smette di dire la
+   verita' e' peggio di nessuna tabella. */
+var FAME_SILENCE = [0.45, 0.35, 0.25, 0.18, 0.12];
+var FAME_WHO = ["the corner shop and the town hall",
+                "local builders, the garage, the pub",
+                "the sportswear shop, the supermarket",
+                "the bank, the insurers, the hauliers",
+                "the airline, the telecoms, the league itself"];
+function fameLadder() {
+  var here = fameTier(), out = "", i;
+  for (i = 1; i <= 5; i++) {
+    var b = FAME_BANDS[i - 1], on = i === here;
+    out += '<div class="fmst2' + (on ? " on" : "") + '">' +
+      '<span class="fmsn">' + (i * 20 - 19) + "–" + (i * 20) + "</span>" +
+      '<span class="fmsb"><b>' + esc(b.n) + "</b><em>" + esc(FAME_WHO[i - 1]) +
+      "</em></span>" +
+      '<span class="fmsp">' + Math.round(FAME_SILENCE[i - 1] * 100) +
+      "%<i>no answer</i></span></div>";
+  }
+  return '<div class="fmlad">' + out + "</div>";
+}
+function fameMoves() {
+  function row(n, t) {
+    return '<div class="fmmv"><b class="' + (n > 0 ? "up" : n < 0 ? "dn" : "") + '">' +
+      (n > 0 ? "+" : "") + n + "</b><span>" + t + "</span></div>";
+  }
+  return '<div class="fmmvs">' +
+    row(FAME_WIN, "you win a match") +
+    row(FAME_DRAW, "you draw") +
+    row(FAME_LOSS, "you lose") +
+    row(FAME_SILENT, "a matchday goes by and you say nothing to the press") +
+    "</div>";
+}
+/* il blocco grande, per la pagina degli sponsor */
+function fameBig() {
+  if (!ME.club) return "";
+  fameCatchUp();
+  var v = fame(), b = fameBand(v), t = fameTier(v), stars = "", i;
+  for (i = 0; i < 5; i++) stars += '<i class="' + (i < t ? "on" : "") + '">★</i>';
+  return '<div class="fmbig"><span class="fmk">HOW THE CITY SEES YOU</span>' +
+    '<div class="fmbr"><b>' + v + "<em>/100</em></b>" +
+    '<span class="fmbw">' + esc(b.n) + '<i class="fmst">' + stars + "</i></span></div>" +
+    '<div class="fmbar big"><i style="width:' + v + '%"></i></div>' +
+    "<p>" + esc(b.s) + "</p>" + fameLadder() +
+    '<p class="fmwhy">What moves it</p>' + fameMoves() + "</div>";
+}
+
 /* ───────── la riga nella home ───────── */
 function fameCard() {
   if (!ME.club) return "";
@@ -21054,7 +21151,12 @@ function spPerMatch() {
 function spCall() {
   var t = (typeof fameTier === "function") ? fameTier() : 1;
   var luck = Math.random();
-  var silence = [0.45, 0.35, 0.25, 0.18, 0.12][t - 1];
+  /* la tabella dei silenzi sta in 57-fame.js, accanto alla scala che la
+     mostra all'alunno: scritta in due posti, uno dei due prima o poi
+     mentirebbe */
+  var sil = (typeof FAME_SILENCE !== "undefined")
+    ? FAME_SILENCE : [0.45, 0.35, 0.25, 0.18, 0.12];
+  var silence = sil[t - 1];
   if (luck < silence) return null;
   var lane = t;
   if (luck > 0.92 && t < 5) lane = t + 1;             /* un colpo di fortuna */
@@ -21105,8 +21207,10 @@ VIEWS.spon = function () {
 
   html('<div class="pad">' +
     '<p class="lede">A club lives on what it sells around the pitch. Who answers ' +
-    "the telephone depends on how the city sees you: <b>" + esc(band.n) +
-    "</b> today.</p>" +
+    "the telephone depends on how the city sees you — so here it is, in full.</p>" +
+    /* la reputazione in grande, con la scala: e' questa pagina che la
+       rende concreta, perche' e' qui che si vede chi risponde e chi no */
+    ((typeof fameBig === "function") ? fameBig() : "") +
 
     '<div class="spgrid">' + SPOTS.map(function (s) {
       var deal = d[s.id];
