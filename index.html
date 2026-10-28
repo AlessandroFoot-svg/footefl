@@ -3314,6 +3314,41 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .fmmv b.up{color:var(--gold)}
 .fmmv b.dn{color:#E8A89A}
 .fmmv span{font-size:10.5px;font-weight:600;line-height:1.35;color:var(--cream)}
+
+/* ═════════ il colloquio e i candidati ═════════ */
+.rcrole{margin:12px 0;padding:14px 15px;border-radius:15px;border:1px solid var(--edge);
+  background:rgba(226,251,206,.05)}
+.rck{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;color:var(--gold)}
+.rcrole b{display:block;margin-top:7px;font:800 16px/1.2 var(--brand);color:#FFFDEE}
+.rcrole p{margin:7px 0 0;font-size:12px;font-weight:600;line-height:1.5;
+  color:var(--cream)}
+.rcfame{display:flex;align-items:center;gap:13px;margin:14px 0 16px;padding:13px 14px;
+  border-radius:14px;border:1px solid var(--edge);background:rgba(4,23,15,.4)}
+.rcfame i{display:block;font:800 8.5px/1 var(--brand);letter-spacing:.13em;
+  font-style:normal;color:#8FC4AC}
+.rcfame b{display:block;margin-top:5px;font:800 15px/1 var(--brand);color:var(--gold)}
+.rcfame em{flex:1;font-size:11px;font-weight:600;font-style:normal;line-height:1.45;
+  color:var(--cream)}
+.rcman{display:block;width:100%;margin-bottom:11px;padding:15px;border-radius:17px;
+  border:1px solid var(--edge);background:linear-gradient(180deg,
+    rgba(226,251,206,.07),rgba(4,23,15,.5));color:inherit;text-align:left;
+  cursor:pointer;font-family:inherit}
+.rcman:active{transform:translateY(1px)}
+.rcm1{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rcm1 i{font:800 8.5px/1 var(--brand);letter-spacing:.13em;font-style:normal;
+  color:#8FC4AC}
+.rcstar{display:flex;gap:3px}
+.rcstar u{width:13px;height:5px;border-radius:3px;text-decoration:none;
+  background:rgba(226,251,206,.2)}
+.rcstar u.on{background:var(--gold)}
+.rcman b{display:block;margin-top:9px;font:800 19px/1.1 var(--brand);color:#FFFDEE}
+.rcman em{display:block;margin-top:4px;font-size:11px;font-weight:700;
+  font-style:normal;color:var(--gold)}
+.rcman p{margin:8px 0 0;font-size:12px;font-weight:600;line-height:1.5;
+  color:var(--cream)}
+.rcg{display:block;margin-top:11px;padding:9px 11px;border-radius:10px;
+  background:rgba(227,239,38,.12);border:1px solid rgba(227,239,38,.4);
+  font:800 12px/1.35 var(--brand);color:#FFFDEE}
 </style>
 </head>
 <body>
@@ -4217,7 +4252,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "120";
+var APPVER = "121";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -11528,7 +11563,7 @@ function discHalf(ph, r) {
            Chi esce non rientra, come nel calcio: va in D.off, ma con
            il segno « calm », cosi' non conta come rosso (D.n non si
            tocca) e non porta squalifica alla giornata dopo. */
-        if (typeof staffIs === "function" && staffIs("gaf") && !D.calm) {
+        if (typeof staffCalm === "function" && staffCalm() && !D.calm) {
           D.calm = { no:no, min:c.min, name:ev.name };
           D.y[no] = 1;
           ev.calm = true;
@@ -14083,6 +14118,346 @@ VIEWS.mkDone = function () {
       '<button class="btn" id="home3">' + homeBackName() + "</button></div>");
     $("home3").onclick = function () { reset(homeBack()); };
   }
+};
+
+
+/* ───── 41-recruit.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   RECRUIT YOUR STAFF
+
+   Finora i due in panchina si sceglievano e basta: due facce, un tocco,
+   fatto. Troppo poco per una cosa che decide un terzo della stagione, e
+   soprattutto gratis — mentre tutto il resto, in questa app, si guadagna
+   scrivendo.
+
+   Adesso funziona come il mercato: una prova di lingua, e il risultato
+   decide chi ti risponde. Con una differenza voluta nel gesto, perche'
+   fare due volte di fila lo stesso esercizio prima del calcio d'inizio
+   stanca: il mercato sono venti domande con tutto il tempo che vuoi,
+   questo e' un COLLOQUIO — dieci domande e l'orologio che scende. Si
+   pensa in piedi, come si fa quando si parla con qualcuno.
+
+   ╔═══════════════════════════════════════════════════════════════╗
+   ║  PERCHE' I CANDIDATI NON HANNO POTERI DIVERSI                  ║
+   ║                                                               ║
+   ║  La tentazione era dare a ognuno la sua abilita' speciale.     ║
+   ║  Non si fa, e la ragione sta nei tuoi SCOUTS: dieci persone,   ║
+   ║  nessun potere diverso: cambia dove guardano e quanti ne       ║
+   ║  portano. Una scala sola, confrontabile a colpo d'occhio.      ║
+   ║                                                               ║
+   ║  Con otto bonus diversi un ragazzo davanti a quattro carte     ║
+   ║  non sceglie: tira a indovinare, perche' non ha modo di        ║
+   ║  confrontarli. Qui la leva e' una per ruolo e cresce di        ║
+   ║  gradino in gradino. La varieta' sta nel nome, nella faccia e  ║
+   ║  nella storia — che e' esattamente quanto basta.               ║
+   ╚═══════════════════════════════════════════════════════════════╝
+
+   Chi risponde dipende da due cose insieme: quanto hai fatto nel
+   colloquio, e come la citta' vede il club. Il secondo e' un tetto: un
+   preparatore da nazionale non risponde a chi nessuno conosce, per
+   quanto bene abbia risposto alle dieci domande. E' la stessa regola
+   degli sponsor, ed e' giusto che sia la stessa: si guadagna giocando.
+
+   Una volta per competizione, come il mercato. Se si potesse rifare,
+   le dieci domande diventerebbero una macinatrice e la scelta non
+   peserebbe piu' niente.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var RC_N = 10;               /* dieci domande, non venti */
+var RC_SECS = 11;            /* e undici secondi l'una: si pensa, non si medita */
+
+var RC = { i:0, qs:[], answers:[], score:0, show:[], t:null };
+
+/* ───────── chi puo' arrivare ─────────
+   Quattro gradini per ruolo. Il numero che cambia e' uno solo, e si
+   legge da sinistra a destra come una scala. */
+var STAFF_POOL = [
+  /* il responsabile dell'allenamento: quanto lavoro regge la squadra */
+  { id:"f1", role:"fit", tier:1, name:"Les Rudd", she:false, nick:"the boot room",
+    from:"Oldham", line:"Forty years in the same training ground. He knows what a "
+      + "tired squad looks like from the car park.",
+    acts:6, men:5 },
+  { id:"f2", role:"fit", tier:2, name:"Milos Varga", she:false, nick:"the Danube method",
+    from:"Novi Sad", line:"Short sessions, often, and nobody goes home with "
+      + "anything left in the tank.",
+    acts:7, men:5 },
+  { id:"f3", role:"fit", tier:3, name:"Rosa Iglesias", she:true, nick:"the recovery coach",
+    from:"Valencia", line:"She plans the week backwards from the match, and the "
+      + "squad arrives fresher than anybody else's.",
+    acts:8, men:6 },
+  { id:"f4", role:"fit", tier:4, name:"Amara Sow", she:true, nick:"the sports scientist",
+    from:"Dakar", line:"Two national teams before she was forty. Nobody gets more "
+      + "work into a week without breaking anyone.",
+    acts:9, men:7 },
+
+  /* l'allenatore: quanto si puo' rimediare all'intervallo */
+  { id:"g1", role:"gaf", tier:1, name:"Pat Doyle", she:false, nick:"the shouter",
+    from:"Cork", line:"Loud, honest, and out of ideas by the hour mark — but "
+      + "the dressing room listens to him.",
+    subs:3, calm:false, scout:false },
+  { id:"g2", role:"gaf", tier:2, name:"Yannick Perez", she:false, nick:"the calm one",
+    from:"Lille", line:"He has never had a player sent off for two yellows. He "
+      + "takes them off first, every time.",
+    subs:3, calm:true, scout:false },
+  { id:"g3", role:"gaf", tier:3, name:"Ingrid Holm", she:true, nick:"the half-time fixer",
+    from:"Bergen", line:"Whatever the first half was, the second one is a "
+      + "different match. That is her whole reputation.",
+    subs:5, calm:true, scout:false },
+  { id:"g4", role:"gaf", tier:4, name:"Victor Abalo", she:false, nick:"the one who has seen them",
+    from:"Lagos", line:"He watches the other side for a week before he says a "
+      + "word, and then he says the one word that matters.",
+    subs:5, calm:true, scout:true }
+];
+/* lui o lei: meta' dei candidati sono donne, e scrivere « he » per
+   Rosa Iglesias in un'app che insegna inglese e' un errore due volte */
+function manHe(m, cap) {
+  var w = (m && m.she) ? "she" : "he";
+  return cap ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+}
+function manHim(m) { return (m && m.she) ? "her" : "him"; }
+function manHis(m, cap) {
+  var w = (m && m.she) ? "her" : "his";
+  return cap ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+}
+function staffOneMan(id) {
+  return STAFF_POOL.filter(function (m) { return m.id === id; })[0] || null;
+}
+/* che cosa porta, in una riga sola: e' la colonna da confrontare */
+function manGain(m) {
+  return m.role === "fit"
+    ? m.acts + " actions a matchday, on " + m.men + " players"
+    : m.subs + " changes at half time" +
+      (m.calm ? " · no second yellows" : "") +
+      (m.scout ? " · a note on the other side" : "");
+}
+function manRole(m) { return m.role === "fit" ? "HEAD OF TRAINING" : "HEAD COACH"; }
+
+/* ───────── quanti ne rispondono ─────────
+   Il punteggio decide quanti, la reputazione decide fin dove si arriva.
+   Sempre almeno uno per ruolo: se no la scelta fra allenare di piu' e
+   gestire meglio sparirebbe, e quella scelta e' il punto. */
+function rcBand(score) {
+  if (score >= 9) return 4;
+  if (score >= 7) return 3;
+  return 2;
+}
+function rcCeiling(score) {
+  var byScore = score >= 9 ? 4 : score >= 7 ? 3 : score >= 5 ? 2 : 1;
+  var byFame = (typeof fameTier === "function") ? fameTier() : 3;
+  return Math.max(1, Math.min(byScore, byFame));
+}
+function rcOffer(score) {
+  var top = rcCeiling(score), n = rcBand(score), out = [], role, i;
+  ["fit", "gaf"].forEach(function (r) {
+    var lane = STAFF_POOL.filter(function (m) {
+      return m.role === r && m.tier <= top;
+    }).sort(function (a, b) { return b.tier - a.tier; });
+    if (lane.length) out.push(lane[0]);              /* il migliore di ogni ruolo */
+  });
+  /* e poi si riempie con i secondi migliori, alternando */
+  var rest = STAFF_POOL.filter(function (m) {
+    return m.tier <= top && out.indexOf(m) < 0;
+  }).sort(function (a, b) { return b.tier - a.tier; });
+  for (i = 0; i < rest.length && out.length < n; i++) out.push(rest[i]);
+  return out.sort(function (a, b) {
+    return (a.role === b.role) ? b.tier - a.tier : (a.role === "fit" ? -1 : 1);
+  });
+}
+
+/* ───────── una volta per competizione ───────── */
+function rcDone() { return !!stfAll().hired; }
+
+/* ═══════════════ 1. LA PAGINA CHE SPIEGA ═══════════════ */
+VIEWS.recruit = function () {
+  paintClub(ME.club);
+  barFlow("Recruit your staff", ME.club ? ME.club.name : "", 0);
+
+  if (rcDone()) {
+    var m = staffMan();
+    return html('<div class="pad"><h1>Your staff is hired.</h1>' +
+      '<p class="lede">You take <b>one</b> of the two, once a competition, and ' +
+      "yours is " + (m ? "<b>" + esc(m.name) + "</b>, " + esc(manRole(m).toLowerCase())
+                       : "already in") + ".</p>" +
+      '<button class="btn" id="rcsee">See him</button>' +
+      '<button class="btn ghost" id="rcbk">' +
+      ((typeof homeBackName === "function") ? homeBackName() : "Back") + "</button></div>") ||
+      (function () {
+        $("rcsee").onclick = function () { go("staff", { id:m ? m.role : "fit" }); };
+        $("rcbk").onclick = function () { reset(homeBack()); };
+      })();
+  }
+
+  var t = (typeof fameTier === "function") ? fameTier() : 3;
+  var fb = (typeof fameBand === "function") ? fameBand() : { n:"" };
+  html('<div class="pad"><h1>Two jobs.<br>One of them is yours to fill.</h1>' +
+    '<p class="lede">A squad is not only the twelve who play. You can hire ' +
+    "<b>one</b> member of staff for this competition — and only one, so the " +
+    "choice is a real one.</p>" +
+
+    '<div class="rcrole"><span class="rck">HEAD OF TRAINING</span>' +
+    "<b>More work in the week</b>" +
+    "<p>He decides how many sessions the squad can take, and how many of your " +
+    "twelve you can reach. He makes nobody stronger — the ceiling per player " +
+    "stays where it is — he lets you look after more of them.</p></div>" +
+
+    '<div class="rcrole"><span class="rck">HEAD COACH</span>' +
+    "<b>A better half time</b>" +
+    "<p>A head coach does not train legs. The talk comes at the break: which " +
+    "mistake cost you the first half, and a free hand to change the side that " +
+    "walks back out. The best of them read the opposition for you too.</p></div>" +
+
+    '<p class="lede">Now the interview: <b>' + RC_N + " questions at " +
+    esc(ME.level || "A1") + "</b>, and the clock runs on each one. " +
+    "How you do decides <b>how many of them take your call</b>.</p>" +
+
+    '<div class="rcfame"><span><i>THE CITY</i><b>' + esc(fb.n) + "</b></span>" +
+    "<em>" + (t >= 4
+      ? "At this level the best names will listen to you."
+      : t >= 3
+        ? "Good names will listen. The very best want a club with a bigger name."
+        : "Only the local ones will come. Win matches and speak to the press, and "
+          + "better staff start answering the phone.") + "</em></div>" +
+
+    '<button class="btn" id="rcgo">Start the interview</button>' +
+    '<button class="btn ghost" id="rcbk">' +
+    ((typeof homeBackName === "function") ? homeBackName() : "Back") + "</button></div>");
+
+  $("rcgo").onclick = function () {
+    RC.qs = (typeof drawQuestions === "function")
+      ? drawQuestions(ME.level || "A1", RC_N) : [];
+    if (!RC.qs.length) return;
+    RC.i = 0; RC.answers = [];
+    swap("rcQuiz");
+  };
+  $("rcbk").onclick = function () { reset(homeBack()); };
+};
+
+/* ═══════════════ 2. IL COLLOQUIO, A TEMPO ═══════════════ */
+function rcStop() { if (RC.t) { clearInterval(RC.t); RC.t = null; } }
+
+VIEWS.rcQuiz = function () {
+  rcStop();
+  var q = RC.qs[RC.i];
+  if (!q) return swap("rcScore");
+  barFlow("The interview", "Question " + (RC.i + 1) + " of " + RC.qs.length +
+          " · " + esc(ME.level || "A1"),
+          Math.round((RC.i / RC.qs.length) * 100), false);
+
+  html('<div class="pad">' +
+    '<div class="spbar"><i id="rcb"></i></div>' +
+    '<div class="qtop"><span>' + (RC.i + 1) + " / " + RC.qs.length +
+    "</span><em>" + esc(q.t) + "</em></div>" +
+    '<p class="qq">' + esc(q.q) + "</p>" +
+    '<div class="opts" id="rco">' + q.o.map(function (o, i) {
+      return '<button class="opt" data-a="' + i + '" type="button"><u>' + "ABCD"[i] +
+        "</u>" + esc(o) + "</button>";
+    }).join("") + "</div></div>");
+
+  var chiuso = false;
+  function avanti(a) {
+    if (chiuso) return;
+    chiuso = true; rcStop();
+    RC.answers[RC.i] = a;
+    RC.i++;
+    swap(RC.i < RC.qs.length ? "rcQuiz" : "rcScore");
+  }
+  Array.prototype.forEach.call($("rco").querySelectorAll(".opt"), function (b) {
+    b.onclick = function () { avanti(parseInt(b.dataset.a, 10)); };
+  });
+
+  /* l'orologio, con la stessa guardia della cronaca: se la pagina e'
+     cambiata sotto, si spegne invece di scrivere nel vuoto */
+  var t0 = Date.now(), tot = RC_SECS * 1000;
+  RC.t = setInterval(function () {
+    var bar = $("rcb");
+    if (!bar) { rcStop(); return; }
+    var left = Math.max(0, tot - (Date.now() - t0));
+    bar.style.width = (left / tot * 100) + "%";
+    if (left <= 0) avanti(-1);          /* tempo scaduto: risposta persa */
+  }, 70);
+};
+
+/* ═══════════════ 3. CHI RISPONDE ═══════════════ */
+VIEWS.rcScore = function () {
+  rcStop();
+  RC.score = 0;
+  RC.qs.forEach(function (q, i) { if (RC.answers[i] === q.c) RC.score++; });
+  RC.show = rcOffer(RC.score);
+  var top = rcCeiling(RC.score);
+  var t = (typeof fameTier === "function") ? fameTier() : 3;
+  var byScore = RC.score >= 9 ? 4 : RC.score >= 7 ? 3 : RC.score >= 5 ? 2 : 1;
+
+  paintClub(ME.club);
+  barFlow("The interview", "Your result", 60, false);
+  html('<div class="pad"><p class="bignum">' + RC.score + "<em>/ " + RC.qs.length +
+    '</em></p>' +
+    '<div class="verdict"><b>' + RC.show.length +
+    (RC.show.length === 1 ? " answer" : " answers") + "</b>" +
+    (RC.score >= 9 ? "They were queuing up. Take your pick."
+     : RC.score >= 7 ? "Good. Two or three of them will come."
+     : "Enough to choose from — and one of each job, so the decision is still "
+       + "yours.") + "</div>" +
+    (byScore > t
+      ? '<div class="capnote"><b>Your answers were worth more than your name</b>' +
+        "The best of them do not call back a club the city barely knows. Win, and " +
+        "say something in the press room, and next time they will.</div>"
+      : "") +
+    '<p class="lede">You hire <b>one</b>, and he stays for the whole competition.</p>' +
+    '<button class="btn" id="rc2">See who called back</button></div>');
+  $("rc2").onclick = function () { swap("rcPick"); };
+};
+
+/* ═══════════════ 4. LA SCELTA ═══════════════ */
+VIEWS.rcPick = function () {
+  paintClub(ME.club);
+  barFlow("Who called back", "One of them, and that is your bench", 85);
+  if (!RC.show.length) RC.show = rcOffer(RC.score || 0);
+
+  html('<div class="pad"><p class="lede">One takes the job. Read what each one ' +
+    "brings before you call — you will not get another interview in this " +
+    "competition.</p>" +
+    RC.show.map(function (m) {
+      return '<button class="rcman" data-id="' + m.id + '" type="button">' +
+        '<span class="rcm1"><i>' + manRole(m) + "</i>" +
+        '<span class="rcstar">' + (function () {
+          var o = "", i;
+          for (i = 0; i < 4; i++) o += '<u class="' + (i < m.tier ? "on" : "") + '"></u>';
+          return o;
+        })() + "</span></span>" +
+        "<b>" + esc(m.name) + "</b>" +
+        '<em>' + esc(m.nick) + " · " + esc(m.from) + "</em>" +
+        "<p>" + esc(m.line) + "</p>" +
+        '<span class="rcg">' + esc(manGain(m)) + "</span></button>";
+    }).join("") +
+    '<button class="btn ghost" id="rcbk">Not now</button></div>');
+
+  Array.prototype.forEach.call($("main").querySelectorAll(".rcman"), function (b) {
+    b.onclick = function () { swap("rcSure", { id:b.dataset.id }); };
+  });
+  $("rcbk").onclick = function () { reset(homeBack()); };
+};
+
+VIEWS.rcSure = function (d) {
+  var m = staffOneMan(d && d.id);
+  if (!m) return back();
+  paintClub(ME.club);
+  barFlow("Sign him?", esc(m.name), 95);
+  html('<div class="pad"><h1>' + esc(m.name) + "?</h1>" +
+    '<p class="lede">' + esc(manRole(m).toLowerCase()) + " — " +
+    esc(m.line) + "</p>" +
+    '<div class="capnote"><b>' + esc(manGain(m)) + "</b>" +
+    esc(manHe(m, true)) + " is on your bench for the whole competition. The other " +
+    "job stays empty: you take one, not both.</div>" +
+    '<button class="btn" id="rcyes">Sign ' + esc(m.name) + "</button>" +
+    '<button class="btn ghost" id="rcno">Look again</button></div>');
+  $("rcyes").onclick = function () {
+    var a = stfAll();
+    a.who = m.role; a.hired = m.id;
+    a.md = (typeof mdNow === "function") ? mdNow() : 1;
+    stfSave(a);
+    swap("staff", { id:m.role });
+  };
+  $("rcno").onclick = function () { swap("rcPick"); };
 };
 
 
@@ -17104,6 +17479,10 @@ function demoSteps() {
       go:"market", ok:market },
     { id:"spon",   t:"A sponsor on the shirt", s:"make the call — somebody may say no",
       go:"spon",   ok:spon },
+    { id:"staff",  t:"Recruit your staff", s:"ten questions, then one of them signs",
+      go:"recruit", ok:(function () {
+        try { return !!(typeof rcDone === "function" && rcDone()); } catch (e) { return false; }
+      })() },
     { id:"ground", t:"Grow your squad",
       s:"six actions to share out among your twelve",
       go:"ground", ok:ground },
@@ -17184,6 +17563,7 @@ function wireDemo() {
    stessa porta del campionato vero, quella che sa a che punto sei */
 function demoGo(where) {
   if (where === "home") return;
+  if (where === "recruit") return go("recruit");
   if (where !== "sheet" && where !== "play") return go(where);
   var md = (ME.next && ME.next.md) || 1;
   if (where === "play") {
@@ -19311,7 +19691,7 @@ var STAFF = [
     + "the reason the gym has three real rooms instead of one door.",
     g:["Eight actions a matchday instead of six",
        "Six players can work instead of four",
-       "He makes nobody stronger: the ceiling stays at 0.15 a player"] },
+       "Nobody gets stronger: the ceiling stays at 0.15 a player"] },
   { id:"gaf", n:"Head coach", k:"THE EAR",
     short:"Coach", b:"EAR",
     one:"He trains the ear and the eye, not the legs",
@@ -19375,11 +19755,41 @@ function staffPick(id) {
    Un posto solo dove si legge il budget di giornata: 56-lang.js chiede
    qui invece di guardare le costanti, cosi' la riga « 6 azioni su 4
    giocatori » non resta scritta in tre punti diversi. */
+/* ───────── chi e' davvero in panchina ─────────
+   Non piu' « il ruolo », ma la persona assunta nel colloquio: e' da lei
+   che escono i numeri, perche' un preparatore di quartiere e uno da
+   nazionale non valgono lo stesso. Se per qualche motivo il nome non
+   si trova, si ricade sul gradino piu' basso di quel ruolo: meglio un
+   po' meno che niente del tutto. */
+function staffMan() {
+  var a = stfAll();
+  var m = (typeof staffOneMan === "function" && a.hired) ? staffOneMan(a.hired) : null;
+  if (m) return m;
+  if (!a.who || typeof STAFF_POOL === "undefined") return null;
+  return STAFF_POOL.filter(function (x) { return x.role === a.who; })[0] || null;
+}
 function actCapNow() {
-  return staffIs("fit") ? 8 : ((typeof ACT_PER_MD === "number") ? ACT_PER_MD : 6);
+  var m = staffMan();
+  return (m && m.role === "fit") ? m.acts
+    : ((typeof ACT_PER_MD === "number") ? ACT_PER_MD : 6);
 }
 function actPlayersNow() {
-  return staffIs("fit") ? 6 : ((typeof ACT_PLAYERS === "number") ? ACT_PLAYERS : 4);
+  var m = staffMan();
+  return (m && m.role === "fit") ? m.men
+    : ((typeof ACT_PLAYERS === "number") ? ACT_PLAYERS : 4);
+}
+/* quanti cambi all'intervallo, e chi tiene la testa fredda */
+function dressMax() {
+  var m = staffMan();
+  return (m && m.role === "gaf") ? m.subs : 0;
+}
+function staffCalm() {
+  var m = staffMan();
+  return !!(m && m.role === "gaf" && m.calm);
+}
+function staffScouts() {
+  var m = staffMan();
+  return !!(m && m.role === "gaf" && m.scout);
 }
 
 /* ═══════════════ LE TRE STANZE DELLA PALESTRA ═══════════════
@@ -19685,7 +20095,8 @@ function staffPeg(m) {
     m.id + '" type="button" aria-label="' + esc(m.n) + '">' +
     '<span class="shirt"><svg viewBox="2 5 96 91"><use href="#coat"/></svg>' +
     '<span class="badge">' + esc(m.b) + "</span></span>" +
-    '<span class="pname">' + esc(m.short) + "</span>" +
+    '<span class="pname">' + esc(mine ? surname((staffMan() || {}).name || m.short)
+                                        : m.short) + "</span>" +
     '<span class="stfst' + (mine ? " on" : "") + '">' +
     (mine ? "on the bench" : staffWho() ? "not hired" : "free") + "</span></button>";
 }
@@ -19694,14 +20105,16 @@ function staffRow() {
   if (!ME.club) return "";
   return '<p class="hint stfhint">And two who do not play. ' +
     (staffWho() ? "Tap to see what yours brings."
-                : "You can hire <b>one</b> of them.") + "</p>" +
+                : "An interview, and one of them takes the job.") + "</p>" +
     '<div class="row stfrow2">' + STAFF.map(staffPeg).join("") + "</div>";
 }
 /* la riga di stato, quella che si legge senza aprire niente */
 function staffLine() {
   if (!ME.club) return "";
   var w = staffWho();
-  return w ? ((staffOne(w) || {}).short || "") + " on the bench"
+  var man = staffMan();
+  return w ? (man ? surname(man.name) : ((staffOne(w) || {}).short || "")) +
+             " on the bench"
            : "nobody on the bench yet";
 }
 function drawStaffRow() {
@@ -19719,12 +20132,14 @@ function drawStaffRow() {
    imparato a sfogliare la rosa non deve imparare niente di nuovo. */
 function staffHero(m) {
   var mine = staffIs(m.id);
+  var man = mine ? staffMan() : null;
   return '<div class="phero" data-stf="' + m.id + '">' +
     '<span class="pkit"><svg viewBox="2 5 96 91"><use href="#coat"/></svg></span>' +
-    '<span class="pwho"><b>' + esc(m.n) + "</b>" +
+    '<span class="pwho"><b>' + esc(man ? man.name : m.n) + "</b>" +
     '<span class="prow2"><i class="rl">' + esc(m.k) + "</i>" +
     (mine ? '<i class="rl cap">ON THE BENCH</i>' : "") + "</span>" +
-    "<em>" + esc(m.one) + "</em></span></div>";
+    "<em>" + esc(man ? (man.nick + " \u00b7 " + man.from) : m.one) +
+    "</em></span></div>";
 }
 
 VIEWS.staff = function (d) {
@@ -19777,11 +20192,17 @@ function drawStaffBody(id) {
   var who = staffWho(), mine = who === m.id, lock = staffLocked();
   var lv = (typeof lvSafe === "function") ? lvSafe() : "A1";
 
+  var man = mine ? staffMan() : null;
   box.innerHTML =
-    '<h2 class="sec top">What he brings</h2><div class="panel">' +
-    m.g.map(function (g) {
-      return '<div class="stfr"><span>' + esc(g) + "</span></div>";
-    }).join("") + "</div>" +
+    (man ? '<p class="lede">' + esc(man.line) + "</p>" : "") +
+    '<h2 class="sec top">What ' + (man ? esc(manHe(man)) : "he") +
+    ' brings</h2><div class="panel">' +
+    (man
+      ? '<div class="stfr"><span>' + esc(manGain(man)) + "</span><em>\u2605 " +
+        man.tier + "/4</em></div>"
+      : m.g.map(function (g) {
+          return '<div class="stfr"><span>' + esc(g) + "</span></div>";
+        }).join("")) + "</div>" +
 
     (m.id === "fit"
       ? '<h2 class="sec top">The three rooms in the gym</h2><div class="panel">' +
@@ -19792,7 +20213,7 @@ function drawStaffBody(id) {
         }).join("") + "</div>" +
         '<p class="hint">These three are open to everybody, hired or not: ' +
         "three names over one box of questions was a defect, not a reward. " +
-        "What he gives you is the <b>room to use them</b> \u2014 eight actions a " +
+        "What the head of training gives you is the <b>room to use them</b> \u2014 eight actions a " +
         "matchday on six players instead of six on four.</p>"
       : '<h2 class="sec top">His room</h2><div class="panel">' +
         '<div class="stfr"><span><b>' + esc(EAR_ROOM.n) + "</b> \u00b7 " +
@@ -19802,26 +20223,25 @@ function drawStaffBody(id) {
         '<p class="hint">It opens inside <b>Boost the English</b>, next to the ' +
         "four written exercises, and it is the only one of them that nobody " +
         "else has.</p>" +
-        (mine ? scoutBox() : "")) +
+        ((mine && staffScouts()) ? scoutBox() : "")) +
 
     (mine
       ? '<p class="lede top">' +
-        (lock ? "He is on your bench for this competition."
-              : "He is on your bench. You can still swap him until the first dictation.") +
+        (man ? manHe(man, true) : "He") + " is on your bench for this competition." +
         "</p>"
-      : lock
-        ? '<p class="lede top">The competition has started, so the bench is ' +
-          "settled. " + esc((staffOne(who) || {}).n || "") + " stays.</p>"
-        : '<button class="btn" id="stfgo" type="button">' +
-          (who ? "Swap: bring in " + esc(m.n) : "Hire " + esc(m.n)) + "</button>") +
+      : who
+        ? '<p class="lede top">You have already filled the one job you get in this ' +
+          "competition. " + esc((staffMan() || {}).name || "") + " stays.</p>"
+        : '<button class="btn" id="stfgo" type="button">Recruit your staff</button>' +
+          '<p class="hint">Ten questions with the clock running, and the ones who ' +
+          "like what they hear call back. How many of them, and how good, depends " +
+          "on your answers and on how the city sees the club.</p>") +
 
     '<button class="btn ghost" id="stfbk" type="button">' +
     ((typeof homeBackName === "function") ? homeBackName() : "Back") + "</button>";
 
   if ($("stfgo")) {
-    $("stfgo").onclick = function () {
-      if (staffPick(m.id)) swap("staff", { id:m.id });
-    };
+    $("stfgo").onclick = function () { go("recruit"); };
   }
   $("stfbk").onclick = function () {
     if (typeof toSquad === "function") return toSquad();
@@ -19865,7 +20285,7 @@ function drawStaffBody(id) {
    meta' del gioco.
    ═══════════════════════════════════════════════════════════════════ */
 
-var DRESS_MAX = 5;
+var DRESS_MAX = 5;          /* il tetto assoluto; quelli veri li da' l'uomo */
 var DRESSPICK = null;          /* la casella che si sta cambiando */
 
 function dressKey() {
@@ -19876,7 +20296,14 @@ function dressUsed() {
   try { return parseInt(localStorage.getItem(dressKey()) || "0", 10) || 0; }
   catch (e) { return 0; }
 }
-function dressLeft() { return Math.max(0, DRESS_MAX - dressUsed()); }
+function dressLeft() {
+  var cap = (typeof dressMax === "function") ? dressMax() : DRESS_MAX;
+  return Math.max(0, Math.min(DRESS_MAX, cap) - dressUsed());
+}
+function dressCap() {
+  var cap = (typeof dressMax === "function") ? dressMax() : DRESS_MAX;
+  return Math.min(DRESS_MAX, cap);
+}
 function dressBump() {
   try { localStorage.setItem(dressKey(), String(dressUsed() + 1)); } catch (e) {}
 }
@@ -20030,7 +20457,7 @@ VIEWS.dressing = function () {
       : "") +
 
     '<div class="drhead"><span><i>CHANGES LEFT</i><b>' + left + "<em>/" +
-    DRESS_MAX + "</em></b></span>" +
+    dressCap() + "</em></b></span>" +
     "<em>Tap a place to put somebody else there. A player with " +
     "<b>BOOKED</b> next to his name is one yellow from being sent off: " +
     "taking him off now is the safe move.</em></div>" +
