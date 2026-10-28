@@ -3237,6 +3237,48 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   font:700 13px/1 var(--brand);cursor:pointer}
 .drp.on{border-color:var(--gold);background:rgba(227,239,38,.16);color:#FFFDEE}
 .drp.none{border-style:dashed;color:var(--fog)}
+
+/* ═════════ il totale dei due reparti ═════════ */
+.qrw.big{padding-top:4px;padding-bottom:12px;border-bottom:1px solid var(--edge);
+  margin-bottom:4px}
+.qrw.big .qv{font-size:27px;color:var(--gold)}
+.qrw.big .ql{font-weight:800;letter-spacing:.14em;color:#FFFDEE}
+
+/* ═════════ il gol, in diretta ═════════ */
+.rnb{position:relative;overflow:hidden;transition:border-color .18s,box-shadow .18s}
+.rnb.hit{border-color:var(--gold);
+  box-shadow:0 0 0 2px rgba(227,239,38,.35),0 0 34px rgba(227,239,38,.22)}
+.rnb.hit.them{border-color:rgba(201,85,63,.9);
+  box-shadow:0 0 0 2px rgba(201,85,63,.35),0 0 34px rgba(201,85,63,.2)}
+.rnb.sting{border-color:rgba(201,85,63,.9);
+  box-shadow:0 0 0 2px rgba(201,85,63,.3)}
+.rnn b.pop{display:inline-block;animation:rnpop .62s cubic-bezier(.2,1.5,.4,1)}
+@keyframes rnpop{
+  0%{transform:scale(1)}
+  35%{transform:scale(1.55);color:var(--gold)}
+  100%{transform:scale(1)}
+}
+.rngo{position:absolute;left:0;right:0;bottom:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:9px 0 10px;pointer-events:none;
+  background:var(--gold);
+  color:#06231D;font:900 25px/1 var(--brand);letter-spacing:.12em;
+  animation:rnband 1.4s ease-out forwards}
+.rngo.wnd{background:#FFFDEE}
+.rngo em{font:800 10.5px/1 var(--brand);font-style:normal;letter-spacing:.1em;
+  color:rgba(6,35,29,.75)}
+@keyframes rnband{
+  0%{opacity:0;transform:translateY(100%)}
+  16%{opacity:1;transform:translateY(0)}
+  76%{opacity:1;transform:translateY(0)}
+  100%{opacity:0;transform:translateY(40%)}
+}
+@media (prefers-reduced-motion:reduce){
+  .rnn b.pop{animation:none}
+  .rngo{animation:none;opacity:1}
+}
+.rngo{font-size:22px}
+.rngo em{opacity:.85}
 </style>
 </head>
 <body>
@@ -4140,7 +4182,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "118";
+var APPVER = "119";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -12175,8 +12217,49 @@ function ftRole(w) {
 }
 
 /* ───────── tutte le azioni, in ordine di minuto ───────── */
+/* ═══════════════ CHI SEGNA DALL'ALTRA PARTE ═══════════════
+
+   Contro un altro alunno non si sa e non si inventa: la sua formazione
+   sta sul suo telefono, e il gol resta intestato al club. Scrivere un
+   nome a caso vorrebbe dire mettere in cronaca una cosa falsa.
+
+   Contro il bot e' diverso: la rosa ce l'abbiamo — e' quella vera del
+   club, le stesse dodici maglie che vedrebbe chi lo guidasse — e allora
+   il gol ha un nome, come dev'essere.
+
+   La scelta e' ferma, non casuale: dipende dalla giornata, dal minuto e
+   dal numero dell'azione. Cosi' la diretta e il tabellino finale dicono
+   lo stesso nome, e chi riguarda la partita la ritrova identica. Un
+   marcatore che cambia a ogni replay non e' un marcatore. */
+function foeSquad(oppId) {
+  var base = (typeof baseClub === "function") ? baseClub(oppId, "") : oppId;
+  return (typeof SQUADS !== "undefined" && SQUADS[base]) ? SQUADS[base] : null;
+}
+function foeIsBot(o) {
+  if (o && o.foeNames !== undefined) return !!o.foeNames;
+  return (typeof demoOnSafe === "function") && demoOnSafe();
+}
+function foeScorer(oppId, md, min, n) {
+  var list = foeSquad(oppId);
+  if (!list || !list.length) return null;
+  /* segnano gli attaccanti, poi i centrocampisti: un portiere che fa
+     gol ogni tanto sarebbe buffo una volta e sbagliato sempre */
+  var pool = list.filter(function (p) { return p.r === "FW"; });
+  if (pool.length < 2) pool = pool.concat(list.filter(function (p) { return p.r === "MF"; }));
+  if (!pool.length) pool = list.filter(function (p) { return p.r !== "GK"; });
+  if (!pool.length) return null;
+  var k = Math.abs((md || 1) * 97 + (min || 0) * 31 + (n || 0) * 7) % pool.length;
+  return pool[k];
+}
+
 function ftEvents(md, s, them, o) {
   o = o || {};
+  var botFoe = foeIsBot(o);
+  /* il nome e il ruolo di chi segna per loro, quando lo sappiamo */
+  function theirMan(min, n) {
+    if (!botFoe) return null;
+    return foeScorer(s.opp, md, min, n);
+  }
   var myName = o.myName || (ME.club ? ME.club.name : ""), ev = [];
   var myC = o.myCrest !== undefined ? o.myCrest : crestOf(ME.club.id);
   var thC = o.thCrest !== undefined ? o.thCrest : crestOf(s.opp);
@@ -12221,7 +12304,9 @@ function ftEvents(md, s, them, o) {
   s.their.duels.forEach(function (d) {
     var m = (s.their.mins || [])[d.n - 1] || null;
     if (d.goal) {
-      ev.push({ min:m, crest:thC, ini:thI, name:them, role:"",
+      var fm = theirMan(m, d.n);
+      ev.push({ min:m, crest:thC, ini:thI,
+        name:fm ? fm.n : them, role:fm ? ftRole({ role:fm.r }) : "",
         note:"their shot " + d.n + " &middot; " + fmt(d.shot) +
           (d.save == null ? ", nobody on the line" : " against your " + fmt(d.save)),
         tag:"GOAL", cls:"out" });
@@ -12244,13 +12329,17 @@ function ftEvents(md, s, them, o) {
     }
   });
   if (s.their.sources.bdo) {
-    ev.push({ min:s.their.bdoMin || null, crest:thC, ini:thI, name:them, role:"",
+    var fw = theirMan(s.their.bdoMin || 0, 99);
+    ev.push({ min:s.their.bdoMin || null, crest:thC, ini:thI,
+      name:fw ? fw.n : them, role:fw ? ftRole({ role:fw.r }) : "",
       note:"their hard word, written perfectly", tag:"WONDER", cls:"out wnd" });
   }
   if (s.their.penalty.conceded) {
+    var fp = theirMan(s.their.penMin || 0, 98);
     ev.push({ min:s.their.penMin || null, crest:thC, ini:thI,
-      name:"Penalty for " + them, role:"",
-      note:"your hard word came out wrong",
+      name:fp ? fp.n : ("Penalty for " + them),
+      role:fp ? ftRole({ role:fp.r }) : "",
+      note:(fp ? "from the spot · " : "") + "your hard word came out wrong",
       tag:s.their.penalty.outcome === "goal" ? "GOAL" : "SAVED",
       cls:s.their.penalty.outcome === "goal" ? "out" : "kp" });
   }
@@ -12311,9 +12400,21 @@ function ftEvents(md, s, them, o) {
    « Morgan Fog » diventa « Fog M. »: il cognome davanti e l'iniziale
    con il punto, che e' come si leggono i tabellini. Chi segna due volte
    compare una volta sola, con i suoi minuti in fila. */
+/* « Cavalli M. » si scrive cosi' solo se quello e' davvero un nome di
+   persona: due o tre parole, tutte con l'iniziale maiuscola. Su
+   « Nobody on this action » la stessa regola produceva « on this action
+   N. », che non vuol dire niente e sembrava un guasto. */
+function isPersonName(nm) {
+  var a = String(nm == null ? "" : nm).trim().split(/\s+/);
+  if (a.length < 2 || a.length > 3) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (!/^[A-ZÀ-Þ]/.test(a[i])) return false;
+  }
+  return true;
+}
 function shortScorer(nm) {
   var a = String(nm == null ? "" : nm).trim().split(/\s+/);
-  if (a.length < 2) return a[0] || "";
+  if (!isPersonName(nm)) return String(nm == null ? "" : nm);
   return a.slice(1).join(" ") + " " + a[0].charAt(0).toUpperCase() + ".";
 }
 function ftScorers(ev) {
@@ -12344,10 +12445,15 @@ function ftScorersHtml(ev, myName, them) {
   /* a sinistra i tuoi, e si abbreviano. A destra c'e' solo il nome del
      club: di chi segna dall'altra parte non sappiamo niente, e « Brass
      FC » abbreviato diventerebbe « FC B. » */
-  function col(list, club, corto) {
+  /* si abbrevia un nome di persona, non il nome di un club: « Brass FC »
+     accorciato diventerebbe « FC B. ». Quindi si guarda voce per voce,
+     non colonna per colonna — adesso che anche dall'altra parte, contro
+     il bot, i gol hanno un nome. */
+  function col(list, club) {
     return '<div class="scc"><em>' + esc(club) + "</em>" +
       (list.length
         ? list.map(function (x) {
+            var corto = x.name !== club && isPersonName(x.name);
             return "<b>" + esc(corto ? shortScorer(x.name) : x.name) +
               (x.wnd ? " ★" : "") +
               "<i>" + x.mins.map(function (m) {
@@ -12356,8 +12462,8 @@ function ftScorersHtml(ev, myName, them) {
         : "<span>no scorer</span>") + "</div>";
   }
   return '<div class="scbox"><span class="sck">SCORERS</span>' +
-    '<div class="scrow">' + col(sc.me, myName, true) +
-    col(sc.them, them, false) + "</div></div>";
+    '<div class="scrow">' + col(sc.me, myName) +
+    col(sc.them, them) + "</div></div>";
 }
 
 function ftRowHtml(e) {
@@ -12403,7 +12509,7 @@ function ftRunPage(cfg) {
   barFlow("Live", cfg.title || (myName + " v " + them), 0, false);
 
   html('<div class="pad">' +
-    '<div class="rnb">' +
+    '<div class="rnb" id="rnb">' +
       '<span class="rnt"><span class="rnd" id="rnd"></span><b id="rmin">0&prime;</b>' +
       '<em id="rph">KICK OFF</em></span>' +
       '<div class="rnsc">' +
@@ -12471,6 +12577,52 @@ function ftRunPage(cfg) {
   }
   function score() { $("rA").textContent = A; $("rB").textContent = B; }
 
+  /* ───────── quando succede qualcosa ─────────
+     Un gol, in diretta, finora era un numero che cambiava da solo
+     mentre l'occhio stava leggendo la riga di sotto: capitava di
+     accorgersene due minuti dopo. Adesso il tabellone lampeggia, la
+     cifra che e' cresciuta fa un salto, e una fascia attraversa lo
+     schermo con la parola. Dura meno di un secondo e poi sparisce:
+     deve far alzare gli occhi, non interrompere la partita.
+     Sotto il punteggio compare subito il nome di chi ha segnato — non
+     a fine partita, adesso, come su un tabellone vero.
+     Chi ha chiesto al telefono meno animazioni non le vede: la regola
+     sta nel foglio di stile. */
+  var BANGT = null;
+  function bang(e, out) {
+    var box = $("rnb"), num = $(out ? "rB" : "rA");
+    if (!box) return;
+    var wnd = e.tag === "WONDER";
+    var pen = /from the spot|Penalty/.test(String(e.name || "") + String(e.note || ""));
+    var txt = wnd ? "WONDER GOAL" : pen ? "PENALTY" : "GOAL";
+    box.className = "rnb hit" + (out ? " them" : "");
+    if (num) num.className = "pop";
+    var rb = document.createElement("span");
+    rb.className = "rngo" + (wnd ? " wnd" : "");
+    rb.innerHTML = esc(txt) + "<em>" + esc(shortScorer(e.name || "")) + "</em>";
+    box.appendChild(rb);
+    if (BANGT) clearTimeout(BANGT);
+    BANGT = setTimeout(function () {
+      if (box) box.className = "rnb";
+      if (num) num.className = "";
+      if (rb.parentNode) rb.parentNode.removeChild(rb);
+    }, 1400);
+  }
+  /* un rosso non e' un gol, ma e' una cosa che cambia la partita: un
+     lampo breve, senza fascia */
+  function sting() {
+    var box = $("rnb");
+    if (!box) return;
+    box.className = "rnb sting";
+    setTimeout(function () { if (box) box.className = "rnb"; }, 700);
+  }
+  /* i marcatori, aggiornati al volo */
+  function scorersNow(upTo) {
+    var sc = $("rsco");
+    if (!sc) return;
+    sc.innerHTML = ftScorersHtml(ev.slice(0, upTo), myName, them);
+  }
+
   function tick() {
     /* se nel frattempo si e' usciti dalla cronaca, l'orologio si ferma:
        se no continua a scrivere dentro una pagina che non c'e' piu' */
@@ -12491,8 +12643,13 @@ function ftRunPage(cfg) {
     while (i < ev.length && ((ev[i].late ? 90 : ev[i].min || 90) <= min)) {
       var e = ev[i];
       if (e.tag === "GOAL" || e.tag === "WONDER") {
-        if (e.cls && e.cls.indexOf("out") === 0) B++; else A++;
+        var fuori = !!(e.cls && e.cls.indexOf("out") === 0);
+        if (fuori) B++; else A++;
         score();
+        bang(e, fuori);
+        scorersNow(i + 1);
+      } else if (e.tag === "SENT OFF" || e.tag === "RED") {
+        sting();
       }
       put(ftRowHtml(e));
       i++;
@@ -12502,10 +12659,9 @@ function ftRunPage(cfg) {
   function over() {
     $("rph").textContent = "FULL TIME";
     mark("FULL TIME", A + " &ndash; " + B);
-    /* il tabellino dei marcatori, sotto il punteggio: e' la prima cosa
-       che si cerca quando la partita finisce */
-    var sc = $("rsco");
-    if (sc) sc.innerHTML = ftScorersHtml(ev, myName, them);
+    /* il tabellino dei marcatori, sotto il punteggio: durante la partita
+       si e' riempito gol dopo gol, qui si chiude con tutti */
+    scorersNow(ev.length);
     /* finita: la finestra si apre e torna tutta la partita, dal primo
        minuto all'ultimo. Il tabellone resta appiccicato in alto mentre
        il dito scorre. */
@@ -12655,7 +12811,35 @@ VIEWS.live = function () {
     '<h2 class="sec top">The two sides</h2>' +
     '<div class="panel qbox"><div class="qhd"><span>' + esc(ME.club.name) +
       "</span><span>" + esc(them) + "</span></div>" +
+      /* ── il totale, in cima ──
+         Attacco e difesa erano due righe e basta: mancava il numero che
+         l'alunno cerca per primo, « quanto ho messo insieme in tutto ».
+         E' la somma dei due reparti, momenti compresi. */
+      (function () {
+        var mT = { v:myAtt.v + myDef.v, n:myAtt.n + myDef.n };
+        var tT = { v:thAtt.v + thDef.v, n:thAtt.n + thDef.n };
+        return '<div class="qrw big"><span class="qv">' + fmt(mT.v) +
+          "<u>" + mT.n + (mT.n === 1 ? " moment" : " moments") + "</u></span>" +
+          '<span class="ql">total</span><span class="qv">' + fmt(tT.v) +
+          "<u>" + tT.n + (tT.n === 1 ? " moment" : " moments") + "</u></span></div>";
+      })() +
       qrow("attack", myAtt, thAtt) + qrow("defence", myDef, thDef) +
+      /* ── zero momenti non e' un errore, ed e' meglio dirlo ──
+         Un reparto a « 0,00 · 0 moments » sembra un guasto. Non lo e':
+         vuol dire che il totale scritto non ha mai raggiunto la prima
+         soglia, e quindi non si e' aperto niente. Detto, si capisce. */
+      (function () {
+        var vuoti = [];
+        if (!myAtt.n) vuoti.push("attack");
+        if (!myDef.n) vuoti.push("defence");
+        if (!vuoti.length) return "";
+        return '<p class="qn sm3">Your ' + vuoti.join(" and your ") +
+          (vuoti.length === 1 ? " opened no moments at all" : " opened no moments at all") +
+          ": what you wrote never reached the first threshold, so there was " +
+          "nothing to " + (vuoti.length === 1 && vuoti[0] === "defence"
+            ? "defend with" : "play with") + ". The thresholds, and the word " +
+          "each one fell on, are in your language report.</p>";
+      })() +
       pwrow() +
       '<p class="qn">The points each side put together \u2014 not the goals: ' +
       "every moment is worth " +
