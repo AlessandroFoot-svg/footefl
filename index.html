@@ -3175,11 +3175,35 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   background:linear-gradient(180deg,rgba(226,251,206,.08),rgba(4,23,15,.5))}
 .frs.half .frsk{color:#8FC4AC}
 .frs p b{display:inline;font:inherit;font-weight:800;color:#FFFDEE}
+
+/* ═════════ le due maglie dello staff, in coda alla rosa ═════════ */
+.stfhint{margin:16px 2px 9px;padding-top:14px;
+  border-top:1px solid var(--edge)}
+.stfrow2{justify-content:flex-start;gap:18px}
+.stfpeg .shirt svg{opacity:.92}
+.stfpeg .badge{background:rgba(226,251,206,.22);color:#FFFDEE}
+.stfpeg.on .badge{background:var(--gold);color:#06231D}
+.stfst{display:block;margin-top:3px;font:700 9px/1 var(--brand);
+  letter-spacing:.06em;color:var(--fog);text-transform:uppercase}
+.stfst.on{color:var(--gold);font-weight:800}
+.stfpeg.on .pname{color:#FFFDEE}
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <!-- la giacca dello staff: non scendono in campo, e si vede -->
+  <symbol id="coat" viewBox="2 5 96 91">
+    <path d="M37 8 L50 23 L63 8 L81 15 C92 20 96 27 96 35 L80 44 L82 93 L18 93
+             L20 44 L4 35 C4 27 8 20 19 15 Z"
+          fill="var(--club)" stroke="rgba(242,230,200,.32)" stroke-width="1.7"
+          stroke-linejoin="round"/>
+    <path d="M37 8 L50 23 L63 8" fill="none"
+          stroke="rgba(242,230,200,.5)" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M50 23 L50 93" fill="none"
+          stroke="rgba(242,230,200,.55)" stroke-width="2.3" stroke-linecap="round"/>
+    <circle cx="50" cy="40" r="2.6" fill="rgba(242,230,200,.6)"/>
+  </symbol>
   <symbol id="jersey" viewBox="2 5 96 91">
     <path d="M37 8 C41 17 59 17 63 8 L81 15 C92 20 96 27 96 35 L80 44 L82 93 L18 93
              L20 44 L4 35 C4 27 8 20 19 15 Z"
@@ -4066,7 +4090,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "115";
+var APPVER = "117";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -10146,7 +10170,6 @@ VIEWS.squad = function () {
        conferenza e chi risponde agli sponsor, e stava dietro una porta */
     '<section class="pad" id="fmbar"></section>' +
     '<section class="pad"><div class="sqc" id="sqc"></div></section>' +
-    '<div id="staffbar"></div>' +
     '<div id="stadbar"></div>' +
     '<section class="pad" id="signs" hidden><h2 class="sec">Signed in the market</h2>' +
     '<div class="panel" id="signbox"></div></section>' +
@@ -10161,7 +10184,6 @@ VIEWS.squad = function () {
     '<div class="tiles" id="tiles"></div></section>' +
     '<p class="foot" id="foot"></p>');
   drawSqPress(); drawFameBar(); drawStadium(); drawBand(); drawSquadCard();
-  if (typeof drawStaff === "function") drawStaff();
   drawSignings();
   if (!demo) drawTable();
   drawNext();
@@ -10379,13 +10401,18 @@ function drawSquadCard() {
     (SQOPEN ? "true" : "false") + '"><span class="sqt"><i>MY SQUAD</i><b>' +
     all.length + " players</b><em>" +
     (grown ? grown + (grown === 1 ? " has grown" : " have grown") : "nobody has grown yet") +
+    /* lo stato della panchina si legge anche a scheda chiusa: se no due
+       assunzioni restano nascoste dietro un tocco che nessuno fa */
+    ((typeof staffLine === "function" && staffLine())
+      ? " &middot; " + esc(staffLine()) : "") +
     "</em></span><i class=\"sqtog\">" + (SQOPEN ? "&minus;" : "+") + "</i></button>" +
     (SQOPEN
       ? '<div class="sqbody">' +
         '<div class="sqf" id="sqrole"></div>' +
         '<div class="sqf thin" id="sqsort"></div>' +
         '<p class="hint" id="sqhint">Tap a shirt to open the player.</p>' +
-        '<div id="shirts"></div></div>'
+        '<div id="shirts"></div>' +
+        '<div id="sqstaff"></div></div>'
       : "");
   $("sqtog").onclick = function () { SQOPEN = !SQOPEN; drawSquadCard(); };
   if (!SQOPEN) return;
@@ -10405,6 +10432,7 @@ function drawSquadCard() {
     b.onclick = function () { SQF.sort = b.dataset.s; drawSquadCard(); };
   });
   drawShirts();
+  if (typeof drawStaffRow === "function") drawStaffRow();
 }
 
 /* ───────── le maglie, dodici per schermata ─────────
@@ -18554,21 +18582,38 @@ function toSquad() {
    chiede quattro:
 
      DSPEED  riconoscere in fretta        ·  si tocca, ma il tempo scorre
-     DORDER  mettere le parole in fila    ·  si costruisce, non si scegli
+     DORDER  mettere le parole in fila    ·  si costruisce, non si sceglie
      DTYPE   scrivere la parola giusta    ·  si digita, e l'ortografia conta
      DEAR    capire una voce              ·  non c'e' niente da leggere
 
-   Il campo lessicale e' lo sport visto da dentro: il movimento, la
-   forza, il tocco. Chi fa questi esercizi non impara "l'inglese in
-   generale", impara le parole che gli servono quando il professore
-   legge il dettato della partita.
+   ╔═══════════════════════════════════════════════════════════════╗
+   ║  LA REGOLA DEI TEMI — decisa dal prof. Autiello               ║
+   ║                                                               ║
+   ║  Solo un esercizio su cinque parla di calcio. Gli altri        ║
+   ║  quattro parlano d'altro: la casa, la scuola, il cibo, la      ║
+   ║  citta', i soldi, i viaggi, il tempo, gli animali, la salute,  ║
+   ║  il lavoro, la tecnologia, l'ambiente.                         ║
+   ║                                                               ║
+   ║  Non e' una questione di gusto: e' un corso di inglese dentro  ║
+   ║  un gioco di calcio, non un corso di calcio. Un alunno che a   ║
+   ║  maggio sapesse dire « cross », « offside » e « first touch »  ║
+   ║  e non sapesse ordinare un panino avrebbe imparato la cosa     ║
+   ║  sbagliata, e i dettati del professore — il traghetto, il      ║
+   ║  faro, le capitali, il parco dietro la scuola — vanno in tutt' ║
+   ║  altra direzione.                                              ║
+   ║                                                               ║
+   ║  La stanza dice il GESTO, non l'argomento: « Weights » vuol    ║
+   ║  dire ordine delle parole, non frasi sui pesi.                 ║
+   ║                                                               ║
+   ║  Vale per ogni lotto nuovo: quattro su cinque fuori dal campo. ║
+   ╚═══════════════════════════════════════════════════════════════╝
 
    Quanto ce n'e' e quanto ce ne vorrebbe: qui sono una quindicina per
    stanza e per livello. Il bersaglio vero e' quaranta, perche' con il
-   responsabile dell'allenamento si arriva a otto azioni a giornata e
-   in tre giornate si bruciano in fretta. Il registro di 43-staff.js
-   tiene il conto di quello che e' gia' uscito e lo dice senza mentire
-   quando il banco e' finito.
+   responsabile dell'allenamento si arriva a otto azioni a giornata e in
+   tre giornate si bruciano in fretta. Il registro di 43-staff.js tiene
+   il conto di quello che e' gia' uscito e lo dice senza mentire quando
+   il banco e' finito.
    B2, C1 e C2 ricadono su B1 finche' non hanno il loro.
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -18577,113 +18622,126 @@ function toSquad() {
    da rileggere due volte. */
 var DSPEED = {
 A1: [
- { q:"go back towards your own goal",        o:["drop back","push up","cut inside","stay wide"], c:0 },
- { q:"run forward, away from your goal",     o:["push up","drop back","turn round","sit down"], c:0 },
- { q:"move towards the middle of the pitch", o:["cut inside","stay wide","drop back","go long"], c:0 },
- { q:"stay near the touchline",              o:["stay wide","cut inside","push up","drop back"], c:0 },
- { q:"run as fast as you can, for a short way", o:["sprint","jog","walk","stop"], c:0 },
- { q:"run slowly, to keep warm",             o:["jog","sprint","dive","jump"], c:0 },
- { q:"stop and go the other way",            o:["turn","kneel","wait","stand"], c:0 },
- { q:"follow the player you must watch",     o:["track him","leave him","call him","pass him"], c:0 },
- { q:"kick the ball a long way forward",     o:["go long","go short","hold on","turn back"], c:0 },
- { q:"keep the ball at your feet and run",   o:["dribble","head it","throw it","catch it"], c:0 },
- { q:"put your body between him and the ball", o:["block him","wave at him","shout at him","rest"], c:0 },
- { q:"jump and hit the ball with your head", o:["head it","kick it","catch it","carry it"], c:0 },
- { q:"give the ball to a team-mate",         o:["pass","shoot","foul","dive"], c:0 },
- { q:"kick the ball at the goal",            o:["shoot","pass","clear","throw"], c:0 },
- { q:"kick the ball away from danger",       o:["clear it","keep it","drop it","lose it"], c:0 },
- { q:"the keeper throws himself at the ball", o:["he dives","he waits","he walks","he sleeps"], c:0 },
- { q:"get up quickly after you fall",        o:["get up","lie down","sit back","give in"], c:0 },
- { q:"take a short rest between two runs",   o:["recover","argue","shout","leave"], c:0 }
+ { q:"the meal you eat in the morning",      o:["breakfast","dinner","supper","a snack"], c:0 },
+ { q:"the room where you cook",              o:["the kitchen","the garden","the garage","the hall"], c:0 },
+ { q:"not expensive",                        o:["cheap","heavy","rich","early"], c:0 },
+ { q:"the day after today",                  o:["tomorrow","yesterday","tonight","last night"], c:0 },
+ { q:"you wear them on your feet",           o:["shoes","gloves","hats","belts"], c:0 },
+ { q:"drops of water falling from the sky",  o:["rain","snow","wind","dust"], c:0 },
+ { q:"your mother's mother",                 o:["your grandmother","your sister","your aunt","your cousin"], c:0 },
+ { q:"the animal that gives us milk",        o:["a cow","a horse","a cat","a hen"], c:0 },
+ { q:"it has many pages and you read it",    o:["a book","a pen","a desk","a bell"], c:0 },
+ { q:"to go up something steep",             o:["to climb","to fall","to swim","to sit"], c:0 },
+ { q:"very big",                             o:["huge","tiny","thin","short"], c:0 },
+ { q:"you sleep in it",                      o:["a bed","a chair","a shelf","a cupboard"], c:0 },
+ { q:"the opposite of difficult",            o:["easy","busy","late","deep"], c:0 },
+ { q:"to begin",                             o:["to start","to stop","to lose","to close"], c:0 },
+ /* ── il campo ── */
+ { q:"to give the ball to a team-mate",      o:["to pass","to shoot","to foul","to dive"], c:0 },
+ { q:"the player who stops the shots",       o:["the goalkeeper","the referee","the captain","the winger"], c:0 },
+ { q:"to run as fast as you can",            o:["to sprint","to jog","to walk","to rest"], c:0 },
+ { q:"to kick the ball at the goal",         o:["to shoot","to pass","to clear","to throw"], c:0 }
 ],
 A2: [
- { q:"run into the space behind the defence", o:["make a run","hold the line","drop off","stand still"], c:0 },
- { q:"stay in line with the other defenders", o:["hold the line","break away","cut inside","go long"], c:0 },
- { q:"get away from the man marking you",     o:["lose your marker","find your marker","mark him","follow him"], c:0 },
- { q:"run past your own team-mate on the outside", o:["overlap","overload","over-hit","overturn"], c:0 },
- { q:"slow the game down on purpose",         o:["waste time","speed up","press high","dive in"], c:0 },
- { q:"win the ball with your foot, cleanly",  o:["make a tackle","commit a foul","give a corner","take a throw"], c:0 },
- { q:"chase the man with the ball to force a mistake", o:["press him","ignore him","hold back","drop off"], c:0 },
- { q:"pass the ball back to your own keeper", o:["play it back","play it long","play it out","play it safe"], c:0 },
- { q:"stretch gently before the work starts", o:["warm up","cool down","knock off","stand by"], c:0 },
- { q:"stretch gently once the work is over",  o:["cool down","warm up","build up","set off"], c:0 },
- { q:"breathe hard because you are tired",    o:["be out of breath","be out of order","be out of time","be out of reach"], c:0 },
- { q:"a muscle tears a little",               o:["pull a muscle","push a muscle","press a muscle","pass a muscle"], c:0 },
- { q:"be fit enough to last ninety minutes",  o:["have stamina","have talent","have a chance","have a go"], c:0 },
- { q:"do the same movement again and again",  o:["repetitions","reparations","reputations","repairs"], c:0 },
- { q:"lift weights to get stronger",          o:["strength work","speed work","paper work","net work"], c:0 },
- { q:"run between two cones, there and back", o:["a shuttle run","a long run","a free run","a dry run"], c:0 },
- { q:"the one who looks after fitness",       o:["the fitness coach","the referee","the chairman","the steward"], c:0 },
- { q:"the one who treats an injury",          o:["the physio","the keeper","the captain","the scout"], c:0 }
+ { q:"to put money away for later",          o:["to save","to spend","to lend","to borrow"], c:0 },
+ { q:"a journey you take for pleasure",      o:["a trip","a queue","a bill","a shift"], c:0 },
+ { q:"the money you pay to ride a bus",      o:["the fare","the fee","the tip","the fine"], c:0 },
+ { q:"to get well again after an illness",   o:["to recover","to retire","to return","to remind"], c:0 },
+ { q:"the person who looks after your teeth", o:["a dentist","a chemist","a plumber","a waiter"], c:0 },
+ { q:"to use paper or glass again instead of throwing it away",
+   o:["to recycle","to repair","to replace","to refuse"], c:0 },
+ { q:"the room right under the roof",        o:["the attic","the cellar","the hall","the landing"], c:0 },
+ { q:"so tired you can hardly stand",        o:["exhausted","excited","embarrassed","enormous"], c:0 },
+ { q:"to say you are sorry",                 o:["to apologise","to complain","to promise","to agree"], c:0 },
+ { q:"the season when the leaves fall",      o:["autumn","spring","summer","winter"], c:0 },
+ { q:"something bad that happens by chance", o:["an accident","an appointment","an agreement","an arrangement"], c:0 },
+ { q:"to write to a company because you want the job",
+   o:["to apply","to employ","to resign","to retire"], c:0 },
+ { q:"a short written message on a phone",   o:["a text","a form","a bill","a note"], c:0 },
+ { q:"the shop where you buy medicine",      o:["the chemist's","the butcher's","the grocer's","the stationer's"], c:0 },
+ /* ── il campo ── */
+ { q:"to win the ball cleanly with your foot", o:["to tackle","to foul","to dive","to handle"], c:0 },
+ { q:"a match where neither side wins",      o:["a draw","a defeat","a replay","a friendly"], c:0 },
+ { q:"to run into the space behind the defence",
+   o:["to make a run","to hold the line","to drop off","to stand still"], c:0 },
+ { q:"breathing hard after a sprint",        o:["out of breath","out of order","out of time","out of reach"], c:0 }
 ],
 B1: [
- { q:"a run that drags a defender away to make room", o:["a decoy run","a dummy pass","a late tackle","a loose touch"], c:0 },
- { q:"the whole back four moves up together", o:["the line pushes up","the line breaks down","the line gives way","the line falls in"], c:0 },
- { q:"put them under pressure near their own goal", o:["press high","sit deep","drop off","clear long"], c:0 },
- { q:"defend close to your own penalty area", o:["sit deep","press high","go long","spread out"], c:0 },
- { q:"keep the ball and wait for help",       o:["hold the ball up","give the ball away","knock it long","hoof it clear"], c:0 },
- { q:"the touch that brings the ball under control at once", o:["a clean first touch","a heavy touch","a lucky touch","a soft foul"], c:0 },
- { q:"a pass into the space a team-mate is running into", o:["a through ball","a back pass","a goal kick","a square ball"], c:0 },
+ { q:"to put something off until later",     o:["to postpone","to proceed","to pursue","to provoke"], c:0 },
+ { q:"money you owe and must pay back",      o:["a debt","a deposit","a discount","a donation"], c:0 },
+ { q:"the person who writes for a newspaper", o:["a journalist","a publisher","a novelist","a printer"], c:0 },
+ { q:"to take something as true without proof",
+   o:["to assume","to insist","to deny","to confess"], c:0 },
+ { q:"the harm we do to air, water and land", o:["pollution","population","production","promotion"], c:0 },
+ { q:"to leave a job because you choose to", o:["to resign","to be sacked","to be promoted","to be hired"], c:0 },
+ { q:"to have enough money for something",   o:["to afford","to allow","to admit","to achieve"], c:0 },
+ { q:"a chance that may not come again",     o:["an opportunity","an obligation","an objection","an observation"], c:0 },
+ { q:"to look after a child for an evening", o:["to babysit","to bring up","to take after","to look up"], c:0 },
+ { q:"a story going round that may not be true",
+   o:["a rumour","a receipt","a record","a report"], c:0 },
+ { q:"to work together on the same task",    o:["to collaborate","to compete","to complain","to compare"], c:0 },
+ { q:"what is left once every cost is paid", o:["the profit","the price","the payment","the purchase"], c:0 },
+ { q:"to make a difficult thing easier to bear",
+   o:["to ease","to erase","to extend","to exceed"], c:0 },
+ { q:"to give back money somebody has paid", o:["to refund","to reward","to relieve","to release"], c:0 },
+ /* ── il campo ── */
+ { q:"to keep the ball and wait for help",   o:["to hold it up","to give it away","to knock it long","to clear it"], c:0 },
+ { q:"a pass into the space a team-mate is running into",
+   o:["a through ball","a back pass","a goal kick","a throw-in"], c:0 },
  { q:"to run out of energy late in the game", o:["to fade","to flourish","to settle","to surge"], c:0 },
- { q:"the work you do before the season starts", o:["pre-season","off-season","mid-season","close season"], c:0 },
- { q:"the ability to keep going for ninety minutes", o:["endurance","endeavour","enjoyment","enclosure"], c:0 },
- { q:"to get your breath back",               o:["to recover","to retire","to resign","to recall"], c:0 },
- { q:"an injury that keeps coming back",      o:["a recurring injury","a running injury","a rough injury","a raw injury"], c:0 },
- { q:"to be chosen to play from the first minute", o:["to start","to sit out","to stand down","to sign off"], c:0 },
- { q:"to be taken off during the match",      o:["to be substituted","to be suspended","to be selected","to be supported"], c:0 },
- { q:"how muscles feel the day after weights", o:["sore","sour","sure","sworn"], c:0 },
- { q:"training done with the ball at your feet", o:["ball work","head work","foot note","net work"], c:0 },
- { q:"a sudden burst at full speed",          o:["a sprint","a stroll","a stride","a stand"], c:0 },
- { q:"to lose your place in the starting eleven", o:["to be dropped","to be dragged","to be drafted","to be drawn"], c:0 }
+ { q:"to be taken off during the match",     o:["to be substituted","to be suspended","to be selected","to be supported"], c:0 }
 ]
 };
 
 /* ───────── 2. WEIGHTS · la frase da rimettere in piedi ─────────
    Si tocca una parola per volta e si costruisce. Non c'e' la risposta
-   fra quattro: c'e' l'ordine, che e' esattamente quello che nel dettato
-   fa perdere i quarti di punto. */
+   fra quattro: c'e' l'ordine, che e' quello che nel dettato fa perdere
+   i quarti di punto. */
 var DORDER = {
 A1: [
- { s:"We warm up before every match" },
- { s:"The goalkeeper wears long sleeves" },
- { s:"My legs hurt after a hard session" },
- { s:"He drinks water every ten minutes" },
- { s:"She can run faster than me" },
- { s:"I do not lift weights at home" },
- { s:"Our coach is never late" },
- { s:"They sleep eight hours before a match" },
- { s:"The physio puts ice on my knee" },
- { s:"He stretches his legs for ten minutes" },
- { s:"We run between the cones twice" },
- { s:"There are eleven players in a team" }
+ { s:"We have breakfast at seven o'clock" },
+ { s:"My sister does not like cheese" },
+ { s:"There is a bus stop near the school" },
+ { s:"Her brother works in a hospital" },
+ { s:"I always walk to school on Monday" },
+ { s:"The cat is sleeping under the table" },
+ { s:"How much does this jacket cost?" },
+ { s:"They watch television after dinner" },
+ { s:"It is very cold in January" },
+ { s:"We are going to the beach tomorrow" },
+ /* ── il campo ── */
+ { s:"Our team plays at home on Saturday" },
+ { s:"The goalkeeper wears long sleeves" }
 ],
 A2: [
- { s:"The trainer told us to cool down slowly" },
- { s:"I pulled a muscle in the second half" },
- { s:"She was out of breath after the shuttle runs" },
- { s:"We did twenty repetitions with the weights" },
- { s:"He has never missed a training session" },
- { s:"The pitch was too wet for ball work" },
- { s:"They were fitter than us at the end" },
- { s:"You should not train on an empty stomach" },
- { s:"Our new coach has changed the warm-up" },
- { s:"I could not feel my legs that evening" },
+ { s:"I could not find my keys this morning" },
+ { s:"She has lived in this town for ten years" },
+ { s:"The train was late because of the snow" },
+ { s:"We should recycle more paper at home" },
+ { s:"He was reading a book when I arrived" },
+ { s:"There were too many people in the shop" },
+ { s:"My brother is better at maths than me" },
+ { s:"They have just finished their homework" },
+ { s:"You must not use your phone in class" },
+ { s:"The film was longer than I expected" },
+ /* ── il campo ── */
  { s:"He was taken off because of his knee" },
- { s:"Nobody wanted to run in that rain" }
+ { s:"We did twenty repetitions with the weights" }
 ],
 B1: [
- { s:"If you train every day you will get injured" },
- { s:"The session had already started when I arrived" },
- { s:"He has been working on his first touch all week" },
- { s:"She would have played if her ankle had healed" },
- { s:"The weights were heavier than I had expected" },
+ { s:"If I had known I would have told you" },
+ { s:"The bridge has been closed since the storm" },
+ { s:"She said she would call me back later" },
+ { s:"Not everybody agrees with the new rules" },
+ { s:"He apologised for arriving so late" },
+ { s:"This phone is supposed to last all day" },
+ { s:"Having finished her work she went out" },
+ { s:"The letter was written by my grandmother" },
+ { s:"Unless we leave now we will miss the train" },
+ { s:"The results will be published next week" },
+ /* ── il campo ── */
  { s:"We were told to press high from the first minute" },
- { s:"The coach says that endurance cannot be bought" },
- { s:"My shoulder has been sore since the pre-season" },
- { s:"The drill was designed to improve our turning" },
- { s:"Not one of them complained about the heat" },
- { s:"Unless we recover quickly we will fade again" },
- { s:"He is expected to start on Saturday afternoon" }
+ { s:"He has been working on his first touch all week" }
 ]
 };
 
@@ -18693,52 +18751,55 @@ B1: [
    appiglio e l'alunno non resta davanti al vuoto. */
 var DTYPE = {
 A1: [
- { s:"He stopped the ball with his first ___.",      w:"touch" },
- { s:"The keeper caught the ___ with two hands.",     w:"ball" },
- { s:"Hit it with your ___, not with your hand.",     w:"head" },
- { s:"We play on grass, on a ___.",                   w:"pitch" },
- { s:"The man with the whistle is the ___.",          w:"referee" },
- { s:"Eleven players make one ___.",                  w:"team" },
- { s:"He wears number one: he is the ___.",           w:"goalkeeper" },
- { s:"You score when the ball goes into the ___.",    w:"goal" },
- { s:"After ninety ___ the match is over.",           w:"minutes" },
- { s:"I drink ___ when I am thirsty.",                w:"water" },
- { s:"My ___ are tired after the run.",               w:"legs" },
- { s:"Before the match we always ___ up.",            w:"warm" },
- { s:"She kicked it with her left ___.",              w:"foot" },
- { s:"The ball went over the ___ and out.",           w:"line" }
+ { s:"I brush my ___ every morning.",               w:"teeth" },
+ { s:"The shop is ___ on Sundays, so we cannot go.", w:"closed" },
+ { s:"My father drives a red ___.",                 w:"car" },
+ { s:"We eat soup with a ___.",                     w:"spoon" },
+ { s:"I put the milk in the ___ to keep it cold.",  w:"fridge" },
+ { s:"She writes with a blue ___.",                 w:"pen" },
+ { s:"There are seven days in a ___.",              w:"week" },
+ { s:"Birds have wings, so they can ___.",          w:"fly" },
+ { s:"We live on the third ___ of that building.",  w:"floor" },
+ { s:"He is thirsty and wants a glass of ___.",     w:"water" },
+ { s:"The opposite of hot is ___.",                 w:"cold" },
+ /* ── il campo ── */
+ { s:"He wears number one: he is the ___.",         w:"goalkeeper" },
+ { s:"You score when the ball goes into the ___.",  w:"goal" },
+ { s:"After ninety ___ the match is over.",         w:"minutes" }
 ],
 A2: [
- { s:"She has a very clean first ___.",               w:"touch" },
- { s:"After the session we always cool ___.",         w:"down" },
- { s:"I pulled a ___ in my right leg.",               w:"muscle" },
- { s:"Running between cones is a ___ run.",           w:"shuttle" },
- { s:"He was out of ___ after two minutes.",          w:"breath" },
- { s:"Twenty lifts of the bar is twenty ___.",        w:"repetitions" },
- { s:"The ___ looks after the injured players.",      w:"physio" },
- { s:"Lifting weights is ___ work.",                  w:"strength" },
- { s:"You need ___ to last the whole match.",         w:"stamina" },
- { s:"The coach made us ___ up for ten minutes.",     w:"warm" },
- { s:"My knee is ___ the day after weights.",         w:"sore" },
- { s:"He ___ his legs before every session.",         w:"stretches" },
- { s:"She can run ___ than anyone in the squad.",     w:"faster" },
- { s:"He has not ___ a single training session.",     w:"missed" }
+ { s:"I am saving ___ for a new bike.",             w:"money" },
+ { s:"The soup needs a little more ___.",           w:"salt" },
+ { s:"The museum is ___ from Tuesday to Sunday.",   w:"open" },
+ { s:"We missed the train and had to ___ an hour.", w:"wait" },
+ { s:"He has been living here ___ 2019.",           w:"since" },
+ { s:"I need to ___ an appointment with the dentist.", w:"make" },
+ { s:"This jacket is too small; can I ___ it?",     w:"change" },
+ { s:"If you feel ill you should see a ___.",       w:"doctor" },
+ { s:"He plays the guitar in a rock ___.",          w:"band" },
+ { s:"They are looking for a new ___ near the station.", w:"flat" },
+ { s:"In autumn the leaves ___ from the trees.",    w:"fall" },
+ /* ── il campo ── */
+ { s:"He pulled a ___ in his right leg.",           w:"muscle" },
+ { s:"Running between cones is a ___ run.",         w:"shuttle" },
+ { s:"The ___ looks after the injured players.",    w:"physio" }
 ],
 B1: [
- { s:"His touch was heavy, so he lost ___ of the ball.", w:"control" },
- { s:"Pre-season is where you build your ___.",       w:"endurance" },
- { s:"An injury that keeps coming back is a ___ one.", w:"recurring" },
- { s:"He was ___ off after sixty minutes.",           w:"taken" },
- { s:"You must ___ properly or the muscle will tear.", w:"stretch" },
- { s:"The physio said the ankle had not ___ yet.",    w:"healed" },
- { s:"We were told to ___ high and win it back.",     w:"press" },
- { s:"Running out of energy late on is called ___.",  w:"fading" },
- { s:"He has been ___ on his weaker foot all week.",  w:"working" },
- { s:"Eight hours of ___ is part of the training.",   w:"sleep" },
- { s:"A sudden burst at full speed is a ___.",        w:"sprint" },
- { s:"Muscles need ___ as much as they need work.",   w:"rest" },
- { s:"She trains to improve her ___ when turning.",   w:"balance" },
- { s:"The drill was ___ to make us quicker.",         w:"designed" }
+ { s:"The meeting was ___ until next week.",        w:"postponed" },
+ { s:"He cannot ___ a new car on that salary.",     w:"afford" },
+ { s:"Smoking is not ___ inside the building.",     w:"allowed" },
+ { s:"He made a serious ___ in the final report.",  w:"mistake" },
+ { s:"The bridge has been ___ since the storm.",    w:"closed" },
+ { s:"They are ___ for a solution to the problem.", w:"looking" },
+ { s:"The evidence was not ___ enough to convince them.", w:"strong" },
+ { s:"The teacher ___ out the mistakes one by one.", w:"pointed" },
+ { s:"Prices have ___ sharply since last year.",    w:"risen" },
+ { s:"Nobody could ___ why the lights went out.",   w:"explain" },
+ { s:"She is ___ of winning the whole competition.", w:"capable" },
+ /* ── il campo ── */
+ { s:"Pre-season is where you build your ___.",     w:"endurance" },
+ { s:"He was ___ off after sixty minutes.",         w:"taken" },
+ { s:"A sudden burst at full speed is a ___.",      w:"sprint" }
 ]
 };
 
@@ -18749,46 +18810,49 @@ B1: [
    preparatore: lui allena l'orecchio, non le gambe. */
 var DEAR = {
 A1: [
+ "My name is Anna",
+ "I live near the park",
+ "The shop opens at nine",
+ "She has two brothers",
+ "It is very cold today",
+ "Can I have some water",
+ "The book is on the table",
+ "We go to school by bus",
+ "My favourite colour is green",
+ "He is eating an apple",
+ /* ── il campo ── */
  "Pass the ball to me",
- "The match starts at three",
- "My boots are in the bag",
- "He is our goalkeeper",
- "We play at home on Saturday",
- "The pitch is very wet today",
- "I am not tired",
- "Where is the referee",
- "She can run very fast",
- "The coach is angry today",
- "We won two one",
- "Drink some water now"
+ "We play at home on Saturday"
 ],
 A2: [
- "We cooled down after the session",
+ "I have lived here for five years",
+ "She was waiting outside the station",
+ "We should leave before it gets dark",
+ "The train was cancelled this morning",
+ "He apologised for being late",
+ "There is too much salt in the soup",
+ "I am looking for a new job",
+ "They arrived while we were eating",
+ "You must not touch that machine",
+ "The museum is closed on Mondays",
+ /* ── il campo ── */
  "He pulled a muscle last week",
- "I was out of breath",
- "The physio looked at my knee",
- "They were fitter than us",
- "She has never missed a training session",
- "We did twenty repetitions",
- "He was taken off at half time",
- "The weights were too heavy",
- "Our coach changed the warm up",
- "Nobody wanted to run today",
- "It was too wet for ball work"
+ "We cooled down after the session"
 ],
 B1: [
- "If you do not rest you will break down",
- "He has been working on his first touch",
- "The session had already started",
+ "If I were you I would wait",
+ "The decision has already been made",
+ "She said she would think about it",
+ "Prices have risen since last summer",
+ "Nobody seems to know what happened",
+ "The bridge was built in the sixties",
+ "I would rather stay at home tonight",
+ "He was told to come back later",
+ "It is not as simple as it looks",
+ "The results will be published next week",
+ /* ── il campo ── */
  "We were told to press high",
- "My shoulder has been sore since pre season",
- "She would have played with a healthy ankle",
- "Endurance cannot be bought in a week",
- "The drill was designed to improve our turning",
- "Unless we recover we will fade",
- "He is expected to start on Saturday",
- "Not one of them complained",
- "The ball was played into the space behind"
+ "He has been working on his first touch"
 ]
 };
 
@@ -18932,12 +18996,16 @@ function drillFresh(kind, level, bank) {
 /* ═══════════════ CHI SONO I DUE ═══════════════ */
 var STAFF = [
   { id:"fit", n:"Head of training", k:"THE GYM",
+    short:"Training", b:"GYM",
+    one:"He sets how much work the squad can take in a week",
     s:"He decides how much work the squad can take in a week — and he is "
     + "the reason the gym has three real rooms instead of one door.",
     g:["Eight actions a matchday instead of six",
        "Six players can work instead of four",
        "He makes nobody stronger: the ceiling stays at 0.15 a player"] },
   { id:"gaf", n:"Head coach", k:"THE EAR",
+    short:"Coach", b:"EAR",
+    one:"He trains the ear and the eye, not the legs",
     s:"He does not train legs. He trains what you hear and what you notice "
     + "before a ball is kicked.",
     g:["A listening room: the voice reads, you write what you heard",
@@ -19288,64 +19356,119 @@ VIEWS.bxEar = function () {
   box.onkeydown = function (ev) { if (ev.key === "Enter") go2(); };
 };
 
-/* ═══════════════ LA CARTA NELLA ROSA ═══════════════
-   Le due icone stanno qui, nella pagina della squadra, perche' e' la
-   pagina che l'alunno apre per prima e perche' lo staff e' parte della
-   squadra quanto i dodici. */
-function staffCard() {
-  if (!ME.club) return "";
-  var who = staffWho(), lock = staffLocked();
-  return '<section class="pad"><h2 class="sec">The two on the touchline' +
-    (who ? '<span class="cnt thin">one hired</span>'
-         : '<span class="cnt thin">pick one</span>') + "</h2>" +
-    '<div class="stfrow">' + STAFF.map(function (m) {
-      var mine = who === m.id;
-      return '<button class="stf' + (mine ? " on" : (who ? " off" : "")) +
-        '" data-id="' + m.id + '" type="button">' +
-        '<span class="stfi">' + STAFF_SVG[m.id] + "</span>" +
-        "<b>" + esc(m.n) + "</b><em>" + esc(m.k) + "</em>" +
-        '<i class="stfb">' + (mine ? "ON THE BENCH" : who ? "not hired" : "free") +
-        "</i></button>";
-    }).join("") + "</div>" +
-    '<p class="hint">' + (who
-      ? (lock ? "The match has started, so the bench is settled for this competition."
-              : "You can still change your mind: nothing is played yet.")
-      : "You can have one of the two, and only one. Tap a face to see what he brings.") +
-    "</p></section>";
+/* ═══════════════ I DUE DENTRO LA ROSA ═══════════════
+
+   Prima erano una carta a parte, con due icone da schedario. Sbagliato:
+   lo staff è parte della squadra, e la squadra sono le maglie. Quindi
+   stanno dentro « My squad », in fondo alle dodici, con una maglia
+   loro — una giacca con la cerniera, non la maglia da gioco, perché un
+   allenatore in campo non ci scende — e si toccano come si tocca un
+   giocatore: si apre la loro pagina, con la stessa testata che scorre
+   di lato.
+
+   Una riga sola resta visibile anche a scheda chiusa: « My squad » si
+   apre solo se la tocchi, e due assunzioni nascoste dietro un tocco
+   sono due assunzioni che non esistono. */
+
+function staffPeg(m) {
+  var mine = staffIs(m.id);
+  return '<button class="peg stfpeg' + (mine ? " on" : "") + '" data-stf="' +
+    m.id + '" type="button" aria-label="' + esc(m.n) + '">' +
+    '<span class="shirt"><svg viewBox="2 5 96 91"><use href="#coat"/></svg>' +
+    '<span class="badge">' + esc(m.b) + "</span></span>" +
+    '<span class="pname">' + esc(m.short) + "</span>" +
+    '<span class="stfst' + (mine ? " on" : "") + '">' +
+    (mine ? "on the bench" : staffWho() ? "not hired" : "free") + "</span></button>";
 }
-function wireStaff() {
-  Array.prototype.forEach.call(document.querySelectorAll(".stf"), function (b) {
-    b.onclick = function () { go("staff", { id:b.dataset.id }); };
+/* la riga delle due maglie, in coda alla rosa */
+function staffRow() {
+  if (!ME.club) return "";
+  return '<p class="hint stfhint">And two who do not play. ' +
+    (staffWho() ? "Tap to see what yours brings."
+                : "You can hire <b>one</b> of them.") + "</p>" +
+    '<div class="row stfrow2">' + STAFF.map(staffPeg).join("") + "</div>";
+}
+/* la riga di stato, quella che si legge senza aprire niente */
+function staffLine() {
+  if (!ME.club) return "";
+  var w = staffWho();
+  return w ? ((staffOne(w) || {}).short || "") + " on the bench"
+           : "nobody on the bench yet";
+}
+function drawStaffRow() {
+  var box = $("sqstaff");
+  if (!box) return;
+  box.innerHTML = staffRow();
+  Array.prototype.forEach.call(box.querySelectorAll(".stfpeg"), function (b) {
+    b.onclick = function () { go("staff", { id:b.dataset.stf }); };
   });
 }
-function drawStaff() {
-  var box = $("staffbar");
-  if (!box) return;
-  box.innerHTML = staffCard();
-  wireStaff();
+
+/* ───────── la pagina di uno dei due ─────────
+   La stessa forma della pagina di un giocatore: la testata in alto che
+   scorre di lato fra i due, e sotto quello che c'è da sapere. Chi ha
+   imparato a sfogliare la rosa non deve imparare niente di nuovo. */
+function staffHero(m) {
+  var mine = staffIs(m.id);
+  return '<div class="phero" data-stf="' + m.id + '">' +
+    '<span class="pkit"><svg viewBox="2 5 96 91"><use href="#coat"/></svg></span>' +
+    '<span class="pwho"><b>' + esc(m.n) + "</b>" +
+    '<span class="prow2"><i class="rl">' + esc(m.k) + "</i>" +
+    (mine ? '<i class="rl cap">ON THE BENCH</i>' : "") + "</span>" +
+    "<em>" + esc(m.one) + "</em></span></div>";
 }
 
-/* ───────── la stanza dello staff ───────── */
 VIEWS.staff = function (d) {
   var pick = (d && d.id) || staffWho() || "fit";
-  var who = staffWho(), lock = staffLocked();
+  var at = 0, i;
+  for (i = 0; i < STAFF.length; i++) if (STAFF[i].id === pick) at = i;
+
   paintClub(ME.club);
   barFlow("The bench", ME.club ? ME.club.name : "", 0);
+  html('<div class="pad">' +
+    '<div class="phtrack" id="stftrack">' + STAFF.map(staffHero).join("") + "</div>" +
+    '<p class="hint pslide">Slide the card sideways for the other one \u203a</p>' +
+    '<div id="stfbody"></div></div>');
 
-  var m = staffOne(pick) || STAFF[0];
-  var mine = who === m.id;
+  var tr = $("stftrack");
+  function land() {
+    if (!tr || !tr.children[at]) return;
+    tr.scrollLeft = tr.children[at].offsetLeft;
+  }
+  land();
+  if (window.requestAnimationFrame) requestAnimationFrame(land);
+  setTimeout(land, 60);
+
+  var tick = null;
+  if (tr) {
+    tr.onscroll = function () {
+      if (tick) clearTimeout(tick);
+      tick = setTimeout(function () {
+        var k = 0, dd, best = 1e9, j;
+        for (j = 0; j < tr.children.length; j++) {
+          dd = Math.abs(tr.children[j].offsetLeft - tr.scrollLeft);
+          if (dd < best) { best = dd; k = j; }
+        }
+        k = Math.max(0, Math.min(STAFF.length - 1, k));
+        if (STAFF[k] && STAFF[k].id !== (HERE.data || {}).id) {
+          HERE.data = { id:STAFF[k].id };
+          drawStaffBody(STAFF[k].id);
+        }
+      }, 90);
+    };
+  }
+  drawStaffBody(pick);
+};
+
+/* tutto quello che sta sotto la testata */
+function drawStaffBody(id) {
+  var box = $("stfbody");
+  if (!box) return;
+  var m = staffOne(id) || STAFF[0];
+  var who = staffWho(), mine = who === m.id, lock = staffLocked();
   var lv = (typeof lvSafe === "function") ? lvSafe() : "A1";
 
-  html('<div class="pad">' +
-    '<div class="stftab">' + STAFF.map(function (x) {
-      return '<button class="stftb' + (x.id === pick ? " on" : "") +
-        '" data-id="' + x.id + '" type="button">' + esc(x.n) + "</button>";
-    }).join("") + "</div>" +
-
-    '<div class="stfbig"><span class="stfi big">' + STAFF_SVG[m.id] + "</span>" +
-    "<i>" + esc(m.k) + "</i><b>" + esc(m.n) + "</b>" +
-    "<p>" + esc(m.s) + "</p></div>" +
-
+  box.innerHTML =
     '<h2 class="sec top">What he brings</h2><div class="panel">' +
     m.g.map(function (g) {
       return '<div class="stfr"><span>' + esc(g) + "</span></div>";
@@ -19355,15 +19478,15 @@ VIEWS.staff = function (d) {
       ? '<h2 class="sec top">The three rooms in the gym</h2><div class="panel">' +
         GYM_ROOMS.map(function (r) {
           var n = drillFresh(r.id, lv, bankOf(r.bank, lv));
-          return '<div class="stfr"><span><b>' + esc(r.n) + "</b> · " +
+          return '<div class="stfr"><span><b>' + esc(r.n) + "</b> \u00b7 " +
             esc(r.s) + "</span><em>" + n + " new</em></div>";
         }).join("") + "</div>" +
         '<p class="hint">These three are open to everybody, hired or not: ' +
         "three names over one box of questions was a defect, not a reward. " +
-        "What he gives you is the <b>room to use them</b> — eight actions a " +
+        "What he gives you is the <b>room to use them</b> \u2014 eight actions a " +
         "matchday on six players instead of six on four.</p>"
       : '<h2 class="sec top">His room</h2><div class="panel">' +
-        '<div class="stfr"><span><b>' + esc(EAR_ROOM.n) + "</b> · " +
+        '<div class="stfr"><span><b>' + esc(EAR_ROOM.n) + "</b> \u00b7 " +
         esc(EAR_ROOM.s) + "</span><em>" +
         drillFresh(EAR_ROOM.id, lv, bankOf(EAR_ROOM.bank, lv)) + " new</em></div>" +
         "</div>" +
@@ -19380,15 +19503,12 @@ VIEWS.staff = function (d) {
       : lock
         ? '<p class="lede top">The competition has started, so the bench is ' +
           "settled. " + esc((staffOne(who) || {}).n || "") + " stays.</p>"
-        : '<button class="btn" id="stfgo">' +
+        : '<button class="btn" id="stfgo" type="button">' +
           (who ? "Swap: bring in " + esc(m.n) : "Hire " + esc(m.n)) + "</button>") +
 
-    '<button class="btn ghost" id="stfbk">' +
-    ((typeof homeBackName === "function") ? homeBackName() : "Back") + "</button></div>");
+    '<button class="btn ghost" id="stfbk" type="button">' +
+    ((typeof homeBackName === "function") ? homeBackName() : "Back") + "</button>";
 
-  Array.prototype.forEach.call($("main").querySelectorAll(".stftb"), function (b) {
-    b.onclick = function () { swap("staff", { id:b.dataset.id }); };
-  });
   if ($("stfgo")) {
     $("stfgo").onclick = function () {
       if (staffPick(m.id)) swap("staff", { id:m.id });
@@ -19398,7 +19518,7 @@ VIEWS.staff = function (d) {
     if (typeof toSquad === "function") return toSquad();
     go("squad");
   };
-};
+}
 
 /* ───────── la nota dello scout ─────────
    Informazione, non punti: i due cieli e quante caselle aprono. Niente
