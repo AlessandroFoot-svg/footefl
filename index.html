@@ -3349,6 +3349,48 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .rcg{display:block;margin-top:11px;padding:9px 11px;border-radius:10px;
   background:rgba(227,239,38,.12);border:1px solid rgba(227,239,38,.4);
   font:800 12px/1.35 var(--brand);color:#FFFDEE}
+
+/* ═════════ il correttore della sala stampa ═════════ */
+.pfx{padding:14px 15px;border-radius:15px;border:1px solid var(--edge);
+  background:rgba(4,23,15,.45)}
+.pfk{display:block;font:800 9px/1 var(--brand);letter-spacing:.14em;color:#8FC4AC}
+.pfx p{margin:9px 0 0;font-size:15px;font-weight:600;line-height:1.55;
+  color:var(--cream);font-style:italic}
+.pfok{margin-top:14px;padding:15px;border-radius:16px;border:1px solid var(--gold);
+  background:rgba(227,239,38,.1)}
+.pfok b{display:block;font:800 17px/1.2 var(--brand);color:#FFFDEE}
+.pfok span{display:block;margin-top:7px;font-size:12px;font-weight:600;
+  line-height:1.5;color:var(--cream)}
+.pfr{padding:12px 14px;border-bottom:1px solid var(--edge)}
+.panel>.pfr:last-child{border-bottom:0}
+.pft{display:block;font:800 8.5px/1 var(--brand);letter-spacing:.13em;color:#8FC4AC}
+.pfw{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:7px}
+.pfw s{text-decoration:line-through;font:700 14px/1.2 var(--brand);color:#E8A89A}
+.pfw i{font-style:normal;color:#8FC4AC}
+.pfw b{font:800 15px/1.2 var(--brand);color:var(--gold)}
+.pfr em{display:block;margin-top:6px;font-size:11.5px;font-weight:600;
+  font-style:normal;line-height:1.5;color:var(--cream)}
+.pfr em b{color:#FFFDEE}
+.pfbest{padding:15px;border-radius:16px;border:1px solid var(--gold);
+  background:linear-gradient(180deg,rgba(227,239,38,.12),rgba(4,23,15,.5))}
+.pfbest p{margin:0;font:700 16px/1.55 var(--brand);color:#FFFDEE}
+.pfbest span{display:block;margin-top:9px;font-size:11px;font-weight:600;
+  color:#8FC4AC}
+.pfpts{margin:18px 0 16px;padding:15px;border-radius:16px;border:1px solid var(--edge);
+  background:rgba(226,251,206,.05)}
+.pfpts>b{display:block;margin-top:6px;font:800 34px/1 var(--brand);color:var(--gold)}
+.pfl{display:flex;flex-direction:column;gap:6px;margin:12px 0 10px}
+.pfl span{display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:600;
+  color:var(--fog)}
+.pfl span.on{color:var(--cream)}
+.pfl i{flex:none;width:28px;font:800 12px/1 var(--brand);font-style:normal;
+  color:rgba(226,251,206,.3)}
+.pfl span.on i{color:var(--gold)}
+.pfpts em{display:block;font-size:11px;font-weight:600;font-style:normal;
+  line-height:1.5;color:#8FC4AC}
+.prfix{display:block;margin-top:6px;padding:9px 11px;border-radius:10px;
+  background:rgba(227,239,38,.1);border:1px solid rgba(227,239,38,.35);
+  font-size:12.5px;font-weight:700;line-height:1.5;color:#FFFDEE}
 </style>
 </head>
 <body>
@@ -4252,7 +4294,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "121";
+var APPVER = "122";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -21403,8 +21445,10 @@ VIEWS.confWrite = function () {
     '<p class="prq">&ldquo;' + esc(q) + "&rdquo;</p>" +
     '<label class="wlab" for="pra">YOUR ANSWER</label>' +
     '<textarea id="pra" rows="4" placeholder="one or two lines are enough"></textarea>' +
-    '<p class="prfree">Spelling is not counted here. Your teacher reads what you ' +
-    "wrote, not how you wrote it. Six words at least &mdash; a shrug is not an answer.</p>" +
+    '<p class="prfree">Write it your way. Nothing here can cost you points: when ' +
+    "you have sent it, the paper's editor goes over the form with you and shows " +
+    "you the same thing said properly. Six words at least &mdash; a shrug is not " +
+    "an answer.</p>" +
     '<p class="prcnt" id="prc">0 of 6 words</p>' +
     '<button class="btn" id="prnx" disabled>That is all, thank you</button></div>');
 
@@ -21422,6 +21466,10 @@ VIEWS.confWrite = function () {
   ta.oninput = tell; tell();
   $("prnx").onclick = function () {
     if (words(ta.value) < PRESS_MIN) return;
+    /* prima di chiudere, il redattore ci passa sopra: la correzione della
+       forma, la frase rimessa a posto e i punti. Se per qualche motivo
+       quel pezzo non c'e', si va avanti come prima e non si perde niente. */
+    if (VIEWS.confFix) return swap("confFix", { a:ta.value.trim(), q:q });
     CF.said.push({ id:"mine", q:q, a:ta.value.trim(), spoke:0 });
     CF.pay += CF.paper.pay;              /* la parola dell'allenatore vale piena */
     CF.fame += 2;
@@ -21459,10 +21507,15 @@ VIEWS.confEnd = function () {
     '<div class="panel">' + CF.said.map(function (x) {
       return '<div class="prrow"><b>&ldquo;' + esc(x.q) + "&rdquo;</b>" +
         "<span>" + esc(x.a) + "</span>" +
+        (x.fixed && x.fixed !== x.a
+          ? '<span class="prfix">' + esc(x.fixed) + "</span>" : "") +
         (x.spoke
           ? '<em class="cfby">' + esc(whoName(x.who)) + " &middot; " +
             esc(LANGSAY[x.bars]) + " &middot; " + money(x.paid / 1000) + "</em>"
-          : '<em class="cfby">your own words</em>') + "</div>";
+          : '<em class="cfby">your own words' +
+            (x.fixes ? " &middot; " + x.fixes +
+              (x.fixes === 1 ? " thing put right" : " things put right") : "") +
+            "</em>") + "</div>";
     }).join("") + "</div>" +
 
     '<p class="prfree">What you wrote goes to your teacher with the match report. ' +
@@ -21476,6 +21529,303 @@ function whoName(no) {
   var p = confPool().filter(function (x) { return x.no === no; })[0];
   return (p && p.name) || ("Shirt " + no);
 }
+
+
+/* ───── 58-check.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   IL CORRETTORE DELLA SALA STAMPA
+
+   L'ultima domanda della conferenza e' aperta: l'alunno scrive quello
+   che vuole, e finora quelle righe andavano al professore senza che
+   nessuno gliele guardasse.
+
+   ╔═══════════════════════════════════════════════════════════════╗
+   ║  QUELLO CHE QUESTO CORRETTORE NON FA, E VA DETTO               ║
+   ║                                                               ║
+   ║  L'app gira sul telefono, senza rete e senza nessuna           ║
+   ║  intelligenza dietro. Non capisce quello che l'alunno ha       ║
+   ║  scritto e non puo' riscrivergli la frase: chi promettesse di  ║
+   ║  farlo starebbe mentendo, e prima o poi uscirebbe un consiglio ║
+   ║  sbagliato — che in un'app di scuola e' peggio di nessun       ║
+   ║  consiglio.                                                    ║
+   ║                                                               ║
+   ║  Quello che fa e' preciso e vero: riconosce un elenco CHIUSO   ║
+   ║  di errori che gli italiani che imparano l'inglese fanno       ║
+   ║  sempre — « we was », « he don't », « more better », « i »     ║
+   ║  minuscolo, « becouse » — e per ognuno sa la forma giusta.     ║
+   ║  Niente indovinelli: o la regola scatta su quelle parole li',  ║
+   ║  o non dice niente.                                            ║
+   ║                                                               ║
+   ║  La « forma migliore della frase » nasce di li': non e' una    ║
+   ║  riscrittura, e' la stessa frase con quelle sostituzioni       ║
+   ║  dentro. Resta sua, ed e' giusta.                              ║
+   ╚═══════════════════════════════════════════════════════════════╝
+
+   E i punti: non si tolgono mai. Chi risponde prende i suoi due punti
+   di reputazione come prima, e ne guadagna fino a quattro se ha scritto
+   molto e pulito. Se facessimo pagare gli errori, il ragazzo scriverebbe
+   sei parole prudenti e stop — e sei parole prudenti non insegnano
+   niente a nessuno. Si guadagna scrivendo meglio, non si perde
+   scrivendo male.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ───────── 1. le regole di forma ─────────
+   Ognuna sa che cosa cercare, con che cosa sostituirla, e perche'. */
+var PR_RULES = [
+  /* la maiuscola che non si perdona */
+  { re:/\bi\b/g, to:"I", t:"Capital letter",
+    w:"<b>I</b> is always a capital in English, anywhere in the sentence." },
+
+  /* essere */
+  { re:/\bwe was\b/gi, to:"we were", t:"Verb", w:"<b>We were</b>, not « we was »." },
+  { re:/\bthey was\b/gi, to:"they were", t:"Verb", w:"<b>They were</b>, not « they was »." },
+  { re:/\byou was\b/gi, to:"you were", t:"Verb", w:"<b>You were</b>, always, for one person or many." },
+  { re:/\bI are\b/g, to:"I am", t:"Verb", w:"<b>I am</b>." },
+  { re:/\bwe is\b/gi, to:"we are", t:"Verb", w:"<b>We are</b>." },
+  { re:/\bthey is\b/gi, to:"they are", t:"Verb", w:"<b>They are</b>." },
+
+  /* la s della terza persona */
+  { re:/\b(he|she|it) don't\b/gi, to:"$1 doesn't", t:"Third person",
+    w:"He, she and it take <b>doesn't</b>, never « don't »." },
+  { re:/\b(he|she|it) have\b/gi, to:"$1 has", t:"Third person",
+    w:"He, she and it take <b>has</b>." },
+  { re:/\b(he|she|it) do\b/gi, to:"$1 does", t:"Third person",
+    w:"He, she and it take <b>does</b>." },
+  /* e i nomi singolari che in sala stampa tornano sempre: « the defence
+     don't ». La lista e' chiusa apposta — riconoscere da solo quali
+     nomi sono terza persona singolare non si puo' fare con una regola */
+  { re:/\b(team|defence|attack|coach|keeper|club|player|side|referee|manager|crowd) don't\b/gi,
+    to:"$1 doesn't", t:"Third person",
+    w:"One team, one defence, one coach: they all take <b>doesn't</b>." },
+  { re:/\b(team|defence|attack|coach|keeper|club|player|side|referee|manager|crowd) have\b/gi,
+    to:"$1 has", t:"Third person",
+    w:"One of them takes <b>has</b>: the team <b>has</b>." },
+
+  /* i comparativi doppi */
+  { re:/\bmore better\b/gi, to:"better", t:"Comparative",
+    w:"<b>Better</b> already means « more good »: one word is enough." },
+  { re:/\bmore easier\b/gi, to:"easier", t:"Comparative",
+    w:"Either <b>easier</b> or « more easy », never both." },
+  { re:/\bmost best\b/gi, to:"best", t:"Comparative", w:"<b>Best</b> is already the top." },
+  { re:/\bmore worse\b/gi, to:"worse", t:"Comparative", w:"<b>Worse</b>, on its own." },
+
+  /* good e well */
+  { re:/\b(play|played|playing|do|did|done|go|went|start|started) good\b/gi,
+    to:"$1 well", t:"Adverb",
+    w:"A verb takes <b>well</b>, not « good »: you play <b>well</b>." },
+
+  /* l'infinito di troppo, che e' l'errore italiano per eccellenza */
+  { re:/\b(must|can|could|should|will|would|may|might) to\b/gi, to:"$1", t:"Infinitive",
+    w:"After must, can, should and the others the <b>to</b> disappears." },
+  { re:/\bfor to\b/gi, to:"to", t:"Infinitive",
+    w:"« For to » does not exist: <b>to</b> on its own says why." },
+  { re:/\bI am agree\b/gi, to:"I agree", t:"Verb",
+    w:"<b>Agree</b> is a verb on its own: « I agree », not « I am agree »." },
+  { re:/\bhave need\b/gi, to:"need", t:"Verb", w:"<b>Need</b> is the verb: « I need »." },
+
+  /* i plurali che non esistono */
+  { re:/\bpeoples\b/gi, to:"people", t:"Plural", w:"<b>People</b> is already more than one." },
+  { re:/\binformations\b/gi, to:"information", t:"Plural", w:"<b>Information</b> has no plural." },
+  { re:/\badvices\b/gi, to:"advice", t:"Plural", w:"<b>Advice</b> has no plural." },
+  { re:/\bhomeworks\b/gi, to:"homework", t:"Plural", w:"<b>Homework</b> has no plural." },
+  { re:/\bequipments\b/gi, to:"equipment", t:"Plural", w:"<b>Equipment</b> has no plural." },
+
+  /* calchi dall'italiano */
+  { re:/\b(make|made|making) a goal\b/gi, to:"score a goal", t:"Word choice",
+    w:"In English you <b>score</b> a goal." },
+  { re:/\b(make|made) a question\b/gi, to:"ask a question", t:"Word choice",
+    w:"You <b>ask</b> a question." },
+  { re:/\bthe most of\b/gi, to:"most of", t:"Word choice", w:"<b>Most of</b>, without « the »." },
+  { re:/\ball the two\b/gi, to:"both", t:"Word choice", w:"<b>Both</b> says it in one word." },
+  { re:/\bin the next time\b/gi, to:"next time", t:"Word choice", w:"<b>Next time</b>." },
+
+  /* il soggetto che sparisce: in italiano « è difficile » sta in piedi,
+     in inglese no. E' l'errore piu' frequente di tutti, ma la regola
+     scatterebbe anche su « all I know is that… », che e' giusto. Allora
+     si chiude: solo davanti a un aggettivo di una lista corta. Meglio
+     accorgersene nove volte su dieci che sbagliare una volta su dieci —
+     una correzione falsa, a un ragazzo, fa piu' danno di una mancata. */
+  { re:/\b(think|thought|believe|hope|because|and) (is|was) (difficult|easy|hard|important|good|bad|better|worse|possible|impossible|necessary|true|strange|normal)\b/gi,
+    to:"$1 it $2 $3", t:"Missing subject",
+    w:"English never leaves the subject out: <b>it is</b> difficult, not « is "
+      + "difficult »." },
+
+  /* il passato dopo did */
+  { re:/\b(didn't|did not) (went|played|made|took|saw|had|was|were|came|got|said)\b/gi,
+    to:function (m, a, b) {
+      var base = { went:"go", played:"play", made:"make", took:"take", saw:"see",
+                   had:"have", was:"be", were:"be", came:"come", got:"get",
+                   said:"say" };
+      return a + " " + (base[b.toLowerCase()] || b);
+    }, t:"Past", w:"After <b>didn't</b> the verb goes back to its plain form." }
+];
+
+/* ───────── 2. le parole scritte male ─────────
+   Elenco chiuso: solo quelle che si sbagliano sempre. Nessun controllo
+   ortografico generale — direbbe « sbagliato » a meta' dei cognomi e a
+   tutte le parole che non conosce, e un correttore che grida al lupo
+   smette di essere letto. */
+var PR_SPELL = {
+  becouse:"because", beacuse:"because", becuase:"because", becase:"because",
+  becuse:"because", wich:"which", whitch:"which", whit:"with", teh:"the",
+  thier:"their", freind:"friend", recieve:"receive", beleive:"believe",
+  allways:"always", alot:"a lot", tomorow:"tomorrow", untill:"until",
+  allready:"already", begining:"beginning", writting:"writing", stoped:"stopped",
+  runing:"running", traning:"training", diferent:"different", diffrent:"different",
+  experiance:"experience", opinon:"opinion", succesful:"successful",
+  ofcourse:"of course", infact:"in fact", aswell:"as well", togheter:"together",
+  wen:"when", whas:"was", shure:"sure", happend:"happened", enought:"enough",
+  wold:"would", wich_:"which", abuot:"about", adress:"address", allmost:"almost",
+  dont:"don't", doesnt:"doesn't", didnt:"didn't", cant:"can't", wont:"won't",
+  wasnt:"wasn't", werent:"weren't", isnt:"isn't", arent:"aren't", im:"I'm",
+  ive:"I've", id:"I'd", youre:"you're", theyre:"they're", wouldnt:"wouldn't",
+  couldnt:"couldn't", shouldnt:"shouldn't", havent:"haven't", hasnt:"hasn't"
+};
+
+/* ───────── 3. il controllo ─────────
+   Torna le correzioni trovate e la frase rimessa a posto. */
+function prCheck(text) {
+  var src = String(text == null ? "" : text);
+  var out = src, found = [], seen = {};
+
+  function note(t, w, from, to) {
+    var k = t + "|" + from.toLowerCase();
+    if (seen[k]) return;
+    seen[k] = 1;
+    found.push({ t:t, w:w, from:from, to:to });
+  }
+
+  /* 3a. le parole scritte male */
+  out = out.replace(/[A-Za-z']+/g, function (word) {
+    var low = word.toLowerCase(), fix = PR_SPELL[low];
+    if (!fix) return word;
+    /* se cominciava maiuscola, resta maiuscola */
+    var done = /^[A-Z]/.test(word) ? fix.charAt(0).toUpperCase() + fix.slice(1) : fix;
+    note("Spelling", "<b>" + esc(fix) + "</b> is the way it is written.", word, done);
+    return done;
+  });
+
+  /* 3b. le regole di forma */
+  PR_RULES.forEach(function (r) {
+    var hit = out.match(r.re);
+    if (!hit || !hit.length) return;
+    var before = hit[0];
+    out = out.replace(r.re, r.to);
+    /* quello che la regola ha prodotto su quel pezzo, per mostrarlo */
+    var after = String(before).replace(new RegExp(r.re.source, r.re.flags), r.to);
+    note(r.t, r.w, before, after);
+  });
+
+  /* 3c. la punteggiatura e lo spazio */
+  if (/\s+[,.;!?]/.test(out)) {
+    out = out.replace(/\s+([,.;!?])/g, "$1");
+    note("Punctuation", "No space <b>before</b> a comma or a full stop — the "
+      + "space goes after.", " ,", ",");
+  }
+  if (/ {2,}/.test(out)) {
+    out = out.replace(/ {2,}/g, " ");
+    note("Spacing", "One space between words is enough.", "· ·", "·");
+  }
+  var dub = out.match(/\b(\w+) \1\b/i);
+  if (dub) {
+    out = out.replace(/\b(\w+) \1\b/gi, "$1");
+    note("Repeated word", "The same word twice in a row: one of them goes.",
+      dub[0], dub[1]);
+  }
+  out = out.replace(/\s+$/, "");
+
+  /* 3d. la maiuscola all'inizio e il punto alla fine */
+  var first = out.match(/[A-Za-z]/);
+  if (first && /[a-z]/.test(first[0])) {
+    var at = out.indexOf(first[0]);
+    out = out.slice(0, at) + first[0].toUpperCase() + out.slice(at + 1);
+    note("Start of sentence", "A sentence opens with a <b>capital letter</b>.",
+      first[0], first[0].toUpperCase());
+  }
+  if (out && !/[.!?]$/.test(out)) {
+    out = out + ".";
+    note("Full stop", "A sentence closes with a <b>full stop</b>.", "—", ".");
+  }
+
+  return { src:src, fixed:out, found:found, clean:!found.length };
+}
+
+/* ───────── 4. i punti ─────────
+   Due per aver risposto — quelli di sempre — e fino a due in piu'.
+   Mai meno di due: la penna non si punisce. */
+var PR_BASE = 2, PR_LONG = 14;
+function prPoints(r, words) {
+  var n = PR_BASE;
+  if (words >= PR_LONG) n++;
+  if (r.clean) n++;
+  return n;
+}
+function prWhyPoints(r, words) {
+  var o = [];
+  o.push({ n:PR_BASE, t:"you answered the question" });
+  o.push({ n:words >= PR_LONG ? 1 : 0,
+           t:words >= PR_LONG ? "you said something, not just a line"
+                              : "a longer answer is worth one more" });
+  o.push({ n:r.clean ? 1 : 0,
+           t:r.clean ? "nothing to put right"
+                     : "a clean one is worth one more" });
+  return o;
+}
+
+/* ───────── 5. la schermata ───────── */
+VIEWS.confFix = function (d) {
+  var txt = (d && d.a) || "";
+  var r = prCheck(txt);
+  var words = String(txt).trim().split(/\s+/).filter(function (x) { return x; }).length;
+  var pts = prPoints(r, words);
+
+  paintClub(ME.club);
+  if (typeof paintBg === "function") paintBg("bg-press", true);
+  barFlow("Press room", "What you said", 90);
+
+  html('<div class="pad prpad">' +
+    '<div class="pfx"><span class="pfk">YOUR WORDS</span>' +
+    "<p>" + esc(r.src) + "</p></div>" +
+
+    (r.clean
+      ? '<div class="pfok"><b>Nothing to put right.</b>' +
+        "<span>The form holds up. What you meant is for your teacher to read — " +
+        "that part no phone can mark.</span></div>"
+      : '<h2 class="sec top">' + r.found.length +
+        (r.found.length === 1 ? " thing to look at" : " things to look at") + "</h2>" +
+        '<div class="panel">' + r.found.map(function (f) {
+          return '<div class="pfr"><span class="pft">' + esc(f.t) + "</span>" +
+            '<span class="pfw"><s>' + esc(f.from) + "</s>" +
+            '<i>→</i><b>' + esc(f.to) + "</b></span>" +
+            "<em>" + f.w + "</em></div>";
+        }).join("") + "</div>" +
+
+        '<h2 class="sec top">The same thing, said properly</h2>' +
+        '<div class="pfbest"><p>' + esc(r.fixed) + "</p>" +
+        '<span>These are your words: only the parts above have moved.</span></div>') +
+
+    '<div class="pfpts"><span class="pfk">THE CITY HEARD YOU</span>' +
+    "<b>+" + pts + "</b>" +
+    '<div class="pfl">' + prWhyPoints(r, words).map(function (x) {
+      return '<span class="' + (x.n ? "on" : "") + '"><i>' +
+        (x.n ? "+" + x.n : "—") + "</i>" + esc(x.t) + "</span>";
+    }).join("") + "</div>" +
+    '<em>Nothing is ever taken away here. Writing badly costs you nothing; ' +
+    "writing well earns you something.</em></div>" +
+
+    '<button class="btn" id="pfgo">That is all, thank you</button></div>');
+
+  $("pfgo").onclick = function () {
+    if (typeof CF !== "undefined" && CF) {
+      CF.said.push({ id:"mine", q:(d && d.q) || "", a:r.src, fixed:r.fixed,
+                     fixes:r.found.length, spoke:0 });
+      CF.pay += CF.paper.pay;
+      CF.fame += pts;
+      loadGround(); GROUND.funds += CF.paper.pay / 1000; saveGround();
+    }
+    swap("confEnd");
+  };
+};
 
 
 /* ───── 59-sponsor.js ───── */
