@@ -4294,7 +4294,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "123";
+var APPVER = "124";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -4861,9 +4861,90 @@ C2: [
    e la rotazione non ne ripete nessuno finché non li ha dati tutti. Se
    servono più frasi di quante ne abbia il pacchetto, il resto arriva
    dalla riserva di sempre. */
-function drawQuestions(level, n) {
+
+/* ═══════════════════════════════════════════════════════════════════
+   I TEMI — un'amichevole su un punto di grammatica
+
+   Il professore puo' puntare UNA PARTITA su un argomento: un'amichevole
+   sul futuro, una sul passato. Non un torneo, e la ragione e' il conto:
+   un campionato da tre giornate consuma una sessantina di domande di
+   grammatica a testa, e un tema che ne ha quaranta andrebbe in secca
+   alla seconda giornata. Una partita sola ne consuma dieci, e
+   quaranta ne bastano per quattro alunni diversi senza una ripetizione.
+
+   Ogni tema e' una famiglia di etichette, non una sola: chi dice
+   « il futuro » intende « going to » e « will » insieme, perche' in
+   classe si spiegano insieme.
+
+   ATTENZIONE: questa tabella esiste in due posti — qui e nella
+   piattaforma del professore. Sono due programmi separati e non si
+   possono passare un file. Se si tocca una, si tocca l'altra.
+   ═══════════════════════════════════════════════════════════════════ */
+var TEMI = [
+  { id:"futuro", n:"The future",
+    t:["going to", "will", "future", "future cont.", "future perfect", "future in past"] },
+  { id:"passato", n:"The past",
+    t:["past simple", "past simple irregular", "past cont.", "past perfect", "used to"] },
+  { id:"presente", n:"The present",
+    t:["present simple", "present continuous", "adverbs of frequency", "adverbs"] },
+  { id:"perfetto", n:"The present perfect",
+    t:["pres. perfect", "perfect", "perfect cont.", "since / for"] },
+  { id:"essere", n:"To be and have got",
+    t:["to be", "have got"] },
+  { id:"nome", n:"Nouns and articles",
+    t:["articles", "plural", "demonstratives", "some / any", "possessive 's", "possessive", "quantifiers", "quantifier"] },
+  { id:"chiedere", n:"Asking and offering",
+    t:["question words", "imperative", "would like", "can", "modals", "modality", "question tag"] },
+  { id:"dovequando", n:"Where and when",
+    t:["prepositions place", "prepositions time", "there is / there are", "prepositions"] },
+  { id:"confronto", n:"Comparing",
+    t:["adjectives", "comparatives", "superlatives", "comparative", "superlative", "so / such", "too / enough", "the more"] },
+  { id:"condizionali", n:"If and wishes",
+    t:["first cond.", "second cond.", "third cond.", "mixed cond.", "wish", "unreal past"] },
+  { id:"passivo", n:"The passive",
+    t:["passive", "passive past", "passive modal", "passive perf.", "passive report", "causative"] },
+  { id:"indiretto", n:"Reported speech",
+    t:["reported", "reporting"] },
+  { id:"forme", n:"Verb patterns",
+    t:["gerund", "infinitive", "verb pattern", "make / let", "phrasal", "phrasal verbs", "like + ing"] }
+];
+function temaById(id) {
+  for (var i = 0; i < TEMI.length; i++) if (TEMI[i].id === id) return TEMI[i];
+  return null;
+}
+/* quante domande ha davvero un tema, a un livello: serve alla
+   piattaforma per spegnere i temi che non reggono una partita, e qui
+   per non chiedere l'impossibile */
+function temaConta(id, level) {
+  var t = temaById(id);
+  if (!t) return 0;
+  var n = 0;
+  (PACKS[level] || []).forEach(function (p) {
+    p.forEach(function (q) { if (t.t.indexOf(q.t) > -1) n++; });
+  });
+  return n;
+}
+
+function drawQuestions(level, n, tema) {
   var lv = PACKS[level] ? level : (BANK[level] ? level : "A1");
-  var pool = packPick(lv) || [];
+  var pool;
+  /* ── una partita a tema ──
+     Qui non si pesca un pacchetto: si prende tutta la banca del livello
+     e si tiene solo quello che porta un'etichetta di quel tema. Un
+     pacchetto e' una prova equilibrata per costruzione, e filtrarlo
+     lascerebbe tre domande. Se il tema non basta a riempire la prova,
+     il resto arriva dal pescaggio normale: meglio una prova piena un
+     po' fuori tema che una prova monca. */
+  var fam = tema ? temaById(tema) : null;
+  if (fam) {
+    pool = [];
+    (PACKS[lv] || []).forEach(function (p) {
+      p.forEach(function (q) { if (fam.t.indexOf(q.t) > -1) pool.push(q); });
+    });
+    if (pool.length < n) pool = pool.concat(packPick(lv) || []);
+  } else {
+    pool = packPick(lv) || [];
+  }
   var old = (BANK[lv] || BANK.A1).slice();
   if (pool.length < n) pool = pool.concat(old);
   if (!pool.length) pool = old;
@@ -4883,7 +4964,7 @@ function drawQuestions(level, n) {
      alternative finiscono si prende quel che c'e', perche' una prova
      corta e' peggio di una prova sbilanciata. */
   var want = Math.min(n, pool.length), src = [], last = "", conta = {};
-  var tetto = Math.max(2, Math.ceil(want / 4));
+  var tetto = fam ? want : Math.max(2, Math.ceil(want / 4));
   while (src.length < want && pool.length) {
     var k = 0, scelto = -1, j;
     /* la prima che non ripete l'ultima e non ha gia' riempito la sua quota */
@@ -5927,6 +6008,21 @@ VIEWS.bulletin = function () {
     setTimeout(function () { reset("bulletin"); }, 500);
   }
 };
+
+/* ───────── il tema di questa competizione ─────────
+   Il professore puo' puntare un'amichevole su un punto di grammatica.
+   Arriva nel file pubblicato come « tema », ed e' un id della tabella
+   TEMI. Vuoto vuol dire competizione normale, mista. */
+function compTema() {
+  try {
+    if (typeof BULL === "undefined" || !BULL) return "";
+    return String(BULL.tema || "");
+  } catch (e) { return ""; }
+}
+function compTemaNome() {
+  var t = (typeof temaById === "function") ? temaById(compTema()) : null;
+  return t ? t.n : "";
+}
 
 
 /* ───── 12-online.js ───── */
@@ -16604,7 +16700,13 @@ var GRAM_N = 10, GROW_MIN = 80;     /* da 80% in su si cresce un giocatore */
 var GS = null;
 
 function newGram() {
-  return { kind:"gram", i:0, qs:drawQuestions(myLevelSafe(), GRAM_N), answers:[] };
+  /* ── il tema della competizione, se il professore ne ha messo uno ──
+     Vale QUI, dove si allena, e non al mercato ne' al colloquio: quelle
+     due sono prove una tantum che assegnano lo scout e lo staff per
+     tutta la competizione, e farle su un punto solo vorrebbe dire
+     punire per tre giornate chi era debole proprio quel giorno li'. */
+  var tm = (typeof compTema === "function") ? compTema() : "";
+  return { kind:"gram", i:0, qs:drawQuestions(myLevelSafe(), GRAM_N, tm), answers:[] };
 }
 function newDict() {
   var d = dictPick(myLevelSafe());
