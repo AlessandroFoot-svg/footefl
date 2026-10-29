@@ -4294,7 +4294,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "122";
+var APPVER = "123";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -4873,11 +4873,34 @@ function drawQuestions(level, n) {
      ripete, si prende quella dopo e la ripetuta aspetta il suo turno */
   /* il traguardo si fissa adesso: la riserva si svuota a ogni giro e
      se lo si rileggesse ogni volta la prova si accorcerebbe da sola */
-  var want = Math.min(n, pool.length), src = [], last = "";
+  /* ───────── nessun punto si prende la prova ─────────
+     Prima bastava non ripetere lo stesso punto due volte DI FILA. Con
+     un pacchetto equilibrato funzionava; il giorno che e' arrivato un
+     lotto nuovo tutto sullo stesso punto, la prova e' uscita con venti
+     domande identiche di argomento — alternate, ma tutte quelle.
+     Adesso c'e' anche un tetto: in una prova nessun punto puo' valere
+     piu' di un quarto delle domande, finche' ci sono alternative. Se le
+     alternative finiscono si prende quel che c'e', perche' una prova
+     corta e' peggio di una prova sbilanciata. */
+  var want = Math.min(n, pool.length), src = [], last = "", conta = {};
+  var tetto = Math.max(2, Math.ceil(want / 4));
   while (src.length < want && pool.length) {
-    var k = 0;
-    while (k < pool.length - 1 && pool[k].t === last) k++;
-    src.push(pool[k]); last = pool[k].t; pool.splice(k, 1);
+    var k = 0, scelto = -1, j;
+    /* la prima che non ripete l'ultima e non ha gia' riempito la sua quota */
+    for (j = 0; j < pool.length; j++) {
+      if (pool[j].t === last) continue;
+      if ((conta[pool[j].t] || 0) >= tetto) continue;
+      scelto = j; break;
+    }
+    /* se nessuna va bene, si allenta prima il tetto e poi tutto */
+    if (scelto < 0) {
+      for (j = 0; j < pool.length; j++) if (pool[j].t !== last) { scelto = j; break; }
+    }
+    k = scelto < 0 ? 0 : scelto;
+    src.push(pool[k]);
+    last = pool[k].t;
+    conta[last] = (conta[last] || 0) + 1;
+    pool.splice(k, 1);
   }
   return src.slice(0, Math.min(n, src.length)).map(function (q) {
     var opts = q.o.map(function (text, i) { return { text:text, right:i === q.c }; });
@@ -4906,121 +4929,191 @@ function bankSize(level) {
 
 var PACKS = { A1:[], A2:[], B1:[], B2:[], C1:[], C2:[] };
 
+/* ═══════════════════════════════════════════════════════════════════
+   LOTTO 1 — IL FUTURO (A1)
+   Primo dei lotti nuovi, decisi col prof. Autiello il 29 ottobre 2026.
+   Prima di oggi al livello A1 il futuro non c'era affatto: zero domande
+   su « going to » e zero su « will ». Un'amichevole sul futuro sarebbe
+   finita in secca alla prima prova del mercato, che di domande ne chiede
+   venti.
+
+   Due regole che ho seguito e che valgono per tutti i lotti che
+   verranno:
+
+   1. LE TRE RISPOSTE SBAGLIATE SONO SBAGLIATE DAVVERO. Mai un'opzione
+      che in inglese starebbe in piedi: « it will rain » accanto a
+      « it is going to rain » e' un tranello, non una domanda, e il
+      ragazzo che sceglie bene si vede segnare un errore. Le distrattrici
+      sono forme che non esistono.
+   2. IL BUCO SI SPOSTA. Non sempre sull'ausiliare: a volte sul verbo
+      dopo (« will ___ » → be, leave, know), a volte sulla negazione
+      (won't), a volte sulla domanda (Shall I…?). Se il buco sta sempre
+      nello stesso posto si impara a rispondere senza leggere.
+
+   E la regola dei temi: su quaranta, due parlano di calcio. Il resto e'
+   meteo, casa, famiglia, scuola, cibo, viaggi, negozi, animali, cinema.
+   ═══════════════════════════════════════════════════════════════════ */
+
+
 PACKS.A1.push([
  {t:"to be",        q:"The ball ___ under the bench.",               o:["is","are","be","am"], c:0},
  {t:"to be",        q:"We ___ not ready for the second half.",       o:["are","is","am","be"], c:0},
  {t:"have got",     q:"Our goalkeeper ___ new gloves.",              o:["has got","have got","has get","is got"], c:0},
- {t:"present",      q:"He ___ to the stadium every Saturday.",       o:["goes","go","going","gos"], c:0},
- {t:"negative",     q:"They ___ play on Sunday mornings.",           o:["don't","doesn't","aren't","not"], c:0},
- {t:"a / an",       q:"She is ___ excellent defender.",              o:["an","a","the","—"], c:0},
+ {t:"present simple",      q:"He ___ to the stadium every Saturday.",       o:["goes","go","going","gos"], c:0},
+ {t:"negatives",     q:"They ___ play on Sunday mornings.",           o:["don't","doesn't","aren't","not"], c:0},
+ {t:"articles",       q:"She is ___ excellent defender.",              o:["an","a","the","—"], c:0},
  {t:"plural",       q:"There are two ___ on the bench.",             o:["coaches","coachs","coachies","coach"], c:0},
- {t:"there is",     q:"___ eleven players in a team.",               o:["There are","There is","It are","Have"], c:0},
+ {t:"there is / there are",     q:"___ eleven players in a team.",               o:["There are","There is","It are","Have"], c:0},
  {t:"can",          q:"I ___ run fast, but I can't jump.",           o:["can","cans","am can","could to"], c:0},
- {t:"prepositions", q:"My shirt is ___ the bag.",                    o:["in","on","at","of"], c:0},
- {t:"prepositions", q:"The match starts ___ three o'clock.",         o:["at","in","on","to"], c:0},
- {t:"possessive",   q:"This is ___ ball, not mine.",                 o:["Tom's","Toms","Tom","of Tom"], c:0},
- {t:"question",     q:"___ is the captain? Forge is.",               o:["Who","What","Where","When"], c:0},
+ {t:"prepositions place", q:"My shirt is ___ the bag.",                    o:["in","on","at","of"], c:0},
+ {t:"prepositions time", q:"The match starts ___ three o'clock.",         o:["at","in","on","to"], c:0},
+ {t:"possessive 's",   q:"This is ___ ball, not mine.",                 o:["Tom's","Toms","Tom","of Tom"], c:0},
+ {t:"question words",     q:"___ is the captain? Forge is.",               o:["Who","What","Where","When"], c:0},
  {t:"imperative",   q:"___ the ball to me!",                         o:["Pass","Passing","You pass","To pass"], c:0},
  {t:"adjectives",   q:"It is a ___ day for football.",               o:["cold","coldly","colding","colds"], c:0},
- {t:"this / that",  q:"___ boots over here are mine.",               o:["These","This","That","It"], c:0},
+ {t:"demonstratives",  q:"___ boots over here are mine.",               o:["These","This","That","It"], c:0},
  {t:"pronouns",     q:"The coach called ___ after the match.",       o:["us","we","our","ours"], c:0},
  {t:"numbers",      q:"The second half starts at half ___ four.",    o:["past","to","over","after"], c:0},
  {t:"like + ing",   q:"I like ___ with my friends.",                 o:["playing","play","to playing","played"], c:0},
- {t:"continuous",   q:"Look! The keeper ___ the ball.",              o:["is holding","holds","hold","holding"], c:0}
+ {t:"present continuous",   q:"Look! The keeper ___ the ball.",              o:["is holding","holds","hold","holding"], c:0},
+ /* ── lotto 1 · il futuro ── */
+ {t:"going to",  q:"Look at those clouds! It ___ rain.",            o:["is going to","is go to","going to","is going"], c:0},
+ {t:"going to",  q:"We ___ visit my grandmother on Sunday.",        o:["are going to","is going to","are go to","going to"], c:0},
+ {t:"going to",  q:"I ___ buy a new jacket tomorrow.",              o:["am going to","is going to","am go to","are going to"], c:0},
+ {t:"going to",  q:"She ___ study French next year.",               o:["is going to","are going to","am going to","is go to"], c:0},
+ {t:"will",      q:"I think it ___ be sunny tomorrow.",             o:["will","wills","will to","is will"], c:0},
+ {t:"will",      q:"Don't worry, I ___ help you.",                  o:["will","am will","will to","wills"], c:0},
+ {t:"will",      q:"She ___ be twelve in June.",                    o:["will","wills","will to","is will"], c:0},
+ {t:"will",      q:"We ___ forget your birthday, we promise.",      o:["won't","willn't","don't will","not will"], c:0}
 ]);
 
 PACKS.A1.push([
  {t:"to be",        q:"My parents ___ at home this evening.",        o:["are","is","am","be"], c:0},
  {t:"to be",        q:"___ your sister eleven years old?",           o:["Is","Are","Am","Do"], c:0},
  {t:"have got",     q:"___ you got a bicycle?",                      o:["Have","Has","Do","Are"], c:0},
- {t:"present",      q:"My mother ___ coffee in the morning.",        o:["drinks","drink","drinking","is drink"], c:0},
- {t:"negative",     q:"My brother ___ like cold milk.",              o:["doesn't","don't","isn't","not"], c:0},
- {t:"a / an",       q:"We live in ___ old house.",                   o:["an","a","the","—"], c:0},
+ {t:"present simple",      q:"My mother ___ coffee in the morning.",        o:["drinks","drink","drinking","is drink"], c:0},
+ {t:"negatives",     q:"My brother ___ like cold milk.",              o:["doesn't","don't","isn't","not"], c:0},
+ {t:"articles",       q:"We live in ___ old house.",                   o:["an","a","the","—"], c:0},
  {t:"plural",       q:"There are three ___ in the kitchen.",         o:["knives","knifes","knife","knifs"], c:0},
- {t:"there is",     q:"___ a lamp next to my bed.",                  o:["There is","There are","It has","Have"], c:0},
+ {t:"there is / there are",     q:"___ a lamp next to my bed.",                  o:["There is","There are","It has","Have"], c:0},
  {t:"can",          q:"My little sister ___ swim yet.",              o:["can't","doesn't can","not can","isn't can"], c:0},
- {t:"prepositions", q:"The cat sleeps ___ the sofa.",                o:["on","in","at","to"], c:0},
- {t:"prepositions", q:"I go to bed ___ ten o'clock.",                o:["at","in","on","by"], c:0},
- {t:"possessive",   q:"That bedroom is ___ .",                       o:["ours","our","us","of us"], c:0},
- {t:"question",     q:"___ do you live? In Birmingham.",             o:["Where","When","Who","Why"], c:0},
+ {t:"prepositions place", q:"The cat sleeps ___ the sofa.",                o:["on","in","at","to"], c:0},
+ {t:"prepositions time", q:"I go to bed ___ ten o'clock.",                o:["at","in","on","by"], c:0},
+ {t:"possessive 's",   q:"That bedroom is ___ .",                       o:["ours","our","us","of us"], c:0},
+ {t:"question words",     q:"___ do you live? In Birmingham.",             o:["Where","When","Who","Why"], c:0},
  {t:"imperative",   q:"___ the door, please. It is cold.",           o:["Close","Closing","You close","To close"], c:0},
  {t:"adjectives",   q:"My room is very ___ in winter.",              o:["warm","warmly","warming","warms"], c:0},
- {t:"this / that",  q:"___ house over there is my grandmother's.",   o:["That","These","This","Those"], c:0},
+ {t:"demonstratives",  q:"___ house over there is my grandmother's.",   o:["That","These","This","Those"], c:0},
  {t:"pronouns",     q:"My father reads the paper and I help ___ .",  o:["him","he","his","himself"], c:0},
- {t:"frequency",    q:"We ___ have dinner at seven.",                o:["usually","usual","usualy","use"], c:0},
+ {t:"adverbs of frequency",    q:"We ___ have dinner at seven.",                o:["usually","usual","usualy","use"], c:0},
  {t:"like + ing",   q:"She hates ___ the washing-up.",               o:["doing","do","to doing","did"], c:0},
- {t:"continuous",   q:"Be quiet! The baby ___ .",                    o:["is sleeping","sleeps","sleep","sleeping"], c:0}
+ {t:"present continuous",   q:"Be quiet! The baby ___ .",                    o:["is sleeping","sleeps","sleep","sleeping"], c:0},
+ /* ── lotto 1 · il futuro ── */
+ {t:"going to",  q:"___ you going to eat that sandwich?",           o:["Are","Is","Do","Have"], c:0},
+ {t:"going to",  q:"They ___ not going to come to the party.",      o:["are","is","am","do"], c:0},
+ {t:"going to",  q:"My brother ___ going to wash the car.",         o:["is","are","am","be"], c:0},
+ {t:"going to",  q:"What ___ you going to do on Saturday?",         o:["are","is","do","have"], c:0},
+ {t:"will",      q:"The bag is heavy. I ___ carry it for you.",     o:["will","am will","will to","wills"], c:0},
+ {t:"will",      q:"I will ___ you tomorrow morning.",              o:["call","calls","calling","called"], c:0},
+ {t:"will",      q:"___ we go to the cinema tonight?",              o:["Shall","Will to","Do shall","Are"], c:0},
+ {t:"will",      q:"They will ___ at six o'clock.",                 o:["arrive","arrives","arriving","arrived"], c:0}
 ]);
 
 PACKS.A1.push([
  {t:"to be",        q:"Our classroom ___ on the first floor.",       o:["is","are","be","am"], c:0},
  {t:"to be",        q:"The teachers ___ in the staff room.",         o:["are","is","am","be"], c:0},
  {t:"have got",     q:"We ___ got a new English book.",              o:["have","has","are","do"], c:0},
- {t:"present",      q:"The lesson ___ at nine every day.",           o:["begins","begin","beginning","begines"], c:0},
- {t:"negative",     q:"I ___ understand this exercise.",             o:["don't","doesn't","am not","no"], c:0},
- {t:"a / an",       q:"Can I borrow ___ pencil, please?",            o:["a","an","the","—"], c:0},
+ {t:"present simple",      q:"The lesson ___ at nine every day.",           o:["begins","begin","beginning","begines"], c:0},
+ {t:"negatives",     q:"I ___ understand this exercise.",             o:["don't","doesn't","am not","no"], c:0},
+ {t:"articles",       q:"Can I borrow ___ pencil, please?",            o:["a","an","the","—"], c:0},
  {t:"plural",       q:"Two ___ are absent today.",                   o:["children","childs","childrens","child"], c:0},
- {t:"there is",     q:"___ any chalk in the box?",                   o:["Is there","Are there","There is","Have there"], c:0},
+ {t:"there is / there are",     q:"___ any chalk in the box?",                   o:["Is there","Are there","There is","Have there"], c:0},
  {t:"can",          q:"___ you repeat the question, please?",        o:["Can","Do","Are","Have"], c:0},
- {t:"prepositions", q:"The map is ___ the wall.",                    o:["on","in","at","under"], c:0},
- {t:"prepositions", q:"We have English ___ Monday and Thursday.",    o:["on","in","at","from"], c:0},
- {t:"possessive",   q:"These are the ___ books.",                    o:["students'","students","student's s","of students"], c:0},
- {t:"question",     q:"___ books do you need? Three.",               o:["How many","How much","How long","What many"], c:0},
+ {t:"prepositions place", q:"The map is ___ the wall.",                    o:["on","in","at","under"], c:0},
+ {t:"prepositions time", q:"We have English ___ Monday and Thursday.",    o:["on","in","at","from"], c:0},
+ {t:"possessive 's",   q:"These are the ___ books.",                    o:["students'","students","student's s","of students"], c:0},
+ {t:"question words",     q:"___ books do you need? Three.",               o:["How many","How much","How long","What many"], c:0},
  {t:"imperative",   q:"___ talk during the test.",                   o:["Don't","No","Not","Doesn't"], c:0},
  {t:"adjectives",   q:"English is an ___ language.",                 o:["interesting","interest","interestingly","interested"], c:0},
- {t:"this / that",  q:"Give me ___ pens on your desk, please.",      o:["those","this","that","them"], c:0},
+ {t:"demonstratives",  q:"Give me ___ pens on your desk, please.",      o:["those","this","that","them"], c:0},
  {t:"pronouns",     q:"The exercise is easy. I can do ___ alone.",   o:["it","its","him","he"], c:0},
- {t:"frequency",    q:"She is ___ late for the first lesson.",       o:["never","not never","no","nothing"], c:0},
+ {t:"adverbs of frequency",    q:"She is ___ late for the first lesson.",       o:["never","not never","no","nothing"], c:0},
  {t:"like + ing",   q:"We enjoy ___ stories in English.",            o:["reading","read","to reading","reads"], c:0},
- {t:"continuous",   q:"The students ___ a test right now.",          o:["are doing","do","does","doing"], c:0}
+ {t:"present continuous",   q:"The students ___ a test right now.",          o:["are doing","do","does","doing"], c:0},
+ /* ── lotto 1 · il futuro ── */
+ {t:"going to",  q:"It is cold. I ___ wear my coat.",               o:["am going to","is going to","going to","am go to"], c:0},
+ {t:"going to",  q:"We ___ going to travel by train.",              o:["are","is","am","be"], c:0},
+ {t:"going to",  q:"He ___ going to play in goal today.",           o:["is","are","am","be"], c:0},
+ {t:"going to",  q:"I think I ___ going to be late.",               o:["am","is","are","be"], c:0},
+ {t:"will",      q:"I ___ phone you when I get home.",              o:["will","am will","will to","wills"], c:0},
+ {t:"will",      q:"It will ___ cold in the mountains.",            o:["be","is","being","was"], c:0},
+ {t:"will",      q:"He ___ come with us on Saturday.",              o:["won't","willn't","doesn't will","not will"], c:0},
+ {t:"will",      q:"___ I close the door?",                         o:["Shall","Will to","Do shall","Am"], c:0}
 ]);
 
 PACKS.A1.push([
  {t:"to be",        q:"The soup ___ too hot for me.",                o:["is","are","be","am"], c:0},
  {t:"to be",        q:"___ the apples fresh today?",                 o:["Are","Is","Am","Do"], c:0},
  {t:"have got",     q:"The shop ___ got any bread left.",            o:["hasn't","haven't","doesn't","isn't"], c:0},
- {t:"present",      q:"My father ___ the shopping on Fridays.",      o:["does","do","doing","dos"], c:0},
- {t:"negative",     q:"We ___ eat meat in my family.",               o:["don't","doesn't","aren't","not"], c:0},
- {t:"a / an",       q:"I would like ___ orange, please.",            o:["an","a","the","some"], c:0},
+ {t:"present simple",      q:"My father ___ the shopping on Fridays.",      o:["does","do","doing","dos"], c:0},
+ {t:"negatives",     q:"We ___ eat meat in my family.",               o:["don't","doesn't","aren't","not"], c:0},
+ {t:"articles",       q:"I would like ___ orange, please.",            o:["an","a","the","some"], c:0},
  {t:"plural",       q:"She buys two ___ of milk every day.",         o:["bottles","bottle","bottls","bottlies"], c:0},
- {t:"there is",     q:"___ some rice in the cupboard.",              o:["There is","There are","It is","Have"], c:0},
- {t:"quantity",     q:"How ___ water do you drink?",                 o:["much","many","lot","few"], c:0},
- {t:"prepositions", q:"The juice is ___ the fridge.",                o:["in","on","at","over"], c:0},
- {t:"prepositions", q:"We have lunch ___ one o'clock.",              o:["at","in","on","from"], c:0},
- {t:"possessive",   q:"Is this sandwich ___ or mine?",               o:["yours","your","you","of you"], c:0},
- {t:"question",     q:"___ does a ticket cost? Two pounds.",         o:["How much","How many","What","Which much"], c:0},
+ {t:"there is / there are",     q:"___ some rice in the cupboard.",              o:["There is","There are","It is","Have"], c:0},
+ {t:"some / any",     q:"How ___ water do you drink?",                 o:["much","many","lot","few"], c:0},
+ {t:"prepositions place", q:"The juice is ___ the fridge.",                o:["in","on","at","over"], c:0},
+ {t:"prepositions time", q:"We have lunch ___ one o'clock.",              o:["at","in","on","from"], c:0},
+ {t:"possessive 's",   q:"Is this sandwich ___ or mine?",               o:["yours","your","you","of you"], c:0},
+ {t:"question words",     q:"___ does a ticket cost? Two pounds.",         o:["How much","How many","What","Which much"], c:0},
  {t:"imperative",   q:"___ the salt, please.",                       o:["Pass","Passing","You pass","To pass"], c:0},
  {t:"adjectives",   q:"This pizza is ___ than that one.",            o:["better","gooder","more good","best"], c:0},
- {t:"this / that",  q:"___ cake here looks delicious.",              o:["This","These","Those","Them"], c:0},
+ {t:"demonstratives",  q:"___ cake here looks delicious.",              o:["This","These","Those","Them"], c:0},
  {t:"pronouns",     q:"I like apples but my sister doesn't like ___ .", o:["them","they","their","it"], c:0},
  {t:"some / any",   q:"We haven't got ___ sugar.",                   o:["any","some","no any","a"], c:0},
  {t:"like + ing",   q:"My cousin loves ___ cakes.",                  o:["making","make","to making","made"], c:0},
- {t:"continuous",   q:"Wait a minute — I ___ dinner.",               o:["am cooking","cook","cooks","cooking"], c:0}
+ {t:"present continuous",   q:"Wait a minute — I ___ dinner.",               o:["am cooking","cook","cooks","cooking"], c:0},
+ /* ── lotto 1 · il futuro ── */
+ {t:"going to",  q:"The shop ___ going to open at nine.",           o:["is","are","am","be"], c:0},
+ {t:"going to",  q:"___ it going to snow tonight?",                 o:["Is","Are","Am","Do"], c:0},
+ {t:"going to",  q:"My parents ___ going to buy a dog.",            o:["are","is","am","be"], c:0},
+ {t:"going to",  q:"She is going to ___ her homework after dinner.", o:["do","does","doing","did"], c:0},
+ {t:"will",      q:"You will ___ this film, I promise.",            o:["like","likes","liking","liked"], c:0},
+ {t:"will",      q:"The train will ___ in five minutes.",           o:["leave","leaves","leaving","left"], c:0},
+ {t:"will",      q:"I'm thirsty. I ___ have a glass of water.",     o:["will","am will","will to","wills"], c:0},
+ {t:"will",      q:"Nobody will ___ the answer.",                   o:["know","knows","knowing","knew"], c:0}
 ]);
 
 PACKS.A1.push([
  {t:"to be",        q:"It ___ very windy this morning.",             o:["is","are","be","am"], c:0},
  {t:"to be",        q:"The days ___ short in December.",             o:["are","is","am","be"], c:0},
  {t:"have got",     q:"___ your town got a swimming pool?",          o:["Has","Have","Is","Does"], c:0},
- {t:"present",      q:"The train ___ at nine in the morning.",       o:["leaves","leave","leaving","leafs"], c:0},
- {t:"negative",     q:"It ___ snow very often here.",                o:["doesn't","don't","isn't","not"], c:0},
- {t:"a / an",       q:"We waited ___ hour at the station.",          o:["an","a","the","—"], c:0},
+ {t:"present simple",      q:"The train ___ at nine in the morning.",       o:["leaves","leave","leaving","leafs"], c:0},
+ {t:"negatives",     q:"It ___ snow very often here.",                o:["doesn't","don't","isn't","not"], c:0},
+ {t:"articles",       q:"We waited ___ hour at the station.",          o:["an","a","the","—"], c:0},
  {t:"plural",       q:"There are three ___ in my family.",           o:["women","womans","womens","woman"], c:0},
- {t:"there is",     q:"___ a lot of clouds today.",                  o:["There are","There is","It is","Have"], c:0},
+ {t:"there is / there are",     q:"___ a lot of clouds today.",                  o:["There are","There is","It is","Have"], c:0},
  {t:"can",          q:"You ___ see the sea from my window.",         o:["can","can to","are can","do can"], c:0},
- {t:"prepositions", q:"My grandparents live ___ the sea.",           o:["near","in","on","to"], c:0},
- {t:"prepositions", q:"My birthday is ___ July.",                    o:["in","on","at","from"], c:0},
- {t:"possessive",   q:"That is the ___ umbrella.",                   o:["teacher's","teachers","teacher","of teacher"], c:0},
- {t:"question",     q:"___ is the weather today? Rainy.",            o:["What","How many","Who","Which"], c:0},
+ {t:"prepositions place", q:"My grandparents live ___ the sea.",           o:["near","in","on","to"], c:0},
+ {t:"prepositions time", q:"My birthday is ___ July.",                    o:["in","on","at","from"], c:0},
+ {t:"possessive 's",   q:"That is the ___ umbrella.",                   o:["teacher's","teachers","teacher","of teacher"], c:0},
+ {t:"question words",     q:"___ is the weather today? Rainy.",            o:["What","How many","Who","Which"], c:0},
  {t:"imperative",   q:"___ your coat, it is cold outside.",          o:["Take","Taking","You take","To take"], c:0},
  {t:"adjectives",   q:"Today is ___ than yesterday.",                o:["colder","more cold","coldest","cold"], c:0},
- {t:"this / that",  q:"Look at ___ birds in the sky!",               o:["those","that","this","them"], c:0},
+ {t:"demonstratives",  q:"Look at ___ birds in the sky!",               o:["those","that","this","them"], c:0},
  {t:"pronouns",     q:"The bus is late. We are waiting for ___ .",   o:["it","him","them","its"], c:0},
- {t:"frequency",    q:"It ___ rains in the desert.",                 o:["rarely","rare","rarly","rareness"], c:0},
+ {t:"adverbs of frequency",    q:"It ___ rains in the desert.",                 o:["rarely","rare","rarly","rareness"], c:0},
  {t:"like + ing",   q:"I don't mind ___ in the rain.",               o:["walking","walk","to walking","walked"], c:0},
- {t:"continuous",   q:"Take the umbrella — it ___ again.",           o:["is raining","rains","rain","raining"], c:0}
+ {t:"present continuous",   q:"Take the umbrella — it ___ again.",           o:["is raining","rains","rain","raining"], c:0},
+ /* ── lotto 1 · il futuro ── */
+ {t:"going to",  q:"We are going to ___ pizza tonight.",            o:["eat","eats","eating","ate"], c:0},
+ {t:"going to",  q:"I am not going to ___ the bus today.",          o:["take","takes","taking","took"], c:0},
+ {t:"going to",  q:"Are they going to ___ in the sea?",             o:["swim","swims","swimming","swam"], c:0},
+ {t:"going to",  q:"Tom ___ going to be ten next week.",            o:["is","are","am","be"], c:0},
+ {t:"will",      q:"We ___ see you next week.",                     o:["will","wills","will to","are will"], c:0},
+ {t:"will",      q:"___ it be hot in August?",                      o:["Will","Wills","Do","Is will"], c:0},
+ {t:"will",      q:"Our team ___ win the cup this year.",           o:["will","wills","will to","are will"], c:0},
+ {t:"will",      q:"I will ___ back before dinner.",                o:["be","am","being","was"], c:0}
 ]);
-
 
 /* ───── bk-a2.js ───── */
 /* ═══════════════════════════════════════════════════════════════════
