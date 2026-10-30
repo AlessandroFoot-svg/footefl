@@ -805,6 +805,15 @@ h3.mt{margin-top:18px}
 .gr .gb i{display:block;height:100%;background:var(--ok)}
 .gr .gv{flex:none;width:42px;text-align:right;font-size:12px;font-weight:800}
 
+/* il quaderno dei punti: la stessa riga, col colore che dice come va */
+.gr.pt .gn{color:var(--cream)}
+.gr.pt.ok .gb i{background:var(--ok)}
+.gr.pt.mid .gb i{background:#D8B65C}
+.gr.pt.ko .gb i{background:var(--no)}
+.ptags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ptag{font-size:10.5px;font-weight:700;letter-spacing:.02em;color:var(--fog);
+  padding:5px 9px;border-radius:999px;border:1px dashed var(--edge)}
+
 .rep{margin-top:10px;padding:12px 14px;border-radius:12px;background:var(--deep);
   border:1px solid var(--edge)}
 .rep .rh2 b{display:block;font-size:14px;font-weight:800}
@@ -3708,7 +3717,7 @@ var CARDS = [
    Quando saranno molte — i volti dei giocatori, venti dettati — andranno
    messe accanto all'app invece che dentro.
    ═══════════════════════════════════════════════════════════════════ */
-var IMG = {"bg-ROP":"im/bg-ROP.webp","bg-next":"im/bg-next.webp","bg-pitch":"im/bg-pitch.webp","bg-press":"im/bg-press.webp","crest-BRA":"im/crest-BRA.webp","crest-OXF":"im/crest-OXF.webp","crest-RAV":"im/crest-RAV.webp","crest-ROP":"im/crest-ROP.webp","crest-SHE":"im/crest-SHE.webp","gk-BRA":"im/gk-BRA.webp","gk-OXF":"im/gk-OXF.webp","gk-RAV":"im/gk-RAV.webp","gk-ROP":"im/gk-ROP.webp","gk-SHE":"im/gk-SHE.webp","hero-ROP":"im/hero-ROP.webp","ic-champions":"im/ic-champions.png","ic-cup":"im/ic-cup.png","ic-eurofa":"im/ic-eurofa.png","ic-season":"im/ic-season.png","ic-settings":"im/ic-settings.png","ic-training":"im/ic-training.png","kit-BRA":"im/kit-BRA.webp","kit-OXF":"im/kit-OXF.webp","kit-RAV":"im/kit-RAV.webp","kit-ROP":"im/kit-ROP.webp","kit-SHE":"im/kit-SHE.webp","pitch":"im/pitch.jpg","stadium":"im/stadium.jpg","suit-BRA":"im/suit-BRA.webp","suit-OXF":"im/suit-OXF.webp","suit-RAV":"im/suit-RAV.webp","suit-ROP":"im/suit-ROP.webp","suit-SHE":"im/suit-SHE.webp","wx-cloudy":"im/wx-cloudy.jpg","wx-fog":"im/wx-fog.jpg","wx-rain":"im/wx-rain.jpg","wx-snow":"im/wx-snow.jpg","wx-storm":"im/wx-storm.jpg","wx-sunny":"im/wx-sunny.jpg"};
+var IMG = {"bg-ROP":"im/bg-ROP.webp","bg-next":"im/bg-next.webp","bg-pitch":"im/bg-pitch.webp","bg-press":"im/bg-press.webp","crest-BRA":"im/crest-BRA.webp","crest-OXF":"im/crest-OXF.webp","crest-RAV":"im/crest-RAV.webp","crest-ROP":"im/crest-ROP.webp","crest-SHE":"im/crest-SHE.webp","fit-BRA":"im/fit-BRA.webp","fit-OXF":"im/fit-OXF.webp","fit-RAV":"im/fit-RAV.webp","fit-ROP":"im/fit-ROP.webp","fit-SHE":"im/fit-SHE.webp","gaf-BRA":"im/gaf-BRA.webp","gaf-OXF":"im/gaf-OXF.webp","gaf-RAV":"im/gaf-RAV.webp","gaf-ROP":"im/gaf-ROP.webp","gaf-SHE":"im/gaf-SHE.webp","gk-BRA":"im/gk-BRA.webp","gk-OXF":"im/gk-OXF.webp","gk-RAV":"im/gk-RAV.webp","gk-ROP":"im/gk-ROP.webp","gk-SHE":"im/gk-SHE.webp","hero-ROP":"im/hero-ROP.webp","ic-champions":"im/ic-champions.png","ic-cup":"im/ic-cup.png","ic-eurofa":"im/ic-eurofa.png","ic-season":"im/ic-season.png","ic-settings":"im/ic-settings.png","ic-training":"im/ic-training.png","kit-BRA":"im/kit-BRA.webp","kit-OXF":"im/kit-OXF.webp","kit-RAV":"im/kit-RAV.webp","kit-ROP":"im/kit-ROP.webp","kit-SHE":"im/kit-SHE.webp","pitch":"im/pitch.jpg","stadium":"im/stadium.jpg","suit-BRA":"im/suit-BRA.webp","suit-OXF":"im/suit-OXF.webp","suit-RAV":"im/suit-RAV.webp","suit-ROP":"im/suit-ROP.webp","suit-SHE":"im/suit-SHE.webp","wx-cloudy":"im/wx-cloudy.jpg","wx-fog":"im/wx-fog.jpg","wx-rain":"im/wx-rain.jpg","wx-snow":"im/wx-snow.jpg","wx-storm":"im/wx-storm.jpg","wx-sunny":"im/wx-sunny.jpg"};
 function imgOf(k) { return IMG[k] || ""; }
 /* la sala stampa serve anche al foglio di stile, per la carta in home */
 try {
@@ -3732,6 +3741,12 @@ function kitOf(id) { return IMG["kit-" + imgId(id)] || ""; }
 function gkOf(id) { return IMG["gk-" + imgId(id)] || ""; }
 /* la tuta del club: quella che i giocatori portano in conferenza stampa */
 function suitOf(id) { return IMG["suit-" + imgId(id)] || ""; }
+/* e i due in panchina hanno la loro, uguale per nessun'altra squadra:
+   la tuta col fregio per il responsabile dell'allenamento (fit), la
+   giacca da società per l'allenatore (gaf). Si vedono soltanto quando
+   uno dei due è stato assunto: prima c'è la giacca disegnata, uguale
+   per tutti, e la differenza si vede. */
+function staffKitOf(role, id) { return IMG[String(role) + "-" + imgId(id)] || ""; }
 /* il cielo di una giornata: sole, nuvoloso, pioggia, tempesta, neve, nebbia */
 function skyOf(clim) { return IMG["wx-" + String(clim || "cloudy").toLowerCase()] || IMG["wx-cloudy"]; }
 
@@ -4294,7 +4309,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "128";
+var APPVER = "130";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -12534,6 +12549,7 @@ VIEWS.form = function () {
       '<p class="lede">This page fills itself the moment you play a half on this ' +
       "phone. Every word you write is counted, and after each match you can take " +
       "the <b>language report</b> home as a PDF.</p>" +
+      (typeof notebookBlock === "function" ? notebookBlock() : "") +
       '<button class="btn ghost" id="fbk">Back to my squad</button></div>');
     $("fbk").onclick = function () { reset("squad"); };
     return;
@@ -12571,6 +12587,8 @@ VIEWS.form = function () {
         '<span class="gb"><i style="width:' + x.p + '%"></i></span>' +
         '<span class="gv">' + x.n + "/" + x.d + "</span></div>";
     }).join("") + "</div>" +
+
+    (typeof notebookBlock === "function" ? notebookBlock() : "") +
 
     '<h2 class="sec top">Your language reports</h2>' +
     '<p class="lede sm2">One for each match. Take it home, show it, keep it.</p>' +
@@ -12697,6 +12715,13 @@ function reportOf(md) {
        quello che aveva promesso e quello che ha detto dopo */
     var all = (pr.pre || []).concat(pr.post || []).concat(pr.said || []);
     if (all.length) out.press = all;
+  }
+  /* il quaderno dei punti: numeri e nomi di punti grammaticali, niente
+     di personale. Il professore li somma su tutta la classe e sa che
+     cosa rispiegare lunedi'. */
+  if (typeof tagsForReport === "function") {
+    var tg = tagsForReport();
+    if (tg) out.tags = tg;
   }
   if (SHEET && SHEET.call) {
     out.calls = { side:SHEET.call.att.side, taker:SHEET.call.att.taker,
@@ -15240,6 +15265,10 @@ VIEWS.mkQuiz = function () {
   Array.prototype.forEach.call($("main").querySelectorAll(".opt"), function (b) {
     b.onclick = function () {
       MK.answers[MK.i] = parseInt(b.dataset.a, 10);
+      /* il quaderno dei punti: una riga per risposta, qui dove si tocca */
+      if (typeof tagMark === "function") {
+        tagMark(ME.level, MK.qs[MK.i].t, MK.answers[MK.i] === MK.qs[MK.i].c);
+      }
       MK.i++;
       swap(MK.i < MK.qs.length ? "mkQuiz" : "mkScore");
     };
@@ -15702,6 +15731,9 @@ VIEWS.rcQuiz = function () {
     if (chiuso) return;
     chiuso = true; rcStop();
     RC.answers[RC.i] = a;
+    if (typeof tagMark === "function" && RC.qs[RC.i]) {
+      tagMark(ME.level, RC.qs[RC.i].t, a === RC.qs[RC.i].c);
+    }
     RC.i++;
     swap(RC.i < RC.qs.length ? "rcQuiz" : "rcScore");
   }
@@ -17844,6 +17876,9 @@ VIEWS.gsGram = function () {
   Array.prototype.forEach.call($("main").querySelectorAll(".opt"), function (b) {
     b.onclick = function () {
       GS.answers[GS.i] = parseInt(b.dataset.a, 10);
+      if (typeof tagMark === "function") {
+        tagMark(myLevelSafe(), q.t, GS.answers[GS.i] === q.c);
+      }
       GS.i++;
       if (GS.i < GS.qs.length) swap("gsGram");
       else {
@@ -21471,6 +21506,36 @@ B1: [
 var DRILL_BACK = 2;        /* un debito torna dopo due esercizi */
 var DRILL_FIX = 2;         /* e se ne va dopo due risposte giuste */
 
+/* ───────── e poi il tempo ─────────
+   Il registro di sopra guarda gli esercizi: una voce sbagliata torna
+   dopo due. Ma una voce GIUSTA, fino a ieri, usciva dal giro per
+   sempre: giusta una volta a ottobre, mai piu' vista. Non e' cosi' che
+   si impara una parola — si impara rivedendola a distanze che si
+   allargano.
+
+   Allora ogni voce fatta giusta porta una data e un gradino. Scaduto il
+   gradino, la voce torna disponibile come RIPASSO; se e' giusta di
+   nuovo sale di gradino (un giorno, tre, una settimana, tre settimane),
+   se e' sbagliata ridiventa un debito e ricomincia.
+
+   Due misure per non rovinare l'esercizio: il ripasso prende al massimo
+   un quarto delle domande (i debiti restano a meta'), e la roba nuova
+   viene prima quando ce n'e'. Un esercizio che fosse tutto ripasso
+   sarebbe una verifica, e questo e' un allenamento.
+
+   Le voci segnate col vecchio registro (un 1 secco, senza data) non
+   hanno scadenza: non voglio che un alunno apra l'app e si trovi di
+   colpo trecento ripassi. Prenderanno la data la prima volta che
+   ricapitano. */
+var DRILL_DAYS = [1, 3, 7, 21];
+var DRILL_RIP = 4;         /* il ripasso: al massimo un quarto */
+
+function drillDue(rec) {
+  if (!rec || typeof rec !== "object" || !rec.t) return false;
+  var s = DRILL_DAYS[Math.min(rec.s || 0, DRILL_DAYS.length - 1)];
+  return rec.t + s * 86400000 <= Date.now();
+}
+
 var SEEN = null, SEENK = "";
 function seenKey() {
   var s = (typeof seasonId === "function") ? seasonId() : "s1";
@@ -21507,36 +21572,52 @@ function drillId(kind, level, it) {
    Prima i debiti scaduti, poi le mai viste. Le gia' fatte si ripescano
    solo quando il banco e' finito, e in quel caso lo si dice. */
 function drillPick(kind, level, bank, n) {
-  var S = seenLoad(), owed = [], fresh = [], old = [], i, id, o, e;
+  var S = seenLoad(), owed = [], fresh = [], rip = [], old = [], i, id, o, e;
   for (i = 0; i < bank.length; i++) {
     id = drillId(kind, level, bank[i]);
     e = { it:bank[i], id:id };
     o = S.o[id];
     if (o) { if ((o.due || 0) <= S.k) owed.push(e); }
-    else if (S.d[id]) old.push(e);
+    else if (S.d[id]) { if (drillDue(S.d[id])) rip.push(e); else old.push(e); }
     else fresh.push(e);
   }
-  owed = shuf(owed); fresh = shuf(fresh); old = shuf(old);
+  owed = shuf(owed); fresh = shuf(fresh); rip = shuf(rip); old = shuf(old);
 
   var half = Math.max(1, Math.floor(n / 2));
+  var quarto = Math.max(1, Math.round(n / DRILL_RIP));
   var out = owed.slice(0, half);
+  out = out.concat(rip.slice(0, Math.min(quarto, Math.max(0, n - out.length))));
   out = out.concat(fresh.slice(0, Math.max(0, n - out.length)));
+  /* se non basta: gli altri debiti, poi gli altri ripassi */
   if (out.length < n) out = out.concat(owed.slice(half, half + (n - out.length)));
+  if (out.length < n) out = out.concat(rip.slice(quarto, quarto + (n - out.length)));
   var again = false;
   if (out.length < n) {
-    again = out.length > 0;
+    /* qui si', il banco e' finito: si ripescano le gia' fatte non scadute,
+       e lo si dice sempre — anche quando NON c'era nient'altro, che e'
+       proprio il caso in cui l'alunno ha finito tutto */
+    again = true;
     out = out.concat(old.slice(0, n - out.length));
   }
   if (!out.length) { again = true; out = old.slice(0, n); }
-  return { items:shuf(out), again:again, fresh:fresh.length, owed:owed.length };
+  return { items:shuf(out), again:again, fresh:fresh.length,
+           owed:owed.length, rip:rip.length };
 }
 function drillMark(id, ok) {
-  var S = seenLoad(), o = S.o[id];
+  var S = seenLoad(), o = S.o[id], d = S.d[id];
   if (ok) {
     if (o) {
       o.n = (o.n || DRILL_FIX) - 1;
-      if (o.n <= 0) { delete S.o[id]; S.d[id] = 1; }
-    } else S.d[id] = 1;
+      /* uscita dal debito: riparte dal primo gradino, non dal quarto */
+      if (o.n <= 0) { delete S.o[id]; S.d[id] = { t:Date.now(), s:0 }; }
+    } else if (d && typeof d === "object") {
+      /* era un ripasso andato bene: il prossimo e' piu' lontano */
+      d.s = Math.min((d.s || 0) + 1, DRILL_DAYS.length - 1);
+      d.t = Date.now();
+    } else {
+      /* prima volta, o una voce del vecchio registro che ricapita */
+      S.d[id] = { t:Date.now(), s:d ? 1 : 0 };
+    }
   } else {
     delete S.d[id];
     S.o[id] = { n:DRILL_FIX, due:(S.k || 0) + DRILL_BACK };
@@ -21551,6 +21632,16 @@ function drillFresh(kind, level, bank) {
   for (i = 0; i < bank.length; i++) {
     id = drillId(kind, level, bank[i]);
     if (!S.d[id] && !S.o[id]) n++;
+  }
+  return n;
+}
+/* e quante sono tornate a scadenza: si dice sulla porta, perche' «sei
+   voci da ripassare» e' un motivo per entrare */
+function drillRip(kind, level, bank) {
+  var S = seenLoad(), n = 0, i, id;
+  for (i = 0; i < bank.length; i++) {
+    id = drillId(kind, level, bank[i]);
+    if (drillDue(S.d[id])) n++;
   }
   return n;
 }
@@ -21962,11 +22053,18 @@ VIEWS.bxEar = function () {
    apre solo se la tocchi, e due assunzioni nascoste dietro un tocco
    sono due assunzioni che non esistono. */
 
+/* la giacca vera, quella del club, e solo di chi è stato assunto */
+function staffKit(m) {
+  if (!staffIs(m.id) || !ME.club) return "";
+  return (typeof staffKitOf === "function") ? staffKitOf(m.id, ME.club.id) : "";
+}
 function staffPeg(m) {
-  var mine = staffIs(m.id);
+  var mine = staffIs(m.id), kit = staffKit(m);
   return '<button class="peg stfpeg' + (mine ? " on" : "") + '" data-stf="' +
     m.id + '" type="button" aria-label="' + esc(m.n) + '">' +
-    '<span class="shirt"><svg viewBox="2 5 96 91"><use href="#coat"/></svg>' +
+    '<span class="shirt' + (kit ? " ph" : "") + '">' +
+    (kit ? '<img src="' + kit + '" alt="">'
+         : '<svg viewBox="2 5 96 91"><use href="#coat"/></svg>') +
     '<span class="badge">' + esc(m.b) + "</span></span>" +
     '<span class="pname">' + esc(mine ? surname((staffMan() || {}).name || m.short)
                                         : m.short) + "</span>" +
@@ -22005,9 +22103,11 @@ function drawStaffRow() {
    imparato a sfogliare la rosa non deve imparare niente di nuovo. */
 function staffHero(m) {
   var mine = staffIs(m.id);
-  var man = mine ? staffMan() : null;
+  var man = mine ? staffMan() : null, kit = staffKit(m);
   return '<div class="phero" data-stf="' + m.id + '">' +
-    '<span class="pkit"><svg viewBox="2 5 96 91"><use href="#coat"/></svg></span>' +
+    '<span class="pkit">' +
+    (kit ? '<img src="' + kit + '" alt="">'
+         : '<svg viewBox="2 5 96 91"><use href="#coat"/></svg>') + "</span>" +
     '<span class="pwho"><b>' + esc(man ? man.name : m.n) + "</b>" +
     '<span class="prow2"><i class="rl">' + esc(m.k) + "</i>" +
     (mine ? '<i class="rl cap">ON THE BENCH</i>' : "") + "</span>" +
@@ -22081,8 +22181,10 @@ function drawStaffBody(id) {
       ? '<h2 class="sec top">The three rooms in the gym</h2><div class="panel">' +
         GYM_ROOMS.map(function (r) {
           var n = drillFresh(r.id, lv, bankOf(r.bank, lv));
+          var rp = drillRip(r.id, lv, bankOf(r.bank, lv));
           return '<div class="stfr"><span><b>' + esc(r.n) + "</b> \u00b7 " +
-            esc(r.s) + "</span><em>" + n + " new</em></div>";
+            esc(r.s) + "</span><em>" + n + " new" +
+            (rp ? " \u00b7 " + rp + " back" : "") + "</em></div>";
         }).join("") + "</div>" +
         '<p class="hint">These three are open to everybody, hired or not: ' +
         "three names over one box of questions was a defect, not a reward. " +
@@ -22091,7 +22193,10 @@ function drawStaffBody(id) {
       : '<h2 class="sec top">His room</h2><div class="panel">' +
         '<div class="stfr"><span><b>' + esc(EAR_ROOM.n) + "</b> \u00b7 " +
         esc(EAR_ROOM.s) + "</span><em>" +
-        drillFresh(EAR_ROOM.id, lv, bankOf(EAR_ROOM.bank, lv)) + " new</em></div>" +
+        drillFresh(EAR_ROOM.id, lv, bankOf(EAR_ROOM.bank, lv)) + " new" +
+        (drillRip(EAR_ROOM.id, lv, bankOf(EAR_ROOM.bank, lv))
+          ? " · " + drillRip(EAR_ROOM.id, lv, bankOf(EAR_ROOM.bank, lv)) + " back"
+          : "") + "</em></div>" +
         "</div>" +
         '<p class="hint">It opens inside <b>Boost the English</b>, next to the ' +
         "four written exercises, and it is the only one of them that nobody " +
@@ -25138,6 +25243,168 @@ function ledgerBtn(md) {
 function wireLedger(md) {
   var b = $("lgGo");
   if (b) b.onclick = function () { go("ledger", { md:md }); };
+}
+
+
+/* ───── 63-punti.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   IL QUADERNO DEI PUNTI
+
+   Le domande di grammatica hanno un'etichetta da sempre — «past
+   simple», «some / any», «relative clauses» — ma finora quell'etichetta
+   serviva solo a non far uscire quattordici futuri di fila. Era buttata
+   via nel momento in cui l'alunno rispondeva.
+
+   Qui si tiene. Per ogni punto, a ogni livello: quante giuste, quante
+   sbagliate, l'ultima volta. Da questo quaderno escono due cose che
+   prima non c'erano:
+
+     DALLA PARTE DELL'ALUNNO — in My form, quali punti ha incontrato,
+     quali non ha mai visto, su quali scivola. Il suo quaderno, non la
+     pagella del professore.
+
+     DALLA PARTE DEL PROFESSORE — il referto porta questi numeri, e la
+     piattaforma li somma su tutta la classe: la mappa dei punti dice
+     che cosa rispiegare lunedi'.
+
+   Non e' una valutazione e non entra nel risultato della partita: il
+   risultato lo decide il dettato. Questo e' un quaderno.
+
+   Il cassetto NON e' quello della stagione. Un punto di grammatica
+   imparato a ottobre non si disimpara perche' il professore ha aperto
+   una coppa nuova: il conto continua, e la data accanto dice quanto
+   tempo e' passato. Il filtro per codice (01-store.js) fa il resto:
+   due alunni sullo stesso telefono hanno due quaderni.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var PUNTI = null;
+var PUNTI_KEY = "footefl-punti";
+
+function puntiLoad() {
+  if (PUNTI) return PUNTI;
+  try { PUNTI = JSON.parse(localStorage.getItem(PUNTI_KEY) || "null"); } catch (e) {}
+  if (!PUNTI || typeof PUNTI !== "object") PUNTI = { v:1, t:{} };
+  PUNTI.t = PUNTI.t || {};
+  return PUNTI;
+}
+function puntiSave() {
+  try { localStorage.setItem(PUNTI_KEY, JSON.stringify(puntiLoad())); } catch (e) {}
+}
+/* la chiave e' livello + etichetta: «past simple» a A1 e a A2 non sono
+   la stessa domanda, e sommarli direbbe una cosa falsa */
+function tagKey(level, tag) { return String(level || "A1") + "|" + String(tag || "?"); }
+
+/* ───────── si segna una risposta ─────────
+   Si chiama UNA volta per risposta, dove l'alunno tocca il bottone, non
+   dove si fa il punteggio: le pagine del punteggio si ridisegnano, e un
+   conto che si ridisegna conta due volte. */
+function tagMark(level, tag, ok) {
+  if (!tag) return;
+  var P = puntiLoad(), k = tagKey(level, tag), e = P.t[k];
+  if (!e) e = P.t[k] = { r:0, w:0, at:0 };
+  if (ok) e.r++; else e.w++;
+  e.at = Date.now();
+  puntiSave();
+}
+/* una prova intera, quando serve (non la uso per ora: le prove si
+   segnano domanda per domanda) */
+function tagManyMark(level, qs, answers) {
+  (qs || []).forEach(function (q, i) {
+    tagMark(level, q.t, (answers || [])[i] === q.c);
+  });
+}
+
+/* ───────── quante domande ha un punto, a un livello ─────────
+   Si conta la banca vera: cosi' il quaderno non promette punti che non
+   esistono, e quando allungo una banca il quaderno lo sa da solo. */
+function tagBank(level) {
+  var out = {}, i;
+  function conta(lista) {
+    (lista || []).forEach(function (q) { if (q && q.t) out[q.t] = (out[q.t] || 0) + 1; });
+  }
+  /* la banca vecchia (BANK) si guarda SOLO dove non ci sono pacchetti:
+     i suoi nomi di etichetta sono quelli di prima — «comparative»,
+     «pres. perfect» — e mescolarli coi nuovi farebbe un quaderno con
+     due righe per lo stesso punto */
+  if (typeof PACKS !== "undefined" && PACKS[level] && PACKS[level].length) {
+    PACKS[level].forEach(conta);
+  } else if (typeof BANK !== "undefined" && BANK[level]) conta(BANK[level]);
+  return out;
+}
+
+/* ───────── le righe del quaderno ─────────
+   Prima i punti deboli: un quaderno serve a sapere dove si scivola,
+   non a farsi i complimenti. I punti mai incontrati stanno a parte. */
+function tagRows(level) {
+  var P = puntiLoad(), bank = tagBank(level), met = [], never = [], k;
+  Object.keys(bank).sort().forEach(function (t) {
+    var e = P.t[tagKey(level, t)], n = e ? (e.r + e.w) : 0;
+    if (!n) { never.push({ t:t, n:bank[t] }); return; }
+    met.push({ t:t, r:e.r, w:e.w, n:n, bank:bank[t],
+               pct:Math.round(e.r / n * 100), at:e.at || 0 });
+  });
+  met.sort(function (a, b) { return (a.pct - b.pct) || (b.n - a.n); });
+  return { met:met, never:never, bank:Object.keys(bank).length };
+}
+function tagWeak(level, k) {
+  return tagRows(level).met.filter(function (x) { return x.n >= 2 && x.pct < 70; })
+    .slice(0, k || 3);
+}
+
+/* ───────── quello che va nel referto ─────────
+   Numeri e nomi di punti grammaticali: nessun nome di persona, nessuna
+   frase scritta. Va tutto, non solo il livello di adesso: un alunno che
+   e' passato da A1 a A2 a meta' anno ha un quaderno in due pagine. */
+function tagsForReport() {
+  var P = puntiLoad(), out = {}, n = 0;
+  Object.keys(P.t).forEach(function (k) {
+    var e = P.t[k];
+    if (!e || (!e.r && !e.w)) return;
+    out[k] = [e.r, e.w]; n++;
+  });
+  return n ? out : null;
+}
+
+/* ═══════════════ IL QUADERNO, DA GUARDARE ═══════════════
+   Vive dentro My form, che e' la pagina dove l'alunno guarda se stesso.
+   Riuso i mattoni che ci sono gia' (.panel, .gr, .gb, .gv): una pagina
+   che si assomiglia si legge piu' in fretta. */
+function pointBar(x) {
+  var col = x.pct >= 75 ? "ok" : x.pct >= 50 ? "mid" : "ko";
+  return '<div class="gr pt ' + col + '"><span class="gn">' + esc(x.t) + "</span>" +
+    '<span class="gb"><i style="width:' + Math.max(3, x.pct) + '%"></i></span>' +
+    '<span class="gv">' + x.r + "/" + x.n + "</span></div>";
+}
+function notebookBlock() {
+  var lv = (typeof ME !== "undefined" && ME.level) ? ME.level : "A1";
+  var R = tagRows(lv);
+  if (!R.met.length) {
+    return '<h2 class="sec top">Your grammar notebook</h2>' +
+      '<p class="lede sm2">Nothing in it yet. Every grammar question you answer — in ' +
+      "the training ground, at the transfer test, at the staff interview — writes a " +
+      "line in here: which points you have met, and which ones you keep getting " +
+      "wrong. Nobody is marking you. It is your notebook.</p>";
+  }
+  var deboli = R.met.filter(function (x) { return x.n >= 2 && x.pct < 70; });
+  var forti = R.met.filter(function (x) { return x.pct >= 75 && x.n >= 2; });
+  return '<h2 class="sec top">Your grammar notebook</h2>' +
+    '<p class="lede sm2">' + R.met.length + " of " + R.bank + " points met at " + esc(lv) +
+    (R.never.length ? " &middot; " + R.never.length + " you have never seen" : "") +
+    "</p>" +
+    (deboli.length
+      ? '<div class="panel">' + deboli.slice(0, 8).map(pointBar).join("") + "</div>"
+      : '<p class="empty2">Nothing below seventy per cent. Good.</p>') +
+    (forti.length
+      ? '<p class="lede sm2">Solid: ' + forti.slice(0, 10).map(function (x) {
+          return "<b>" + esc(x.t) + "</b>";
+        }).join(" &middot; ") + "</p>"
+      : "") +
+    (R.never.length
+      ? '<h2 class="sec top">Never come up yet</h2>' +
+        '<div class="ptags">' + R.never.slice(0, 18).map(function (x) {
+          return '<span class="ptag">' + esc(x.t) + "</span>";
+        }).join("") + "</div>"
+      : "");
 }
 
 
