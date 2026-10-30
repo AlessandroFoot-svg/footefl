@@ -3331,6 +3331,16 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .rcrole b{display:block;margin-top:7px;font:800 16px/1.2 var(--brand);color:#FFFDEE}
 .rcrole p{margin:7px 0 0;font-size:12px;font-weight:600;line-height:1.5;
   color:var(--cream)}
+/* l'allenatore della squadra: uno solo, e si vede che è un'altra cosa */
+.rcown{margin:14px 0;padding:15px 16px;border-radius:16px;border:1px solid var(--gold);
+  background:linear-gradient(180deg,rgba(227,239,38,.1),rgba(4,23,15,.45))}
+.rcown b{display:block;margin-top:7px;font:800 19px/1.15 var(--brand);color:#FFFDEE}
+.rcown em{display:block;margin-top:3px;font:700 11px/1.3 var(--brand);font-style:normal;
+  color:var(--gold)}
+.rcown p{margin:9px 0 0;font-size:12px;font-weight:600;line-height:1.5;color:var(--cream)}
+.rcown2{display:block;margin-top:10px;padding-top:9px;border-top:1px solid var(--edge);
+  font-size:11px;font-weight:700;line-height:1.45;color:var(--fog)}
+.rcown2.ok{color:var(--gold)}
 .rcfame{display:flex;align-items:center;gap:13px;margin:14px 0 16px;padding:13px 14px;
   border-radius:14px;border:1px solid var(--edge);background:rgba(4,23,15,.4)}
 .rcfame i{display:block;font:800 8.5px/1 var(--brand);letter-spacing:.13em;
@@ -4309,7 +4319,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "130";
+var APPVER = "131";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -15579,8 +15589,50 @@ var STAFF_POOL = [
   { id:"g4", role:"gaf", tier:4, name:"Victor Abalo", she:false, nick:"the one who has seen them",
     from:"Lagos", line:"He watches the other side for a week before he says a "
       + "word, and then he says the one word that matters.",
-    subs:5, calm:true, scout:true }
+    subs:5, calm:true, scout:true },
+
+  /* ═══════ e poi c'è l'allenatore DELLA TUA SQUADRA ═══════
+     I quattro di sopra girano: oggi sono qui, l'anno prossimo altrove.
+     Questi cinque no — uno per club, e il tuo è il traguardo. Si
+     presenta al colloquio soltanto se la reputazione regge il suo
+     gradino; se dice di no, al suo posto arriva uno di passaggio.
+     Cosi' il club che l'alunno gioca vuol dire qualcosa, la
+     reputazione continua a pesare, e nessuno resta senza panchina.
+     Le giacche sono del club, non della persona: le indossa chiunque
+     prenda il posto. */
+  { id:"cROP", role:"gaf", tier:3, club:"ROP", name:"Naomi Brooks", she:true,
+    nick:"the bench reader", from:"Liverpool", nat:"British", age:46,
+    line:"She grew up by the water and she reads a tired leg from thirty metres. "
+      + "Her bench is not a spare part: it is the plan.",
+    subs:5, calm:true, scout:false },
+  { id:"cSHE", role:"gaf", tier:3, club:"SHE", name:"Arthur Red Deer", she:false,
+    nick:"the tracker", from:"Cardiff", nat:"Welsh", age:48,
+    line:"He studies the other side the way a forester studies a wood, and he "
+      + "will not save you from your own temper.",
+    subs:5, calm:false, scout:true },
+  { id:"cBRA", role:"gaf", tier:3, club:"BRA", name:"Nikolas Xing", she:false,
+    nick:"the foreman", from:"Chongqing", nat:"Chinese", age:60,
+    line:"Forty years of factories before football. He takes a man off before "
+      + "the second yellow, the way you stop a machine before it breaks.",
+    subs:4, calm:true, scout:true },
+  { id:"cRAV", role:"gaf", tier:4, club:"RAV", name:"Eliza Blackwood", she:true,
+    nick:"the one London wants", from:"London", nat:"English", age:52,
+    line:"Every club in the city has asked her at least once. She says yes to "
+      + "the one that is going somewhere.",
+    subs:5, calm:true, scout:true },
+  { id:"cOXF", role:"gaf", tier:3, club:"OXF", name:"Kofi Danquah", she:false,
+    nick:"the lecturer", from:"Accra", nat:"Ghanaian", age:54,
+    line:"He came to the city for a coaching course and never left. At half time "
+      + "he teaches instead of shouting, and the second half shows it.",
+    subs:4, calm:true, scout:true }
 ];
+/* un candidato legato a un club si presenta solo nel suo club */
+function rcMine(m) {
+  if (!m || !m.club) return true;
+  var id = ME.club ? ((typeof imgId === "function") ? imgId(ME.club.id)
+                                                   : String(ME.club.id).toUpperCase()) : "";
+  return id === m.club;
+}
 /* lui o lei: meta' dei candidati sono donne, e scrivere « he » per
    Rosa Iglesias in un'app che insegna inglese e' un errore due volte */
 function manHe(m, cap) {
@@ -15623,13 +15675,16 @@ function rcOffer(score) {
   var top = rcCeiling(score), n = rcBand(score), out = [], role, i;
   ["fit", "gaf"].forEach(function (r) {
     var lane = STAFF_POOL.filter(function (m) {
-      return m.role === r && m.tier <= top;
-    }).sort(function (a, b) { return b.tier - a.tier; });
+      return m.role === r && m.tier <= top && rcMine(m);
+    }).sort(function (a, b) {
+      /* a parità di gradino viene prima quello della squadra */
+      return (b.tier - a.tier) || ((b.club ? 1 : 0) - (a.club ? 1 : 0));
+    });
     if (lane.length) out.push(lane[0]);              /* il migliore di ogni ruolo */
   });
   /* e poi si riempie con i secondi migliori, alternando */
   var rest = STAFF_POOL.filter(function (m) {
-    return m.tier <= top && out.indexOf(m) < 0;
+    return m.tier <= top && out.indexOf(m) < 0 && rcMine(m);
   }).sort(function (a, b) { return b.tier - a.tier; });
   for (i = 0; i < rest.length && out.length < n; i++) out.push(rest[i]);
   return out.sort(function (a, b) {
@@ -15678,6 +15733,28 @@ VIEWS.recruit = function () {
     "<p>A head coach does not train legs. The talk comes at the break: which " +
     "mistake cost you the first half, and a free hand to change the side that " +
     "walks back out. The best of them read the opposition for you too.</p></div>" +
+
+    /* ── l'allenatore della squadra ──
+       Il traguardo va detto prima, non scoperto dopo: un alunno che sa
+       che c'è un nome suo da convincere ha un motivo in più per fare
+       bene il colloquio. */
+    (function () {
+      var own = STAFF_POOL.filter(function (m) {
+        return m.role === "gaf" && m.club && rcMine(m);
+      })[0];
+      if (!own) return "";
+      var reach = t >= own.tier;
+      return '<div class="rcown"><span class="rck">THE CLUB’S OWN COACH</span>' +
+        "<b>" + esc(own.name) + "</b>" +
+        '<em>' + esc(own.nick + " · " +
+          ((typeof manWhere === "function") ? manWhere(own) : own.from)) + "</em>" +
+        "<p>" + esc(own.line) + "</p>" +
+        '<span class="rcown2' + (reach ? " ok" : "") + '">' + (reach
+          ? "Your name is big enough. Answer well and the job is " +
+            (own.she ? "hers" : "his") + "."
+          : "Not yet: a club with a bigger name is asking too. Win, and speak to "
+            + "the press.") + "</span></div>";
+    })() +
 
     '<p class="lede">Now the interview: <b>' + RC_N + " questions at " +
     esc(ME.level || "A1") + "</b>, and the clock runs on each one. " +
@@ -15801,7 +15878,8 @@ VIEWS.rcPick = function () {
           return o;
         })() + "</span></span>" +
         "<b>" + esc(m.name) + "</b>" +
-        '<em>' + esc(m.nick) + " · " + esc(m.from) + "</em>" +
+        '<em>' + esc(m.nick) + " \u00b7 " +
+          esc((typeof manWhere === "function") ? manWhere(m) : m.from) + "</em>" +
         "<p>" + esc(m.line) + "</p>" +
         '<span class="rcg">' + esc(manGain(m)) + "</span></button>";
     }).join("") +
@@ -21725,12 +21803,23 @@ function staffPick(id) {
    nazionale non valgono lo stesso. Se per qualche motivo il nome non
    si trova, si ricade sul gradino piu' basso di quel ruolo: meglio un
    po' meno che niente del tutto. */
+/* da dove viene e quanti anni ha: i cinque allenatori di club lo
+   dicono, i quattro di passaggio hanno solo la citta' */
+function manWhere(m) {
+  if (!m) return "";
+  var out = [m.from];
+  if (m.nat) out.push(m.nat);
+  if (m.age) out.push(m.age);
+  return out.join(" \u00b7 ");
+}
 function staffMan() {
   var a = stfAll();
   var m = (typeof staffOneMan === "function" && a.hired) ? staffOneMan(a.hired) : null;
   if (m) return m;
   if (!a.who || typeof STAFF_POOL === "undefined") return null;
-  return STAFF_POOL.filter(function (x) { return x.role === a.who; })[0] || null;
+  return STAFF_POOL.filter(function (x) {
+    return x.role === a.who && !x.club;
+  })[0] || null;
 }
 function actCapNow() {
   var m = staffMan();
@@ -22111,7 +22200,7 @@ function staffHero(m) {
     '<span class="pwho"><b>' + esc(man ? man.name : m.n) + "</b>" +
     '<span class="prow2"><i class="rl">' + esc(m.k) + "</i>" +
     (mine ? '<i class="rl cap">ON THE BENCH</i>' : "") + "</span>" +
-    "<em>" + esc(man ? (man.nick + " \u00b7 " + man.from) : m.one) +
+    "<em>" + esc(man ? (man.nick + " \u00b7 " + manWhere(man)) : m.one) +
     "</em></span></div>";
 }
 
