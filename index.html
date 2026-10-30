@@ -3188,8 +3188,14 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 /* ═════════ le due maglie dello staff, in coda alla rosa ═════════ */
 .stfhint{margin:16px 2px 9px;padding-top:14px;
   border-top:1px solid var(--edge)}
-.stfrow2{justify-content:flex-start;gap:18px}
+/* due posti, non tre: lo staff non sara' mai piu' di due */
+.stfrow2{grid-template-columns:repeat(2,1fr);gap:20px;max-width:300px}
+.stfno{margin:2px 2px 4px;font-size:11.5px;font-weight:600;color:var(--fog)}
 .stfpeg .shirt svg{opacity:.92}
+/* la giacca e' piu' alta di una maglia: si tiene alla misura delle
+   altre, se no due pezzi di staff pesano come sei giocatori */
+.stfpeg .shirt.ph{display:grid;place-items:end center}
+.stfpeg .shirt.ph img{width:auto;max-width:100%;max-height:120px}
 .stfpeg .badge{background:rgba(226,251,206,.22);color:#FFFDEE}
 .stfpeg.on .badge{background:var(--gold);color:#06231D}
 .stfst{display:block;margin-top:3px;font:700 9px/1 var(--brand);
@@ -3316,6 +3322,8 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
   letter-spacing:.07em;color:#8FC4AC}
 .fmwhy{margin:15px 0 8px;font:800 9px/1 var(--brand);letter-spacing:.14em;
   color:#8FC4AC}
+.fmsub{margin:12px 0 7px;font:800 9px/1 var(--brand);letter-spacing:.13em;
+  color:var(--gold)}
 .fmmvs{display:flex;flex-wrap:wrap;gap:7px}
 .fmmv{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:10px;
   background:rgba(4,23,15,.4);border:1px solid var(--edge);flex:1 1 44%}
@@ -3757,6 +3765,21 @@ function suitOf(id) { return IMG["suit-" + imgId(id)] || ""; }
    uno dei due è stato assunto: prima c'è la giacca disegnata, uguale
    per tutti, e la differenza si vede. */
 function staffKitOf(role, id) { return IMG[String(role) + "-" + imgId(id)] || ""; }
+/* ───────── e se la figura non arriva ─────────
+   Le giacche stanno accanto all'app, in im/. Finche' non sono state
+   caricate sul sito — o se la rete le perde — il telefono mostrerebbe
+   l'iconcina rotta, che e' il modo peggiore di dire « manca un file ».
+   Allora al loro posto torna la giacca disegnata, che e' dentro
+   l'app e non manca mai. */
+function coatBack(el) {
+  try {
+    var p = el.parentNode;
+    p.removeChild(el);
+    p.className = String(p.className).replace(/\s*\bph\b/, "");
+    p.insertAdjacentHTML("afterbegin",
+      '<svg viewBox="2 5 96 91"><use href="#coat"/></svg>');
+  } catch (e) {}
+}
 /* il cielo di una giornata: sole, nuvoloso, pioggia, tempesta, neve, nebbia */
 function skyOf(clim) { return IMG["wx-" + String(clim || "cloudy").toLowerCase()] || IMG["wx-cloudy"]; }
 
@@ -4319,7 +4342,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "131";
+var APPVER = "132";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -22152,7 +22175,7 @@ function staffPeg(m) {
   return '<button class="peg stfpeg' + (mine ? " on" : "") + '" data-stf="' +
     m.id + '" type="button" aria-label="' + esc(m.n) + '">' +
     '<span class="shirt' + (kit ? " ph" : "") + '">' +
-    (kit ? '<img src="' + kit + '" alt="">'
+    (kit ? '<img src="' + kit + '" alt="" onerror="coatBack(this)">'
          : '<svg viewBox="2 5 96 91"><use href="#coat"/></svg>') +
     '<span class="badge">' + esc(m.b) + "</span></span>" +
     '<span class="pname">' + esc(mine ? surname((staffMan() || {}).name || m.short)
@@ -22160,13 +22183,19 @@ function staffPeg(m) {
     '<span class="stfst' + (mine ? " on" : "") + '">' +
     (mine ? "on the bench" : staffWho() ? "not hired" : "free") + "</span></button>";
 }
-/* la riga delle due maglie, in coda alla rosa */
+/* ───────── la riga dello staff, in coda alla rosa ─────────
+   Due posti al massimo, e dentro ci va soltanto chi e' stato assunto:
+   una casella con scritto « not hired » non e' una squadra, e' un
+   promemoria. Chi non ha ancora nessuno legge una riga sola che dice
+   dov'e' la porta. */
 function staffRow() {
   if (!ME.club) return "";
-  return '<p class="hint stfhint">And two who do not play. ' +
-    (staffWho() ? "Tap to see what yours brings."
-                : "An interview, and one of them takes the job.") + "</p>" +
-    '<div class="row stfrow2">' + STAFF.map(staffPeg).join("") + "</div>";
+  var mine = STAFF.filter(function (m) { return staffIs(m.id); });
+  return '<p class="hint stfhint">The Staff</p>' +
+    (mine.length
+      ? '<div class="row stfrow2">' + mine.map(staffPeg).join("") + "</div>"
+      : '<p class="empty2 stfno">Nobody on the bench yet \u2014 the interview is ' +
+        "in the list at home.</p>");
 }
 /* la riga di stato, quella che si legge senza aprire niente */
 function staffLine() {
@@ -22195,7 +22224,7 @@ function staffHero(m) {
   var man = mine ? staffMan() : null, kit = staffKit(m);
   return '<div class="phero" data-stf="' + m.id + '">' +
     '<span class="pkit">' +
-    (kit ? '<img src="' + kit + '" alt="">'
+    (kit ? '<img src="' + kit + '" alt="" onerror="coatBack(this)">'
          : '<svg viewBox="2 5 96 91"><use href="#coat"/></svg>') + "</span>" +
     '<span class="pwho"><b>' + esc(man ? man.name : m.n) + "</b>" +
     '<span class="prow2"><i class="rl">' + esc(m.k) + "</i>" +
@@ -22635,7 +22664,8 @@ function scoutBox() {
 /* ═══════════════════════════════════════════════════════════════════
    LA PERCEZIONE DEL CLUB
 
-   Un numero solo, da 0 a 100, che parte da 50. Sale e scende per due
+   Un numero solo, da 0 a 100. Un club nuovo parte da 10: nessuno lo
+   conosce, e la stima si guadagna. Sale e scende per due
    motivi: quello che succede in campo e quello che si dice in sala
    stampa. E comanda due cose: quale giornale si presenta alla
    conferenza, e chi risponde quando il club cerca uno sponsor.
@@ -22648,7 +22678,7 @@ function scoutBox() {
    in coppa puoi essere rispettato e in campionato no.
    ═══════════════════════════════════════════════════════════════════ */
 
-var FAME_START = 50, FAME_MIN = 0, FAME_MAX = 100;
+var FAME_START = 10, FAME_MIN = 0, FAME_MAX = 100;
 var FAME_BANDS = [
   { to:19,  n:"Unknown",          s:"Nobody outside the ground knows your name." },
   { to:39,  n:"Local curiosity",  s:"The street has started to notice." },
@@ -22663,9 +22693,38 @@ var FAME_SILENT = -1;          /* una giornata senza conferenza */
 function fameKey() {
   return "footefl-fame-" + scope() + "-" + (ME.club ? ME.club.id : "x");
 }
+/* ───────── da dove riparte una competizione nuova ─────────
+   La percezione resta di una competizione alla volta — in coppa puoi
+   essere rispettato e in campionato no — ma non si ricomincia da
+   sconosciuti ogni volta: un club che si e' fatto un nome in
+   campionato se lo porta in coppa. Quindi il punto di partenza e'
+   l'ultimo valore di QUESTO club, in qualunque competizione; solo il
+   primo torneo in assoluto parte da 10.
+   Senza questa riga, partendo da 10, nessun alunno arriverebbe mai ai
+   gradini alti: lo scout buono e l'allenatore del club resterebbero
+   una promessa che non si avvera. */
+function fameSeed() {
+  var club = ME.club ? ME.club.id : "x", mio = fameKey(), coda = "-" + club;
+  var best = null, i, k, o, t;
+  try {
+    for (i = 0; i < localStorage.length; i++) {
+      k = localStorage.key(i);
+      if (!k || k.indexOf("footefl-fame-") !== 0 || k === mio) continue;
+      if (k.slice(-coda.length) !== coda) continue;
+      o = JSON.parse(localStorage.getItem(k) || "null");
+      if (!o || typeof o.v !== "number") continue;
+      t = (o.log && o.log.length) ? (o.log[o.log.length - 1].t || 0) : 0;
+      if (!best || t > best.t) best = { t:t, v:o.v };
+    }
+  } catch (e) {}
+  return best ? Math.max(FAME_MIN, Math.min(FAME_MAX, Math.round(best.v))) : FAME_START;
+}
 function fameAll() {
-  try { return JSON.parse(localStorage.getItem(fameKey()) || "null") || { v:FAME_START, log:[] }; }
-  catch (e) { return { v:FAME_START, log:[] }; }
+  try {
+    var o = JSON.parse(localStorage.getItem(fameKey()) || "null");
+    if (o && typeof o.v === "number") { o.log = o.log || []; return o; }
+  } catch (e) {}
+  return { v:fameSeed(), log:[] };
 }
 function fameSave(o) {
   try { localStorage.setItem(fameKey(), JSON.stringify(o)); } catch (e) {}
@@ -22680,7 +22739,8 @@ function fameMove(key, n, why) {
   var f = fameAll();
   f.log = f.log || [];
   if (key && f.log.filter(function (x) { return x.k === key; }).length) return fame();
-  f.v = Math.max(FAME_MIN, Math.min(FAME_MAX, (f.v || FAME_START) + n));
+  f.v = Math.max(FAME_MIN, Math.min(FAME_MAX,
+    (typeof f.v === "number" ? f.v : fameSeed()) + n));
   f.log.push({ k:key || ("x" + Date.now()), n:n, w:why || "", t:Date.now() });
   if (f.log.length > 60) f.log = f.log.slice(-60);
   fameSave(f);
@@ -22783,11 +22843,31 @@ function fameMoves() {
     return '<div class="fmmv"><b class="' + (n > 0 ? "up" : n < 0 ? "dn" : "") + '">' +
       (n > 0 ? "+" : "") + n + "</b><span>" + t + "</span></div>";
   }
-  return '<div class="fmmvs">' +
+  function span(a, b, t) {
+    return '<div class="fmmv"><b class="' + (b > 0 ? "up" : "") + '">' +
+      (a > 0 ? "+" : "") + a + " to " + (b > 0 ? "+" : "") + b + "</b><span>" + t +
+      "</span></div>";
+  }
+  /* i numeri veri del motore: se cambiano li', qui cambiano da soli */
+  var cf = (typeof CONF_FAME !== "undefined") ? CONF_FAME : [0, -2, 0, 1, 2, 3];
+  var lo = Math.min.apply(null, cf), hi = Math.max.apply(null, cf);
+  var base = (typeof PR_BASE === "number") ? PR_BASE : 2;
+
+  return '<p class="fmsub">On the pitch</p>' +
+    '<div class="fmmvs">' +
     row(FAME_WIN, "you win a match") +
     row(FAME_DRAW, "you draw") +
     row(FAME_LOSS, "you lose") +
-    row(FAME_SILENT, "a matchday goes by and you say nothing to the press") +
+    "</div>" +
+
+    '<p class="fmsub">In the press room</p>' +
+    '<div class="fmmvs">' +
+    span(lo, hi, "each answer a player gives \u2014 the better his English, " +
+         "the more it moves") +
+    row(base, "you answer the open question yourself") +
+    row(1, "if that answer is a real one, not a line") +
+    row(1, "if there is nothing in it to put right") +
+    row(FAME_SILENT, "a matchday goes by and you say nothing") +
     "</div>";
 }
 /* il blocco grande, per la pagina degli sponsor */
