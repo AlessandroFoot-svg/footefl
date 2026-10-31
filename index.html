@@ -3794,6 +3794,10 @@ function coatBack(el) {
     p.className = String(p.className).replace(/\s*\bph\b/, "");
     p.insertAdjacentHTML("afterbegin",
       '<svg viewBox="2 5 96 91"><use href="#coat"/></svg>');
+    p.setAttribute("data-miss", "1");
+    /* e la pagina della panchina lo dice, invece di far pensare a un
+       difetto del gioco: il file non e' ancora arrivato sul sito */
+    if (typeof kitMiss === "function") kitMiss();
   } catch (e) {}
 }
 /* il cielo di una giornata: sole, nuvoloso, pioggia, tempesta, neve, nebbia */
@@ -4358,7 +4362,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "135";
+var APPVER = "137";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -19350,8 +19354,11 @@ VIEWS.tryit = function () {
     $("dvo").innerHTML = rec
       ? "&#9679; At " + DPICK.level + " the dictation is read by your teacher's own " +
         "recordings."
-      : "&#9679; Nobody has recorded " + DPICK.level +
-        " yet, so the phone's voice reads the dictation. Same words, same marking.";
+      : (typeof canSay === "function" && !canSay())
+        ? "&#9679; Nobody has recorded " + DPICK.level + " yet, and this phone has no " +
+          "English voice to read it. Pick A1 or A2, which your teacher has recorded."
+        : "&#9679; Nobody has recorded " + DPICK.level +
+          " yet, so the phone's voice reads the dictation. Same words, same marking.";
   }
 };
 
@@ -21996,7 +22003,11 @@ function bankOf(name, level) {
 /* le porte da mostrare in una sezione, con lo staff di adesso */
 function drillRooms(what) {
   if (what === "body") return GYM_ROOMS;
-  return staffIs("gaf") ? [EAR_ROOM] : [];
+  /* la stanza dell'ascolto esiste solo se il telefono ha davvero una
+     voce inglese: una stanza che legge male non e' una stanza */
+  if (!staffIs("gaf")) return [];
+  if (typeof canSay === "function" && !canSay()) return [];
+  return [EAR_ROOM];
 }
 function roomOf(id) {
   var all = GYM_ROOMS.concat([EAR_ROOM]), i;
@@ -22273,6 +22284,20 @@ function staffKit(m) {
   if (!staffIs(m.id) || !ME.club) return "";
   return (typeof staffKitOf === "function") ? staffKitOf(m.id, ME.club.id) : "";
 }
+/* ───────── quando la giacca non si vede ─────────
+   Due casi diversi, e vanno detti diversi: o il club non ha ancora una
+   giacca fotografata (quattro club su nove, per ora), o ce l'ha ma il
+   file non e' ancora stato caricato sul sito. In tutti e due i casi al
+   suo posto c'e' la giacca disegnata, che e' dentro l'app e non manca
+   mai — ma chi guarda deve sapere qual e' dei due. */
+function kitMiss() {
+  var box = document.getElementById("stfnote");
+  if (!box || box.firstChild) return;
+  box.innerHTML = '<p class="hint">The club jacket has not reached the site yet: ' +
+    "upload <b>" + esc(staffWho() || "gaf") + "-" +
+    esc(ME.club ? ((typeof imgId === "function") ? imgId(ME.club.id) : ME.club.id) : "") +
+    ".webp</b> into <b>im/</b> and it appears here. The drawn jacket is standing in.</p>";
+}
 function staffPeg(m) {
   var mine = staffIs(m.id), kit = staffKit(m);
   return '<button class="peg stfpeg' + (mine ? " on" : "") + '" data-stf="' +
@@ -22346,7 +22371,16 @@ VIEWS.staff = function (d) {
   html('<div class="pad">' +
     '<div class="phtrack" id="stftrack">' + STAFF.map(staffHero).join("") + "</div>" +
     '<p class="hint pslide">Slide the card sideways for the other one \u203a</p>' +
+    '<div id="stfnote"></div>' +
     '<div id="stfbody"></div></div>');
+
+  /* il posto dove si dice se la giacca manca, e perche' */
+  var mine0 = staffWho(), noKit = mine0 && ME.club && !staffKit({ id:mine0 });
+  var nota = $("stfnote");
+  if (nota && noKit) {
+    nota.innerHTML = '<p class="hint">' + esc(ME.club.name) + " has no photographed " +
+      "kit yet, so the drawn jacket stands in for it. Five clubs have one so far.</p>";
+  }
 
   var tr = $("stftrack");
   function land() {
@@ -22411,7 +22445,13 @@ function drawStaffBody(id) {
         "three names over one box of questions was a defect, not a reward. " +
         "What the head of training gives you is the <b>room to use them</b> \u2014 eight actions a " +
         "matchday on six players instead of six on four.</p>"
-      : '<h2 class="sec top">His room</h2><div class="panel">' +
+      : '<h2 class="sec top">His room</h2>' +
+        ((typeof canSay === "function" && !canSay())
+          ? '<p class="hint">This phone has no English voice installed, so his ' +
+            "listening room stays shut: a room that reads badly is worse than no " +
+            "room. Everything else he brings works as usual.</p>"
+          : "") +
+        '<div class="panel">' +
         '<div class="stfr"><span><b>' + esc(EAR_ROOM.n) + "</b> \u00b7 " +
         esc(EAR_ROOM.s) + "</span><em>" +
         drillFresh(EAR_ROOM.id, lv, bankOf(EAR_ROOM.bank, lv)) + " new" +
@@ -24300,16 +24340,27 @@ function hv(easy, full) { return hEasy() ? easy : full; }
    si capisce non spiega niente. Quindi qui, e soltanto qui, si puo'
    passare alla propria lingua. La scelta resta nel cassetto
    dell'alunno, come tutto il resto. */
-var HLKEY = "footefl-helplang";
+/* ───────── una lingua sola in tutta l'app ─────────
+   La stanza delle spiegazioni e il globo nella barra scrivono nella
+   STESSA chiave: chi mette il portoghese qui lo trova anche sulle
+   istruzioni delle pagine, e viceversa. Due scelte separate per la
+   stessa cosa sono un modo di far sentire scemo chi le usa.
+   La barra qui resta a tutti i livelli, anche dal B1 dove il globo
+   sparisce: questa e' la stanza che si apre apposta quando non si
+   capisce, e aprirla e' una scelta, non una stampella sempre accesa. */
+var HLKEY = "footefl-tr";
 var HLANGS = [
   { id:"en", t:"EN", n:"English" },
   { id:"it", t:"IT", n:"Italiano" },
   { id:"fr", t:"FR", n:"Fran\u00e7ais" },
-  { id:"pt", t:"PT", n:"Portugu\u00eas" }
+  { id:"es", t:"ES", n:"Espa\u00f1ol" },
+  { id:"pt", t:"BR", n:"Portugu\u00eas do Brasil" }
 ];
 function hLang() {
   var v = "";
   try { v = localStorage.getItem(HLKEY) || ""; } catch (e) {}
+  /* se l'alunno non ha mai scelto, vale quella del professore */
+  if (!v && typeof trPick === "function") v = trPick();
   for (var i = 0; i < HLANGS.length; i++) if (HLANGS[i].id === v) return v;
   return "en";
 }
@@ -24341,33 +24392,46 @@ function wireLang(again) {
 /* le poche parole dell'interfaccia di questa stanza */
 var HW = {
   how:  { en:["How it works", "How it works"], it:"Come funziona",
-          fr:"Comment \u00e7a marche", pt:"Como funciona" },
+          fr:"Comment \u00e7a marche", es:"C\u00f3mo funciona",
+                                       pt:"Como funciona" },
   moves:{ en:["The six moves", "The six moves"], it:"Le sei mosse",
-          fr:"Les six temps", pt:"Os seis passos" },
+          fr:"Les six temps", es:"Los seis pasos",
+                              pt:"Os seis passos" },
   six:  { en:["FootEFL in six moves", "FootEFL in six moves"],
           it:"FootEFL in sei mosse", fr:"FootEFL en six temps",
+          es:"FootEFL en seis pasos",
           pt:"FootEFL em seis passos" },
   tour: { en:["Take the tour", "Take the tour"], it:"Fai il giro",
-          fr:"Fais le tour", pt:"D\u00e1 a volta" },
+          fr:"Fais le tour", es:"Haz el recorrido",
+                             pt:"D\u00ea uma volta" },
   tsub: { en:["Eight screens, two minutes", "Eight screens, two minutes"],
           it:"Otto schermate, due minuti", fr:"Huit \u00e9crans, deux minutes",
-          pt:"Oito ecr\u00e3s, dois minutos" },
+          es:"Ocho pantallas, dos minutos",
+          pt:"Oito telas, dois minutos" },
   ask:  { en:["Questions", "Questions"], it:"Domande", fr:"Questions",
+          es:"Preguntas",
           pt:"Perguntas" },
   asub: { en:["Pick one, read the answer", "Pick one, read the answer"],
           it:"Scegli la tua, leggi la risposta",
           fr:"Choisis la tienne, lis la r\u00e9ponse",
-          pt:"Escolhe a tua, l\u00ea a resposta" },
-  next: { en:["Next", "Next"], it:"Avanti", fr:"Suivant", pt:"Seguinte" },
+          es:"Elige la tuya, lee la respuesta",
+          pt:"Escolha a sua, leia a resposta" },
+  next: { en:["Next", "Next"], it:"Avanti", fr:"Suivant", es:"Siguiente",
+                                                          pt:"Pr\u00f3ximo" },
   done: { en:["That is the whole game", "That is the whole game"],
           it:"Ecco tutto il gioco", fr:"Voil\u00e0 tout le jeu",
-          pt:"\u00c9 todo o jogo" },
+          es:"Esto es todo el juego",
+          pt:"\u00c9 o jogo inteiro" },
   prev: { en:["Back one step", "Back one step"], it:"Indietro di uno",
-          fr:"Un pas en arri\u00e8re", pt:"Um passo atr\u00e1s" },
+          fr:"Un pas en arri\u00e8re", es:"Un paso atr\u00e1s",
+                                       pt:"Um passo atr\u00e1s" },
   quit: { en:["Leave the tour", "Leave the tour"], it:"Esci dal giro",
-          fr:"Quitter le tour", pt:"Sair da volta" },
-  back: { en:["Back", "Back"], it:"Indietro", fr:"Retour", pt:"Voltar" },
-  of:   { en:["of", "of"], it:"di", fr:"sur", pt:"de" }
+          fr:"Quitter le tour", es:"Salir del recorrido",
+                                pt:"Sair da volta" },
+  back: { en:["Back", "Back"], it:"Indietro", fr:"Retour", es:"Atr\u00e1s",
+                                                           pt:"Voltar" },
+  of:   { en:["of", "of"], it:"di", fr:"sur", es:"de",
+                                              pt:"de" }
 };
 
 /* ───────── i disegni del giro ─────────
@@ -24399,7 +24463,8 @@ function tourSteps() {
     t:{ en:["Your code is your season", "The code is the whole season"],
         it:"Il codice \u00e8 la tua stagione",
         fr:"Ton code, c'est ta saison",
-        pt:"O teu c\u00f3digo \u00e9 a tua \u00e9poca" },
+        es:"El c\u00f3digo es tu temporada",
+        pt:"O c\u00f3digo \u00e9 a sua temporada" },
     x:{ en:["Your teacher gives you a code. It says which competitions are yours and " +
             "which club you manage. You do not choose the club: it is already yours.",
             "Everything starts from the code your teacher gives you. It decides which " +
@@ -24410,14 +24475,14 @@ function tourSteps() {
         fr:"Ton professeur te donne un code. Il dit \u00e0 quelles comp\u00e9titions tu " +
            "participes et quel club tu diriges dans chacune. L'\u00e9quipe ne se choisit " +
            "pas : elle est d\u00e9j\u00e0 la tienne.",
-        pt:"O teu professor d\u00e1-te um c\u00f3digo. Diz em que competi\u00e7\u00f5es " +
-           "participas e que clube dirige em cada uma. A equipa n\u00e3o se escolhe: " +
-           "j\u00e1 \u00e9 tua." } },
+        es:"Tu profesor te da un c\u00f3digo. Dice en qu\u00e9 competiciones participas y qu\u00e9 club diriges en cada una. El club no se elige: ya es tuyo.",
+        pt:"O seu professor te d\u00e1 um c\u00f3digo. Ele diz em quais competi\u00e7\u00f5es voc\u00ea participa e qual time voc\u00ea dirige em cada uma. O time n\u00e3o se escolhe: j\u00e1 \u00e9 seu." } },
 
   { a:"page",
     t:{ en:["One page for each competition", "Each competition has its own page"],
         it:"Una pagina per ogni competizione",
         fr:"Une page par comp\u00e9tition",
+        es:"Una p\u00e1gina para cada competici\u00f3n",
         pt:"Uma p\u00e1gina para cada competi\u00e7\u00e3o" },
     x:{ en:["Tap a competition on your home page. Inside you find the last result, the " +
             "next match, your squad and the table.",
@@ -24432,16 +24497,15 @@ function tourSteps() {
            "le dernier r\u00e9sultat, le prochain match, ton effectif et le classement. " +
            "En haut, cinq portes : le courrier, la presse, les sponsors, la ville et tes " +
            "chiffres.",
-        pt:"Toca numa competi\u00e7\u00e3o na tua p\u00e1gina. L\u00e1 dentro tens o " +
-           "\u00faltimo resultado, o pr\u00f3ximo jogo, o plantel e a classifica\u00e7" +
-           "\u00e3o. Em cima, cinco portas: o correio, a imprensa, os patrocinadores, a " +
-           "cidade e os teus n\u00fameros." } },
+        es:"Toca una competici\u00f3n en tu p\u00e1gina. Dentro tienes el \u00faltimo resultado, el pr\u00f3ximo partido, la plantilla y la clasificaci\u00f3n. Arriba hay cinco puertas: el correo, la sala de prensa, los patrocinadores, la ciudad y tus n\u00fameros.",
+        pt:"Toque numa competi\u00e7\u00e3o na sua p\u00e1gina. L\u00e1 dentro voc\u00ea tem o \u00faltimo resultado, o pr\u00f3ximo jogo, o elenco e a tabela. Em cima tem cinco portas: o correio, a sala de imprensa, os patrocinadores, a cidade e os seus n\u00fameros." } },
 
   { a:"sheet",
     t:{ en:["Fill in your chances", "Your chances come before the match"],
         it:"Prepara le tue occasioni",
         fr:"Pr\u00e9pare tes occasions",
-        pt:"Prepara as tuas ocasi\u00f5es" },
+        es:"Prepara tus ocasiones",
+        pt:"Prepare as suas chances" },
     x:{ en:["Before the match you say who takes each moment, where you shoot and where " +
             "your keeper dives. The weather says how many moments you get.",
             "Before kick-off you decide who takes each moment, which side you shoot and " +
@@ -24453,15 +24517,15 @@ function tourSteps() {
         fr:"Avant le match tu d\u00e9cides qui prend chaque action, de quel c\u00f4t\u00e9 " +
            "tu tires et de quel c\u00f4t\u00e9 plonge ton gardien. La m\u00e9t\u00e9o " +
            "dit combien d'actions s'ouvrent : dix au soleil, cinq dans le brouillard.",
-        pt:"Antes do jogo decides quem fica com cada lance, para que lado remates e para " +
-           "que lado mergulha o guarda-redes. O tempo diz quantos lances se abrem: dez com " +
-           "sol, cinco com nevoeiro." } },
+        es:"Antes del partido decides qui\u00e9n coge cada acci\u00f3n, hacia qu\u00e9 lado tiras y hacia qu\u00e9 lado se lanza el portero. El tiempo dice cu\u00e1ntas acciones se abren: con sol son diez, con niebla cinco.",
+        pt:"Antes do jogo voc\u00ea decide quem pega cada lance, para que lado voc\u00ea chuta e para que lado o goleiro se joga. O tempo diz quantos lances abrem: com sol s\u00e3o dez, com neblina cinco." } },
 
   { a:"ear",
     t:{ en:["Listen and write", "You hear it once, and you write it"],
         it:"Ascolta e scrivi",
         fr:"\u00c9coute et \u00e9cris",
-        pt:"Ouve e escreve" },
+        es:"Escucha y escribe",
+        pt:"Ou\u00e7a e escreva" },
     x:{ en:["Your teacher reads a text. You hear it and you write it. Every word you get " +
             "right opens a moment for your team.",
             "Each half is a dictation read by your teacher. It does not stop and it does " +
@@ -24473,15 +24537,15 @@ function tourSteps() {
         fr:"Chaque mi-temps est une dict\u00e9e lue par ton professeur. Elle ne s'arr\u00eate " +
            "pas et ne se r\u00e9p\u00e8te pas : tu \u00e9cris ce que tu entends, et les " +
            "mots justes ouvrent les actions que tes joueurs vont jouer.",
-        pt:"Cada parte \u00e9 um ditado lido pelo professor. N\u00e3o p\u00e1ra e n\u00e3o " +
-           "se repete: escreves o que ouves, e as palavras certas abrem os lances que os " +
-           "teus jogadores v\u00e3o jogar." } },
+        es:"Cada tiempo es un dictado le\u00eddo por tu profesor. No para y no se repite: escribes lo que oyes, y las palabras correctas abren las acciones que luego juegan los tuyos.",
+        pt:"Cada tempo \u00e9 um ditado lido pelo seu professor. N\u00e3o para e n\u00e3o repete: voc\u00ea escreve o que ouve, e as palavras certas abrem os lances que os seus jogadores depois jogam." } },
 
   { a:"ball",
     t:{ en:["The match plays itself", "Then the match resolves itself"],
         it:"La partita si gioca da sola",
         fr:"Le match se joue tout seul",
-        pt:"O jogo joga-se sozinho" },
+        es:"El partido se juega solo",
+        pt:"O jogo se joga sozinho" },
     x:{ en:["Your words meet the words of the other player. The app shows the match minute " +
             "by minute, with the goals and who scored them.",
             "Your attacking half is weighed against your opponent's defending half, word " +
@@ -24493,15 +24557,15 @@ function tourSteps() {
         fr:"Ton attaque est pes\u00e9e contre la d\u00e9fense de l'adversaire, mot par " +
            "mot. Le r\u00e9sultat d\u00e9file comme un direct : buts, wonder goals, " +
            "penalties et cartons, avec le nom du joueur sur chaque action.",
-        pt:"O teu ataque \u00e9 pesado contra a defesa do advers\u00e1rio, palavra a " +
-           "palavra. O resultado passa como um direto: golos, wonder goals, penaltis e " +
-           "cart\u00f5es, com o nome de quem esteve em cada lance." } },
+        es:"Tu ataque se pesa contra la defensa del rival, palabra por palabra. El resultado va pasando como un directo: goles, wonder goals, penaltis y tarjetas, con el nombre de qui\u00e9n estaba en cada acci\u00f3n.",
+        pt:"O seu ataque \u00e9 pesado contra a defesa do advers\u00e1rio, palavra por palavra. O resultado passa como uma transmiss\u00e3o ao vivo: gols, wonder goals, p\u00eanaltis e cart\u00f5es, com o nome de quem estava em cada lance." } },
 
   { a:"bars",
     t:{ en:["Train your players", "The squad grows where you train it"],
         it:"Allena i tuoi giocatori",
         fr:"Entra\u00eene tes joueurs",
-        pt:"Treina os teus jogadores" },
+        es:"Entrena a tus jugadores",
+        pt:"Treine os seus jogadores" },
     x:{ en:["In my squad, open a player. You can train the body in the gym or the English " +
             "with four exercises. Six actions every matchday, no more.",
             "Open any player from my squad and you can work on two things: the body, in " +
@@ -24514,15 +24578,14 @@ function tourSteps() {
            "ou l'anglais avec quatre exercices \u2014 synonymes, d\u00e9finitions, " +
            "traduction et la bonne phrase. Six actions par journ\u00e9e, sur quatre " +
            "joueurs au maximum.",
-        pt:"Em my squad abre um jogador: podes treinar o corpo no gin\u00e1sio ou o " +
-           "ingl\u00eas com quatro exerc\u00edcios \u2014 sin\u00f3nimos, " +
-           "defini\u00e7\u00f5es, tradu\u00e7\u00e3o e a frase certa. Seis a\u00e7" +
-           "\u00f5es por jornada, em quatro jogadores no m\u00e1ximo." } },
+        es:"En my squad abres un jugador: puedes entrenar el cuerpo en el gimnasio o el ingl\u00e9s con cuatro ejercicios \u2014 sin\u00f3nimos, definiciones, traducci\u00f3n y la frase correcta. Seis acciones por jornada, sobre cuatro jugadores como mucho.",
+        pt:"Em my squad voc\u00ea abre um jogador: d\u00e1 para treinar o corpo na academia ou o ingl\u00eas com quatro exerc\u00edcios \u2014 sin\u00f4nimos, defini\u00e7\u00f5es, tradu\u00e7\u00e3o e a frase certa. Seis a\u00e7\u00f5es por rodada, em no m\u00e1ximo quatro jogadores." } },
 
   { a:"mic",
     t:{ en:["The press room", "The press room pays, and it judges"],
         it:"La sala stampa",
         fr:"La salle de presse",
+        es:"La sala de prensa",
         pt:"A sala de imprensa" },
     x:{ en:["A paper asks four questions. Three go to your players, and the answer is as " +
             "good as their English. The last one you write yourself.",
@@ -24539,15 +24602,14 @@ function tourSteps() {
            "questions vont \u00e0 des joueurs que tu choisis, et ce qui en sort vaut " +
            "l'anglais que tu as travaill\u00e9. La quatri\u00e8me, c'est toi qui " +
            "l'\u00e9cris, et ton professeur la lit.",
-        pt:"Antes e depois do jogo aparece um jornal: o do bairro se ningu\u00e9m te " +
-           "conhece, um nacional se te conhecem. Tr\u00eas perguntas v\u00e3o para " +
-           "jogadores que escolhes, e o que sai vale o ingl\u00eas que treinaste. A " +
-           "quarta escreves tu, e o professor l\u00ea-a." } },
+        es:"Antes y despu\u00e9s del partido aparece un peri\u00f3dico: el del barrio si no te conoce nadie, uno nacional si te conocen. Tres preguntas van a jugadores que eliges t\u00fa, y lo que sale vale lo que vale el ingl\u00e9s que has entrenado. La cuarta la escribes t\u00fa, y la lee tu profesor.",
+        pt:"Antes e depois do jogo aparece um jornal: o do bairro se ningu\u00e9m te conhece, um nacional se te conhecem. Tr\u00eas perguntas v\u00e3o para jogadores que voc\u00ea escolhe, e o que sai vale o quanto vale o ingl\u00eas que voc\u00ea treinou. A quarta voc\u00ea escreve, e quem l\u00ea \u00e9 o seu professor." } },
 
   { a:"coin",
     t:{ en:["The club lives on money", "Everything ends up in the till"],
         it:"Il club vive di soldi",
         fr:"Le club vit d'argent",
+        es:"El club vive del dinero",
         pt:"O clube vive de dinheiro" },
     x:{ en:["Matches, sessions, the press and the sponsors all pay. With the money you " +
             "build the stadium, open the club and hire the staff.",
@@ -24563,10 +24625,8 @@ function tourSteps() {
            "sponsors remplissent la caisse, et la caisse paie les si\u00e8ges, le club et " +
            "le staff. Gagne et parle bien : la ville le remarque, les journaux et les " +
            "entreprises qui r\u00e9pondent deviennent plus grands.",
-        pt:"A bilheteira, as sess\u00f5es, as respostas \u00e0 imprensa e os " +
-           "patrocinadores enchem o cofre, e o cofre paga os lugares, o clube e a equipa " +
-           "t\u00e9cnica. Ganha e fala bem: a cidade repara, e aparecem jornais e " +
-           "empresas maiores." } }
+        es:"La taquilla, las sesiones en el campo, las respuestas a la prensa y los patrocinadores llenan la caja, y la caja paga los asientos, el club y el cuerpo t\u00e9cnico. Si ganas y hablas bien, la ciudad se da cuenta: llegan peri\u00f3dicos m\u00e1s grandes y empresas m\u00e1s grandes.",
+        pt:"A bilheteria, as sess\u00f5es no campo, as respostas \u00e0 imprensa e os patrocinadores enchem o caixa, e o caixa paga as cadeiras, o clube e a comiss\u00e3o t\u00e9cnica. Se voc\u00ea ganha e fala bem, a cidade percebe: chegam jornais maiores e empresas maiores." } }
   ];
 }
 
@@ -24680,12 +24740,14 @@ function faqGroups() {
   return [
 
 /* ───────── la partita ───────── */
-{ n:{ en:["The match", "The match"], it:"La partita", fr:"Le match", pt:"O jogo" }, q:[
+{ n:{ en:["The match", "The match"], it:"La partita", fr:"Le match", es:"El partido",
+                                                                     pt:"O jogo" }, q:[
 
  { q:{ en:["Why can I only shoot eight times?", "Why do I only get eight moments?"],
        it:"Perché posso tirare solo otto volte?",
        fr:"Pourquoi je ne tire que huit fois ?",
-       pt:"Porque é que só remato oito vezes?" },
+       es:"\u00bfPor qu\u00e9 solo puedo tirar ocho veces?",
+       pt:"Por que eu s\u00f3 posso chutar oito vezes?" },
    a:{ en:["The weather decides. Sunshine opens ten moments, fog only five. The sky is " +
            "the same for both teams.",
            "The number of moments comes from the weather of that half: ten under a clear " +
@@ -24694,12 +24756,13 @@ function faqGroups() {
           "Il cielo è lo stesso per tutte e due le squadre.",
        fr:"C'est la météo : dix actions au soleil, cinq dans le brouillard. " +
           "Le ciel est le même pour les deux équipes.",
-       pt:"É o tempo que decide: dez lances com sol, cinco com nevoeiro. O céu " +
-          "é o mesmo para as duas equipas." } },
+       es:"Lo decide el tiempo: con sol se abren diez acciones, con niebla cinco. El cielo es el mismo para los dos equipos.",
+       pt:"Quem decide \u00e9 o tempo: com sol abrem dez lances, com neblina cinco. O c\u00e9u \u00e9 o mesmo para os dois times." } },
 
  { q:{ en:["What is a wonder goal?", "What is a wonder goal?"],
        it:"Che cos'è il wonder goal?", fr:"C'est quoi un wonder goal ?",
-       pt:"O que é um wonder goal?" },
+       es:"\u00bfQu\u00e9 es el wonder goal?",
+       pt:"O que \u00e9 o wonder goal?" },
    a:{ en:["One hard word in the attacking half. Write it perfectly and you score, " +
            "whatever else happens.",
            "Every attacking dictation hides one difficult word. Write it exactly right " +
@@ -24708,12 +24771,13 @@ function faqGroups() {
           "perfetta diventa un gol, qualunque cosa succeda nel resto del tempo.",
        fr:"Chaque dictée d'attaque cache un mot difficile. Si tu l'écris " +
           "parfaitement, il devient un but à lui tout seul.",
-       pt:"Cada ditado de ataque esconde uma palavra difícil. Se a escreveres " +
-          "perfeita, vira golo por si só." } },
+       es:"En cada dictado de ataque hay una palabra dif\u00edcil escondida. Si la escribes perfecta se convierte en gol, pase lo que pase en el resto del tiempo.",
+       pt:"Em todo ditado de ataque tem uma palavra dif\u00edcil escondida. Se voc\u00ea escrever ela perfeita vira gol, aconte\u00e7a o que acontecer no resto do tempo." } },
 
  { q:{ en:["And the penalty against me?", "And the penalty I concede?"],
        it:"E il rigore contro?", fr:"Et le penalty contre moi ?",
-       pt:"E o penalti contra?" },
+       es:"\u00bfY el penalti en contra?",
+       pt:"E o p\u00eanalti contra?" },
    a:{ en:["The same thing in defence. If you miss that word, the other team gets a " +
            "penalty.",
            "The defending dictation hides a word too, and that one is a trap: miss it and " +
@@ -24723,27 +24787,28 @@ function faqGroups() {
        fr:"La dictée de défense cache un mot elle aussi, mais c'est un " +
           "piège : si tu le rates tu offres un penalty, que ton gardien peut encore " +
           "arrêter.",
-       pt:"O ditado de defesa também esconde uma palavra, mas essa é uma " +
-          "armadilha: se falhares ofereces um penalti — que o teu guarda-redes ainda " +
-          "pode defender." } },
+       es:"El dictado de defensa tambi\u00e9n esconde una palabra, pero esa es una trampa: si la fallas regalas un penalti \u2014 que tu portero todav\u00eda puede parar.",
+       pt:"O ditado de defesa tamb\u00e9m esconde uma palavra, mas essa \u00e9 uma armadilha: se voc\u00ea errar, d\u00e1 um p\u00eanalti de presente \u2014 que o seu goleiro ainda pode defender." } },
 
  { q:{ en:["Can I play the same match twice?", "Can a half be played again?"],
        it:"Posso rigiocare la stessa partita?",
        fr:"Je peux rejouer le même match ?",
-       pt:"Posso voltar a jogar o mesmo jogo?" },
+       es:"\u00bfPuedo volver a jugar el mismo partido?",
+       pt:"Posso jogar o mesmo jogo de novo?" },
    a:{ en:["No. A half is played once. The app remembers it.",
            "No. Once a half is closed it is closed for good: the app keeps the record and " +
            "will not open that matchday again."],
        it:"No. Un tempo si gioca una volta sola: l'app se lo ricorda e non lo riapre.",
        fr:"Non. Une mi-temps se joue une seule fois : l'application s'en souvient.",
-       pt:"Não. Cada parte joga-se uma única vez: a aplicação guarda o " +
-          "registo." } },
+       es:"No. Un tiempo se juega una sola vez: la app se acuerda y no lo vuelve a abrir.",
+       pt:"N\u00e3o. Um tempo se joga uma vez s\u00f3: o app lembra e n\u00e3o abre de novo." } },
 
  { q:{ en:["What if I leave the app while I am writing?",
            "What if I leave the window during a dictation?"],
        it:"E se esco dall'app mentre scrivo?",
        fr:"Et si je sors de l'appli pendant que j'écris ?",
-       pt:"E se sair da aplicação enquanto escrevo?" },
+       es:"\u00bfY si salgo de la app mientras escribo?",
+       pt:"E se eu sair do app enquanto escrevo?" },
    a:{ en:["The app counts it. Every time costs 0.10 on that dictation, and your teacher " +
            "sees it in the report.",
            "It is counted and it costs 0.10 each time on that half. It does not change a " +
@@ -24752,17 +24817,19 @@ function faqGroups() {
           "che legge il professore.",
        fr:"L'application le compte : chaque sortie coûte 0,10 sur cette dictée " +
           "et apparaît dans le rapport que lit ton professeur.",
-       pt:"A aplicação conta: cada saída custa 0,10 nesse ditado e aparece " +
-          "no relatório que o professor lê." } } ] },
+       es:"La app lo cuenta: cada vez cuesta 0,10 en ese dictado y acaba en el informe que lee tu profesor.",
+       pt:"O app conta: cada vez custa 0,10 naquele ditado e vai parar no relat\u00f3rio que o seu professor l\u00ea." } } ] },
 
 /* ───────── le parole ───────── */
 { n:{ en:["Words and mistakes", "Words and mistakes"], it:"Parole ed errori",
-      fr:"Les mots et les fautes", pt:"Palavras e erros" }, q:[
+      fr:"Les mots et les fautes", es:"Palabras y errores",
+                                   pt:"Palavras e erros" }, q:[
 
  { q:{ en:["Where do my wrong words go?", "Where do my mistakes end up?"],
        it:"Dove finiscono le parole che sbaglio?",
        fr:"Où vont les mots que je rate ?",
-       pt:"Para onde vão as palavras que erro?" },
+       es:"\u00bfD\u00f3nde acaban las palabras que fallo?",
+       pt:"Onde param as palavras que eu erro?" },
    a:{ en:["Into my words. Fix a word twice and it leaves the list for good.",
            "Into my words, from matches and from the training ground. Get a word right " +
            "twice and it leaves the list — that is the only way out."],
@@ -24770,14 +24837,15 @@ function faqGroups() {
           "lista solo quando la scrivi giusta due volte.",
        fr:"Dans my words, depuis les matchs et l'entraînement. Un mot ne sort de la " +
           "liste que si tu l'écris juste deux fois.",
-       pt:"Para my words, dos jogos e do treino. Uma palavra só sai da lista quando a " +
-          "escreves certa duas vezes." } },
+       es:"En my words, de los partidos y del campo de entrenamiento. Una palabra sale de la lista solo cuando la escribes bien dos veces.",
+       pt:"Em my words, dos jogos e do campo de treino. Uma palavra sai da lista s\u00f3 quando voc\u00ea escreve certo duas vezes." } },
 
  { q:{ en:["Does spelling count in the press room?",
            "Is my spelling marked in the press room?"],
        it:"In sala stampa conta l'ortografia?",
        fr:"L'orthographe compte en salle de presse ?",
-       pt:"A ortografia conta na sala de imprensa?" },
+       es:"\u00bfEn la sala de prensa cuenta la ortograf\u00eda?",
+       pt:"Na sala de imprensa a ortografia conta?" },
    a:{ en:["No. There you write what you think. Your teacher reads it, not a machine.",
            "Not there. It is the one place where nobody marks your spelling: you write " +
            "what you think and your teacher reads it with the match report."],
@@ -24785,12 +24853,13 @@ function faqGroups() {
           "pensi, e lo legge il professore, non una macchina.",
        fr:"Non : c'est le seul endroit où personne ne corrige ton orthographe. Tu " +
           "écris ce que tu penses, et c'est ton professeur qui te lit.",
-       pt:"Não: é o único sítio onde ninguém corrige a escrita. " +
-          "Escreves o que pensas, e é o professor que lê." } },
+       es:"No: es el \u00fanico sitio donde nadie corrige c\u00f3mo escribes. Escribe lo que piensas, y lo lee tu profesor, no una m\u00e1quina.",
+       pt:"N\u00e3o: \u00e9 o \u00fanico lugar onde ningu\u00e9m corrige como voc\u00ea escreve. Escreva o que voc\u00ea pensa, e quem l\u00ea \u00e9 o seu professor, n\u00e3o uma m\u00e1quina." } },
 
  { q:{ en:["What is the word of the day?", "What is the word of the day for?"],
        it:"A che serve la parola del giorno?",
        fr:"À quoi sert le mot du jour ?",
+       es:"\u00bfPara qu\u00e9 sirve la palabra del d\u00eda?",
        pt:"Para que serve a palavra do dia?" },
    a:{ en:["A word at your level, with its meaning and a sentence. It changes every time " +
            "you go into a competition.",
@@ -24800,17 +24869,19 @@ function faqGroups() {
           "d'esempio. Cambia ogni volta che entri in una competizione.",
        fr:"Un mot choisi pour ton niveau, avec son sens et une phrase. Il change chaque " +
           "fois que tu entres dans une compétition.",
-       pt:"Uma palavra escolhida para o teu nível, com o significado e uma frase. " +
-          "Muda sempre que entras numa competição." } } ] },
+       es:"Es una palabra elegida para tu nivel, con el significado y una frase de ejemplo. Cambia cada vez que entras en una competici\u00f3n.",
+       pt:"\u00c9 uma palavra escolhida para o seu n\u00edvel, com o significado e uma frase de exemplo. Muda toda vez que voc\u00ea entra numa competi\u00e7\u00e3o." } } ] },
 
 /* ───────── la rosa ───────── */
-{ n:{ en:["My squad", "My squad"], it:"La rosa", fr:"L'effectif", pt:"O plantel" }, q:[
+{ n:{ en:["My squad", "My squad"], it:"La rosa", fr:"L'effectif", es:"La plantilla",
+                                                                  pt:"O elenco" }, q:[
 
  { q:{ en:["What are the little bars under a shirt?",
            "What are the three marks under a shirt?"],
        it:"Che cosa sono le tacche sotto la maglia?",
        fr:"C'est quoi les barres sous le maillot ?",
-       pt:"O que são as barras por baixo da camisola?" },
+       es:"\u00bfQu\u00e9 son las muescas debajo de la camiseta?",
+       pt:"O que s\u00e3o os tracinhos embaixo da camisa?" },
    a:{ en:["The gym. Three sessions, +0.05 each, and the body is at its best.",
            "They are the gym sessions that player has done: three in all, +0.05 each, and " +
            "then the body cannot improve any further."],
@@ -24818,13 +24889,14 @@ function faqGroups() {
           "l'una, e poi il corpo è al massimo.",
        fr:"Ce sont les séances de musculation de ce joueur : trois en tout, +0,05 " +
           "chacune, et ensuite le corps est au maximum.",
-       pt:"São as sessões de ginásio desse jogador: três ao todo, " +
-          "+0,05 cada, e depois o corpo chegou ao limite." } },
+       es:"Son las sesiones de gimnasio que ha hecho ese jugador: tres en total, +0,05 cada una, y despu\u00e9s el cuerpo est\u00e1 al m\u00e1ximo.",
+       pt:"S\u00e3o as sess\u00f5es de academia que aquele jogador fez: tr\u00eas no total, +0,05 cada uma, e depois o corpo est\u00e1 no m\u00e1ximo." } },
 
  { q:{ en:["What do the English bars do?", "What do the five English bars change?"],
        it:"A che servono le barre di inglese?",
        fr:"À quoi servent les barres d'anglais ?",
-       pt:"Para que servem as barras de inglês?" },
+       es:"\u00bfPara qu\u00e9 sirven las barras de ingl\u00e9s?",
+       pt:"Para que servem as barras de ingl\u00eas?" },
    a:{ en:["They decide how a player speaks in the press room, and how much the paper pays.",
            "They decide what comes out when that player is asked a question: one bar is " +
            "broken English, five is fluent. The better the answer, the more the paper pays " +
@@ -24835,14 +24907,14 @@ function faqGroups() {
        fr:"Elles décident comment ce joueur parle en conférence de presse : une " +
           "barre, l'anglais est cassé ; cinq, il est fluide. Mieux il répond, " +
           "plus le journal paie et plus la ville respecte le club.",
-       pt:"Decidem como esse jogador fala na conferência de imprensa: com uma barra o " +
-          "inglês é partido, com cinco é fluente. Quanto melhor responde, " +
-          "mais o jornal paga e mais a cidade respeita o clube." } },
+       es:"Deciden c\u00f3mo habla ese jugador en la rueda de prensa: con una barra el ingl\u00e9s est\u00e1 roto, con cinco es fluido. Cuanto mejor responde, m\u00e1s paga el peri\u00f3dico y m\u00e1s sube la consideraci\u00f3n del club.",
+       pt:"Elas decidem como aquele jogador fala na coletiva: com uma barra o ingl\u00eas \u00e9 quebrado, com cinco \u00e9 fluente. Quanto melhor ele responde, mais o jornal paga e mais sobe a considera\u00e7\u00e3o do clube." } },
 
  { q:{ en:["Why can I only train four players?", "Why only six actions a matchday?"],
        it:"Perché posso allenare solo quattro giocatori?",
        fr:"Pourquoi seulement quatre joueurs ?",
-       pt:"Porque é que só treino quatro jogadores?" },
+       es:"\u00bfPor qu\u00e9 solo puedo entrenar a cuatro jugadores?",
+       pt:"Por que eu s\u00f3 posso treinar quatro jogadores?" },
    a:{ en:["Six actions every matchday, four players at most, two sessions each on the " +
            "same thing. Choose well.",
            "Six actions a matchday, spread over four players at most, with two at most on " +
@@ -24851,14 +24923,14 @@ function faqGroups() {
           "due sullo stesso reparto per lo stesso giocatore. Scegliere è il gioco.",
        fr:"Tu as six actions par journée, sur quatre joueurs au maximum, et pas plus " +
           "de deux sur le même travail pour le même joueur. Choisir, c'est le jeu.",
-       pt:"Tens seis ações por jornada, em quatro jogadores no máximo, e " +
-          "não mais de duas no mesmo trabalho para o mesmo jogador. Escolher é " +
-          "o jogo." } },
+       es:"Tienes seis acciones por jornada, sobre cuatro jugadores como mucho, y no m\u00e1s de dos en la misma l\u00ednea para el mismo jugador. Elegir es el juego.",
+       pt:"Voc\u00ea tem seis a\u00e7\u00f5es por rodada, em no m\u00e1ximo quatro jogadores, e n\u00e3o mais de duas no mesmo setor para o mesmo jogador. Escolher \u00e9 o jogo." } },
 
  { q:{ en:["Why is my player suspended?", "Why has my player been suspended?"],
        it:"Perché il mio giocatore è squalificato?",
        fr:"Pourquoi mon joueur est suspendu ?",
-       pt:"Porque é que o meu jogador está suspenso?" },
+       es:"\u00bfPor qu\u00e9 est\u00e1 sancionado mi jugador?",
+       pt:"Por que o meu jogador est\u00e1 suspenso?" },
    a:{ en:["Two yellow cards or a red one. He misses the next matchday.",
            "Cards come from the words you lose: two yellows or a straight red and the " +
            "player sits out the next matchday. A team-mate takes his moments."],
@@ -24866,12 +24938,13 @@ function faqGroups() {
           "giornata dopo. Le sue azioni le prende un compagno.",
        fr:"Les cartons viennent des mots ratés : deux jaunes ou un rouge et il saute " +
           "la journée suivante. Un coéquipier prend ses actions.",
-       pt:"Os cartões nascem das palavras erradas: dois amarelos ou um vermelho e " +
-          "falha a jornada seguinte. Um colega fica com os lances dele." } },
+       es:"Las tarjetas nacen de las palabras falladas: dos amarillas o una roja y se pierde la jornada siguiente. Sus acciones las coge un compa\u00f1ero.",
+       pt:"Os cart\u00f5es nascem das palavras erradas: dois amarelos ou um vermelho e ele perde a rodada seguinte. Os lances dele ficam com um companheiro." } },
 
  { q:{ en:["How does a player get injured?", "Who gets injured, and why?"],
        it:"Come ci si infortuna?", fr:"Comment un joueur se blesse ?",
-       pt:"Como é que um jogador se lesiona?" },
+       es:"\u00bfC\u00f3mo se lesiona uno?",
+       pt:"Como a gente se machuca?" },
    a:{ en:["The one who plays the most moments can get hurt — about one matchday in " +
            "three. A physio brings him back sooner.",
            "The players who run the most are the ones who break down, roughly one matchday " +
@@ -24883,15 +24956,17 @@ function faqGroups() {
        fr:"C'est celui qui joue le plus d'actions qui se blesse, environ une " +
           "journée sur trois. Répartir les actions aide, et le " +
           "kinésithérapeute le remet sur pied une semaine plus tôt.",
-       pt:"Lesiona-se quem joga mais lances, cerca de uma jornada em três. Distribuir " +
-          "ajuda, e o fisioterapeuta põe-no de pé uma semana mais cedo." } } ] },
+       es:"Se lesiona quien juega m\u00e1s acciones, m\u00e1s o menos una jornada de cada tres. Repartir las acciones ayuda, y el fisioterapeuta del cuerpo t\u00e9cnico lo pone en pie una semana antes.",
+       pt:"Quem joga mais lances se machuca, mais ou menos uma rodada em cada tr\u00eas. Dividir os lances ajuda, e o fisioterapeuta da comiss\u00e3o t\u00e9cnica p\u00f5e ele de p\u00e9 uma semana antes." } } ] },
 
 /* ───────── i soldi ───────── */
 { n:{ en:["Money and the city", "Money and the city"], it:"I soldi e la città",
-      fr:"L'argent et la ville", pt:"O dinheiro e a cidade" }, q:[
+      fr:"L'argent et la ville", es:"El dinero y la ciudad",
+                                 pt:"O dinheiro e a cidade" }, q:[
 
  { q:{ en:["Where does the money come from?", "What feeds the till?"],
        it:"Da dove arrivano i soldi?", fr:"D'où vient l'argent ?",
+       es:"\u00bfDe d\u00f3nde sale el dinero?",
        pt:"De onde vem o dinheiro?" },
    a:{ en:["The gate on matchday, the training sessions, the press room and the sponsors.",
            "Four sources: the gate at every home match, the sessions at the training " +
@@ -24901,12 +24976,13 @@ function faqGroups() {
        fr:"Quatre sources : la recette de chaque match à domicile, les séances " +
           "à l'entraînement, ce que paient les journaux pour tes réponses, " +
           "et les sponsors que tu signes.",
-       pt:"Quatro fontes: a bilheteira de cada jogo em casa, as sessões de treino, o " +
-          "que os jornais pagam pelas respostas e os patrocinadores que assinas." } },
+       es:"Cuatro caminos: la taquilla de cada partido en casa, las sesiones en el campo, lo que pagan los peri\u00f3dicos por las respuestas y los patrocinadores que firmas.",
+       pt:"Quatro caminhos: a bilheteria de cada jogo em casa, as sess\u00f5es no campo, o que os jornais pagam pelas respostas e os patrocinadores que voc\u00ea assina." } },
 
  { q:{ en:["What can I buy?", "What is the money for?"],
        it:"Che cosa posso comprare?", fr:"Qu'est-ce que je peux acheter ?",
-       pt:"O que posso comprar?" },
+       es:"\u00bfQu\u00e9 puedo comprar?",
+       pt:"O que eu posso comprar?" },
    a:{ en:["Seats for the stadium, things for the club, and the staff: the analyst, the " +
            "physio and the VAR.",
            "Seats, which raise the gate for ever after; the club itself, the shop and the " +
@@ -24918,14 +24994,14 @@ function faqGroups() {
        fr:"Les sièges, qui augmentent la recette pour toujours ; le club, la boutique " +
           "et la pelouse ; et le staff — l'analyste donne plus de temps pour relire, " +
           "le kiné soigne plus vite, la VAR annule un carton par match.",
-       pt:"Os lugares, que aumentam a bilheteira para sempre; o clube, a loja e o relvado; " +
-          "e a equipa técnica — o analista dá mais tempo para reler, o " +
-          "fisioterapeuta cura mais depressa, o VAR anula um cartão por jogo." } },
+       es:"Los asientos, que suben la taquilla para siempre; el club, la tienda y el campo; y el cuerpo t\u00e9cnico \u2014 el analista da m\u00e1s tiempo para releer, el fisioterapeuta cura antes, el VAR borra una tarjeta por partido.",
+       pt:"As cadeiras, que aumentam a bilheteria para sempre; o clube, a loja e o campo; e a comiss\u00e3o t\u00e9cnica \u2014 o analista d\u00e1 mais tempo para reler, o fisioterapeuta cura antes, o VAR apaga um cart\u00e3o por jogo." } },
 
  { q:{ en:["What is 'how the city sees you'?", "What does the city number mean?"],
        it:"Che cos'è «come ti vede la città»?",
        fr:"C'est quoi « comment la ville te voit » ?",
-       pt:"O que é «como a cidade te vê»?" },
+       es:"\u00bfQu\u00e9 es \u00abc\u00f3mo te ve la ciudad\u00bb?",
+       pt:"O que \u00e9 \u00abcomo a cidade te v\u00ea\u00bb?" },
    a:{ en:["A number from 0 to 100. Win and speak well and it goes up. High, and big " +
            "papers and big companies come to you.",
            "One number, from 0 to 100, that moves with your results and with what your " +
@@ -24937,14 +25013,14 @@ function faqGroups() {
        fr:"Un chiffre de 0 à 100 qui monte avec les résultats et avec ce que tes " +
           "joueurs disent en conférence. Il décide quel journal se " +
           "présente et quelle entreprise répond quand tu cherches un sponsor.",
-       pt:"Um número de 0 a 100 que sobe com os resultados e com o que os teus " +
-          "jogadores dizem na conferência. Decide que jornal aparece e que empresa " +
-          "responde quando procuras patrocínio." } },
+       es:"Un n\u00famero de 0 a 100 que sube con los resultados y con lo que tus jugadores dicen en la rueda de prensa. Decide qu\u00e9 peri\u00f3dico se presenta y qu\u00e9 empresa contesta cuando buscas un patrocinador.",
+       pt:"Um n\u00famero de 0 a 100 que sobe com os resultados e com o que os seus jogadores dizem na coletiva. Ele decide qual jornal aparece e qual empresa atende quando voc\u00ea procura um patrocinador." } },
 
  { q:{ en:["Nobody answers when I call a sponsor.", "Why does nobody answer my calls?"],
        it:"Nessuno risponde quando cerco uno sponsor.",
        fr:"Personne ne répond quand je cherche un sponsor.",
-       pt:"Ninguém responde quando procuro patrocínio." },
+       es:"Nadie contesta cuando busco un patrocinador.",
+       pt:"Ningu\u00e9m atende quando eu procuro um patrocinador." },
    a:{ en:["That is normal at the start. Win a match, speak well, and the telephone starts " +
            "working.",
            "At the bottom of the scale almost half the calls end in a polite no. That is " +
@@ -24955,17 +25031,18 @@ function faqGroups() {
        fr:"Au début c'est normal : presque la moitié des appels se termine par un " +
           "non poli. C'est le principe — un club inconnu doit mériter ses " +
           "partenaires.",
-       pt:"No início é normal: quase metade das chamadas acaba num não " +
-          "educado. É esse o ponto — um clube que ninguém conhece tem de " +
-          "ganhar os seus apoios." } } ] },
+       es:"Al principio es normal: casi la mitad de las llamadas acaba con un no amable. Es justo el punto \u2014 un club que no conoce nadie tiene que ganarse a los que ponen el dinero.",
+       pt:"No come\u00e7o \u00e9 normal: quase metade das liga\u00e7\u00f5es termina com um n\u00e3o educado. \u00c9 justamente esse o ponto \u2014 um clube que ningu\u00e9m conhece precisa conquistar quem p\u00f5e o dinheiro." } } ] },
 
 /* ───────── il professore ───────── */
 { n:{ en:["My teacher", "My teacher"], it:"Il professore", fr:"Le professeur",
+      es:"El profesor",
       pt:"O professor" }, q:[
 
  { q:{ en:["Who decides the table?", "Who publishes the table?"],
        it:"Chi decide la classifica?", fr:"Qui décide le classement ?",
-       pt:"Quem decide a classificação?" },
+       es:"\u00bfQui\u00e9n decide la clasificaci\u00f3n?",
+       pt:"Quem decide a tabela?" },
    a:{ en:["Your teacher. What you see with a dot is still waiting for him.",
            "The official table is published by your teacher. Points from matches already " +
            "finished on the phones appear with a dot — provisional until he runs the " +
@@ -24976,14 +25053,14 @@ function faqGroups() {
        fr:"Le classement officiel, c'est ton professeur qui le publie. Les points des " +
           "matchs déjà terminés sur les téléphones apparaissent " +
           "avec un point : provisoires tant qu'il n'a pas validé la journée.",
-       pt:"A classificação oficial é publicada pelo professor. Os pontos " +
-          "dos jogos já terminados nos telemóveis aparecem com um ponto: " +
-          "são provisórios até ele fechar a jornada." } },
+       es:"La clasificaci\u00f3n oficial la publica tu profesor. Los puntos de los partidos ya terminados en los tel\u00e9fonos se ven enseguida con el punto: son provisionales hasta que \u00e9l cierra la jornada.",
+       pt:"A tabela oficial quem publica \u00e9 o seu professor. Os pontos dos jogos j\u00e1 terminados nos celulares aparecem na hora com a bolinha: s\u00e3o provis\u00f3rios at\u00e9 ele fechar a rodada." } },
 
  { q:{ en:["Why is my next match locked?", "Why is the next matchday locked?"],
        it:"Perché la prossima partita ha il lucchetto?",
        fr:"Pourquoi le prochain match est verrouillé ?",
-       pt:"Porque é que o próximo jogo está trancado?" },
+       es:"\u00bfPor qu\u00e9 el pr\u00f3ximo partido tiene candado?",
+       pt:"Por que o pr\u00f3ximo jogo est\u00e1 com cadeado?" },
    a:{ en:["Your teacher has not opened it yet. It appears here the moment he does.",
            "Matchdays open one at a time, and only your teacher opens them. The padlock " +
            "means the fixture exists but is not yours to play yet."],
@@ -24991,13 +25068,14 @@ function faqGroups() {
           "lucchetto vuol dire che la partita esiste ma non è ancora tua.",
        fr:"Les journées s'ouvrent une à la fois, et c'est ton professeur qui les " +
           "ouvre. Le cadenas veut dire que le match existe mais n'est pas encore à toi.",
-       pt:"As jornadas abrem uma de cada vez, e só o professor as abre. O cadeado quer " +
-          "dizer que o jogo existe mas ainda não é teu." } },
+       es:"Las jornadas se abren de una en una, y solo las abre tu profesor. El candado quiere decir que el partido existe pero todav\u00eda no es tuyo.",
+       pt:"As rodadas abrem uma de cada vez, e quem abre \u00e9 s\u00f3 o seu professor. O cadeado quer dizer que o jogo existe mas ainda n\u00e3o \u00e9 seu." } },
 
  { q:{ en:["Does my teacher see what I write?", "What does my teacher actually see?"],
        it:"Il professore vede quello che scrivo?",
        fr:"Mon professeur voit ce que j'écris ?",
-       pt:"O professor vê o que escrevo?" },
+       es:"\u00bfMi profesor ve lo que escribo?",
+       pt:"O meu professor v\u00ea o que eu escrevo?" },
    a:{ en:["Yes. Your dictations and your press answers travel to him in the report.",
            "Yes — the match report carries your dictations word by word, your press " +
            "answers and small things like how often you left the window. It travels with " +
@@ -25008,9 +25086,8 @@ function faqGroups() {
        fr:"Oui : le rapport contient tes dictées mot à mot, tes réponses " +
           "à la presse et les détails, comme le nombre de sorties de la " +
           "fenêtre. Il voyage avec ton code, jamais avec ton nom.",
-       pt:"Sim: o relatório leva os ditados palavra a palavra, as respostas à " +
-          "imprensa e os pormenores, como quantas vezes saíste da janela. Viaja com o " +
-          "teu código, nunca com o teu nome." } } ] }
+       es:"S\u00ed: el informe lleva los dictados palabra por palabra, las respuestas de la sala de prensa y tambi\u00e9n los detalles, como cu\u00e1ntas veces has salido de la ventana. Viaja con tu c\u00f3digo, nunca con tu nombre.",
+       pt:"V\u00ea: o relat\u00f3rio leva os ditados palavra por palavra, as respostas da sala de imprensa e tamb\u00e9m os detalhes, como quantas vezes voc\u00ea saiu da janela. Ele viaja com o seu c\u00f3digo, nunca com o seu nome." } } ] }
 
   ];
 }
@@ -27269,20 +27346,37 @@ function learnItems(items, src) {
 
 /* ───────── la voce ───────── */
 var VOICE = null, CAN_SPEAK = typeof window !== "undefined" && "speechSynthesis" in window;
+/* ───────── solo una voce inglese, o niente ─────────
+   Prima, se il telefono non aveva una voce inglese, si ripiegava sulla
+   voce predefinita: su un telefono italiano vuol dire un dettato
+   inglese letto con la bocca italiana. Non e' un ripiego, e' un danno:
+   un alunno che sente « the lighthouse » pronunciato all'italiana
+   impara quello. Meglio tacere.
+
+   Quindi: si prende una voce en-GB, se no una en-US, se no una
+   qualunque inglese. Se non ce n'e' nessuna, VOICE resta vuota,
+   canSay() dice no, e quello che aveva bisogno della voce non si apre
+   nemmeno. */
 function pickVoice() {
   if (!CAN_SPEAK) return;
   var all = window.speechSynthesis.getVoices() || [];
   if (!all.length) return;
-  var want = ME.world || "en";
-  VOICE = all.filter(function (v) {
-    return v.lang && v.lang.toLowerCase().indexOf(want) === 0; })[0]
-    || all.filter(function (v) { return v.default; })[0] || all[0];
+  var want = String(ME.world || "en").toLowerCase();
+  var mine = all.filter(function (v) {
+    return v.lang && String(v.lang).toLowerCase().indexOf(want) === 0;
+  });
+  function like(re) {
+    return mine.filter(function (v) { return re.test(String(v.lang)); })[0];
+  }
+  VOICE = like(/^en[-_]gb/i) || like(/^en[-_]us/i) || mine[0] || null;
 }
+/* c'e' davvero una voce nella lingua giusta su questo telefono? */
+function canSay() { return !!(CAN_SPEAK && VOICE); }
 if (CAN_SPEAK) { pickVoice(); window.speechSynthesis.onvoiceschanged = pickVoice; }
 /* una frase intera, letta piano come un dettato, con il modo di sapere
    quando ha finito: serve ai livelli che nessuno ha ancora inciso. */
 function sayLine(text, done, fail) {
-  if (!CAN_SPEAK) return fail && fail();
+  if (!canSay()) return fail && fail();
   try {
     window.speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(String(text || ""));
@@ -27301,7 +27395,7 @@ function sayLine(text, done, fail) {
 }
 
 function say(word) {
-  if (!CAN_SPEAK) return false;
+  if (!canSay()) return false;
   try {
     window.speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(word);
