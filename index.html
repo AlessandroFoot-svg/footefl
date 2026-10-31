@@ -3418,6 +3418,21 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .prfix{display:block;margin-top:6px;padding:9px 11px;border-radius:10px;
   background:rgba(227,239,38,.1);border:1px solid rgba(227,239,38,.35);
   font-size:12.5px;font-weight:700;line-height:1.5;color:#FFFDEE}
+
+/* ═════════ le istruzioni nella propria lingua ═════════
+   La traduzione sta SOTTO l'inglese, piu' piccola e piu' spenta:
+   l'occhio prende prima l'originale, e la stampella si vede che e'
+   una stampella. */
+.trx{display:block;margin-top:6px;padding-left:9px;border-left:2px solid var(--edge);
+  font-style:normal;font-size:11.5px;font-weight:600;line-height:1.45;color:#8FC4AC}
+.hint .trx,.sm2 .trx{font-size:11px}
+.trchip{flex:none;display:flex;align-items:center;gap:4px;height:34px;padding:0 9px 0 7px;
+  border-radius:999px;border:1px solid var(--edge);background:rgba(4,23,15,.35);
+  color:var(--fog);cursor:pointer;font:inherit}
+.trchip svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6}
+.trchip b{font:800 10px/1 var(--brand);letter-spacing:.06em}
+.trchip.on{border-color:var(--gold);color:var(--gold);background:rgba(227,239,38,.12)}
+.trchip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -4342,7 +4357,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "132";
+var APPVER = "133";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -7226,6 +7241,13 @@ function enterComp(id, after) {
           (t.who || []).forEach(function (w) {
             if (String(w.c || "").toUpperCase() === String(ME.code || "").toUpperCase()) {
               mineName = unhide(w.n);
+              /* la lingua in cui il professore gli ha messo le istruzioni:
+                 vale finche' l'alunno non tocca il globo da sé */
+              if (w.tr) {
+                var lin = unhide(w.tr) || w.tr;   /* viaggia coperta, come il nome */
+                ME.tr = lin;
+                if (typeof trProfSet === "function") trProfSet(lin);
+              }
             }
           });
         });
@@ -25574,6 +25596,462 @@ function notebookBlock() {
           return '<span class="ptag">' + esc(x.t) + "</span>";
         }).join("") + "</div>"
       : "");
+}
+
+
+/* ───── 64-tr.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   LE ISTRUZIONI NELLA PROPRIA LINGUA
+
+   Un A1 che non capisce la regola non sta imparando l'inglese: sta
+   indovinando un gioco. Allora le ISTRUZIONI — le righe che dicono che
+   cosa fare in questa pagina — si possono leggere anche in italiano,
+   francese, spagnolo o portoghese del Brasile.
+
+   Tre paletti, e sono quelli che tengono in piedi l'app:
+
+     1. NON si traduce la materia. Dettati, esercizi, le parole dei
+        giocatori, la sala stampa, la parola del giorno: quello e'
+        l'inglese che si impara, e resta inglese.
+     2. NON si traducono le etichette — « My squad », « Press room »:
+        quindici parole che si imparano in due giorni e che tengono
+        l'alunno dentro la lingua.
+     3. L'inglese NON sparisce. La traduzione si mette SOTTO, piu'
+        piccola e piu' spenta: l'alunno legge comunque l'originale, e
+        la stampella gliela si puo' togliere senza cambiargli la
+        pagina sotto gli occhi.
+
+   Dal B1 in su il bottone non c'e'. Non e' una privazione: e' una
+   promozione, e si vede.
+
+   COME FUNZIONA, perche' non e' ovvio.
+   Le istruzioni sono centotredici paragrafi sparsi in quaranta file.
+   Non le ho toccate: la tavola qui sotto tiene la frase inglese e le
+   sue quattro traduzioni, e dopo che una pagina si e' disegnata un
+   passaggio solo guarda i paragrafi di istruzione e, se riconosce la
+   frase, le appende la versione tradotta. Ne viene che:
+
+     · le pagine non cambiano, e si possono riempire di traduzioni un
+       pezzo alla volta senza rompere niente;
+     · se un giorno cambio una frase in inglese, la traduzione sparisce
+       invece di restare sbagliata — che e' il guasto giusto da avere.
+
+   I numeri dentro le frasi (« 3 sessions left before matchday 4 ») non
+   stanno nella chiave: al loro posto c'e' un #, e quando si scrive la
+   traduzione i numeri veri tornano al loro posto, nell'ordine.
+   ═══════════════════════════════════════════════════════════════════ */
+
+var TR_KEY  = "footefl-tr";        /* la scelta dell'alunno */
+var TR_PROF = "footefl-tr-prof";   /* quella che gli ha messo il professore */
+var TR_LANGS = [
+  { id:"en", t:"EN", n:"English" },
+  { id:"it", t:"IT", n:"Italiano" },
+  { id:"fr", t:"FR", n:"Français" },
+  { id:"es", t:"ES", n:"Español" },
+  { id:"pt", t:"BR", n:"Português do Brasil" }
+];
+
+/* ───────── chi decide la lingua ─────────
+   Prima l'alunno: se ha toccato il globo, comanda lui. Se non l'ha mai
+   toccato vale quella che il professore gli ha messo nella piattaforma
+   — e' li' per lo studente appena arrivato, che apre l'app e la trova
+   gia' nella sua lingua senza sapere che esiste un bottone. */
+function trPick() {
+  var v = "";
+  try { v = localStorage.getItem(TR_KEY) || ""; } catch (e) {}
+  if (!v && typeof ME !== "undefined" && ME && ME.tr) v = ME.tr;
+  /* la scelta del professore resta scritta anche senza rete: arriva col
+     bollettino, ma l'alunno apre l'app in corriera */
+  if (!v) { try { v = localStorage.getItem(TR_PROF) || ""; } catch (e) {} }
+  for (var i = 0; i < TR_LANGS.length; i++) if (TR_LANGS[i].id === v) return v;
+  return "en";
+}
+function trProfSet(v) {
+  if (!v) return;
+  try { localStorage.setItem(TR_PROF, String(v)); } catch (e) {}
+}
+function trSet(v) {
+  try { localStorage.setItem(TR_KEY, v); } catch (e) {}
+  trPass(true);
+}
+/* solo A1 e A2 */
+function trAllowed() {
+  var l = String((typeof ME !== "undefined" && ME.level) || "A1").toUpperCase();
+  return l === "A1" || l === "A2";
+}
+
+/* ───────── la chiave ───────── */
+function trNorm(s) {
+  return String(s == null ? "" : s)
+    .replace(/[‘’]/g, "'")
+    .replace(/ /g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\d+/g, "#");
+}
+function trNums(s) {
+  return String(s == null ? "" : s).match(/\d+/g) || [];
+}
+/* la traduzione con i numeri veri rimessi dentro */
+function trSay(txt) {
+  var e = TR[trNorm(txt)];
+  if (!e) return trModel(trNorm(txt));
+  var t = e[trPick()];
+  if (!t) return "";
+  var n = trNums(txt), i = 0;
+  return t.replace(/#/g, function () { return n[i++] !== undefined ? n[i - 1] : "#"; });
+}
+
+/* ───────── i modelli ─────────
+   Certe istruzioni portano dentro un pezzo che cambia: « The
+   lighthouse, read by your teacher » — il titolo del dettato e' quello
+   del professore e non lo so in anticipo. Allora in chiave ci va una
+   tilde al posto del pezzo, e nella traduzione la tilde torna al suo
+   posto come fanno i numeri. */
+var TRP = [];
+function trModel(txt) {
+  var L = trPick(), i, m, re, t, k = 0;
+  for (i = 0; i < TRP.length; i++) {
+    if (!TRP[i].re) {
+      re = TRP[i].k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+                   .replace(/~/g, "(.+?)").replace(/#/g, "(\\d+)");
+      TRP[i].re = new RegExp("^" + re + "$");
+    }
+    m = TRP[i].re.exec(txt);
+    if (!m) continue;
+    t = TRP[i][L];
+    if (!t) return "";
+    k = 1;
+    return t.replace(/[~#]/g, function () { return m[k++] !== undefined ? m[k - 1] : ""; });
+  }
+  return "";
+}
+
+var TR = {
+ "Everything your teacher has entered you in. Tap one to play it: the club is the one he gave you, you do not have to choose.":
+  { it:"Tutte le competizioni in cui ti ha iscritto il professore. Toccane una per giocarla: la squadra è quella che ti ha dato lui, non devi sceglierla.",
+    fr:"Toutes les compétitions où ton professeur t'a inscrit. Touche-en une pour y jouer : le club est celui qu'il t'a donné, tu n'as pas à choisir.",
+    es:"Todas las competiciones en las que te ha inscrito tu profesor. Toca una para jugarla: el club es el que él te ha dado, no tienes que elegirlo.",
+    pt:"Tudo em que o seu professor te inscreveu. Toque em uma para jogar: o time é o que ele te deu, você não precisa escolher." },
+ "The transfer test and the training ground ask questions at this level. It changes nothing in your squad.":
+  { it:"Il test del mercato e il campo di allenamento fanno domande di questo livello. Non cambia niente nella tua rosa.",
+    fr:"Le test du marché et le terrain d'entraînement posent des questions de ce niveau. Ça ne change rien dans ton effectif.",
+    es:"La prueba del mercado y el campo de entrenamiento hacen preguntas de este nivel. No cambia nada en tu plantilla.",
+    pt:"O teste do mercado e o campo de treino fazem perguntas deste nível. Não muda nada no seu elenco." },
+ "Stars buy you another club, nothing else. A club you open is not stronger than yours — other city, other words, other colours. You keep it for good, and the stars are gone.":
+  { it:"Le stelle servono solo a comprare un'altra squadra. Una squadra che apri non è più forte della tua — altra città, altre parole, altri colori. Resta tua per sempre, e le stelle sono spese.",
+    fr:"Les étoiles servent seulement à ouvrir un autre club. Un club que tu ouvres n'est pas plus fort que le tien — autre ville, autres mots, autres couleurs. Il reste à toi pour toujours, et les étoiles sont dépensées.",
+    es:"Las estrellas solo sirven para abrir otro club. Un club que abres no es más fuerte que el tuyo — otra ciudad, otras palabras, otros colores. Es tuyo para siempre, y las estrellas ya están gastadas.",
+    pt:"As estrelas servem só para abrir outro time. Um time que você abre não é mais forte que o seu — outra cidade, outras palavras, outras cores. Fica seu para sempre, e as estrelas foram gastas." },
+ "Your teacher gave you a code. Write it once and this phone knows you: the competitions he has entered you in, the club he gave you in each one, and the words you have to fix.":
+  { it:"Il professore ti ha dato un codice. Scrivilo una volta e questo telefono ti riconosce: le competizioni in cui ti ha iscritto, la squadra che ti ha dato in ognuna e le parole che devi sistemare.",
+    fr:"Ton professeur t'a donné un code. Écris-le une fois et ce téléphone te reconnaît : les compétitions où il t'a inscrit, le club qu'il t'a donné dans chacune et les mots que tu dois corriger.",
+    es:"Tu profesor te ha dado un código. Escríbelo una vez y este teléfono te reconoce: las competiciones en las que te ha inscrito, el club que te ha dado en cada una y las palabras que tienes que arreglar.",
+    pt:"O seu professor te deu um código. Escreva uma vez e este celular te reconhece: as competições em que ele te inscreveu, o time que ele te deu em cada uma e as palavras que você precisa consertar." },
+ "Win, and the city talks. Answer well in the press room, and it listens. The better it sees you, the bigger the paper that turns up and the bigger the company that answers the telephone.":
+  { it:"Vinci, e la città parla. Rispondi bene in sala stampa, e la città ascolta. Più bene ti vede, più grande è il giornale che si presenta e più grande è l'azienda che risponde al telefono.",
+    fr:"Gagne, et la ville parle. Réponds bien en conférence de presse, et elle écoute. Mieux elle te voit, plus grand est le journal qui vient et plus grande est l'entreprise qui répond au téléphone.",
+    es:"Gana, y la ciudad habla. Responde bien en la sala de prensa, y la ciudad escucha. Cuanto mejor te ve, más grande es el periódico que se presenta y más grande la empresa que contesta al teléfono.",
+    pt:"Ganhe, e a cidade fala. Responda bem na sala de imprensa, e ela escuta. Quanto melhor ela te vê, maior é o jornal que aparece e maior é a empresa que atende o telefone." },
+ "# matches in all, # scored and # let in. These come from your teacher's championship, not from this phone.":
+  { it:"# partite in tutto, # fatti e # subiti. Vengono dal campionato del tuo professore, non da questo telefono.",
+    fr:"# matchs en tout, # marqués et # encaissés. Ils viennent du championnat de ton professeur, pas de ce téléphone.",
+    es:"# partidos en total, # marcados y # encajados. Vienen del campeonato de tu profesor, no de este teléfono.",
+    pt:"# jogos no total, # feitos e # sofridos. Vêm do campeonato do seu professor, não deste celular." },
+ "Badges come from the pitch: they count the words you write in your matches, in every competition. The warm up does not open any of them — that is training. None of them makes you score more: what you win is something to wear.":
+  { it:"Le medaglie vengono dal campo: contano le parole che scrivi nelle partite, in tutte le competizioni. Il riscaldamento non ne apre nessuna — quello è allenamento. Nessuna ti fa segnare di più: quello che vinci è qualcosa da portare addosso.",
+    fr:"Les médailles viennent du terrain : elles comptent les mots que tu écris en match, dans toutes les compétitions. L'échauffement n'en ouvre aucune — c'est de l'entraînement. Aucune ne te fait marquer plus : ce que tu gagnes, c'est quelque chose à porter.",
+    es:"Las medallas vienen del campo: cuentan las palabras que escribes en los partidos, en todas las competiciones. El calentamiento no abre ninguna — eso es entrenamiento. Ninguna te hace marcar más: lo que ganas es algo que llevar puesto.",
+    pt:"As medalhas vêm do campo: contam as palavras que você escreve nos jogos, em todas as competições. O aquecimento não abre nenhuma — aquilo é treino. Nenhuma faz você marcar mais: o que você ganha é algo para vestir." },
+ "Nothing counted yet: your first half of football starts all four of these.":
+  { it:"Ancora niente contato: il tuo primo tempo di calcio apre tutte e quattro.",
+    fr:"Rien de compté pour l'instant : ta première mi-temps les ouvre toutes les quatre.",
+    es:"Todavía nada contado: tu primer tiempo de fútbol abre las cuatro.",
+    pt:"Ainda nada contado: o seu primeiro tempo de futebol abre todas as quatro." },
+ "This page fills itself the moment you play a half on this phone. Every word you write is counted, and after each match you can take the language report home as a PDF.":
+  { it:"Questa pagina si riempie da sola nel momento in cui giochi un tempo su questo telefono. Ogni parola che scrivi viene contata, e dopo ogni partita puoi portarti a casa il referto linguistico in PDF.",
+    fr:"Cette page se remplit toute seule dès que tu joues une mi-temps sur ce téléphone. Chaque mot que tu écris est compté, et après chaque match tu peux emporter ton bilan de langue en PDF.",
+    es:"Esta página se llena sola en cuanto juegas un tiempo en este teléfono. Cada palabra que escribes se cuenta, y después de cada partido puedes llevarte el informe de lengua en PDF.",
+    pt:"Esta página se enche sozinha assim que você joga um tempo neste celular. Cada palavra que você escreve é contada, e depois de cada jogo você pode levar o relatório de língua em PDF." },
+ "Nothing in it yet. Every grammar question you answer — in the training ground, at the transfer test, at the staff interview — writes a line in here: which points you have met, and which ones you keep getting wrong. Nobody is marking you. It is your notebook.":
+  { it:"Ancora vuoto. Ogni domanda di grammatica a cui rispondi — al campo di allenamento, al test del mercato, al colloquio dello staff — scrive una riga qui dentro: quali punti hai incontrato e su quali continui a sbagliare. Nessuno ti sta dando un voto. È il tuo quaderno.",
+    fr:"Encore vide. Chaque question de grammaire à laquelle tu réponds — au terrain d'entraînement, au test du marché, à l'entretien du staff — écrit une ligne ici : quels points tu as rencontrés et sur lesquels tu continues à te tromper. Personne ne te note. C'est ton cahier.",
+    es:"Todavía vacío. Cada pregunta de gramática que contestas — en el campo de entrenamiento, en la prueba del mercado, en la entrevista del cuerpo técnico — escribe una línea aquí: qué puntos has encontrado y en cuáles sigues fallando. Nadie te está poniendo nota. Es tu cuaderno.",
+    pt:"Ainda vazio. Cada pergunta de gramática que você responde — no campo de treino, no teste do mercado, na entrevista da comissão técnica — escreve uma linha aqui: quais pontos você já encontrou e em quais continua errando. Ninguém está te dando nota. É o seu caderno." },
+ "Your code is made of what you wrote: it exists only when the attack and the defence are both in.":
+  { it:"Il tuo codice è fatto di quello che hai scritto: esiste solo quando l'attacco e la difesa ci sono tutti e due.",
+    fr:"Ton code est fait de ce que tu as écrit : il n'existe que quand l'attaque et la défense sont toutes les deux rentrées.",
+    es:"Tu código está hecho de lo que has escrito: solo existe cuando el ataque y la defensa están los dos dentro.",
+    pt:"O seu código é feito do que você escreveu: só existe quando o ataque e a defesa estão os dois prontos." },
+ "This opens once, before the first match, and never again until next season. Take your time.":
+  { it:"Si apre una volta sola, prima della prima partita, e non si riapre fino alla stagione prossima. Prenditi il tempo che serve.",
+    fr:"Ça s'ouvre une seule fois, avant le premier match, et plus jamais avant la saison prochaine. Prends ton temps.",
+    es:"Se abre una sola vez, antes del primer partido, y no se vuelve a abrir hasta la próxima temporada. Tómate tu tiempo.",
+    pt:"Abre uma vez só, antes do primeiro jogo, e não abre de novo até a próxima temporada. Vá com calma." },
+ "First, twenty questions at A#. Your score decides which scouts answer the phone — and a better scout signs more players. The worst will bring you one. The best can bring three.":
+  { it:"Prima, venti domande di livello A#. Il tuo punteggio decide quali osservatori rispondono al telefono — e un osservatore migliore porta a casa più giocatori. Il peggiore te ne porta uno. Il migliore può portarne tre.",
+    fr:"D'abord, vingt questions de niveau A#. Ton score décide quels recruteurs répondent au téléphone — et un meilleur recruteur ramène plus de joueurs. Le pire t'en ramène un. Le meilleur peut en ramener trois.",
+    es:"Primero, veinte preguntas de nivel A#. Tu puntuación decide qué ojeadores contestan al teléfono — y un ojeador mejor ficha más jugadores. El peor te traerá uno. El mejor puede traer tres.",
+    pt:"Primeiro, vinte perguntas de nível A#. A sua pontuação decide quais olheiros atendem o telefone — e um olheiro melhor traz mais jogadores. O pior traz um. O melhor pode trazer três." },
+ "You will not be told which questions you missed. Your teacher has the answers.":
+  { it:"Non ti verrà detto quali domande hai sbagliato. Le risposte ce le ha il tuo professore.",
+    fr:"On ne te dira pas quelles questions tu as ratées. Les réponses, c'est ton professeur qui les a.",
+    es:"No se te dirá qué preguntas has fallado. Las respuestas las tiene tu profesor.",
+    pt:"Não vamos dizer quais perguntas você errou. As respostas estão com o seu professor." },
+ "Each one looks somewhere different and each one brings home a different number. You call one, and what he signs is your whole market.":
+  { it:"Ognuno guarda in un posto diverso e ognuno porta a casa un numero diverso. Ne chiami uno solo, e quello che firma è tutto il tuo mercato.",
+    fr:"Chacun cherche ailleurs et chacun ramène un nombre différent. Tu en appelles un seul, et ce qu'il signe, c'est tout ton marché.",
+    es:"Cada uno mira en un sitio distinto y cada uno trae un número distinto. Llamas a uno solo, y lo que fiche es todo tu mercado.",
+    pt:"Cada um procura num lugar diferente e cada um traz um número diferente. Você liga para um só, e o que ele assinar é todo o seu mercado." },
+ "A squad is not only the twelve who play. You can hire one member of staff for this competition — and only one, so the choice is a real one.":
+  { it:"Una squadra non è solo i dodici che giocano. Puoi assumere una persona dello staff per questa competizione — una sola, così la scelta è una scelta vera.",
+    fr:"Une équipe, ce n'est pas seulement les douze qui jouent. Tu peux engager une personne du staff pour cette compétition — une seule, pour que le choix en soit vraiment un.",
+    es:"Un equipo no es solo los doce que juegan. Puedes contratar a una persona del cuerpo técnico para esta competición — una sola, así la elección es una elección de verdad.",
+    pt:"Um time não é só os doze que jogam. Você pode contratar uma pessoa da comissão técnica para esta competição — uma só, para a escolha ser uma escolha de verdade." },
+ "Now the interview: # questions at A#, and the clock runs on each one. How you do decides how many of them take your call.":
+  { it:"Adesso il colloquio: # domande di livello A#, e su ognuna corre il tempo. Come vai decide quanti di loro rispondono alla tua chiamata.",
+    fr:"Maintenant l'entretien : # questions de niveau A#, et le chrono tourne à chacune. Ce que tu fais décide combien d'entre eux répondent à ton appel.",
+    es:"Ahora la entrevista: # preguntas de nivel A#, y en cada una corre el reloj. Cómo te salga decide cuántos de ellos cogen tu llamada.",
+    pt:"Agora a entrevista: # perguntas de nível A#, e em cada uma o relógio corre. Como você for decide quantos deles atendem a sua ligação." },
+ "You hire one, and he stays for the whole competition.":
+  { it:"Ne assumi uno, e resta per tutta la competizione.",
+    fr:"Tu en engages un, et il reste toute la compétition.",
+    es:"Contratas a uno, y se queda toda la competición.",
+    pt:"Você contrata um, e ele fica a competição inteira." },
+ "One takes the job. Read what each one brings before you call — you will not get another interview in this competition.":
+  { it:"Uno prende il posto. Leggi che cosa porta ciascuno prima di chiamare — un altro colloquio, in questa competizione, non c'è.",
+    fr:"L'un prend le poste. Lis ce que chacun apporte avant d'appeler — il n'y aura pas d'autre entretien dans cette compétition.",
+    es:"Uno se queda el puesto. Lee lo que trae cada uno antes de llamar — otra entrevista, en esta competición, no la hay.",
+    pt:"Um fica com a vaga. Leia o que cada um traz antes de ligar — outra entrevista, nesta competição, não tem." },
+ "Press play and it does not stop: no pause, no going back, no second listen. Write as you hear it — full stops, commas and capital letters count. When the voice ends you get # seconds to read it over.":
+  { it:"Premi play e non si ferma più: niente pausa, niente indietro, niente secondo ascolto. Scrivi mentre senti — punti, virgole e maiuscole contano. Quando la voce finisce hai # secondi per rileggere.",
+    fr:"Appuie sur play et ça ne s'arrête plus : pas de pause, pas de retour, pas de deuxième écoute. Écris pendant que tu entends — les points, les virgules et les majuscules comptent. Quand la voix s'arrête, tu as # secondes pour relire.",
+    es:"Dale al play y ya no para: sin pausa, sin volver atrás, sin segunda escucha. Escribe mientras oyes — los puntos, las comas y las mayúsculas cuentan. Cuando la voz termina tienes # segundos para releer.",
+    pt:"Aperte play e não para mais: sem pausa, sem voltar, sem ouvir de novo. Escreva enquanto ouve — pontos, vírgulas e maiúsculas contam. Quando a voz acabar você tem # segundos para reler." },
+ "This is everything your dictations produced. The result comes when your teacher puts it against the other side's sheet.":
+  { it:"Questo è tutto quello che hanno prodotto i tuoi dettati. Il risultato arriva quando il professore li mette contro il foglio dell'altra squadra.",
+    fr:"Voici tout ce que tes dictées ont produit. Le résultat arrive quand ton professeur les met face à la feuille de l'autre équipe.",
+    es:"Esto es todo lo que han producido tus dictados. El resultado llega cuando tu profesor los pone contra la hoja del otro equipo.",
+    pt:"Isto é tudo o que os seus ditados produziram. O resultado chega quando o professor coloca eles contra a folha do outro time." },
+ "Your language report for this matchday is ready in My form, with every word and every kind of mistake. You can download it as a PDF and take it home.":
+  { it:"Il tuo referto linguistico di questa giornata è pronto in My form, con ogni parola e ogni tipo di errore. Puoi scaricarlo in PDF e portartelo a casa.",
+    fr:"Ton bilan de langue de cette journée est prêt dans My form, avec chaque mot et chaque type de faute. Tu peux le télécharger en PDF et l'emporter.",
+    es:"Tu informe de lengua de esta jornada está listo en My form, con cada palabra y cada tipo de error. Puedes descargarlo en PDF y llevártelo a casa.",
+    pt:"O seu relatório de língua desta rodada está pronto em My form, com cada palavra e cada tipo de erro. Você pode baixar em PDF e levar para casa." },
+ "# sessions left before matchday #. Each one pays into the till, and a good one earns a player a step of +#.#.":
+  { it:"Restano # sessioni prima della giornata #. Ognuna porta soldi in cassa, e una fatta bene vale a un giocatore un passo di +#.#.",
+    fr:"Il reste # séances avant la journée #. Chacune rapporte de l'argent en caisse, et une bonne séance vaut à un joueur un pas de +#.#.",
+    es:"Quedan # sesiones antes de la jornada #. Cada una mete dinero en la caja, y una buena le vale a un jugador un paso de +#.#.",
+    pt:"Faltam # sessões antes da rodada #. Cada uma rende dinheiro no caixa, e uma bem feita vale para um jogador um passo de +#.#." },
+ "One step is +#.# to the department this player lines up in. A player can take three steps in all, no more.":
+  { it:"Un passo è +#.# al reparto in cui questo giocatore si schiera. Un giocatore può fare tre passi in tutto, non di più.",
+    fr:"Un pas, c'est +#.# au secteur où ce joueur est aligné. Un joueur peut faire trois pas en tout, pas plus.",
+    es:"Un paso es +#.# a la línea en la que juega este jugador. Un jugador puede dar tres pasos en total, no más.",
+    pt:"Um passo é +#.# ao setor em que este jogador atua. Um jogador pode dar três passos no total, não mais." },
+ "A league of your own against the computer. Same dictations in your teacher's voice, same rules, same engine — but it stays on this phone. No report, no money, no badges — only practice. The words you miss still go on your list.":
+  { it:"Un campionato tuo contro il computer. Stessi dettati con la voce del tuo professore, stesse regole, stesso motore — ma resta su questo telefono. Niente referto, niente soldi, niente medaglie — solo allenamento. Le parole che sbagli finiscono lo stesso nella tua lista.",
+    fr:"Un championnat à toi contre l'ordinateur. Mêmes dictées avec la voix de ton professeur, mêmes règles, même moteur — mais ça reste sur ce téléphone. Pas de bilan, pas d'argent, pas de médailles — seulement de l'entraînement. Les mots que tu rates vont quand même sur ta liste.",
+    es:"Un campeonato tuyo contra el ordenador. Los mismos dictados con la voz de tu profesor, las mismas reglas, el mismo motor — pero se queda en este teléfono. Sin informe, sin dinero, sin medallas — solo entrenamiento. Las palabras que fallas van igualmente a tu lista.",
+    pt:"Um campeonato seu contra o computador. Os mesmos ditados com a voz do seu professor, as mesmas regras, o mesmo motor — mas fica neste celular. Sem relatório, sem dinheiro, sem medalhas — só treino. As palavras que você erra vão para a sua lista do mesmo jeito." },
+ "# teams · # matchdays · everyone plays everyone once":
+  { it:"# squadre · # giornate · tutti contro tutti una volta",
+    fr:"# équipes · # journées · tout le monde joue contre tout le monde une fois",
+    es:"# equipos · # jornadas · todos contra todos una vez",
+    pt:"# times · # rodadas · todos contra todos uma vez" },
+ "You have done # of #. Nothing here is written down: no report goes to a teacher, and this phone keeps none of it. Leave now and next time you start a whole match again, from the market.":
+  { it:"Ne hai fatte # su #. Qui non si scrive niente: nessun referto va a un professore, e questo telefono non conserva nulla. Se esci adesso, la prossima volta ricominci una partita intera, dal mercato.",
+    fr:"Tu en as fait # sur #. Ici rien n'est noté : aucun bilan ne part chez un professeur, et ce téléphone ne garde rien. Si tu sors maintenant, la prochaine fois tu recommences un match entier, depuis le marché.",
+    es:"Has hecho # de #. Aquí no se apunta nada: ningún informe va a un profesor, y este teléfono no guarda nada. Si sales ahora, la próxima vez empiezas un partido entero, desde el mercado.",
+    pt:"Você fez # de #. Aqui nada fica escrito: nenhum relatório vai para um professor, e este celular não guarda nada. Se sair agora, na próxima vez você recomeça um jogo inteiro, desde o mercado." },
+ "No code, no teacher, no season: one match from start to finish, so you can see what the game is. Pick how hard you want it, and go.":
+  { it:"Niente codice, niente professore, niente stagione: una partita sola dall'inizio alla fine, per vedere che gioco è. Scegli quanto la vuoi difficile, e vai.",
+    fr:"Pas de code, pas de professeur, pas de saison : un seul match du début à la fin, pour voir ce que c'est. Choisis le niveau de difficulté, et vas-y.",
+    es:"Sin código, sin profesor, sin temporada: un solo partido de principio a fin, para ver qué juego es. Elige lo difícil que lo quieres, y adelante.",
+    pt:"Sem código, sem professor, sem temporada: um jogo só do começo ao fim, para ver que jogo é. Escolha o quanto quer que seja difícil, e vá." },
+ "Every letter ends with one question. The first right answer puts £#k in the club till.":
+  { it:"Ogni lettera finisce con una domanda. La prima risposta giusta mette £#k nella cassa del club.",
+    fr:"Chaque lettre finit par une question. La première bonne réponse met £#k dans la caisse du club.",
+    es:"Cada carta termina con una pregunta. La primera respuesta correcta mete £#k en la caja del club.",
+    pt:"Cada carta termina com uma pergunta. A primeira resposta certa coloca £#k no caixa do clube." },
+ "Slide the card sideways for the other one ›":
+  { it:"Fai scorrere la scheda di lato per vedere l'altro ›",
+    fr:"Fais glisser la carte sur le côté pour voir l'autre ›",
+    es:"Desliza la ficha hacia el lado para ver al otro ›",
+    pt:"Deslize o cartão para o lado para ver o outro ›" },
+ "These three are open to everybody, hired or not: three names over one box of questions was a defect, not a reward. What the head of training gives you is the room to use them — eight actions a matchday on six players instead of six on four.":
+  { it:"Queste tre sono aperte a tutti, assunto o no: tre nomi sopra una sola scatola di domande era un difetto, non un premio. Quello che ti dà il responsabile dell'allenamento è lo spazio per usarle — otto azioni a giornata su sei giocatori invece di sei su quattro.",
+    fr:"Ces trois-là sont ouvertes à tout le monde, engagé ou pas : trois noms sur une seule boîte de questions, c'était un défaut, pas une récompense. Ce que te donne le responsable de l'entraînement, c'est la place pour les utiliser — huit actions par journée sur six joueurs au lieu de six sur quatre.",
+    es:"Estas tres están abiertas a todos, contratado o no: tres nombres sobre una sola caja de preguntas era un defecto, no un premio. Lo que te da el preparador es el espacio para usarlas — ocho acciones por jornada sobre seis jugadores en vez de seis sobre cuatro.",
+    pt:"Estas três estão abertas para todo mundo, contratado ou não: três nomes em cima de uma caixa só de perguntas era um defeito, não um prêmio. O que o preparador te dá é o espaço para usá-las — oito ações por rodada em seis jogadores em vez de seis em quatro." },
+ "Ten questions with the clock running, and the ones who like what they hear call back. How many of them, and how good, depends on your answers and on how the city sees the club.":
+  { it:"Dieci domande col tempo che corre, e quelli a cui piace quello che sentono richiamano. Quanti, e quanto bravi, dipende dalle tue risposte e da come la città vede il club.",
+    fr:"Dix questions avec le chrono qui tourne, et ceux à qui ça plaît rappellent. Combien, et à quel point ils sont bons, dépend de tes réponses et de la façon dont la ville voit le club.",
+    es:"Diez preguntas con el reloj corriendo, y los que les gusta lo que oyen devuelven la llamada. Cuántos, y lo buenos que son, depende de tus respuestas y de cómo ve la ciudad al club.",
+    pt:"Dez perguntas com o relógio correndo, e quem gostar do que ouve liga de volta. Quantos, e quão bons, depende das suas respostas e de como a cidade vê o clube." },
+ "A club lives on what it sells around the pitch. Who answers the telephone depends on how the city sees you — so here it is, in full.":
+  { it:"Un club vive di quello che vende intorno al campo. Chi risponde al telefono dipende da come ti vede la città — eccolo qui, per intero.",
+    fr:"Un club vit de ce qu'il vend autour du terrain. Qui répond au téléphone dépend de la façon dont la ville te voit — le voici, en entier.",
+    es:"Un club vive de lo que vende alrededor del campo. Quién contesta al teléfono depende de cómo te ve la ciudad — aquí lo tienes, entero.",
+    pt:"Um clube vive do que vende em volta do campo. Quem atende o telefone depende de como a cidade te vê — aqui está, inteiro." },
+ "Every line below is a dangerous moment of the match. Choose who takes part in it. The weather decides how many moments there are: a bright sky opens ten, fog only five.":
+  { it:"Ogni riga qui sotto è un momento pericoloso della partita. Scegli chi lo gioca. Il meteo decide quanti momenti ci sono: un cielo sereno ne apre dieci, la nebbia solo cinque.",
+    fr:"Chaque ligne ci-dessous est un moment dangereux du match. Choisis qui le joue. La météo décide combien il y en a : un ciel dégagé en ouvre dix, le brouillard seulement cinq.",
+    es:"Cada línea de aquí abajo es un momento peligroso del partido. Elige quién lo juega. El tiempo decide cuántos momentos hay: un cielo despejado abre diez, la niebla solo cinco.",
+    pt:"Cada linha aqui embaixo é um momento perigoso do jogo. Escolha quem joga. O tempo decide quantos momentos existem: céu limpo abre dez, neblina só cinco." },
+ "A player takes one moment and then he is done — he will not come back, not in attack and not in defence. Only your three men at the top — keeper, captain and gem — can come back, up to four times each.":
+  { it:"Un giocatore prende un momento e poi ha finito — non torna più, né in attacco né in difesa. Solo i tuoi tre in cima — portiere, capitano e gioiello — possono tornare, fino a quattro volte ciascuno.",
+    fr:"Un joueur prend un moment et c'est fini pour lui — il ne revient pas, ni en attaque ni en défense. Seuls tes trois du haut — gardien, capitaine et pépite — peuvent revenir, jusqu'à quatre fois chacun.",
+    es:"Un jugador coge un momento y ya ha terminado — no vuelve, ni en ataque ni en defensa. Solo tus tres de arriba — portero, capitán y joya — pueden volver, hasta cuatro veces cada uno.",
+    pt:"Um jogador pega um momento e acabou — não volta mais, nem no ataque nem na defesa. Só os seus três de cima — goleiro, capitão e joia — podem voltar, até quatro vezes cada um." },
+ "These are the only ones who can come back. Four moments each, attack and defence together.":
+  { it:"Questi sono gli unici che possono tornare. Quattro momenti ciascuno, attacco e difesa insieme.",
+    fr:"Ce sont les seuls qui peuvent revenir. Quatre moments chacun, attaque et défense ensemble.",
+    es:"Estos son los únicos que pueden volver. Cuatro momentos cada uno, ataque y defensa juntos.",
+    pt:"Estes são os únicos que podem voltar. Quatro momentos cada um, ataque e defesa juntos." },
+ "Your attack is already written and sent. You cannot write it twice — the other half is still waiting for you.":
+  { it:"Il tuo attacco è già scritto e spedito. Non lo puoi scrivere due volte — l'altro tempo ti sta ancora aspettando.",
+    fr:"Ton attaque est déjà écrite et envoyée. Tu ne peux pas l'écrire deux fois — l'autre mi-temps t'attend encore.",
+    es:"Tu ataque ya está escrito y enviado. No lo puedes escribir dos veces — la otra mitad todavía te espera.",
+    pt:"O seu ataque já está escrito e enviado. Você não pode escrever duas vezes — o outro tempo ainda está te esperando." },
+ "# players in attack, # in defence. Nothing more to do at home.":
+  { it:"# giocatori in attacco, # in difesa. A casa non c'è altro da fare.",
+    fr:"# joueurs en attaque, # en défense. À la maison, il n'y a plus rien à faire.",
+    es:"# jugadores en ataque, # en defensa. En casa no queda nada más que hacer.",
+    pt:"# jogadores no ataque, # na defesa. Em casa não tem mais nada para fazer." },
+ "Next come your calls — the penalty, the wonder goal, the shape and the plan — then the weather, and then the dictation. Once it starts it does not stop, so do it when you are ready and somewhere quiet.":
+  { it:"Adesso vengono le tue scelte — il rigore, il wonder goal, la forma e il piano — poi il meteo, e poi il dettato. Una volta partito non si ferma, quindi fallo quando sei pronto e in un posto tranquillo.",
+    fr:"Maintenant viennent tes choix — le penalty, le wonder goal, la forme et le plan — puis la météo, et puis la dictée. Une fois lancée, elle ne s'arrête pas : fais-la quand tu es prêt et dans un endroit calme.",
+    es:"Ahora vienen tus decisiones — el penalti, el wonder goal, la forma y el plan — luego el tiempo, y luego el dictado. Una vez empieza no para, así que hazlo cuando estés listo y en un sitio tranquilo.",
+    pt:"Agora vêm as suas escolhas — o pênalti, o wonder goal, a forma e o plano — depois o tempo, e depois o ditado. Quando começa não para, então faça quando estiver pronto e num lugar quieto." },
+ "The lighthouse, read by your teacher. You hear it and write it, all of it. Every time your total crosses a line, one save opens and the player you put on that action takes it.":
+  { it:"Il faro, letto dal tuo professore. Lo senti e lo scrivi, tutto quanto. Ogni volta che il tuo totale supera una linea si apre una parata, e la prende il giocatore che hai messo su quell'azione.",
+    fr:"Le phare, lu par ton professeur. Tu l'entends et tu l'écris, en entier. Chaque fois que ton total franchit une ligne, un arrêt s'ouvre, et c'est le joueur que tu as mis sur cette action qui le fait.",
+    es:"El faro, leído por tu profesor. Lo oyes y lo escribes, todo entero. Cada vez que tu total cruza una línea se abre una parada, y la hace el jugador que has puesto en esa acción.",
+    pt:"O farol, lido pelo seu professor. Você ouve e escreve, tudo. Cada vez que o seu total cruza uma linha abre uma defesa, e quem faz é o jogador que você colocou naquela ação." },
+ "Write what you hear. Nothing is corrected on screen until the end — this is the match, not practice.":
+  { it:"Scrivi quello che senti. Sullo schermo non si corregge niente fino alla fine — questa è la partita, non l'allenamento.",
+    fr:"Écris ce que tu entends. Rien n'est corrigé à l'écran avant la fin — c'est le match, pas l'entraînement.",
+    es:"Escribe lo que oyes. En la pantalla no se corrige nada hasta el final — esto es el partido, no el entrenamiento.",
+    pt:"Escreva o que você ouve. Na tela nada é corrigido até o fim — isto é o jogo, não o treino." },
+ "Every word on your list is fixed. New ones will arrive after the next dictation.":
+  { it:"Ogni parola della tua lista è sistemata. Ne arriveranno di nuove dopo il prossimo dettato.",
+    fr:"Chaque mot de ta liste est réglé. D'autres arriveront après la prochaine dictée.",
+    es:"Cada palabra de tu lista está arreglada. Llegarán otras después del próximo dictado.",
+    pt:"Cada palavra da sua lista está resolvida. Vão chegar outras depois do próximo ditado." },
+ "# more words fixed and you earn a star.":
+  { it:"Altre # parole sistemate e ti guadagni una stella.",
+    fr:"Encore # mots réglés et tu gagnes une étoile.",
+    es:"# palabras más arregladas y te ganas una estrella.",
+    pt:"Mais # palavras resolvidas e você ganha uma estrela." }
+};
+
+/* i modelli: la tilde e' il pezzo che cambia */
+TRP = [
+ { k:"~, read by your teacher. You hear it and write it, all of it. Every time your total crosses a line, one save opens and the player you put on that action takes it.",
+   it:"~, letto dal tuo professore. Lo senti e lo scrivi, tutto quanto. Ogni volta che il tuo totale supera una linea si apre una parata, e la prende il giocatore che hai messo su quell'azione.",
+   fr:"~, lu par ton professeur. Tu l'entends et tu l'\u00e9cris, en entier. Chaque fois que ton total franchit une ligne, un arr\u00eat s'ouvre, et c'est le joueur que tu as mis sur cette action qui le fait.",
+   es:"~, le\u00eddo por tu profesor. Lo oyes y lo escribes, todo entero. Cada vez que tu total cruza una l\u00ednea se abre una parada, y la hace el jugador que has puesto en esa acci\u00f3n.",
+   pt:"~, lido pelo seu professor. Voc\u00ea ouve e escreve, tudo. Cada vez que o seu total cruza uma linha abre uma defesa, e quem faz \u00e9 o jogador que voc\u00ea colocou naquela a\u00e7\u00e3o." },
+ { k:"~, read by your teacher. You hear it and write it, all of it. Every time your total crosses a line, one chance opens and the player you put on that action takes it.",
+   it:"~, letto dal tuo professore. Lo senti e lo scrivi, tutto quanto. Ogni volta che il tuo totale supera una linea si apre un'occasione, e la prende il giocatore che hai messo su quell'azione.",
+   fr:"~, lu par ton professeur. Tu l'entends et tu l'\u00e9cris, en entier. Chaque fois que ton total franchit une ligne, une occasion s'ouvre, et c'est le joueur que tu as mis sur cette action qui la prend.",
+   es:"~, le\u00eddo por tu profesor. Lo oyes y lo escribes, todo entero. Cada vez que tu total cruza una l\u00ednea se abre una ocasi\u00f3n, y la coge el jugador que has puesto en esa acci\u00f3n.",
+   pt:"~, lido pelo seu professor. Voc\u00ea ouve e escreve, tudo. Cada vez que o seu total cruza uma linha abre uma chance, e quem pega \u00e9 o jogador que voc\u00ea colocou naquela a\u00e7\u00e3o." }
+];
+
+/* ───────── il passaggio dopo ogni disegno ─────────
+   Un osservatore guarda #main: ogni volta che una pagina si rifa', le
+   istruzioni riconosciute si prendono la loro riga sotto. Si stacca
+   mentre scrive, se no si guarderebbe scrivere all'infinito. */
+var TR_SEL = ".lede, .hint, .lede2, .sm2";
+var TR_OBS = null, TR_BUSY = false;
+
+function trStrip(n) {
+  var old = n.querySelector(".trx");
+  if (old) n.removeChild(old);
+}
+function trOne(n) {
+  trStrip(n);
+  if (trPick() === "en" || !trAllowed()) return;
+  var t = trSay(n.textContent);
+  if (!t) return;
+  var em = document.createElement("em");
+  em.className = "trx";
+  em.textContent = t;
+  n.appendChild(em);
+}
+function trPass(force) {
+  var main = document.getElementById("main");
+  if (!main || TR_BUSY) return;
+  TR_BUSY = true;
+  try {
+    var ns = main.querySelectorAll(TR_SEL), i;
+    for (i = 0; i < ns.length; i++) {
+      if (force || !ns[i].querySelector(".trx")) trOne(ns[i]);
+    }
+    trChipDraw();
+  } catch (e) {}
+  TR_BUSY = false;
+}
+function trStart() {
+  if (TR_OBS || typeof MutationObserver === "undefined") return;
+  var main = document.getElementById("main"), bar = document.getElementById("bar");
+  if (!main) return;
+  var waiting = false;
+  function later() {
+    if (waiting) return;
+    waiting = true;
+    (window.requestAnimationFrame || function (f) { setTimeout(f, 16); })(function () {
+      waiting = false; trPass();
+    });
+  }
+  TR_OBS = new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) {
+      var t = ms[i].target;
+      if (t && t.className && String(t.className).indexOf("trx") > -1) continue;
+      return later();
+    }
+  });
+  TR_OBS.observe(main, { childList:true, subtree:true });
+  if (bar) TR_OBS.observe(bar, { childList:true });
+  later();
+}
+
+/* ───────── il globo nella barra ─────────
+   Sta nella barra perche' la barra c'e' sempre: una stampella che si
+   deve cercare non e' una stampella. Si tocca e gira fra le cinque. */
+function trChipDraw() {
+  var bar = document.getElementById("bar");
+  if (!bar) return;
+  var old = bar.querySelector(".trchip");
+  if (!trAllowed() || !bar.firstChild) { if (old) old.parentNode.removeChild(old); return; }
+  var cur = trPick();
+  var lab = "EN";
+  for (var i = 0; i < TR_LANGS.length; i++) if (TR_LANGS[i].id === cur) lab = TR_LANGS[i].t;
+  if (old) {
+    var b = old.querySelector("b");
+    if (b) b.textContent = lab;
+    old.className = "trchip" + (cur === "en" ? "" : " on");
+    return;
+  }
+  var btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "trchip" + (cur === "en" ? "" : " on");
+  btn.setAttribute("aria-label", "Read the instructions in your language");
+  btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/>' +
+    '<path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg><b>' + lab + "</b>";
+  btn.onclick = function () {
+    var now = trPick(), k = 0, j;
+    for (j = 0; j < TR_LANGS.length; j++) if (TR_LANGS[j].id === now) k = j;
+    trSet(TR_LANGS[(k + 1) % TR_LANGS.length].id);
+  };
+  bar.firstChild.appendChild(btn);
+}
+
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", trStart);
+  } else setTimeout(trStart, 0);
 }
 
 
