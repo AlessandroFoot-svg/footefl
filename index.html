@@ -4362,7 +4362,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "137";
+var APPVER = "138";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -15687,37 +15687,37 @@ var RC = { i:0, qs:[], answers:[], score:0, show:[], t:null };
 var STAFF_POOL = [
   /* il responsabile dell'allenamento: quanto lavoro regge la squadra */
   { id:"f1", role:"fit", tier:1, name:"Les Rudd", she:false, nick:"the boot room",
-    from:"Oldham", line:"Forty years in the same training ground. He knows what a "
+    from:"Oldham", nat:"English", age:63, line:"Forty years in the same training ground. He knows what a "
       + "tired squad looks like from the car park.",
     acts:6, men:5 },
   { id:"f2", role:"fit", tier:2, name:"Milos Varga", she:false, nick:"the Danube method",
-    from:"Novi Sad", line:"Short sessions, often, and nobody goes home with "
+    from:"Novi Sad", nat:"Serbian", age:44, line:"Short sessions, often, and nobody goes home with "
       + "anything left in the tank.",
     acts:7, men:5 },
   { id:"f3", role:"fit", tier:3, name:"Rosa Iglesias", she:true, nick:"the recovery coach",
-    from:"Valencia", line:"She plans the week backwards from the match, and the "
+    from:"Valencia", nat:"Spanish", age:39, line:"She plans the week backwards from the match, and the "
       + "squad arrives fresher than anybody else's.",
     acts:8, men:6 },
   { id:"f4", role:"fit", tier:4, name:"Amara Sow", she:true, nick:"the sports scientist",
-    from:"Dakar", line:"Two national teams before she was forty. Nobody gets more "
+    from:"Dakar", nat:"Senegalese", age:41, line:"Two national teams before she was forty. Nobody gets more "
       + "work into a week without breaking anyone.",
     acts:9, men:7 },
 
   /* l'allenatore: quanto si puo' rimediare all'intervallo */
   { id:"g1", role:"gaf", tier:1, name:"Pat Doyle", she:false, nick:"the shouter",
-    from:"Cork", line:"Loud, honest, and out of ideas by the hour mark — but "
+    from:"Cork", nat:"Irish", age:57, line:"Loud, honest, and out of ideas by the hour mark — but "
       + "the dressing room listens to him.",
     subs:3, calm:false, scout:false },
   { id:"g2", role:"gaf", tier:2, name:"Yannick Perez", she:false, nick:"the calm one",
-    from:"Lille", line:"He has never had a player sent off for two yellows. He "
+    from:"Lille", nat:"French", age:45, line:"He has never had a player sent off for two yellows. He "
       + "takes them off first, every time.",
     subs:3, calm:true, scout:false },
   { id:"g3", role:"gaf", tier:3, name:"Ingrid Holm", she:true, nick:"the half-time fixer",
-    from:"Bergen", line:"Whatever the first half was, the second one is a "
+    from:"Bergen", nat:"Norwegian", age:50, line:"Whatever the first half was, the second one is a "
       + "different match. That is her whole reputation.",
     subs:5, calm:true, scout:false },
   { id:"g4", role:"gaf", tier:4, name:"Victor Abalo", she:false, nick:"the one who has seen them",
-    from:"Lagos", line:"He watches the other side for a week before he says a "
+    from:"Lagos", nat:"Nigerian", age:58, line:"He watches the other side for a week before he says a "
       + "word, and then he says the one word that matters.",
     subs:5, calm:true, scout:true },
 
