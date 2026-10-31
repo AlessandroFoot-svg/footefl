@@ -3424,6 +3424,7 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
    l'occhio prende prima l'originale, e la stampella si vede che e'
    una stampella. */
 .trx{display:block;margin-top:6px;padding-left:9px;border-left:2px solid var(--edge);
+  white-space:pre-line;
   font-style:normal;font-size:11.5px;font-weight:600;line-height:1.45;color:#8FC4AC}
 .hint .trx,.sm2 .trx{font-size:11px}
 .trchip{flex:none;display:flex;align-items:center;gap:4px;height:34px;padding:0 9px 0 7px;
@@ -4357,7 +4358,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "133";
+var APPVER = "135";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -4973,6 +4974,86 @@ var TEMI = [
   { id:"unire", n:"Joining sentences",
     t:["relative clauses", "relative", "connectors", "connector"] }
 ];
+/* ═══════════════ L'ETICHETTA CHE SI VEDE ═══════════════
+
+   Sopra ogni domanda c'e' scritto di che cosa parla. E' una buona cosa:
+   dice all'alunno quale regola andare a cercare, e una risposta data
+   sapendo perche' vale il doppio di una indovinata.
+
+   Ma per una trentina di etichette quella parola E' la risposta.
+   « will », « some / any », « used to », « must / have to »: scritte in
+   cima alla domanda non sono un aiuto, sono la soluzione. In quei casi
+   si mostra la famiglia — « the future », « quantity », « the past » —
+   e la domanda torna a essere una domanda.
+
+   L'etichetta vera non cambia: resta nei dati, nel quaderno dei punti,
+   nella mappa del professore e nel filtro dei temi. Cambia soltanto la
+   parola che l'alunno legge. */
+var TAG_SHOW = {
+  "will":"the future", "going to":"the future", "future":"the future",
+  "future cont.":"the future", "future perfect":"the future",
+  "future in past":"the future",
+  "used to":"the past",
+  "there is / there are":"places and things", "there is":"places and things",
+  "some / any":"quantity", "quantity":"quantity", "quantifiers":"quantity",
+  "since / for":"how long", "for / since":"how long",
+  "too / enough":"degree", "enough / too":"degree", "so / such":"degree",
+  "the more":"comparing",
+  "must / have to":"obligation", "must":"obligation",
+  "should":"advice",
+  "can":"ability and permission",
+  "would like":"offers and requests",
+  "possessive 's":"whose it is", "possessive":"whose it is",
+  "possessive pronouns":"whose it is",
+  "have got":"what you own",
+  "a / an":"articles",
+  "like + ing":"verb patterns", "make / let":"verb patterns",
+  "verb + gerund":"verb patterns", "verb + infinitive":"verb patterns",
+  "gerund":"verb patterns", "infinitive":"verb patterns",
+  "gerund / inf.":"verb patterns",
+  "passive report":"the passive",
+  "adverbs of frequency":"adverbs",
+  "deduction":"modal verbs", "modality":"modal verbs", "modals":"modal verbs",
+  "first cond.":"if", "second cond.":"if", "third cond.":"if",
+  "mixed cond.":"if", "wish":"if and wishes", "unreal past":"if and wishes"
+};
+function tagShow(t) { return TAG_SHOW[t] || t; }
+
+/* ═══════════════ E QUANTO SE NE VEDE, LIVELLO PER LIVELLO ═══════════════
+
+   La stampella si toglie quando la gamba regge, come il globo delle
+   traduzioni. Tre gradini, non due:
+
+     A1 e A2   l'etichetta precisa (quella coperta, dove serve):
+               « plural », « the future », « how long ». Un principiante
+               deve sapere quale regola andare a cercare, se no non
+               risponde: indovina.
+     B1 e B2   solo la FAMIGLIA: « The past », « Verb patterns »,
+               « If and wishes ». Dice il territorio e non la regola —
+               accorgersi di che cosa chiedono e' meta' della competenza
+               a questo livello, e in un esame nessuno te lo dice.
+     C1 e C2   niente. Qui la domanda arriva come arriva nella vita.
+
+   L'etichetta vera resta sempre nei dati: il quaderno dei punti e la
+   mappa del professore continuano a chiamare le cose col loro nome.
+   Quella che cambia e' solo la parola sopra la domanda. */
+var TAG_FAM = null;
+function tagFam(t) {
+  if (!TAG_FAM) {
+    TAG_FAM = {};
+    for (var i = 0; i < TEMI.length; i++) {
+      for (var j = 0; j < TEMI[i].t.length; j++) TAG_FAM[TEMI[i].t[j]] = TEMI[i].n;
+    }
+  }
+  return TAG_FAM[t] || "";
+}
+function tagLabel(t, level) {
+  var lv = String(level || "A1").toUpperCase();
+  if (lv === "C1" || lv === "C2") return "";
+  if (lv === "B1" || lv === "B2") return tagFam(t) || tagShow(t);
+  return tagShow(t);
+}
+
 function temaById(id) {
   for (var i = 0; i < TEMI.length; i++) if (TEMI[i].id === id) return TEMI[i];
   return null;
@@ -15312,7 +15393,7 @@ VIEWS.mkQuiz = function () {
   barFlow("The scout trial", "Question " + (MK.i + 1) + " of " + MK.qs.length +
           " · " + ME.level, Math.round((MK.i / MK.qs.length) * 100), false);
   html('<div class="pad"><div class="qtop"><span>' + (MK.i + 1) + " / " + MK.qs.length +
-    "</span><em>" + esc(q.t) + '</em></div><p class="qq">' + esc(q.q) + "</p>" +
+    "</span><em>" + esc(tagLabel(q.t, ME.level)) + '</em></div><p class="qq">' + esc(q.q) + "</p>" +
     '<div class="opts">' + q.o.map(function (o, i) {
       return '<button class="opt" data-a="' + i + '" type="button"><u>' + "ABCD"[i] +
         "</u>" + esc(o) + "</button>";
@@ -15841,7 +15922,7 @@ VIEWS.rcQuiz = function () {
   html('<div class="pad">' +
     '<div class="spbar"><i id="rcb"></i></div>' +
     '<div class="qtop"><span>' + (RC.i + 1) + " / " + RC.qs.length +
-    "</span><em>" + esc(q.t) + "</em></div>" +
+    "</span><em>" + esc(tagLabel(q.t, ME.level)) + "</em></div>" +
     '<p class="qq">' + esc(q.q) + "</p>" +
     '<div class="opts" id="rco">' + q.o.map(function (o, i) {
       return '<button class="opt" data-a="' + i + '" type="button"><u>' + "ABCD"[i] +
@@ -17991,7 +18072,7 @@ VIEWS.gsGram = function () {
   barFlow("Grammar", (GS.i + 1) + " of " + GS.qs.length + " · " + ME.level,
           Math.round((GS.i / GS.qs.length) * 100), false);
   html('<div class="pad"><div class="qtop"><span>' + (GS.i + 1) + " / " + GS.qs.length +
-    "</span><em>" + esc(q.t) + '</em></div><p class="qq">' + esc(q.q) + "</p>" +
+    "</span><em>" + esc(tagLabel(q.t, myLevelSafe())) + '</em></div><p class="qq">' + esc(q.q) + "</p>" +
     '<div class="opts">' + q.o.map(function (o, i) {
       return '<button class="opt" data-a="' + i + '" type="button"><u>' + "ABCD"[i] +
         "</u>" + esc(o) + "</button>";
@@ -25942,7 +26023,69 @@ var TR = {
   { it:"Altre # parole sistemate e ti guadagni una stella.",
     fr:"Encore # mots réglés et tu gagnes une étoile.",
     es:"# palabras más arregladas y te ganas una estrella.",
-    pt:"Mais # palavras resolvidas e você ganha uma estrela." }
+    pt:"Mais # palavras resolvidas e você ganha uma estrela." },
+
+ /* ── i cartelli che si aprono sopra la pagina ── */
+ "This is a tutorial.":
+  { it:"Questo è un tutorial.",
+    fr:"Ceci est un tutoriel.",
+    es:"Esto es un tutorial.",
+    pt:"Isto é um tutorial." },
+ "One whole match, from the transfer market to the final whistle, so you can see how FootEFL works. The list below has the eight steps of a matchday: open them in order or jump about, but they all have to be done before the result arrives.Nothing here reaches a teacher and nothing is kept on this phone. Have fun!":
+  { it:"Una partita intera, dal mercato al fischio finale, per farti vedere come funziona FootEFL. Nella lista qui sotto ci sono gli otto passi di una giornata: aprili in ordine o salta da uno all'altro, ma vanno fatti tutti prima che arrivi il risultato.\n\nQui dentro niente arriva a un professore e niente resta su questo telefono. Divertiti!",
+    fr:"Un match entier, du marché au coup de sifflet final, pour te montrer comment marche FootEFL. La liste ci-dessous contient les huit étapes d'une journée : ouvre-les dans l'ordre ou saute de l'une à l'autre, mais il faut toutes les faire avant que le résultat arrive.\n\nIci rien n'arrive à un professeur et rien ne reste sur ce téléphone. Amuse-toi bien !",
+    es:"Un partido entero, del mercado al pitido final, para enseñarte cómo funciona FootEFL. En la lista de abajo están los ocho pasos de una jornada: ábrelos en orden o salta de uno a otro, pero hay que hacerlos todos antes de que llegue el resultado.\n\nAquí nada llega a un profesor y nada se queda en este teléfono. ¡Diviértete!",
+    pt:"Um jogo inteiro, do mercado ao apito final, para te mostrar como o FootEFL funciona. Na lista aqui embaixo estão os oito passos de uma rodada: abra na ordem ou pule de um para o outro, mas todos têm que ser feitos antes de o resultado chegar.\n\nAqui nada chega a um professor e nada fica neste celular. Divirta-se!" },
+ "Thank you and see you soon.":
+  { it:"Grazie e a presto.",
+    fr:"Merci et à bientôt.",
+    es:"Gracias y hasta pronto.",
+    pt:"Obrigado e até logo." },
+ "You have played a whole matchday of FootEFL: the market, the sponsor, the training ground, the press room, your chances, both halves and the result.In a real season this is one week out of six, your club comes from your teacher, and the side facing you is another pupil writing the same dictation — not a bot.":
+  { it:"Hai giocato una giornata intera di FootEFL: il mercato, lo sponsor, il campo di allenamento, la sala stampa, le tue occasioni, i due tempi e il risultato.\n\nIn una stagione vera questa è una settimana su sei, la squadra te la dà il tuo professore, e dall'altra parte non c'è un computer: c'è un altro alunno che scrive lo stesso dettato.",
+    fr:"Tu as joué une journée entière de FootEFL : le marché, le sponsor, le terrain d'entraînement, la conférence de presse, tes occasions, les deux mi-temps et le résultat.\n\nDans une vraie saison, c'est une semaine sur six, c'est ton professeur qui te donne le club, et en face il n'y a pas un ordinateur : il y a un autre élève qui écrit la même dictée.",
+    es:"Has jugado una jornada entera de FootEFL: el mercado, el patrocinador, el campo de entrenamiento, la sala de prensa, tus ocasiones, los dos tiempos y el resultado.\n\nEn una temporada de verdad esto es una semana de seis, el club te lo da tu profesor, y enfrente no hay un ordenador: hay otro alumno escribiendo el mismo dictado.",
+    pt:"Você jogou uma rodada inteira do FootEFL: o mercado, o patrocinador, o campo de treino, a sala de imprensa, as suas chances, os dois tempos e o resultado.\n\nNuma temporada de verdade isto é uma semana de seis, o time quem te dá é o seu professor, e do outro lado não tem um computador: tem outro aluno escrevendo o mesmo ditado." },
+ "Pick a player, then boost him.":
+  { it:"Scegli un giocatore, poi fallo crescere.",
+    fr:"Choisis un joueur, puis fais-le progresser.",
+    es:"Elige un jugador, y luego hazlo crecer.",
+    pt:"Escolha um jogador, e depois faça ele crescer." },
+ "Tap a shirt to open a player. Inside you can work on his body or on his English, and every exercise you win moves him up a step. You have six actions for the whole squad, so spend them where they will count on Saturday.":
+  { it:"Tocca una maglia per aprire un giocatore. Dentro puoi lavorare sul suo fisico o sul suo inglese, e ogni esercizio che vinci lo fa salire di un passo. Hai sei azioni per tutta la rosa: spendile dove peseranno sabato.",
+    fr:"Touche un maillot pour ouvrir un joueur. À l'intérieur tu peux travailler son physique ou son anglais, et chaque exercice réussi le fait monter d'un pas. Tu as six actions pour tout l'effectif : dépense-les là où elles compteront samedi.",
+    es:"Toca una camiseta para abrir a un jugador. Dentro puedes trabajar su físico o su inglés, y cada ejercicio que ganas lo sube un paso. Tienes seis acciones para toda la plantilla: gástalas donde vayan a contar el sábado.",
+    pt:"Toque numa camisa para abrir um jogador. Lá dentro você pode trabalhar o físico ou o inglês dele, e cada exercício que você ganha faz ele subir um passo. Você tem seis ações para o elenco inteiro: gaste onde vão pesar no sábado." },
+ "It is not a formation.":
+  { it:"Non è una formazione.",
+    fr:"Ce n'est pas une composition.",
+    es:"No es una alineación.",
+    pt:"Não é uma escalação." },
+ "The weather says how many dangerous moments this match will have. Here you say who is there when each one comes: in attack, who is in front of their goal when the chance opens; in defence, who is between them and yours.Nobody plays ninety minutes. A player takes the moment you give him and then he is finished — only your keeper, your captain and your gem come back, up to four moments each.Going forward they are your chances; coming back they are theirs. Either way, what counts is who is there.":
+  { it:"Il meteo dice quanti momenti pericolosi avrà questa partita. Qui dici chi c'è quando arriva ognuno: in attacco, chi è davanti alla loro porta quando si apre l'occasione; in difesa, chi sta fra loro e la tua.\n\nNessuno gioca novanta minuti. Un giocatore prende il momento che gli dai e poi ha finito — tornano solo il portiere, il capitano e il gioiello, fino a quattro momenti ciascuno.\n\nIn avanti sono le tue occasioni; all'indietro sono le loro. In tutti e due i casi, quello che conta è chi c'è.",
+    fr:"La météo dit combien ce match aura de moments dangereux. Ici tu dis qui est là quand chacun arrive : en attaque, qui est devant leur but quand l'occasion s'ouvre ; en défense, qui se trouve entre eux et le tien.\n\nPersonne ne joue quatre-vingt-dix minutes. Un joueur prend le moment que tu lui donnes et c'est fini pour lui — seuls le gardien, le capitaine et la pépite reviennent, jusqu'à quatre moments chacun.\n\nVers l'avant ce sont tes occasions ; vers l'arrière ce sont les leurs. Dans les deux cas, ce qui compte, c'est qui est là.",
+    es:"El tiempo dice cuántos momentos peligrosos tendrá este partido. Aquí dices quién está cuando llega cada uno: en ataque, quién está delante de su portería cuando se abre la ocasión; en defensa, quién está entre ellos y la tuya.\n\nNadie juega noventa minutos. Un jugador coge el momento que le das y ya ha terminado — solo vuelven el portero, el capitán y la joya, hasta cuatro momentos cada uno.\n\nHacia delante son tus ocasiones; hacia atrás son las suyas. En los dos casos, lo que cuenta es quién está.",
+    pt:"O tempo diz quantos momentos perigosos este jogo vai ter. Aqui você diz quem está lá quando cada um chega: no ataque, quem está na frente do gol deles quando a chance abre; na defesa, quem está entre eles e o seu.\n\nNinguém joga noventa minutos. Um jogador pega o momento que você dá e acabou para ele — só voltam o goleiro, o capitão e a joia, até quatro momentos cada um.\n\nPara frente são as suas chances; para trás são as deles. Nos dois casos, o que conta é quem está lá." },
+ "Turn your keyboard's help off":
+  { it:"Spegni l'aiuto della tastiera",
+    fr:"Coupe l'aide de ton clavier",
+    es:"Apaga la ayuda del teclado",
+    pt:"Desligue a ajuda do teclado" },
+ "This page has already switched off everything a page can switch off: auto-correction, capitals, the spellchecker, and pasting. The one thing it cannot reach is your own keyboard — the strip of words above the letters, and writing by sliding your finger. Tap one of those words and the phone has spelt it, not you — and the app notices: it counts them, and your teacher sees the number.":
+  { it:"Questa pagina ha già spento tutto quello che una pagina può spegnere: correzione automatica, maiuscole, correttore ortografico e incolla. L'unica cosa a cui non arriva è la tua tastiera — la striscia di parole sopra le lettere, e la scrittura con il dito che scivola. Se tocchi una di quelle parole, l'ha scritta il telefono, non tu — e l'app se ne accorge: le conta, e il tuo professore vede il numero.",
+    fr:"Cette page a déjà coupé tout ce qu'une page peut couper : correction automatique, majuscules, correcteur orthographique et collage. La seule chose qu'elle n'atteint pas, c'est ton clavier — la bande de mots au-dessus des lettres, et l'écriture en glissant le doigt. Si tu touches un de ces mots, c'est le téléphone qui l'a écrit, pas toi — et l'appli le remarque : elle les compte, et ton professeur voit le nombre.",
+    es:"Esta página ya ha apagado todo lo que una página puede apagar: corrección automática, mayúsculas, corrector ortográfico y pegar. Lo único que no alcanza es tu teclado — la tira de palabras encima de las letras, y escribir deslizando el dedo. Si tocas una de esas palabras, la ha escrito el teléfono, no tú — y la app se da cuenta: las cuenta, y tu profesor ve el número.",
+    pt:"Esta página já desligou tudo o que uma página pode desligar: correção automática, maiúsculas, corretor ortográfico e colar. A única coisa que ela não alcança é o seu teclado — a faixa de palavras em cima das letras, e escrever deslizando o dedo. Se você toca numa dessas palavras, quem escreveu foi o celular, não você — e o app percebe: ele conta, e o seu professor vê o número." },
+ "This page has already switched off everything a page can switch off: auto-correction, capitals, the spellchecker, and pasting. The one thing it cannot reach is your own keyboard — the strip of words above the letters, and writing by sliding your finger. Tap one of those words and the phone has spelt it, not you. It has done that # times for you so far, and your teacher sees the number.":
+  { it:"Questa pagina ha già spento tutto quello che una pagina può spegnere: correzione automatica, maiuscole, correttore ortografico e incolla. L'unica cosa a cui non arriva è la tua tastiera — la striscia di parole sopra le lettere, e la scrittura con il dito che scivola. Se tocchi una di quelle parole, l'ha scritta il telefono, non tu. Finora l'ha fatto # volte al posto tuo, e il tuo professore vede il numero.",
+    fr:"Cette page a déjà coupé tout ce qu'une page peut couper : correction automatique, majuscules, correcteur orthographique et collage. La seule chose qu'elle n'atteint pas, c'est ton clavier — la bande de mots au-dessus des lettres, et l'écriture en glissant le doigt. Si tu touches un de ces mots, c'est le téléphone qui l'a écrit, pas toi. Jusqu'ici il l'a fait # fois à ta place, et ton professeur voit le nombre.",
+    es:"Esta página ya ha apagado todo lo que una página puede apagar: corrección automática, mayúsculas, corrector ortográfico y pegar. Lo único que no alcanza es tu teclado — la tira de palabras encima de las letras, y escribir deslizando el dedo. Si tocas una de esas palabras, la ha escrito el teléfono, no tú. Hasta ahora lo ha hecho # veces por ti, y tu profesor ve el número.",
+    pt:"Esta página já desligou tudo o que uma página pode desligar: correção automática, maiúsculas, corretor ortográfico e colar. A única coisa que ela não alcança é o seu teclado — a faixa de palavras em cima das letras, e escrever deslizando o dedo. Se você toca numa dessas palavras, quem escreveu foi o celular, não você. Até agora ele fez isso # vezes por você, e o seu professor vê o número." },
+ "On your phone they may be called something slightly different. It is a better game this way: the words are yours, and so is the score.":
+  { it:"Sul tuo telefono possono chiamarsi in modo un po' diverso. Così è un gioco migliore: le parole sono tue, e anche il punteggio.",
+    fr:"Sur ton téléphone, ça peut s'appeler un peu autrement. C'est un meilleur jeu comme ça : les mots sont à toi, et le score aussi.",
+    es:"En tu teléfono pueden llamarse de una forma un poco distinta. Así es un juego mejor: las palabras son tuyas, y la puntuación también.",
+    pt:"No seu celular podem ter um nome um pouco diferente. Assim é um jogo melhor: as palavras são suas, e a pontuação também." }
 };
 
 /* i modelli: la tilde e' il pezzo che cambia */
@@ -25963,7 +26106,13 @@ TRP = [
    Un osservatore guarda #main: ogni volta che una pagina si rifa', le
    istruzioni riconosciute si prendono la loro riga sotto. Si stacca
    mentre scrive, se no si guarderebbe scrivere all'infinito. */
-var TR_SEL = ".lede, .hint, .lede2, .sm2";
+/* ───────── che cosa si traduce ─────────
+   Le righe di istruzione delle pagine, e i cartelli che si aprono
+   sopra: quelli introducono una stanza e la spiegano, e sono proprio
+   quelli che un A1 non puo' saltare. Del cartello si traduce anche il
+   titolo, perche' il titolo e' meta' della spiegazione. */
+var TR_SEL = ".lede, .hint, .lede2, .sm2, .dmtipc b, .dmtipc p, " +
+             ".kbd > b, .kbd > p, .kbds, .trtip";
 var TR_OBS = null, TR_BUSY = false;
 
 function trStrip(n) {
@@ -25981,11 +26130,13 @@ function trOne(n) {
   n.appendChild(em);
 }
 function trPass(force) {
-  var main = document.getElementById("main");
-  if (!main || TR_BUSY) return;
+  /* si guarda tutto il corpo, non solo la pagina: i cartelli della
+     prova si appendono fuori da #main */
+  var root = document.body || document.getElementById("main");
+  if (!root || TR_BUSY) return;
   TR_BUSY = true;
   try {
-    var ns = main.querySelectorAll(TR_SEL), i;
+    var ns = root.querySelectorAll(TR_SEL), i;
     for (i = 0; i < ns.length; i++) {
       if (force || !ns[i].querySelector(".trx")) trOne(ns[i]);
     }
@@ -26012,7 +26163,7 @@ function trStart() {
       return later();
     }
   });
-  TR_OBS.observe(main, { childList:true, subtree:true });
+  TR_OBS.observe(document.body || main, { childList:true, subtree:true });
   if (bar) TR_OBS.observe(bar, { childList:true });
   later();
 }
