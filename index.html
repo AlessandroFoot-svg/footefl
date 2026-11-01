@@ -2886,6 +2886,70 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .dmgo{flex:none;font-style:normal;font-size:16px;color:var(--gold)}
 .dmnote{margin:10px 8px 2px;font-size:10px;font-weight:600;line-height:1.5;color:var(--fog)}
 
+/* ───────── il mercato, la presentazione ─────────
+   Il titolo fa una domanda, il paragrafo diventa tre battute numerate e
+   le quattro fasce del punteggio si guardano invece di leggerle. */
+.kick{display:block;font-size:9px;font-weight:800;letter-spacing:.16em;color:var(--gold)}
+.mkin h1{margin-top:8px}
+.mklv{display:inline;padding:0 1px;border:0;background:none;color:var(--gold);
+  font:inherit;font-weight:800;text-decoration:underline;text-underline-offset:3px;
+  cursor:pointer}
+.mkbeats{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+.mkbeats li{display:flex;align-items:flex-start;gap:13px}
+.mkbeats i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;
+  border:1.5px solid var(--gold);color:var(--gold);font-style:normal;font-size:11.5px;
+  font-weight:800}
+.mkbeats span{flex:1;min-width:0;padding-top:2px}
+.mkbeats b{display:block;font-size:14px;font-weight:800;line-height:1.2}
+.mkbeats em{display:block;margin-top:2px;font-style:normal;font-size:11.5px;font-weight:600;
+  line-height:1.45;color:var(--fog)}
+
+/* le quattro fasce: una giacca per ognuna, e sotto quanti rispondono */
+.mktiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:18px}
+.mkt{padding:0 0 9px;overflow:hidden;border-radius:13px;border:1px solid var(--edge);
+  background:var(--band);color:var(--cream);font:inherit;text-align:center;cursor:pointer}
+.mkt.top{border-color:var(--gold);background:rgba(227,239,38,.07)}
+.mktp{position:relative;display:block;height:92px;overflow:hidden;background:#0A2318}
+.mktp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:50% 12%;opacity:.55;filter:grayscale(.45)}
+.mkt.top .mktp img{opacity:1;filter:none}
+.mktp i{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(4,23,15,.6) 0%,rgba(4,23,15,0) 55%)}
+.mktn{display:block;margin-top:7px;font-size:19px;font-weight:800;line-height:1}
+.mkt.top .mktn{color:var(--gold)}
+.mktw{display:block;font-size:8.5px;font-weight:800;letter-spacing:.1em;color:var(--fog)}
+.mktr{display:block;margin:6px 5px 0;padding-top:6px;border-top:1px solid var(--edge);
+  font-size:10px;font-weight:800}
+.mkfoot{margin:11px 0 0;font-size:11px;font-weight:600;line-height:1.4;color:var(--fog);
+  text-align:center}
+
+/* il cartello con la regola intera, per chi la vuole */
+.mksh{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px;
+  background:rgba(4,23,15,.84)}
+.mkshc{width:100%;max-width:344px;max-height:86vh;overflow:auto;padding:20px 18px 18px;
+  border-radius:18px;border:1px solid var(--gold);background:var(--deep)}
+.mkshc b{display:block;margin-top:8px;font:800 19px/1.2 var(--brand);color:var(--cream)}
+.mkshc p{margin:10px 0 0;font-size:12.5px;font-weight:600;line-height:1.55;color:var(--fog)}
+.mkshc p b{display:inline;font-size:inherit;font-family:inherit;color:var(--cream)}
+.mkshl{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.mkshr{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:13px;
+  border:1px solid var(--edge);background:var(--band)}
+.mkshr.top{border-color:var(--gold);background:rgba(227,239,38,.07)}
+.mkshf{flex:none;position:relative;display:block;width:40px;height:40px;border-radius:50%;
+  overflow:hidden;background:#0A2318;border:1.5px solid var(--edge)}
+.mkshr.top .mkshf{border-color:var(--gold)}
+.mkshf img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:50% 9%;opacity:.6;filter:grayscale(.45)}
+.mkshr.top .mkshf img{opacity:1;filter:none}
+.mkshr span{flex:1;min-width:0}
+.mkshr b{display:block;margin:0;font-size:13px;font-weight:800;line-height:1.2;
+  font-family:inherit;color:var(--cream)}
+.mkshr em{display:block;margin-top:2px;font-style:normal;font-size:10.5px;font-weight:600;
+  color:var(--fog)}
+.mkshp{flex:none;padding:4px 9px;border-radius:999px;border:1px solid var(--edge);
+  font-size:9.5px;font-weight:800;color:var(--fog)}
+.mkshr.top .mkshp{background:var(--gold);border-color:var(--gold);color:#06231D}
+
 /* ───────── la prova: niente cornice, fondo quasi nero ─────────
    La striscia aveva un bordo giallo e un fondo verde chiaro: con una
    fotografia grande dentro sembravano due pannelli uno sull'altro.
@@ -3856,7 +3920,7 @@ var CARDS = [
    Quando saranno molte — i volti dei giocatori, venti dettati — andranno
    messe accanto all'app invece che dentro.
    ═══════════════════════════════════════════════════════════════════ */
-var IMG = {"bg-ROP":"im/bg-ROP.webp","bg-next":"im/bg-next.webp","bg-pitch":"im/bg-pitch.webp","bg-press":"im/bg-press.webp","crest-BRA":"im/crest-BRA.webp","crest-OXF":"im/crest-OXF.webp","crest-RAV":"im/crest-RAV.webp","crest-ROP":"im/crest-ROP.webp","crest-SHE":"im/crest-SHE.webp","fit-BRA":"im/fit-BRA.webp","fit-OXF":"im/fit-OXF.webp","fit-RAV":"im/fit-RAV.webp","fit-ROP":"im/fit-ROP.webp","fit-SHE":"im/fit-SHE.webp","gaf-BRA":"im/gaf-BRA.webp","gaf-OXF":"im/gaf-OXF.webp","gaf-RAV":"im/gaf-RAV.webp","gaf-ROP":"im/gaf-ROP.webp","gaf-SHE":"im/gaf-SHE.webp","gk-BRA":"im/gk-BRA.webp","gk-OXF":"im/gk-OXF.webp","gk-RAV":"im/gk-RAV.webp","gk-ROP":"im/gk-ROP.webp","gk-SHE":"im/gk-SHE.webp","hero-ROP":"im/hero-ROP.webp","ic-champions":"im/ic-champions.png","ic-cup":"im/ic-cup.png","ic-eurofa":"im/ic-eurofa.png","ic-season":"im/ic-season.png","ic-settings":"im/ic-settings.png","ic-training":"im/ic-training.png","kit-BRA":"im/kit-BRA.webp","kit-OXF":"im/kit-OXF.webp","kit-RAV":"im/kit-RAV.webp","kit-ROP":"im/kit-ROP.webp","kit-SHE":"im/kit-SHE.webp","pitch":"im/pitch.jpg","stadium":"im/stadium.jpg","suit-BRA":"im/suit-BRA.webp","suit-OXF":"im/suit-OXF.webp","suit-RAV":"im/suit-RAV.webp","suit-ROP":"im/suit-ROP.webp","suit-SHE":"im/suit-SHE.webp","wx-cloudy":"im/wx-cloudy.jpg","wx-fog":"im/wx-fog.jpg","wx-rain":"im/wx-rain.jpg","wx-snow":"im/wx-snow.jpg","wx-storm":"im/wx-storm.jpg","wx-sunny":"im/wx-sunny.jpg"};
+var IMG = {"bg-ROP":"im/bg-ROP.webp","bg-next":"im/bg-next.webp","bg-pitch":"im/bg-pitch.webp","bg-press":"im/bg-press.webp","crest-BRA":"im/crest-BRA.webp","crest-OXF":"im/crest-OXF.webp","crest-RAV":"im/crest-RAV.webp","crest-ROP":"im/crest-ROP.webp","crest-SHE":"im/crest-SHE.webp","fit-BRA":"im/fit-BRA.webp","fit-OXF":"im/fit-OXF.webp","fit-RAV":"im/fit-RAV.webp","fit-ROP":"im/fit-ROP.webp","fit-SHE":"im/fit-SHE.webp","gaf-BRA":"im/gaf-BRA.webp","gaf-OXF":"im/gaf-OXF.webp","gaf-RAV":"im/gaf-RAV.webp","gaf-ROP":"im/gaf-ROP.webp","gaf-SHE":"im/gaf-SHE.webp","gk-BRA":"im/gk-BRA.webp","gk-OXF":"im/gk-OXF.webp","gk-RAV":"im/gk-RAV.webp","gk-ROP":"im/gk-ROP.webp","gk-SHE":"im/gk-SHE.webp","hero-ROP":"im/hero-ROP.webp","ic-champions":"im/ic-champions.png","ic-cup":"im/ic-cup.png","ic-eurofa":"im/ic-eurofa.png","ic-season":"im/ic-season.png","ic-settings":"im/ic-settings.png","ic-training":"im/ic-training.png","kit-BRA":"im/kit-BRA.webp","kit-OXF":"im/kit-OXF.webp","kit-RAV":"im/kit-RAV.webp","kit-ROP":"im/kit-ROP.webp","kit-SHE":"im/kit-SHE.webp","pitch":"im/pitch.jpg","scoutcoat":"im/scoutcoat.webp","stadium":"im/stadium.jpg","suit-BRA":"im/suit-BRA.webp","suit-OXF":"im/suit-OXF.webp","suit-RAV":"im/suit-RAV.webp","suit-ROP":"im/suit-ROP.webp","suit-SHE":"im/suit-SHE.webp","wx-cloudy":"im/wx-cloudy.jpg","wx-fog":"im/wx-fog.jpg","wx-rain":"im/wx-rain.jpg","wx-snow":"im/wx-snow.jpg","wx-storm":"im/wx-storm.jpg","wx-sunny":"im/wx-sunny.jpg"};
 function imgOf(k) { return IMG[k] || ""; }
 /* la sala stampa serve anche al foglio di stile, per la carta in home */
 try {
@@ -4467,7 +4531,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "139";
+var APPVER = "140";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -15486,22 +15550,98 @@ VIEWS.market = function () {
     $("bk2").onclick = function () { reset(homeBack()); };
     return;
   }
-  html('<div class="pad"><h1>One market.<br>One season.</h1>' +
-    '<p class="lede">This opens <b>once</b>, before the first match, and never again ' +
-    "until next season. Take your time.</p>" +
-    '<p class="lede">First, <b>twenty questions at ' + esc(ME.level) + '</b>. ' +
-    "Your score decides <b>which scouts answer the phone</b> — and a better scout " +
-    "signs more players. The worst will bring you one. The best can bring three.</p>" +
-    '<div class="lvltag" id="lvt"><span>YOUR TEST LEVEL</span><b>' + esc(ME.level) +
-    "</b><em>change it</em></div>" +
-    '<button class="btn" id="go">Start the trial</button></div>');
+  drawMarketIn();
+};
+
+/* ───────── la presentazione, disegnata ─────────
+   Erano settanta parole di inglese prima di poter toccare qualcosa, e la
+   cosa piu' importante — il punteggio decide quanti scout rispondono —
+   stava in fondo al secondo paragrafo. Adesso il titolo fa una domanda,
+   il paragrafo diventa tre battute numerate, e le quattro fasce si
+   guardano invece di leggerle. */
+var MKSHEET = false;
+/* le fasce vere, quelle di band(): il punteggio non compra giocatori,
+   apre un numero di scout fra cui scegliere */
+var MKBANDS = [
+  { r:"0–9",   n:1 }, { r:"10–13", n:2 },
+  { r:"14–17", n:3 }, { r:"18–20", n:4 }
+];
+/* se la figura non e' ancora sul sito resta il riquadro scuro */
+function mkNoPic(el) {
+  try { el.parentNode.removeChild(el); } catch (e) {}
+}
+function mkTiles() {
+  var pic = (typeof IMG === "object" && IMG.scoutcoat) || "";
+  return '<div class="mktiles">' + MKBANDS.map(function (b, k) {
+    var top = k === MKBANDS.length - 1;
+    return '<button class="mkt' + (top ? " top" : "") + '" type="button" data-k="' + k +
+      '" aria-label="' + b.r + " right: " + b.n +
+      (b.n === 1 ? " scout" : " scouts") + ' — how the call works">' +
+      '<span class="mktp">' +
+      (pic ? '<img src="' + pic + '" alt="" onerror="mkNoPic(this)">' : "") +
+      '<i aria-hidden="true"></i></span>' +
+      '<span class="mktn">' + b.n + "</span>" +
+      '<span class="mktw">' + (b.n === 1 ? "scout" : "scouts") + "</span>" +
+      '<span class="mktr">' + b.r + "</span></button>";
+  }).join("") + "</div>";
+}
+function mkSheet() {
+  if (!MKSHEET) return "";
+  var pic = (typeof IMG === "object" && IMG.scoutcoat) || "";
+  return '<div class="mksh" id="mksh"><div class="mkshc">' +
+    '<span class="kick">WHO PICKS UP THE PHONE</span>' +
+    "<b>The scout signs the players for the club.</b>" +
+    "<p>Your twenty answers do not buy anybody. They decide <b>how many scouts " +
+    "take your call</b> — and the better you answer, the bigger the names who " +
+    "are listening.</p>" +
+    '<div class="mkshl">' + MKBANDS.map(function (b, k) {
+      var top = k === MKBANDS.length - 1;
+      return '<div class="mkshr' + (top ? " top" : "") + '"><span class="mkshf">' +
+        (pic ? '<img src="' + pic + '" alt="" onerror="mkNoPic(this)">' : "") +
+        "</span><span><b>" + b.n + (b.n === 1 ? " scout" : " scouts") +
+        " to choose from</b><em>" +
+        (b.n === 1 ? "The one who never leaves town."
+                   : b.n === 4 ? "The best names in the game are listening."
+                   : "Better names come to the phone.") +
+        '</em></span><span class="mkshp">' + b.r + "</span></div>";
+    }).join("") + "</div>" +
+    "<p>Then you call <b>one of them</b>, and what he signs is your whole market. " +
+    "Somebody always answers: you never come back empty.</p>" +
+    '<button class="btn" id="mkshx" type="button">Got it</button>' +
+    "</div></div>";
+}
+function drawMarketIn() {
+  html('<div class="pad mkin">' +
+    '<span class="kick">ONCE A SEASON</span>' +
+    "<h1>Who picks up<br>the phone?</h1>" +
+    '<p class="lede">Scouts are waiting by the phone. How many of them take your ' +
+    "call is up to you.</p>" +
+    '<ol class="mkbeats">' +
+    "<li><i>1</i><span><b>It opens once</b><em>Before the first match, and never " +
+    "again until next season.</em></span></li>" +
+    "<li><i>2</i><span><b>Twenty questions at " +
+    /* il livello non ha piu' il suo riquadro: si cambia da qui, dove il
+       livello e' gia' nominato */
+    '<button class="mklv" id="lvt" type="button">' + esc(ME.level) + "</button>" +
+    "</b><em>Take your time. Nobody is counting the minutes.</em></span></li>" +
+    "<li><i>3</i><span><b>A scout answers</b><em>He signs the players for the club, " +
+    "not you. Answer well and better names pick up.</em></span></li>" +
+    "</ol>" +
+    mkTiles() +
+    '<p class="mkfoot">You will find out who answered when the call ends.</p>' +
+    '<button class="btn" id="go">Find a scout</button></div>' + mkSheet());
   $("lvt").onclick = function () { go("level"); };
+  Array.prototype.forEach.call($("main").querySelectorAll(".mkt"), function (b) {
+    b.onclick = function () { MKSHEET = true; drawMarketIn(); };
+  });
+  if ($("mkshx")) $("mkshx").onclick = function () { MKSHEET = false; drawMarketIn(); };
   $("go").onclick = function () {
+    MKSHEET = false;
     MK.qs = drawQuestions(ME.level, QN);
     MK.i = 0; MK.answers = [];
     swap("mkQuiz");
   };
-};
+}
 
 /* ───────── 2. la prova ───────── */
 VIEWS.mkQuiz = function () {
@@ -27767,181 +27907,4 @@ VIEWS.words = function () {
     "</div>");
 
   if ($("gow")) $("gow").onclick = function () {
-    WR = { queue: left.slice().sort(function () { return Math.random() - 0.5; }),
-           i:0, fixedNow:0, again:[] };
-    swap("wDrill");
-  };
-  if ($("rst")) $("rst").onclick = function () {
-    if (!confirm("Put every word back on the list?")) return;
-    MEM = {}; saveMem(); swap("words");
-  };
-};
-
-/* ───────── 2. l'esercizio ───────── */
-var WR = { queue:[], i:0, fixedNow:0, again:[] };
-var SPK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/>' +
-  '<path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="1.8" ' +
-  'stroke-linecap="round"/><path d="M19 6a8.5 8.5 0 0 1 0 12" fill="none" ' +
-  'stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-
-VIEWS.wDrill = function () {
-  var it = WR.queue[WR.i];
-  barFlow("Listen and write", (WR.i + 1) + " of " + WR.queue.length,
-          Math.round((WR.i / WR.queue.length) * 100));
-  html('<div class="pad">' +
-    '<button class="hear" id="hear" type="button" aria-label="Hear the word">' + SPK +
-    '</button><p class="hearlab">' +
-    (CAN_SPEAK ? "TAP TO HEAR IT AGAIN" : "TAP TO SEE IT FOR A MOMENT") + "</p>" +
-    '<p class="flashword" id="flash"></p>' +
-    '<input type="text" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" ' +
-    'spellcheck="false" placeholder="write the word">' +
-    '<button class="btn" id="chk" disabled>Check</button><div id="res"></div></div>');
-
-  function hear() {
-    var h = $("hear");
-    h.classList.remove("flash"); void h.offsetWidth; h.classList.add("flash");
-    if (!say(it.w)) {
-      $("flash").textContent = it.w;
-      setTimeout(function () { var f = $("flash"); if (f) f.textContent = ""; }, 1600);
-    }
-  }
-  $("hear").onclick = hear;
-  hear();
-
-  var ans = $("ans"), chk = $("chk");
-  ans.oninput = function () { chk.disabled = !ans.value.trim(); };
-  ans.onkeydown = function (e) { if (e.key === "Enter" && ans.value.trim()) check(); };
-  chk.onclick = check;
-  setTimeout(function () { try { ans.focus(); } catch (e) {} }, 80);
-
-  function check() {
-    var got = ans.value.trim(), right = got === it.w;
-    ans.disabled = true; chk.hidden = true;
-    if (right) {
-      MEM[it.w] = wordHits(it.w) + 1; saveMem();
-      if (wordFixed(it.w)) WR.fixedNow++;
-    } else { MEM[it.w] = 0; saveMem(); WR.again.push(it); }
-    $("res").innerHTML = '<div class="res ' + (right ? "good" : "bad") + '">' +
-      '<div class="hd">' + (right ? "RIGHT" : "NOT YET") + '</div><div class="word">' +
-      (right ? esc(it.w) : markDiff(it.w, got)) + "</div>" +
-      (right ? "" : '<div class="yours">you wrote <s>' + esc(got) + "</s></div>") +
-      (right && wordFixed(it.w)
-        ? '<div class="tip"><b>Fixed.</b>Twice right — this one leaves your list.</div>'
-        : '<div class="tip"><b>' + esc(it.kind) + "</b>" + esc(TIPS[it.kind] || "") +
-          "</div>") + "</div>" +
-      '<button class="btn" id="nx">' +
-      (WR.i + 1 < WR.queue.length ? "Next word" : "Finish") + "</button>";
-    $("nx").onclick = function () {
-      WR.i++;
-      if (WR.i < WR.queue.length) swap("wDrill");
-      else if (WR.again.length) {
-        WR.queue = WR.again; WR.again = []; WR.i = 0; swap("wDrill");
-      } else swap("wEnd");
-    };
-    $("nx").focus();
-  }
-};
-
-/* ───────── 3. la fine ───────── */
-VIEWS.wEnd = function () {
-  var left = wordsLeft().length;
-  var before = (loadStars(), starsEarned());
-  noteFixedWords();
-  var won = starsEarned() - before;
-  barFlow("Done for today", ME.club ? ME.club.name : "Try it", 100, false);
-  html('<div class="pad"><h1>' + (WR.fixedNow
-    ? WR.fixedNow + (WR.fixedNow === 1 ? " word fixed." : " words fixed.")
-    : "Good work.") + "</h1>" +
-    (won
-      ? '<div class="starwon"><b>&#9733; +' + won + "</b><span>" +
-        (won === 1 ? "A star" : won + " stars") + " for the words you have fixed for " +
-        "good. Spend them on a new club when you like.</span></div>"
-      : '<p class="lede">' + wordsToNextStar() +
-        (wordsToNextStar() === 1 ? " more word" : " more words") +
-        " fixed and you earn a star.</p>") +
-    '<div class="done"><div class="n">' + left + "</div><p>" + (left
-      ? (left === 1 ? "word still on your list. " : "words still on your list. ") +
-        "Come back tomorrow — a word sticks better if you meet it twice on " +
-        "different days."
-      : "Your list is empty. Nothing left to fix until the next dictation.") +
-    "</p></div>" +
-    '<button class="btn" id="wb">Back to my words</button>' +
-    '<button class="btn ghost" id="wh">' +
-    (ME.club ? "Back to my squad" : "Back to my home") + "</button></div>");
-  $("wb").onclick = function () { swap("words"); };
-  $("wh").onclick = function () { reset(ME.club ? "squad" : "home"); };
-};
-
-/* ───────── avvio ───────── */
-loadMem();
-loadLevel();
-/* il codice puo' arrivare dal link: va letto prima di tutto il resto,
-   cosi' il primo disegno della home lo sa gia' */
-var fromLink = codeFromLink();
-/* e cosi' il codice di una partita, se qualcuno ha inquadrato il QR
-   dell'avversario con la fotocamera del telefono */
-var daQuadrato = (typeof xcDalLink === "function") ? xcDalLink() : null;
-loadCode(); loadComps(); loadDrop();
-loadBulletin();
-/* la lavagna del professore non vive piu' qui: stava nella stessa app
-   che gira su un sito pubblico, e bastava indovinare #coach per leggere
-   l'elenco dei ragazzi. Quell'elenco sta nella piattaforma, che e' sul
-   computer del professore e non la vede nessun altro. */
-if (fromLink) {
-  /* arrivato dalla sua tesserina: la porta l'ha aperta il link, quindi si
-     va dritto alla sua pagina e intanto si guarda se c'e' qualcosa di nuovo */
-  reset("land");
-  pullOnline(function () {
-    if (HERE && HERE.name === "land") landFromCode();
-  });
-} else if (!ME.code && !isPract()) {
-  /* la porta: senza codice e senza aver chiesto di allenarsi non si entra */
-  reset("gate");
-} else {
-  /* con il codice si atterra sulla propria pagina; chi si allena e basta
-     non ha competizioni da scegliere e va dritto al cruscotto */
-  reset(ME.code ? "land" : "home");
-  flushOutbox();
-}
-/* e intanto si chiede al sito se questa copia e' ancora quella buona:
-   non blocca niente, e se la rete non c'e' non si fa sentire */
-if (typeof freshBoot === "function") setTimeout(freshBoot, 900);
-
-/* il codice della partita arriva dopo: la stanza dello scambio si apre
-   sopra a quello che c'era, con il campo dell'avversario gia' pieno */
-if (daQuadrato) {
-  XCIN = String(daQuadrato).replace(/(.{4})(?=.)/g, "$1-");
-  setTimeout(function () { go("swap"); }, 60);
-}
-
-</script>
-<script>
-/* Il guardiano: tiene l'app sul telefono anche senza rete, e si fa da
-   parte quando il file e' aperto da disco, dove non puo' esistere. */
-(function () {
-  if (!("serviceWorker" in navigator)) return;
-  if (String(location.protocol).indexOf("http") !== 0) return;
-  window.addEventListener("load", function () {
-    try {
-      navigator.serviceWorker.register("sw.js");
-      /* La primissima volta la pagina arriva prima del guardiano: le
-         figure chieste in quel momento passano dalla rete liscia e, se
-         sul sito stanno in un'altra cartella, non si vedono. Appena il
-         guardiano prende servizio si ricarica una volta sola — mezzo
-         secondo, e tutto e' al suo posto. Agli aggiornamenti non
-         succede: li' il guardiano c'e' gia'. */
-      if (!navigator.serviceWorker.controller) {
-        navigator.serviceWorker.addEventListener("controllerchange", function () {
-          try {
-            if (sessionStorage.getItem("ft-born")) return;
-            sessionStorage.setItem("ft-born", "1");
-          } catch (e) {}
-          location.reload();
-        });
-      }
-    } catch (e) {}
-  });
-})();
-</script>
-</body>
-</html>
+    WR = { queue: left.slice().sort(funct
