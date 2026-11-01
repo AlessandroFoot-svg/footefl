@@ -27907,4 +27907,181 @@ VIEWS.words = function () {
     "</div>");
 
   if ($("gow")) $("gow").onclick = function () {
-    WR = { queue: left.slice().sort(funct
+    WR = { queue: left.slice().sort(function () { return Math.random() - 0.5; }),
+           i:0, fixedNow:0, again:[] };
+    swap("wDrill");
+  };
+  if ($("rst")) $("rst").onclick = function () {
+    if (!confirm("Put every word back on the list?")) return;
+    MEM = {}; saveMem(); swap("words");
+  };
+};
+
+/* ───────── 2. l'esercizio ───────── */
+var WR = { queue:[], i:0, fixedNow:0, again:[] };
+var SPK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/>' +
+  '<path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+  'stroke-linecap="round"/><path d="M19 6a8.5 8.5 0 0 1 0 12" fill="none" ' +
+  'stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+
+VIEWS.wDrill = function () {
+  var it = WR.queue[WR.i];
+  barFlow("Listen and write", (WR.i + 1) + " of " + WR.queue.length,
+          Math.round((WR.i / WR.queue.length) * 100));
+  html('<div class="pad">' +
+    '<button class="hear" id="hear" type="button" aria-label="Hear the word">' + SPK +
+    '</button><p class="hearlab">' +
+    (CAN_SPEAK ? "TAP TO HEAR IT AGAIN" : "TAP TO SEE IT FOR A MOMENT") + "</p>" +
+    '<p class="flashword" id="flash"></p>' +
+    '<input type="text" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" ' +
+    'spellcheck="false" placeholder="write the word">' +
+    '<button class="btn" id="chk" disabled>Check</button><div id="res"></div></div>');
+
+  function hear() {
+    var h = $("hear");
+    h.classList.remove("flash"); void h.offsetWidth; h.classList.add("flash");
+    if (!say(it.w)) {
+      $("flash").textContent = it.w;
+      setTimeout(function () { var f = $("flash"); if (f) f.textContent = ""; }, 1600);
+    }
+  }
+  $("hear").onclick = hear;
+  hear();
+
+  var ans = $("ans"), chk = $("chk");
+  ans.oninput = function () { chk.disabled = !ans.value.trim(); };
+  ans.onkeydown = function (e) { if (e.key === "Enter" && ans.value.trim()) check(); };
+  chk.onclick = check;
+  setTimeout(function () { try { ans.focus(); } catch (e) {} }, 80);
+
+  function check() {
+    var got = ans.value.trim(), right = got === it.w;
+    ans.disabled = true; chk.hidden = true;
+    if (right) {
+      MEM[it.w] = wordHits(it.w) + 1; saveMem();
+      if (wordFixed(it.w)) WR.fixedNow++;
+    } else { MEM[it.w] = 0; saveMem(); WR.again.push(it); }
+    $("res").innerHTML = '<div class="res ' + (right ? "good" : "bad") + '">' +
+      '<div class="hd">' + (right ? "RIGHT" : "NOT YET") + '</div><div class="word">' +
+      (right ? esc(it.w) : markDiff(it.w, got)) + "</div>" +
+      (right ? "" : '<div class="yours">you wrote <s>' + esc(got) + "</s></div>") +
+      (right && wordFixed(it.w)
+        ? '<div class="tip"><b>Fixed.</b>Twice right — this one leaves your list.</div>'
+        : '<div class="tip"><b>' + esc(it.kind) + "</b>" + esc(TIPS[it.kind] || "") +
+          "</div>") + "</div>" +
+      '<button class="btn" id="nx">' +
+      (WR.i + 1 < WR.queue.length ? "Next word" : "Finish") + "</button>";
+    $("nx").onclick = function () {
+      WR.i++;
+      if (WR.i < WR.queue.length) swap("wDrill");
+      else if (WR.again.length) {
+        WR.queue = WR.again; WR.again = []; WR.i = 0; swap("wDrill");
+      } else swap("wEnd");
+    };
+    $("nx").focus();
+  }
+};
+
+/* ───────── 3. la fine ───────── */
+VIEWS.wEnd = function () {
+  var left = wordsLeft().length;
+  var before = (loadStars(), starsEarned());
+  noteFixedWords();
+  var won = starsEarned() - before;
+  barFlow("Done for today", ME.club ? ME.club.name : "Try it", 100, false);
+  html('<div class="pad"><h1>' + (WR.fixedNow
+    ? WR.fixedNow + (WR.fixedNow === 1 ? " word fixed." : " words fixed.")
+    : "Good work.") + "</h1>" +
+    (won
+      ? '<div class="starwon"><b>&#9733; +' + won + "</b><span>" +
+        (won === 1 ? "A star" : won + " stars") + " for the words you have fixed for " +
+        "good. Spend them on a new club when you like.</span></div>"
+      : '<p class="lede">' + wordsToNextStar() +
+        (wordsToNextStar() === 1 ? " more word" : " more words") +
+        " fixed and you earn a star.</p>") +
+    '<div class="done"><div class="n">' + left + "</div><p>" + (left
+      ? (left === 1 ? "word still on your list. " : "words still on your list. ") +
+        "Come back tomorrow — a word sticks better if you meet it twice on " +
+        "different days."
+      : "Your list is empty. Nothing left to fix until the next dictation.") +
+    "</p></div>" +
+    '<button class="btn" id="wb">Back to my words</button>' +
+    '<button class="btn ghost" id="wh">' +
+    (ME.club ? "Back to my squad" : "Back to my home") + "</button></div>");
+  $("wb").onclick = function () { swap("words"); };
+  $("wh").onclick = function () { reset(ME.club ? "squad" : "home"); };
+};
+
+/* ───────── avvio ───────── */
+loadMem();
+loadLevel();
+/* il codice puo' arrivare dal link: va letto prima di tutto il resto,
+   cosi' il primo disegno della home lo sa gia' */
+var fromLink = codeFromLink();
+/* e cosi' il codice di una partita, se qualcuno ha inquadrato il QR
+   dell'avversario con la fotocamera del telefono */
+var daQuadrato = (typeof xcDalLink === "function") ? xcDalLink() : null;
+loadCode(); loadComps(); loadDrop();
+loadBulletin();
+/* la lavagna del professore non vive piu' qui: stava nella stessa app
+   che gira su un sito pubblico, e bastava indovinare #coach per leggere
+   l'elenco dei ragazzi. Quell'elenco sta nella piattaforma, che e' sul
+   computer del professore e non la vede nessun altro. */
+if (fromLink) {
+  /* arrivato dalla sua tesserina: la porta l'ha aperta il link, quindi si
+     va dritto alla sua pagina e intanto si guarda se c'e' qualcosa di nuovo */
+  reset("land");
+  pullOnline(function () {
+    if (HERE && HERE.name === "land") landFromCode();
+  });
+} else if (!ME.code && !isPract()) {
+  /* la porta: senza codice e senza aver chiesto di allenarsi non si entra */
+  reset("gate");
+} else {
+  /* con il codice si atterra sulla propria pagina; chi si allena e basta
+     non ha competizioni da scegliere e va dritto al cruscotto */
+  reset(ME.code ? "land" : "home");
+  flushOutbox();
+}
+/* e intanto si chiede al sito se questa copia e' ancora quella buona:
+   non blocca niente, e se la rete non c'e' non si fa sentire */
+if (typeof freshBoot === "function") setTimeout(freshBoot, 900);
+
+/* il codice della partita arriva dopo: la stanza dello scambio si apre
+   sopra a quello che c'era, con il campo dell'avversario gia' pieno */
+if (daQuadrato) {
+  XCIN = String(daQuadrato).replace(/(.{4})(?=.)/g, "$1-");
+  setTimeout(function () { go("swap"); }, 60);
+}
+
+</script>
+<script>
+/* Il guardiano: tiene l'app sul telefono anche senza rete, e si fa da
+   parte quando il file e' aperto da disco, dove non puo' esistere. */
+(function () {
+  if (!("serviceWorker" in navigator)) return;
+  if (String(location.protocol).indexOf("http") !== 0) return;
+  window.addEventListener("load", function () {
+    try {
+      navigator.serviceWorker.register("sw.js");
+      /* La primissima volta la pagina arriva prima del guardiano: le
+         figure chieste in quel momento passano dalla rete liscia e, se
+         sul sito stanno in un'altra cartella, non si vedono. Appena il
+         guardiano prende servizio si ricarica una volta sola — mezzo
+         secondo, e tutto e' al suo posto. Agli aggiornamenti non
+         succede: li' il guardiano c'e' gia'. */
+      if (!navigator.serviceWorker.controller) {
+        navigator.serviceWorker.addEventListener("controllerchange", function () {
+          try {
+            if (sessionStorage.getItem("ft-born")) return;
+            sessionStorage.setItem("ft-born", "1");
+          } catch (e) {}
+          location.reload();
+        });
+      }
+    } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>
