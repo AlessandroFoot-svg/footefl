@@ -2886,6 +2886,76 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .dmgo{flex:none;font-style:normal;font-size:16px;color:var(--gold)}
 .dmnote{margin:10px 8px 2px;font-size:10px;font-weight:600;line-height:1.5;color:var(--fog)}
 
+/* ───────── il carosello della prova ─────────
+   La lista a righe diceva tutto e non invogliava nessuno: nove righe
+   grigie non somigliano a un gioco. Adesso una tappa per volta, grande
+   come una figurina, e sotto il tracciato delle nove, che si accendono
+   man mano. Le figure sono quelle che l'app ha gia': la tuta per il
+   mercato, la maglia per lo sponsor, la giacca per l'allenatore. */
+.dmcar{padding:2px 4px 0}
+.dmfig{position:relative;height:300px;border-radius:16px;overflow:hidden;
+  border:1px solid var(--edge);background:var(--band)}
+.dmfig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92}
+.dmfig .scrim{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(4,23,15,.96) 0%,rgba(4,23,15,.74) 36%,
+    rgba(4,23,15,.06) 72%)}
+/* e se la figura non e' ancora sul sito, resta il pannello scuro:
+   il numero e il titolo si leggono lo stesso */
+.dmfig.nopic{background:var(--deep)}
+.dmbig{position:absolute;top:10px;left:14px;display:flex;align-items:baseline;gap:5px}
+.dmbig b{font-size:52px;font-weight:800;line-height:.8;color:transparent;
+  -webkit-text-stroke:1.6px var(--gold)}
+.dmbig i{font-style:normal;font-size:15px;font-weight:700;color:var(--fog)}
+.dmchip{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;
+  align-items:flex-end;gap:6px}
+.dmchip span{padding:4px 9px;border-radius:999px;background:var(--gold);color:#06231D;
+  font-size:9px;font-weight:800;letter-spacing:.14em}
+.dmchip span.done{background:rgba(4,23,15,.8);border:1px solid var(--gold);color:var(--gold)}
+.dmcap{position:absolute;left:16px;right:16px;bottom:16px}
+.dmcap b{display:block;font-size:25px;font-weight:800;line-height:1.08;letter-spacing:-.01em}
+.dmcap em{display:block;margin-top:5px;font-style:normal;font-size:12.5px;font-weight:600;
+  line-height:1.4;color:var(--fog)}
+.dmarr{position:absolute;top:50%;margin-top:-17px;width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--edge);background:rgba(4,23,15,.82);color:var(--cream);
+  font:inherit;font-size:17px;line-height:1;cursor:pointer;z-index:2}
+.dmarr.l{left:6px}
+.dmarr.r{right:6px}
+
+/* il tracciato: la linea e' un disegno che si stira con la larghezza
+   del telefono, le tappe sono bottoni veri messi in percentuale */
+.dmroute{margin:12px 2px 0}
+.dmrlab{display:flex;align-items:baseline;justify-content:space-between;margin:0;
+  font-size:9px;font-weight:800;letter-spacing:.16em;color:var(--fog)}
+.dmrlab i{font-style:normal;color:var(--gold)}
+.dmrbox{position:relative;height:50px;margin-top:3px}
+.dmrbox svg{position:absolute;inset:0;width:100%;height:100%}
+.dmstop{position:absolute;transform:translate(-50%,-50%);padding:0;border-radius:50%;
+  border:1.5px solid var(--edge);background:var(--band);color:var(--fog);
+  font:inherit;font-weight:800;line-height:1;cursor:pointer;z-index:2;
+  transition:width .2s ease,height .2s ease}
+.dmstop.ok{background:var(--gold);border-color:var(--gold);color:#06231D;
+  box-shadow:0 0 8px rgba(227,239,38,.45)}
+/* la tappa che si ha in mano porta un anello staccato: cosi' si
+   riconosce anche quando e' gia' accesa, dove il colore non basta */
+.dmstop.now{border-color:var(--gold);color:var(--gold);
+  box-shadow:0 0 0 2px var(--ink),0 0 0 3.5px var(--gold)}
+.dmstop.now.ok{color:#06231D}
+
+/* la rosa sta qui dentro, sopra il bottone: nella prova e' la cosa che
+   cambia mentre le tappe passano, e va vista senza andarla a cercare */
+.dmsq{margin-top:11px}
+.dmopen{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  margin-top:11px;padding:14px;border:0;border-radius:12px;background:var(--gold);
+  color:#06231D;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.dmopen:disabled{background:var(--band);color:var(--fog);
+  box-shadow:inset 0 0 0 1px var(--edge);cursor:default}
+.dmopen i{font-style:normal}
+/* la riga tradotta, qui, sta su un bottone giallo: con il verde di
+   sempre non si leggerebbe */
+.dmopen .trx{border-left-color:rgba(6,35,29,.3);color:rgba(6,35,29,.8)}
+.dmopen:disabled .trx{border-left-color:var(--edge);color:var(--fog)}
+.dmcap .trx{font-size:11px}
+
 .dmend{padding:20px 17px;border-radius:14px;background:var(--gold);color:#06231D;text-align:center}
 .dmk{display:block;font-size:8.5px;font-weight:800;letter-spacing:.16em;opacity:.65}
 .dmend b{display:block;margin-top:9px;font-size:24px;font-weight:800;line-height:1.15;
@@ -4362,7 +4432,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "138";
+var APPVER = "139";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -9263,9 +9333,15 @@ VIEWS.home = function () {
      prossima partita, il riscaldamento e i numeri di qui dentro. Le
      competizioni, le porte e il codice stanno nella pagina dell'alunno. */
   if (typeof demoResolve === "function") demoResolve(ME.next ? ME.next.md : 1);
+  /* nella prova la rosa non sta qui: sta dentro la striscia, sopra il
+     bottone che apre la tappa. E' la cosa che cambia mentre le tappe
+     passano, e li' la si guarda senza andarla a cercare. */
+  var dmHere = (typeof demoOn === "function") && demoOn();
+  if (typeof dmReset === "function") dmReset();
   html('<div id="hwho"></div><div id="hdemo"></div><div id="hlive"></div>' +
        '<div id="hnext"></div>' +
-       '<section class="pad" id="hsq"><div class="sqc" id="sqc"></div></section>' +
+       (dmHere ? ""
+               : '<section class="pad" id="hsq"><div class="sqc" id="sqc"></div></section>') +
        '<div id="htab"></div>' +
        '<div id="stadbar"></div>' +
        '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p>');
@@ -19096,6 +19172,88 @@ function demoLeft() {
 }
 function demoOver() { return demoOn() && demoLeft() === 0; }
 
+/* ───────── la figurina di ogni tappa ─────────
+   Nove righe grigie non somigliano a un gioco: adesso ogni tappa ha la
+   sua immagine, presa fra quelle che l'app ha gia'. Cinque seguono il
+   club — la tuta, la maglia, la giacca, il portiere, lo stemma — e
+   quattro sono dei posti: il campo, la sala stampa, la vigilia, lo
+   stadio. */
+var DMPIC = {
+  market:"suit", spon:"kit", staff:"gaf", ground:"bg-pitch", press:"bg-press",
+  sheet:"bg-next", att:"stadium", def:"gk", res:"crest"
+};
+var DMCLUBPIC = { suit:1, kit:1, gaf:1, gk:1, crest:1 };
+var DMTAG = {
+  market:"MARKET", spon:"SPONSOR", staff:"STAFF", ground:"SQUAD", press:"PRESS",
+  sheet:"CHANCES", att:"ATTACK", def:"DEFENCE", res:"RESULT"
+};
+function dmPic(id) {
+  var k = DMPIC[id];
+  if (!k || typeof IMG !== "object") return "";
+  if (DMCLUBPIC[k]) {
+    var club = (typeof imgId === "function")
+      ? imgId((ME.club && ME.club.id) || DEMO_CLUB) : DEMO_CLUB;
+    return IMG[k + "-" + club] || "";
+  }
+  return IMG[k] || "";
+}
+/* se la figura non e' ancora stata caricata sul sito non si lascia
+   l'iconcina rotta: si toglie e resta il pannello scuro col numero */
+function dmNoPic(el) {
+  try {
+    var p = el.parentNode;
+    p.removeChild(el);
+    p.className += " nopic";
+  } catch (e) {}
+}
+
+/* ───────── quale tappa si ha in mano ─────────
+   Entrando si parte sempre dalla prima che manca; poi uno sfoglia dove
+   vuole, e si riparte dalla prima che manca alla prossima entrata. */
+var DMI = null;
+function dmReset() { DMI = null; }
+function dmAt(steps) {
+  if (DMI != null) return Math.max(0, Math.min(steps.length - 1, DMI));
+  for (var k = 0; k < steps.length; k++) { if (!steps[k].ok) return k; }
+  return steps.length - 1;
+}
+
+/* ───────── il tracciato delle nove ─────────
+   La linea e' un disegno che si stira con la larghezza del telefono, le
+   tappe sono bottoni messi in percentuale: cosi' sta bene su ogni
+   schermo. Un pezzo di strada si accende solo se sono fatte tutt'e due
+   le tappe che unisce — le tappe si possono fare in disordine. */
+var DMY = [27, 35, 23, 37, 29, 38, 25, 35, 27];
+function dmRoute(steps, here) {
+  var n = steps.length, xs = [], k;
+  for (k = 0; k < n; k++) xs.push(n > 1 ? 4 + k * (92 / (n - 1)) : 50);
+  function pts(a, b) {
+    var o = [];
+    for (var j = a; j <= b; j++) o.push(xs[j].toFixed(2) + "," + DMY[j % DMY.length]);
+    return o.join(" ");
+  }
+  var svg = '<svg viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true" ' +
+    'focusable="false"><polyline points="' + pts(0, n - 1) + '" fill="none" ' +
+    'stroke="#1C6B4F" stroke-width="1.5" stroke-dasharray="3 3" ' +
+    'vector-effect="non-scaling-stroke"/>';
+  for (k = 0; k < n - 1; k++) {
+    if (steps[k].ok && steps[k + 1].ok) {
+      svg += '<polyline points="' + pts(k, k + 1) + '" fill="none" stroke="#E3EF26" ' +
+        'stroke-width="2" vector-effect="non-scaling-stroke"/>';
+    }
+  }
+  svg += "</svg>";
+
+  return svg + steps.map(function (s, j) {
+    var now = j === here, sz = now ? 26 : (s.ok ? 20 : 16);
+    return '<button class="dmstop' + (s.ok ? " ok" : "") + (now ? " now" : "") +
+      '" type="button" data-k="' + j + '" aria-label="' + esc(s.t) +
+      (s.ok ? " — done" : "") + '" style="left:' + xs[j].toFixed(2) + "%;top:" +
+      DMY[j % DMY.length] + "px;width:" + sz + "px;height:" + sz + "px;font-size:" +
+      (now ? 12 : 10) + 'px">' + (j + 1) + "</button>";
+  }).join("");
+}
+
 /* ───────── la striscia in cima alla home ───────── */
 function demoCard() {
   if (!demoOn()) return "";
@@ -19123,16 +19281,33 @@ function demoCard() {
     " &middot; Ravens FC v Brass FC</em></span>" +
     '<i class="dmar">' + (LDEMO ? "&minus;" : "+") + "</i></button>" +
     (LDEMO
-      ? '<div class="dmlist">' + steps.map(function (s) {
-          /* una riga spuntata non si spegne: al mercato non si torna,
-             ma al campo si', e sei azioni non si spendono in una volta */
-          var fermo = !!s.wait;
-          return '<button class="dmstep' + (s.ok ? " ok" : "") +
-            '" data-go="' + s.go + '" type="button"' + (fermo ? " disabled" : "") + ">" +
-            '<i class="dmtick">' + (s.ok ? "&#10003;" : "") + "</i>" +
-            "<span><b>" + esc(s.t) + "</b><em>" + esc(s.s) + "</em></span>" +
-            (fermo ? "" : '<i class="dmgo">&#8250;</i>') + "</button>";
-        }).join("") +
+      ? '<div class="dmlist">' + (function () {
+          var i = dmAt(steps), c = steps[i], pic = dmPic(c.id);
+          /* la tappa del risultato non si apre: arriva da se' quando i
+             due tempi sono dentro */
+          return '<div class="dmcar"><div class="dmfig' + (pic ? "" : " nopic") + '">' +
+            (pic ? '<img src="' + pic + '" alt="" onerror="dmNoPic(this)">' : "") +
+            '<i class="scrim"></i>' +
+            '<div class="dmbig"><b>' + (i < 9 ? "0" : "") + (i + 1) + "</b><i>/" +
+            steps.length + "</i></div>" +
+            '<div class="dmchip"><span>' + esc(DMTAG[c.id] || "") + "</span>" +
+            (c.ok ? '<span class="done">&#10003; DONE</span>' : "") + "</div>" +
+            '<div class="dmcap"><b>' + esc(c.t) + '</b><em class="dmsub">' +
+            esc(c.s) + "</em></div>" +
+            '<button class="dmarr l" id="dmprev" type="button" ' +
+            'aria-label="The step before">&#8249;</button>' +
+            '<button class="dmarr r" id="dmnext" type="button" ' +
+            'aria-label="The step after">&#8250;</button></div>' +
+            '<div class="dmroute"><p class="dmrlab"><span>THE ROUTE</span><i>' +
+            done + " OF " + steps.length + " LIT</i></p>" +
+            '<div class="dmrbox">' + dmRoute(steps, i) + "</div></div>" +
+            '<div class="dmsq"><div class="sqc" id="sqc"></div></div>' +
+            '<button class="dmopen" id="dmopen" type="button"' +
+            (c.wait ? " disabled" : "") + "><span>" +
+            (c.wait ? "It lands here on its own" : "Open this one") + "</span>" +
+            (c.wait ? "" : '<i aria-hidden="true">&rsaquo;</i>') +
+            "</button></div>";
+        })() +
         '<p class="dmnote">Nothing here reaches a teacher and nothing is kept: ' +
         "when the list is finished the phone goes back to the code screen empty.</p>" +
         '<button class="dmout" id="dmgo" type="button">Leave the try now &#8250;</button>' +
@@ -19146,9 +19321,21 @@ function wireDemo() {
   if ($("dmtog")) {
     $("dmtog").onclick = function () { LDEMO = !LDEMO; drawDemo(); };
   }
-  Array.prototype.forEach.call(document.querySelectorAll(".dmstep"), function (b) {
-    b.onclick = function () { demoGo(b.dataset.go); };
+  /* il carosello: le frecce, le tappe del tracciato e il bottone */
+  var st = demoSteps(), at = dmAt(st);
+  if ($("dmprev")) {
+    $("dmprev").onclick = function () { DMI = (at + st.length - 1) % st.length; drawDemo(); };
+  }
+  if ($("dmnext")) {
+    $("dmnext").onclick = function () { DMI = (at + 1) % st.length; drawDemo(); };
+  }
+  if ($("dmopen")) $("dmopen").onclick = function () { demoGo(st[at].go); };
+  Array.prototype.forEach.call(document.querySelectorAll(".dmstop"), function (b) {
+    b.onclick = function () { DMI = +b.dataset.k; drawDemo(); };
   });
+  /* la rosa vive dentro la striscia: la disegna chi disegna la striscia,
+     perche' ogni tocco sul carosello rifa' tutto il blocco */
+  if ($("sqc") && typeof drawSquadCard === "function") drawSquadCard();
   if ($("dmbye")) $("dmbye").onclick = demoBye;
   if ($("dmgo")) $("dmgo").onclick = demoLeave;
 }
@@ -25886,6 +26073,72 @@ function trModel(txt) {
 }
 
 var TR = {
+ /* ── le nove tappe della prova ──
+    Sono le prime parole che un A1 incontra: se non le capisce non
+    capisce il gioco, e la prova serve proprio a chi non lo conosce. */
+ "The transfer market":
+  { it:"Il mercato", fr:"Le marché des transferts",
+    es:"El mercado de fichajes", pt:"O mercado de transferências" },
+ "twenty questions, then a scout":
+  { it:"venti domande, poi un osservatore", fr:"vingt questions, puis un recruteur",
+    es:"veinte preguntas, luego un ojeador", pt:"vinte perguntas, depois um olheiro" },
+ "A sponsor on the shirt":
+  { it:"Uno sponsor sulla maglia", fr:"Un sponsor sur le maillot",
+    es:"Un patrocinador en la camiseta", pt:"Um patrocinador na camisa" },
+ "make the call — somebody may say no":
+  { it:"fai la telefonata — qualcuno può dire di no",
+    fr:"passe le coup de fil — quelqu'un peut dire non",
+    es:"haz la llamada — alguien puede decir que no",
+    pt:"faça a ligação — alguém pode dizer não" },
+ "Recruit your staff":
+  { it:"Scegli il tuo staff", fr:"Recrute ton staff",
+    es:"Contrata a tu cuerpo técnico", pt:"Contrate a sua comissão técnica" },
+ "ten questions, then one of them signs":
+  { it:"dieci domande, poi uno di loro firma", fr:"dix questions, puis l'un d'eux signe",
+    es:"diez preguntas, luego uno de ellos firma", pt:"dez perguntas, depois um deles assina" },
+ "Grow your squad":
+  { it:"Fai crescere la rosa", fr:"Fais progresser ton effectif",
+    es:"Haz crecer a tu plantilla", pt:"Faça o elenco crescer" },
+ "six actions to share out among your twelve":
+  { it:"sei azioni da dividere fra i tuoi dodici",
+    fr:"six actions à partager entre tes douze",
+    es:"seis acciones para repartir entre tus doce",
+    pt:"seis ações para dividir entre os seus doze" },
+ "The press room":
+  { it:"La sala stampa", fr:"La salle de presse",
+    es:"La sala de prensa", pt:"A sala de imprensa" },
+ "before the match, they want a word":
+  { it:"prima della partita vogliono due parole", fr:"avant le match, ils veulent un mot",
+    es:"antes del partido quieren unas palabras", pt:"antes do jogo, querem uma palavra" },
+ "Your chances":
+  { it:"Le tue occasioni", fr:"Tes occasions",
+    es:"Tus ocasiones", pt:"As suas chances" },
+ "who is there when each one opens":
+  { it:"chi c'è quando se ne apre una", fr:"qui est là quand l'une s'ouvre",
+    es:"quién está cuando se abre cada una", pt:"quem está lá quando cada uma aparece" },
+ "The attack":
+  { it:"L'attacco", fr:"L'attaque", es:"El ataque", pt:"O ataque" },
+ "the dictation you play forward":
+  { it:"il dettato che giochi in avanti", fr:"la dictée que tu joues vers l'avant",
+    es:"el dictado que juegas hacia adelante", pt:"o ditado que você joga para a frente" },
+ "The defence":
+  { it:"La difesa", fr:"La défense", es:"La defensa", pt:"A defesa" },
+ "the one you have to hold":
+  { it:"quello che devi tenere", fr:"celle qu'il faut tenir",
+    es:"el que tienes que aguantar", pt:"o que você tem que segurar" },
+ "The result":
+  { it:"Il risultato", fr:"Le résultat", es:"El resultado", pt:"O resultado" },
+ "it lands here when both halves are in":
+  { it:"arriva qui quando i due tempi sono dentro",
+    fr:"il arrive ici quand les deux mi-temps sont jouées",
+    es:"llega aquí cuando los dos tiempos están hechos",
+    pt:"chega aqui quando os dois tempos estão prontos" },
+ "Open this one":
+  { it:"Apri questa", fr:"Ouvre celle-ci", es:"Abre esta", pt:"Abra esta" },
+ "It lands here on its own":
+  { it:"Arriva qui da solo", fr:"Il arrive ici tout seul",
+    es:"Llega aquí solo", pt:"Chega aqui sozinho" },
+
  "Everything your teacher has entered you in. Tap one to play it: the club is the one he gave you, you do not have to choose.":
   { it:"Tutte le competizioni in cui ti ha iscritto il professore. Toccane una per giocarla: la squadra è quella che ti ha dato lui, non devi sceglierla.",
     fr:"Toutes les compétitions où ton professeur t'a inscrit. Touche-en une pour y jouer : le club est celui qu'il t'a donné, tu n'as pas à choisir.",
@@ -26189,7 +26442,12 @@ TRP = [
    quelli che un A1 non puo' saltare. Del cartello si traduce anche il
    titolo, perche' il titolo e' meta' della spiegazione. */
 var TR_SEL = ".lede, .hint, .lede2, .sm2, .dmtipc b, .dmtipc p, " +
-             ".kbd > b, .kbd > p, .kbds, .trtip";
+             ".kbd > b, .kbd > p, .kbds, .trtip, " +
+             /* e la figurina della prova: titolo, sottotitolo e bottone.
+                Sono le prime parole che un A1 legge del gioco. */
+             /* .dmsub e non em: la riga tradotta e' lei stessa un <em>,
+                e si tradurrebbe da sola */
+             ".dmcap b, .dmcap .dmsub, .dmopen span";
 var TR_OBS = null, TR_BUSY = false;
 
 function trStrip(n) {
