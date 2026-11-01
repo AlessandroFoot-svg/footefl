@@ -2886,6 +2886,38 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .dmgo{flex:none;font-style:normal;font-size:16px;color:var(--gold)}
 .dmnote{margin:10px 8px 2px;font-size:10px;font-weight:600;line-height:1.5;color:var(--fog)}
 
+/* ───────── la prova: niente cornice, fondo quasi nero ─────────
+   La striscia aveva un bordo giallo e un fondo verde chiaro: con una
+   fotografia grande dentro sembravano due pannelli uno sull'altro.
+   Adesso la figurina e' l'unico pannello, e il fondo le sta dietro. */
+html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%,
+  rgba(4,23,15,.95) 40%,rgba(4,23,15,.99) 100%),var(--bg)}
+.dmbox{border:0;background:none;border-radius:0;overflow:visible}
+.dmlist{padding:0}
+.dmcar{padding:0}
+.dmtop{display:flex;align-items:flex-start;gap:12px;padding:0 0 13px}
+.dmtop .t{flex:1;min-width:0}
+.dmtop b{display:block;font-size:20px;font-weight:800;line-height:1.12;letter-spacing:-.01em}
+.dmtop em{display:block;margin-top:3px;font-style:normal;font-size:11.5px;font-weight:600;
+  color:var(--fog)}
+.dmx{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--edge);
+  background:var(--band);color:var(--fog);font:inherit;font-size:15px;line-height:1;
+  cursor:pointer}
+
+/* la rosa su una riga: qui non si apre, si entra */
+.dmsqbar{display:flex;align-items:center;gap:9px;margin-top:12px}
+.dmsqb{flex:1;min-width:0;display:flex;align-items:center;gap:8px;height:52px;padding:0 14px;
+  border:1px solid var(--edge);border-radius:14px;background:var(--band);color:var(--cream);
+  font:inherit;text-align:left;cursor:pointer}
+.dmsqb i{flex:none;font-style:normal;font-size:9px;font-weight:800;letter-spacing:.14em;
+  color:var(--gold)}
+.dmsqb b{flex:none;font-size:19px;font-weight:800;line-height:1}
+.dmsqb em{flex:1;min-width:0;font-style:normal;font-size:12px;font-weight:600;color:var(--fog);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dmsqb u{flex:none;text-decoration:none;color:var(--fog);font-size:15px}
+.dmsqplus{flex:none;width:52px;height:52px;border-radius:14px;border:1px solid var(--gold);
+  background:none;color:var(--gold);font:inherit;font-size:24px;line-height:1;cursor:pointer}
+
 /* ───────── il carosello della prova ─────────
    La lista a righe diceva tutto e non invogliava nessuno: nove righe
    grigie non somigliano a un gioco. Adesso una tappa per volta, grande
@@ -2893,7 +2925,7 @@ textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
    man mano. Le figure sono quelle che l'app ha gia': la tuta per il
    mercato, la maglia per lo sponsor, la giacca per l'allenatore. */
 .dmcar{padding:2px 4px 0}
-.dmfig{position:relative;height:300px;border-radius:16px;overflow:hidden;
+.dmfig{position:relative;height:340px;border-radius:16px;overflow:hidden;
   border:1px solid var(--edge);background:var(--band)}
 .dmfig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92}
 .dmfig .scrim{position:absolute;inset:0;
@@ -9427,10 +9459,10 @@ function drawWho() {
   var nm = myName();
   if (!ME.code) {
     var prova = (typeof demoOn === "function") && demoOn();
-    /* nella prova la lista qui sotto dice gia' tutto: qui resta una riga */
+    /* nella prova qui non c'e' piu' niente: lo spazio va alla figurina,
+       e per uscire c'e' la croce in cima alla striscia */
     $("hwho").innerHTML = prova
-      ? '<div class="pad"><button class="gthin wide" id="hcode" type="button">' +
-        "I have my code now &#8250;</button></div>"
+      ? ""
       : '<div class="pad"><div class="hband prac">' +
       "<b>No code on this phone</b><span>So there are no " +
       "competitions and nothing goes to your teacher. Everything you fix here stays " +
@@ -9440,6 +9472,7 @@ function drawWho() {
       '<button class="gthin" id="hcode" type="button">I have my code now &#8250;</button>' +
       "</div></div>";
     if ($("hpick")) $("hpick").onclick = function () { go("tryit"); };
+    if (!$("hcode")) return;
     $("hcode").onclick = function () {
       /* anche questa e' un'uscita: dalla prova non si esce lasciando
          indietro una partita a meta' che poi riappare da sola */
@@ -19272,15 +19305,16 @@ function demoCard() {
       "</div></section>";
   }
 
-  return '<section class="pad"><div class="dmbox' + (LDEMO ? " open" : "") + '">' +
-    '<button class="dmhead" id="dmtog" type="button" aria-expanded="' +
-    (LDEMO ? "true" : "false") + '">' +
-    '<span class="dmn">' + done + "<i>/" + steps.length + "</i></span>" +
-    '<span class="dmt"><b>You are trying FootEFL</b><em>' +
+  /* il titolo sta fuori dalla figurina e non apre piu' niente: la
+     lista non si richiude, perche' nella prova e' tutta la pagina. La
+     croce e' l'uscita, come il « I have my code now » di prima. */
+  return '<section class="pad"><div class="dmbox">' +
+    '<div class="dmtop"><span class="t"><b>You are trying FootEFL</b><em>' +
     esc(demoDiff().t) + " &middot; level " + esc(DEMO.level) +
     " &middot; Ravens FC v Brass FC</em></span>" +
-    '<i class="dmar">' + (LDEMO ? "&minus;" : "+") + "</i></button>" +
-    (LDEMO
+    '<button class="dmx" id="dmx" type="button" ' +
+    'aria-label="Leave the try">&#10005;</button></div>' +
+    (true
       ? '<div class="dmlist">' + (function () {
           var i = dmAt(steps), c = steps[i], pic = dmPic(c.id);
           /* la tappa del risultato non si apre: arriva da se' quando i
@@ -19301,7 +19335,13 @@ function demoCard() {
             '<div class="dmroute"><p class="dmrlab"><span>THE ROUTE</span><i>' +
             done + " OF " + steps.length + " LIT</i></p>" +
             '<div class="dmrbox">' + dmRoute(steps, i) + "</div></div>" +
-            '<div class="dmsq"><div class="sqc" id="sqc"></div></div>' +
+            /* la rosa su una riga sola: nella prova non serve aprirla
+               qui, serve sapere che c'e' e poterci entrare */
+            '<div class="dmsqbar"><button class="dmsqb" id="dmsq" type="button">' +
+            "<i>MY SQUAD</i><b>" + dmSquadN() + "</b><em>players &middot; bench " +
+            dmBenchN() + '</em><u aria-hidden="true">&rsaquo;</u></button>' +
+            '<button class="dmsqplus" id="dmplus" type="button" ' +
+            'aria-label="Grow your squad">+</button></div>' +
             '<button class="dmopen" id="dmopen" type="button"' +
             (c.wait ? " disabled" : "") + "><span>" +
             (c.wait ? "It lands here on its own" : "Open this one") + "</span>" +
@@ -19317,10 +19357,22 @@ function demoCard() {
 }
 var LDEMO = true;        /* la lista parte aperta: è la guida della prova */
 
+/* quanti giocatori e quanti in panchina, per la riga della rosa */
+function dmSquadN() {
+  try { return squadAll().length; } catch (e) { return 0; }
+}
+function dmBenchN() {
+  try {
+    return STAFF.filter(function (m) { return staffIs(m.id); }).length;
+  } catch (e) { return 0; }
+}
+
 function wireDemo() {
-  if ($("dmtog")) {
-    $("dmtog").onclick = function () { LDEMO = !LDEMO; drawDemo(); };
-  }
+  if ($("dmx")) $("dmx").onclick = demoLeave;
+  if ($("dmsq")) $("dmsq").onclick = function () { go("squad"); };
+  /* il piu' porta al campo: le sei azioni si spendono li', ed e' la
+     stessa tappa « Grow your squad » del tracciato */
+  if ($("dmplus")) $("dmplus").onclick = function () { go("ground"); };
   /* il carosello: le frecce, le tappe del tracciato e il bottone */
   var st = demoSteps(), at = dmAt(st);
   if ($("dmprev")) {
@@ -19333,9 +19385,6 @@ function wireDemo() {
   Array.prototype.forEach.call(document.querySelectorAll(".dmstop"), function (b) {
     b.onclick = function () { DMI = +b.dataset.k; drawDemo(); };
   });
-  /* la rosa vive dentro la striscia: la disegna chi disegna la striscia,
-     perche' ogni tocco sul carosello rifa' tutto il blocco */
-  if ($("sqc") && typeof drawSquadCard === "function") drawSquadCard();
   if ($("dmbye")) $("dmbye").onclick = demoBye;
   if ($("dmgo")) $("dmgo").onclick = demoLeave;
 }
@@ -19358,6 +19407,13 @@ function drawDemo() {
   if (!box) return;
   box.innerHTML = demoCard();
   wireDemo();
+  /* il fondo si fa quasi nero solo qui: la figurina e' una fotografia
+     grande, e con il verde chiaro di sempre dietro non staccava.
+     Si aggiunge dopo paintBg, che scrive la classe da capo, e muore da
+     se' alla prima stanza che si apre. */
+  try {
+    if (demoOn()) document.documentElement.className += " trydark";
+  } catch (e) {}
 }
 
 /* ───────── dove si torna ─────────
