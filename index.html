@@ -2925,7 +2925,7 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
    man mano. Le figure sono quelle che l'app ha gia': la tuta per il
    mercato, la maglia per lo sponsor, la giacca per l'allenatore. */
 .dmcar{padding:2px 4px 0}
-.dmfig{position:relative;height:340px;border-radius:16px;overflow:hidden;
+.dmfig{position:relative;height:400px;border-radius:16px;overflow:hidden;
   border:1px solid var(--edge);background:var(--band)}
 .dmfig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92}
 .dmfig .scrim{position:absolute;inset:0;
@@ -2943,7 +2943,7 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .dmchip span{padding:4px 9px;border-radius:999px;background:var(--gold);color:#06231D;
   font-size:9px;font-weight:800;letter-spacing:.14em}
 .dmchip span.done{background:rgba(4,23,15,.8);border:1px solid var(--gold);color:var(--gold)}
-.dmcap{position:absolute;left:16px;right:16px;bottom:16px}
+.dmcap{position:absolute;left:16px;right:78px;bottom:16px}
 .dmcap b{display:block;font-size:25px;font-weight:800;line-height:1.08;letter-spacing:-.01em}
 .dmcap em{display:block;margin-top:5px;font-style:normal;font-size:12.5px;font-weight:600;
   line-height:1.4;color:var(--fog)}
@@ -2952,6 +2952,19 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
   font:inherit;font-size:17px;line-height:1;cursor:pointer;z-index:2}
 .dmarr.l{left:6px}
 .dmarr.r{right:6px}
+/* la lastra: tutta la figurina e' il bottone che apre la stanza. Sta
+   sotto le frecce, cosi' sfogliare non vuol dire entrare. */
+.dmhit{position:absolute;inset:0;z-index:1;width:100%;height:100%;padding:0;border:0;
+  background:none;cursor:pointer;border-radius:16px}
+.dmhit:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
+/* e il tondo giallo e' solo il segno che si puo' toccare */
+.dmgoc{position:absolute;right:16px;bottom:16px;z-index:0;display:grid;place-items:center;
+  width:50px;height:50px;border-radius:50%;background:var(--gold);color:#06231D;
+  font-style:normal;font-size:24px;font-weight:800;line-height:1;pointer-events:none}
+.dmgoc.wait{background:none;border:1px dashed var(--edge);color:var(--fog);font-size:18px}
+.dmfig:active .dmgoc{transform:scale(.94)}
+.dmwait{margin:11px 2px 0;font-size:11.5px;font-weight:600;line-height:1.45;color:var(--fog);
+  text-align:center}
 
 /* il tracciato: la linea e' un disegno che si stira con la larghezza
    del telefono, le tappe sono bottoni veri messi in percentuale */
@@ -2976,16 +2989,6 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 /* la rosa sta qui dentro, sopra il bottone: nella prova e' la cosa che
    cambia mentre le tappe passano, e va vista senza andarla a cercare */
 .dmsq{margin-top:11px}
-.dmopen{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
-  margin-top:11px;padding:14px;border:0;border-radius:12px;background:var(--gold);
-  color:#06231D;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
-.dmopen:disabled{background:var(--band);color:var(--fog);
-  box-shadow:inset 0 0 0 1px var(--edge);cursor:default}
-.dmopen i{font-style:normal}
-/* la riga tradotta, qui, sta su un bottone giallo: con il verde di
-   sempre non si leggerebbe */
-.dmopen .trx{border-left-color:rgba(6,35,29,.3);color:rgba(6,35,29,.8)}
-.dmopen:disabled .trx{border-left-color:var(--edge);color:var(--fog)}
 .dmcap .trx{font-size:11px}
 
 .dmend{padding:20px 17px;border-radius:14px;background:var(--gold);color:#06231D;text-align:center}
@@ -19328,6 +19331,14 @@ function demoCard() {
             (c.ok ? '<span class="done">&#10003; DONE</span>' : "") + "</div>" +
             '<div class="dmcap"><b>' + esc(c.t) + '</b><em class="dmsub">' +
             esc(c.s) + "</em></div>" +
+            /* si entra toccando la figurina: il bottone sotto diceva la
+               stessa cosa e rubava sessanta pixel alla fotografia. Il
+               tondo giallo e' solo il segno che si puo' toccare — il
+               bottone vero e' la lastra trasparente sopra la carta. */
+            (c.wait
+              ? '<i class="dmgoc wait" aria-hidden="true">&#8230;</i>'
+              : '<button class="dmhit" id="dmopen" type="button" aria-label="Open: ' +
+                esc(c.t) + '"></button><i class="dmgoc" aria-hidden="true">&#8250;</i>') +
             '<button class="dmarr l" id="dmprev" type="button" ' +
             'aria-label="The step before">&#8249;</button>' +
             '<button class="dmarr r" id="dmnext" type="button" ' +
@@ -19342,11 +19353,10 @@ function demoCard() {
             dmBenchN() + '</em><u aria-hidden="true">&rsaquo;</u></button>' +
             '<button class="dmsqplus" id="dmplus" type="button" ' +
             'aria-label="Grow your squad">+</button></div>' +
-            '<button class="dmopen" id="dmopen" type="button"' +
-            (c.wait ? " disabled" : "") + "><span>" +
-            (c.wait ? "It lands here on its own" : "Open this one") + "</span>" +
-            (c.wait ? "" : '<i aria-hidden="true">&rsaquo;</i>') +
-            "</button></div>";
+            (c.wait
+              ? '<p class="dmwait">It lands here on its own, when both halves are in.</p>'
+              : "") +
+            "</div>";
         })() +
         '<p class="dmnote">Nothing here reaches a teacher and nothing is kept: ' +
         "when the list is finished the phone goes back to the code screen empty.</p>" +
@@ -26189,11 +26199,11 @@ var TR = {
     fr:"il arrive ici quand les deux mi-temps sont jouées",
     es:"llega aquí cuando los dos tiempos están hechos",
     pt:"chega aqui quando os dois tempos estão prontos" },
- "Open this one":
-  { it:"Apri questa", fr:"Ouvre celle-ci", es:"Abre esta", pt:"Abra esta" },
- "It lands here on its own":
-  { it:"Arriva qui da solo", fr:"Il arrive ici tout seul",
-    es:"Llega aquí solo", pt:"Chega aqui sozinho" },
+ "It lands here on its own, when both halves are in.":
+  { it:"Arriva qui da solo, quando i due tempi sono dentro.",
+    fr:"Il arrive ici tout seul, quand les deux mi-temps sont jouées.",
+    es:"Llega aquí solo, cuando los dos tiempos están hechos.",
+    pt:"Chega aqui sozinho, quando os dois tempos estão prontos." },
 
  "Everything your teacher has entered you in. Tap one to play it: the club is the one he gave you, you do not have to choose.":
   { it:"Tutte le competizioni in cui ti ha iscritto il professore. Toccane una per giocarla: la squadra è quella che ti ha dato lui, non devi sceglierla.",
@@ -26503,7 +26513,7 @@ var TR_SEL = ".lede, .hint, .lede2, .sm2, .dmtipc b, .dmtipc p, " +
                 Sono le prime parole che un A1 legge del gioco. */
              /* .dmsub e non em: la riga tradotta e' lei stessa un <em>,
                 e si tradurrebbe da sola */
-             ".dmcap b, .dmcap .dmsub, .dmopen span";
+             ".dmcap b, .dmcap .dmsub, .dmwait";
 var TR_OBS = null, TR_BUSY = false;
 
 function trStrip(n) {
