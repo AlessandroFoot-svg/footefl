@@ -4531,7 +4531,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "140";
+var APPVER = "141";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -12002,6 +12002,23 @@ VIEWS.squad = function () {
      bot. Quindi niente classifica, niente « prossima », niente giornate
      che restano — erano la stagione di qualcun altro. */
   var demo = (typeof demoOn === "function") && demoOn();
+  /* ───────── nella prova questa pagina e' solo la rosa ─────────
+     Fuori dalla prova qui c'e' la stagione intera: la sala stampa, la
+     reputazione, il mercato, la prossima partita, le stelle, le porte.
+     Dentro la prova quelle cose stanno gia' tutte nel tracciato delle
+     nove tappe, e ripeterle qui vuol dire dire due volte la stessa
+     cosa a chi il gioco non lo conosce ancora. Qui si entra per
+     guardare i propri giocatori, e si guardano quelli. */
+  if (demo) {
+    /* e la rosa si apre gia' aperta: si e' entrati per vedere le
+       maglie, non per trovare un'altra cosa da toccare */
+    SQOPEN = true;
+    html('<section class="pad"><div class="sqc" id="sqc"></div></section>' +
+      '<section class="pad" id="signs" hidden><h2 class="sec">Signed in the market</h2>' +
+      '<div class="panel" id="signbox"></div></section>');
+    drawSquadCard(); drawSignings();
+    return;
+  }
   html('<div id="sqpress"></div><div id="band"></div>' +
     /* la percezione, in alto e sempre: comanda chi si presenta in
        conferenza e chi risponde agli sponsor, e stava dietro una porta */
@@ -12010,11 +12027,9 @@ VIEWS.squad = function () {
     '<div id="stadbar"></div>' +
     '<section class="pad" id="signs" hidden><h2 class="sec">Signed in the market</h2>' +
     '<div class="panel" id="signbox"></div></section>' +
-    (demo ? "" :
-      '<section class="pad"><h2 class="sec">Where I stand</h2>' +
-      '<div class="panel" id="lad"></div></section>') +
-    '<section class="pad"><h2 class="sec">' +
-    (demo ? "Your match" : "Next match") + "</h2>" +
+    '<section class="pad"><h2 class="sec">Where I stand</h2>' +
+    '<div class="panel" id="lad"></div></section>' +
+    '<section class="pad"><h2 class="sec">Next match</h2>' +
     '<div id="next"></div></section>' +
     '<section class="pad"><div id="starbar"></div></section>' +
     '<section class="pad"><h2 class="sec">More</h2>' +
@@ -12022,7 +12037,7 @@ VIEWS.squad = function () {
     '<p class="foot" id="foot"></p>');
   drawSqPress(); drawFameBar(); drawStadium(); drawBand(); drawSquadCard();
   drawSignings();
-  if (!demo) drawTable();
+  drawTable();
   drawNext();
   drawStarBar(); drawTiles(); drawFoot();
 };
@@ -19490,9 +19505,7 @@ function demoCard() {
                qui, serve sapere che c'e' e poterci entrare */
             '<div class="dmsqbar"><button class="dmsqb" id="dmsq" type="button">' +
             "<i>MY SQUAD</i><b>" + dmSquadN() + "</b><em>players &middot; bench " +
-            dmBenchN() + '</em><u aria-hidden="true">&rsaquo;</u></button>' +
-            '<button class="dmsqplus" id="dmplus" type="button" ' +
-            'aria-label="Grow your squad">+</button></div>' +
+            dmBenchN() + '</em><u aria-hidden="true">&rsaquo;</u></button></div>' +
             (c.wait
               ? '<p class="dmwait">It lands here on its own, when both halves are in.</p>'
               : "") +
@@ -19519,10 +19532,9 @@ function dmBenchN() {
 
 function wireDemo() {
   if ($("dmx")) $("dmx").onclick = demoLeave;
+  /* una porta sola: la riga apre la rosa. Il piu' che portava al campo
+     era una scorciatoia in piu' per una cosa che il tracciato ha gia'. */
   if ($("dmsq")) $("dmsq").onclick = function () { go("squad"); };
-  /* il piu' porta al campo: le sei azioni si spendono li', ed e' la
-     stessa tappa « Grow your squad » del tracciato */
-  if ($("dmplus")) $("dmplus").onclick = function () { go("ground"); };
   /* il carosello: le frecce, le tappe del tracciato e il bottone */
   var st = demoSteps(), at = dmAt(st);
   if ($("dmprev")) {
