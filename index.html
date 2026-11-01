@@ -3922,7 +3922,7 @@ var CARDS = [
    Quando saranno molte — i volti dei giocatori, venti dettati — andranno
    messe accanto all'app invece che dentro.
    ═══════════════════════════════════════════════════════════════════ */
-var IMG = {"bg-ROP":"im/bg-ROP.webp","bg-market":"im/bg-market.webp","bg-next":"im/bg-next.webp","bg-office":"im/bg-office.webp","bg-pitch":"im/bg-pitch.webp","bg-press":"im/bg-press.webp","bg-sponsor":"im/bg-sponsor.webp","crest-BRA":"im/crest-BRA.webp","crest-OXF":"im/crest-OXF.webp","crest-RAV":"im/crest-RAV.webp","crest-ROP":"im/crest-ROP.webp","crest-SHE":"im/crest-SHE.webp","fit-BRA":"im/fit-BRA.webp","fit-OXF":"im/fit-OXF.webp","fit-RAV":"im/fit-RAV.webp","fit-ROP":"im/fit-ROP.webp","fit-SHE":"im/fit-SHE.webp","gaf-BRA":"im/gaf-BRA.webp","gaf-OXF":"im/gaf-OXF.webp","gaf-RAV":"im/gaf-RAV.webp","gaf-ROP":"im/gaf-ROP.webp","gaf-SHE":"im/gaf-SHE.webp","gk-BRA":"im/gk-BRA.webp","gk-OXF":"im/gk-OXF.webp","gk-RAV":"im/gk-RAV.webp","gk-ROP":"im/gk-ROP.webp","gk-SHE":"im/gk-SHE.webp","hero-ROP":"im/hero-ROP.webp","ic-champions":"im/ic-champions.png","ic-cup":"im/ic-cup.png","ic-eurofa":"im/ic-eurofa.png","ic-season":"im/ic-season.png","ic-settings":"im/ic-settings.png","ic-training":"im/ic-training.png","kit-BRA":"im/kit-BRA.webp","kit-OXF":"im/kit-OXF.webp","kit-RAV":"im/kit-RAV.webp","kit-ROP":"im/kit-ROP.webp","kit-SHE":"im/kit-SHE.webp","pitch":"im/pitch.jpg","scoutcoat":"im/scoutcoat.webp","stadium":"im/stadium.jpg","suit-BRA":"im/suit-BRA.webp","suit-OXF":"im/suit-OXF.webp","suit-RAV":"im/suit-RAV.webp","suit-ROP":"im/suit-ROP.webp","suit-SHE":"im/suit-SHE.webp","wx-cloudy":"im/wx-cloudy.jpg","wx-fog":"im/wx-fog.jpg","wx-rain":"im/wx-rain.jpg","wx-snow":"im/wx-snow.jpg","wx-storm":"im/wx-storm.jpg","wx-sunny":"im/wx-sunny.jpg"};
+var IMG = {"bg-ROP":"im/bg-ROP.webp","bg-attack":"im/bg-attack.png","bg-chances":"im/bg-chances.webp","bg-defence":"im/bg-defence.png","bg-squad":"im/bg-squad.webp","bg-market":"im/bg-market.webp","bg-next":"im/bg-next.webp","bg-office":"im/bg-office.webp","bg-pitch":"im/bg-pitch.webp","bg-press":"im/bg-press.webp","bg-sponsor":"im/bg-sponsor.webp","crest-BRA":"im/crest-BRA.webp","crest-OXF":"im/crest-OXF.webp","crest-RAV":"im/crest-RAV.webp","crest-ROP":"im/crest-ROP.webp","crest-SHE":"im/crest-SHE.webp","fit-BRA":"im/fit-BRA.webp","fit-OXF":"im/fit-OXF.webp","fit-RAV":"im/fit-RAV.webp","fit-ROP":"im/fit-ROP.webp","fit-SHE":"im/fit-SHE.webp","gaf-BRA":"im/gaf-BRA.webp","gaf-OXF":"im/gaf-OXF.webp","gaf-RAV":"im/gaf-RAV.webp","gaf-ROP":"im/gaf-ROP.webp","gaf-SHE":"im/gaf-SHE.webp","gk-BRA":"im/gk-BRA.webp","gk-OXF":"im/gk-OXF.webp","gk-RAV":"im/gk-RAV.webp","gk-ROP":"im/gk-ROP.webp","gk-SHE":"im/gk-SHE.webp","hero-ROP":"im/hero-ROP.webp","ic-champions":"im/ic-champions.png","ic-cup":"im/ic-cup.png","ic-eurofa":"im/ic-eurofa.png","ic-season":"im/ic-season.png","ic-settings":"im/ic-settings.png","ic-training":"im/ic-training.png","kit-BRA":"im/kit-BRA.webp","kit-OXF":"im/kit-OXF.webp","kit-RAV":"im/kit-RAV.webp","kit-ROP":"im/kit-ROP.webp","kit-SHE":"im/kit-SHE.webp","pitch":"im/pitch.jpg","scoutcoat":"im/scoutcoat.webp","stadium":"im/stadium.jpg","suit-BRA":"im/suit-BRA.webp","suit-OXF":"im/suit-OXF.webp","suit-RAV":"im/suit-RAV.webp","suit-ROP":"im/suit-ROP.webp","suit-SHE":"im/suit-SHE.webp","wx-cloudy":"im/wx-cloudy.jpg","wx-fog":"im/wx-fog.jpg","wx-rain":"im/wx-rain.jpg","wx-snow":"im/wx-snow.jpg","wx-storm":"im/wx-storm.jpg","wx-sunny":"im/wx-sunny.jpg"};
 function imgOf(k) { return IMG[k] || ""; }
 /* la sala stampa serve anche al foglio di stile, per la carta in home */
 try {
@@ -4533,7 +4533,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "143";
+var APPVER = "144";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -19367,13 +19367,13 @@ function demoOver() { return demoOn() && demoLeft() === 0; }
 
 /* ───────── la figurina di ogni tappa ─────────
    Nove righe grigie non somigliano a un gioco: adesso ogni tappa ha la
-   sua immagine, presa fra quelle che l'app ha gia'. Cinque seguono il
-   club — la tuta, la maglia, la giacca, il portiere, lo stemma — e
-   quattro sono dei posti: il campo, la sala stampa, la vigilia, lo
-   stadio. */
+   sua immagine. Lo stemma segue il club; le altre sono uguali per tutti,
+   e la squadra, le occasioni, l'attacco e la difesa hanno la loro figura
+   invece di prendere in prestito il campo, la vigilia, lo stadio e il
+   portiere. */
 var DMPIC = {
-  market:"bg-market", spon:"bg-sponsor", staff:"bg-office", ground:"bg-pitch",
-  press:"bg-press", sheet:"bg-next", att:"stadium", def:"gk", res:"crest"
+  market:"bg-market", spon:"bg-sponsor", staff:"bg-office", ground:"bg-squad",
+  press:"bg-press", sheet:"bg-chances", att:"bg-attack", def:"bg-defence", res:"crest"
 };
 var DMCLUBPIC = { suit:1, kit:1, gaf:1, gk:1, crest:1 };
 var DMTAG = {
