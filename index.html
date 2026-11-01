@@ -3605,6 +3605,38 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .trchip b{font:800 10px/1 var(--brand);letter-spacing:.06em}
 .trchip.on{border-color:var(--gold);color:var(--gold);background:rgba(227,239,38,.12)}
 .trchip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ═════════ i movimenti ═════════
+   Prima ogni schermata compariva di colpo, e andare avanti o tornare
+   indietro sembravano la stessa cosa. Adesso la pagina nuova arriva dal
+   lato verso cui si va: da destra andando avanti, da sinistra tornando.
+   Solo spostamento e trasparenza, mai le misure: niente salta, e chi
+   tocca durante il movimento tocca davvero. Chi sul telefono ha chiesto
+   meno movimento vede tutto fermo, come per il resto dell'app. */
+@media (prefers-reduced-motion: no-preference) {
+  #main.vin-f{animation:vinf .24s cubic-bezier(.2,.8,.2,1) backwards}
+  #main.vin-b{animation:vinb .24s cubic-bezier(.2,.8,.2,1) backwards}
+  #main.vin-x{animation:vinx .18s ease-out backwards}
+  @keyframes vinf{from{opacity:0;transform:translateX(28px)}}
+  @keyframes vinb{from{opacity:0;transform:translateX(-28px)}}
+  @keyframes vinx{from{opacity:0}}
+  /* le tessere salgono una dopo l'altra, ma solo le prime otto: oltre,
+     si aspetterebbe e basta */
+  .vrise{animation:vrise .28s cubic-bezier(.2,.8,.2,1) backwards}
+  @keyframes vrise{from{opacity:0;transform:translateY(10px)}}
+  /* il tocco si sente: il bottone cede appena e torna, invece di
+     scattare di un pixel; la scelta cambia colore senza strappo */
+  .btn,.ghost,.gthin,.tile,.gtile,.opt,.hmb,.nb,.btake,.tgd,.rcman,.dmx,.dmlv,.dmdf,.dmarr{
+    transition:transform .12s ease-out,background-color .18s ease,
+      border-color .18s ease,color .18s ease}
+  .btn:active:not(:disabled),.ghost:active,.gthin:active,.tile:active,.gtile:active,
+  .opt:active,.hmb:active,.nb:active,.btake:active,.tgd:active,.rcman:active,
+  .dmx:active,.dmlv:active,.dmdf:active{transform:scale(.97)}
+  .dmarr:active{transform:scale(.9)}
+  /* le nove tappe: la figurina scivola dalla parte della freccia */
+  .dmfig.vsl-f{animation:vinf .22s cubic-bezier(.2,.8,.2,1) backwards}
+  .dmfig.vsl-b{animation:vinb .22s cubic-bezier(.2,.8,.2,1) backwards}
+}
 </style>
 </head>
 <body>
@@ -4533,7 +4565,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "144";
+var APPVER = "145";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -4701,11 +4733,11 @@ var HERE = null, STACK = [];
 function go(name, data, keep) {
   if (HERE && !keep) STACK.push(HERE);
   HERE = { name:name, data:data };
-  draw();
+  draw("f");
 }
 function swap(name, data) {            /* resta nello stesso punto della storia */
   HERE = { name:name, data:data };
-  draw();
+  draw("x");
 }
 /* la freccia in alto a sinistra. Quando la pila e' vuota — succede ogni
    volta che una schermata chiude con reset() — non deve restare morta:
@@ -4717,18 +4749,45 @@ function back() {
     return reset(home);
   }
   HERE = STACK.pop();
-  draw();
+  draw("b");
 }
 function reset(name, data) {
   STACK = []; HERE = { name:name, data:data };
-  draw();
+  draw("x");
 }
-function draw() {
+function draw(dir) {
   var v = VIEWS[HERE.name];
   if (!v) return;
-  $("main").innerHTML = "";
+  var m = $("main"), same = m.getAttribute("data-v") === HERE.name;
+  m.innerHTML = "";
   v(HERE.data);
   toTop();
+  m.setAttribute("data-v", HERE.name);
+  /* la stessa schermata ridisegnata da se' — una risposta, un
+     cronometro — non si muove: tremerebbe sotto le dita */
+  if (!same || dir === "f" || dir === "b") moveIn(m, dir);
+}
+/* la pagina entra dalla parte verso cui si va, e le tessere salgono in
+   fila; la classe se ne va a movimento finito, se no ripartirebbe ogni
+   volta che la pagina torna visibile */
+function moveIn(m, dir) {
+  try {
+    m.classList.remove("vin-f", "vin-b", "vin-x");
+    void m.offsetWidth;
+    m.classList.add(dir === "f" ? "vin-f" : dir === "b" ? "vin-b" : "vin-x");
+    if (!m.getAttribute("data-mv")) {
+      m.setAttribute("data-mv", "1");
+      m.addEventListener("animationend", function (e) {
+        if (e.target === m) m.classList.remove("vin-f", "vin-b", "vin-x");
+      });
+    }
+    var t = m.querySelectorAll(".gtile,.tile,.opt,.dmlv,.dmdf");
+    for (var i = 0; i < t.length && i < 8; i++) {
+      if (t[i].classList.contains("pop")) continue;
+      t[i].style.animationDelay = (60 + i * 40) + "ms";
+      t[i].classList.add("vrise");
+    }
+  } catch (e) {}
 }
 /* sul telefono scorre la finestra, dentro la cornice scorre il corpo */
 function toTop() {
@@ -19404,6 +19463,7 @@ function dmNoPic(el) {
    Entrando si parte sempre dalla prima che manca; poi uno sfoglia dove
    vuole, e si riparte dalla prima che manca alla prossima entrata. */
 var DMI = null;
+var DMDIR = "";          /* da che parte si e' sfogliato: f avanti, b indietro */
 function dmReset() { DMI = null; }
 function dmAt(steps) {
   if (DMI != null) return Math.max(0, Math.min(steps.length - 1, DMI));
@@ -19540,10 +19600,10 @@ function wireDemo() {
   /* il carosello: le frecce, le tappe del tracciato e il bottone */
   var st = demoSteps(), at = dmAt(st);
   if ($("dmprev")) {
-    $("dmprev").onclick = function () { DMI = (at + st.length - 1) % st.length; drawDemo(); };
+    $("dmprev").onclick = function () { DMI = (at + st.length - 1) % st.length; DMDIR = "b"; drawDemo(); };
   }
   if ($("dmnext")) {
-    $("dmnext").onclick = function () { DMI = (at + 1) % st.length; drawDemo(); };
+    $("dmnext").onclick = function () { DMI = (at + 1) % st.length; DMDIR = "f"; drawDemo(); };
   }
   if ($("dmopen")) $("dmopen").onclick = function () { demoGo(st[at].go); };
   Array.prototype.forEach.call(document.querySelectorAll(".dmstop"), function (b) {
@@ -19571,6 +19631,12 @@ function drawDemo() {
   if (!box) return;
   box.innerHTML = demoCard();
   wireDemo();
+  /* sfogliando con le frecce la figurina arriva da quella parte */
+  if (DMDIR) {
+    var f = box.querySelector(".dmfig");
+    if (f) f.className += " vsl-" + DMDIR;
+    DMDIR = "";
+  }
   /* il fondo si fa quasi nero solo qui: la figurina e' una fotografia
      grande, e con il verde chiaro di sempre dietro non staccava.
      Si aggiunge dopo paintBg, che scrive la classe da capo, e muore da
