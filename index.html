@@ -4947,7 +4947,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "152";
+var APPVER = "153"
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -20263,7 +20263,7 @@ function demoCard() {
         "<b>Matchday 1 is over.</b>" +
         "<p>There is one more. Two new dictations, and before the match the words " +
         "you missed in this one.</p>" +
-        '<button class="btn" id="dmnext">Play matchday 2 &rsaquo;</button>' +
+        '<button class="btn" id="dmmd2">Play matchday 2 &rsaquo;</button>' +
         '<button class="btn ghost" id="dmbye">Finish here</button>' +
         "</div></section>";
     }
@@ -20364,7 +20364,10 @@ function wireDemo() {
     b.onclick = function () { DMI = +b.dataset.k; drawDemo(); };
   });
   if ($("dmbye")) $("dmbye").onclick = demoBye;
-  if ($("dmnext")) $("dmnext").onclick = demoNext;
+  /* il bottone della seconda giornata ha un nome suo: « dmnext » e' la
+     freccia che sfoglia le tappe, e con lo stesso nome la freccia
+     faceva partire la giornata 2 */
+  if ($("dmmd2")) $("dmmd2").onclick = demoNext;
   if ($("dmgo")) $("dmgo").onclick = demoLeave;
 }
 /* dove porta ogni riga della lista: il foglio e i due tempi hanno la
