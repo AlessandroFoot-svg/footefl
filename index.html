@@ -37,16 +37,21 @@ html{background:#02100A}
    nero: le pagine ci scorrono sopra e i pannelli restano leggibili.
    In cima si intravede la luce dei riflettori, in fondo non piu'. */
 html{background:var(--ink)}
+/* un verde solo, scuro, per tutte le pagine: quello che prima aveva
+   soltanto la prova. Lo stadio dietro si intuisce appena — le pagine si
+   riconoscono come la stessa app, e le figure delle tappe staccano */
 html::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:linear-gradient(180deg,rgba(4,23,15,.42) 0%,rgba(4,23,15,.58) 32%,
-    rgba(4,23,15,.76) 60%,rgba(4,23,15,.9) 84%,rgba(4,23,15,.97) 100%),var(--bg);
+  background-color:#04170F;
+  background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%,
+    rgba(4,23,15,.95) 40%,rgba(4,23,15,.99) 100%),var(--bg);
   background-size:cover,cover;background-position:center top,center top;
   background-repeat:no-repeat,no-repeat}
 @media (prefers-reduced-motion: no-preference){html::before{background-attachment:scroll}}
-/* dove lo sfondo e' il luogo, il velo si alza */
-html.bgsoft::before{background-image:linear-gradient(180deg,rgba(4,23,15,.2) 0%,
-  rgba(4,23,15,.4) 38%,rgba(4,23,15,.66) 68%,rgba(4,23,15,.88) 88%,
-  rgba(4,23,15,.96) 100%),var(--bg)}
+/* « bgsoft » alzava il velo dove lo sfondo era il luogo (la sala stampa,
+   la porta): adesso il fondo e' lo stesso dappertutto, e la classe resta
+   solo perche' la chiamano ancora */
+html.bgsoft::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%,
+  rgba(4,23,15,.95) 40%,rgba(4,23,15,.99) 100%),var(--bg)}
 
 body{font-family:Montserrat,system-ui,-apple-system,"Segoe UI",sans-serif;
   color:var(--cream);background:transparent;position:relative;z-index:1;
@@ -3728,14 +3733,10 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .tv-df.on .tv-bars i.lit{background:#06231D}
 .tv .dmvoice{margin-top:8px}
 
-/* la pagina del club si veste dei colori del club: il fondo e' la sua
-   maglia, non lo stadio di tutti */
-html.cbpage::before{background:var(--cbbg)}
-html.cbpage body{color:var(--cbink)}
-html.cbpage .gtop p{color:var(--cbacc)}
-html.cbpage .tv-round,html.cbpage .gtop .trchip{border-color:var(--cbline);
-  background:transparent;color:var(--cbink)}
-.cb-hero{position:relative;overflow:hidden;padding:8px 20px 20px}
+/* la pagina del club ha il fondo di tutte le altre; il colore del club
+   sta nella fascia in alto, con lo stemma e il nome */
+.cb-hero{position:relative;overflow:hidden;padding:8px 20px 20px;border-radius:0 0 22px 22px;
+  background:linear-gradient(160deg,var(--cbclub) 0%,var(--cbclub2) 60%,transparent 100%)}
 .cb-kit{position:absolute;right:-78px;top:-8px;width:210px;height:210px;object-fit:contain;
   opacity:.32;pointer-events:none}
 .cb-id{position:relative;display:flex;align-items:center;gap:16px}
@@ -4722,7 +4723,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "147";
+var APPVER = "148";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -19962,12 +19963,6 @@ function cbRgba(hex, a) {
   var n = parseInt(m[1], 16);
   return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
 }
-function cbLight(hex) {
-  var m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ""));
-  if (!m) return false;
-  var n = parseInt(m[1], 16);
-  return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) > 150;
-}
 /* i numeri del club: i miei dal riepilogo del gioco, quelli dell'altro
    dalla classifica della competizione aperta; altrimenti zero */
 function cbStats(id, mine) {
@@ -20012,16 +20007,18 @@ VIEWS.club = function (d) {
      resta sulla scheda che si stava guardando */
   if (CBID !== c.id) { CBID = c.id; CBTAB = "squad"; }
   paintNeutral();
-  /* il fondo della pagina e' il colore del club. Chi ha l'inchiostro
-     scuro (la corda dei Ropewalkers) ha un fondo chiaro: l'oro li' non si
-     legge, e l'accento si fa con l'inchiostro */
-  var light = !cbLight(c.ink), r = document.documentElement.style;
-  r.setProperty("--cbbg", c.colour || "#16233F");
-  r.setProperty("--cbink", c.ink || CREAM);
-  r.setProperty("--cbmute", cbRgba(c.ink, 0.74));
-  r.setProperty("--cbline", cbRgba(c.ink, 0.2));
-  r.setProperty("--cbcard", light ? "rgba(0,0,0,.08)" : "rgba(255,255,255,.07)");
-  r.setProperty("--cbacc", light ? (c.ink || "#18120A") : "#E3EF26");
+  /* il fondo e' il verde scuro di tutte le pagine; il colore del club
+     entra a meta' forza nella fascia in alto, cosi' anche la corda chiara
+     dei Ropewalkers diventa un bruno su cui il crema si legge */
+  var r = document.documentElement.style;
+  r.setProperty("--cbbg", "#04170F");
+  r.setProperty("--cbclub", cbRgba(c.colour, 0.62));
+  r.setProperty("--cbclub2", cbRgba(c.colour, 0.28));
+  r.setProperty("--cbink", CREAM);
+  r.setProperty("--cbmute", "#A8D4BE");
+  r.setProperty("--cbline", "rgba(226,251,206,.18)");
+  r.setProperty("--cbcard", "rgba(14,59,44,.55)");
+  r.setProperty("--cbacc", "#E3EF26");
   document.documentElement.className = "cbpage";
 
   $("bar").innerHTML = '<div class="gtop"><button class="tv-round" id="cbk" type="button" ' +
