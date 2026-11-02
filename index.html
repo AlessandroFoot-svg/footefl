@@ -3978,6 +3978,7 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .mkr .pickno{min-width:26px;height:26px;font-size:13px}
 .mkr .flip.gold .face.f{border:3px solid #D4A93C;box-shadow:0 18px 36px rgba(0,0,0,.55),0 0 26px rgba(212,169,60,.45)}
 .mkr .flip.holo .face.f{border:3px solid #E3EF26;box-shadow:0 18px 36px rgba(0,0,0,.55),0 0 30px rgba(227,239,38,.5)}
+.mkr .flip.pick{margin:0;padding:0;border:0;border-radius:0;background:none}
 .mkr .flip.pick .face.f{border-color:var(--gold);box-shadow:0 0 0 6px rgba(227,239,38,.25),0 18px 36px rgba(0,0,0,.55)}
 .mkr .cwin::after{content:"";position:absolute;top:0;bottom:0;left:0;width:45%;pointer-events:none;
   background:linear-gradient(90deg,transparent,rgba(255,250,210,.55),transparent);transform:translateX(-120%) skewX(-18deg)}
@@ -4041,6 +4042,58 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
   @keyframes sgFlash{0%{opacity:0}6%{opacity:.85}14%{opacity:0}30%{opacity:.6}38%{opacity:0}100%{opacity:0}}
   .sg-done{animation:sgRise .4s ease 1.9s both}
   @keyframes sgRise{from{opacity:0;transform:translateY(12px)}}
+}
+/* ═════════ lo staff: i fascicoli e la lettera di nomina ═════════ */
+.sp .lede{text-align:center}
+.sp .lede span{font-size:13px;color:var(--fog)}
+.sp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.sp .flip{aspect-ratio:auto;height:304px;perspective:1100px}
+.sp .flip .in{transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
+.sp .face{border-radius:16px}
+.sp .face.b{background:repeating-linear-gradient(135deg,var(--deep) 0 12px,var(--band) 12px 24px);
+  border:2px solid var(--edge);gap:10px;box-shadow:0 16px 30px rgba(0,0,0,.5)}
+.sp .face.b i{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.18em;color:var(--fog);text-align:center;padding:0 6px}
+.sp .face.b b{padding:6px 10px;border:2.5px solid var(--gold);border-radius:6px;color:var(--gold);
+  font-size:12px;font-weight:900;letter-spacing:.12em;transform:rotate(-8deg)}
+.sp .face.b span{margin-top:12px;padding:7px 12px;border-radius:999px;background:var(--gold);
+  color:#06231D;font-size:10.5px;letter-spacing:.12em}
+.sp .face.f{background:var(--band);border:2px solid var(--edge);padding:0;color:var(--cream);
+  text-align:left;box-shadow:0 16px 30px rgba(0,0,0,.5)}
+.sp .flip.chosen .face.f{border:3px solid var(--gold);box-shadow:0 0 0 5px rgba(227,239,38,.22),0 16px 30px rgba(0,0,0,.5)}
+.sp-pic{position:relative;display:block;height:120px;overflow:hidden;background:var(--deep);flex:none}
+.sp-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 25%}
+.sp-pic::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 50%,rgba(8,35,26,.95) 100%)}
+.sp-pic i{position:absolute;left:9px;bottom:6px;z-index:2;font-style:normal;font-size:9px;font-weight:800;letter-spacing:.14em;color:var(--fog)}
+.sp-who{display:flex;flex-direction:column;gap:3px;padding:10px 10px 0}
+.sp-who b{font:900 17px/1.1 var(--brand)}
+.sp-who em{font-style:normal;font-size:11px;font-weight:700;color:var(--gold)}
+.sp-who small{font-size:11px;font-weight:600;color:var(--fog)}
+.sp-who .rcstar{margin-top:7px}
+.sp-gain{margin-top:9px;padding:8px 9px;border-radius:10px;background:rgba(227,239,38,.12);
+  border:1px solid rgba(227,239,38,.35);font-size:12px;font-weight:800;line-height:1.3}
+.sp .pickno{display:none}
+.sp-note{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--band);
+  border:1px solid var(--edge);font-size:13px;font-weight:600;line-height:1.5;color:#CDEBD2}
+.sp .gbig{margin-top:16px}
+.sp-paper{transform:rotate(1deg)}
+.sp-jk{border-color:var(--edge);transform:rotate(-8deg)}
+.sp-line{margin-top:16px;padding-right:26px;font-size:18px;font-weight:700;line-height:1.6}
+.sp-gap{display:inline-block;min-width:84px;border-bottom:2.5px dashed #7A6A3A;vertical-align:baseline}
+.sp-gap.on{min-width:0;padding:0 4px;border-bottom:2.5px solid #1C6B4F;color:#1C6B4F;font-weight:900}
+.sp-stamp{font-size:15px}
+.sp-from{margin-top:8px;font-size:14px;font-weight:600;color:var(--fog)}
+.sg .btn.ghost{margin-top:10px}
+@media (prefers-reduced-motion: no-preference){
+  .sp .flip{animation:spDeal .5s cubic-bezier(.2,.9,.3,1.2) backwards}
+  @keyframes spDeal{from{transform:translateY(90px) rotate(-10deg) scale(.8);opacity:0}}
+  .sp-pic::after{content:"";position:absolute;top:0;bottom:0;left:0;width:45%;z-index:2;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(255,250,210,.5),transparent);transform:translateX(-120%) skewX(-18deg)}
+  .sp .flip.up .sp-pic::after{animation:mkrShine 1s ease-out .35s both}
+  .sp-gap.on{animation:spWord .5s ease both}
+  @keyframes spWord{from{opacity:0;transform:translateY(-6px)}}
+}
+@media (prefers-reduced-motion: reduce){
+  .sp .flip .in{transition:none}
 }
 </style>
 </head>
@@ -4971,7 +5024,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "154";
+var APPVER = "155";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -17047,52 +17100,145 @@ VIEWS.rcPick = function () {
   barFlow("Who called back", "One of them, and that is your bench", 85);
   if (!RC.show.length) RC.show = rcOffer(RC.score || 0);
 
-  html('<div class="pad"><p class="lede">One takes the job. Read what each one ' +
-    "brings before you call — you will not get another interview in this " +
-    "competition.</p>" +
-    RC.show.map(function (m) {
-      return '<button class="rcman" data-id="' + m.id + '" type="button">' +
-        '<span class="rcm1"><i>' + manRole(m) + "</i>" +
-        '<span class="rcstar">' + (function () {
-          var o = "", i;
-          for (i = 0; i < 4; i++) o += '<u class="' + (i < m.tier ? "on" : "") + '"></u>';
+  /* ───────── i fascicoli sul tavolo ─────────
+     Prima erano schede come tutte le altre, per la scelta che pesa di
+     piu' della stagione. Adesso sono fascicoli coperti: si aprono — la
+     giacca del ruolo, il nome, il livello, quello che porta — e solo
+     quando sono aperti tutti se ne sceglie uno. La storia lunga di
+     ognuno sta sotto, perche' nella carta stretta non ci sta. */
+  var opened = 0, pick = "";
+  html('<div class="pad sp"><p class="lede">' + RC.show.length + " files on the desk. " +
+    "Open them all, then appoint <b>one</b>.<br><span>There is no second interview " +
+    "this competition.</span></p>" +
+    '<div class="sp-grid">' + RC.show.map(function (m, i) {
+      var kit = (typeof staffKitOf === "function") ? staffKitOf(m.role, ME.club.id) : "";
+      return '<button class="flip sp-c" data-id="' + m.id + '" type="button" ' +
+        'style="animation-delay:' + (i * 140) + 'ms" aria-label="Open the file of the ' +
+        esc(manRole(m).toLowerCase()) + '"><span class="in">' +
+        '<span class="face b"><i>' + esc(manRole(m).toUpperCase()) + "</i>" +
+        "<b>CONFIDENTIAL</b><span>TAP TO OPEN</span></span>" +
+        '<span class="face f"><span class="sp-pic">' +
+        (kit ? '<img src="' + kit + '" alt="" onerror="this.parentNode.removeChild(this)">' : "") +
+        "<i>" + esc(manRole(m).toUpperCase()) + "</i></span>" +
+        '<span class="sp-who"><b>' + esc(m.name) + "</b><em>" + esc(m.nick) + "</em>" +
+        "<small>" + esc((typeof manWhere === "function") ? manWhere(m) : m.from) + "</small>" +
+        '<span class="rcstar" aria-label="Level ' + m.tier + ' of 4">' + (function () {
+          var o = "", k;
+          for (k = 0; k < 4; k++) o += '<u class="' + (k < m.tier ? "on" : "") + '"></u>';
           return o;
-        })() + "</span></span>" +
-        "<b>" + esc(m.name) + "</b>" +
-        '<em>' + esc(m.nick) + " \u00b7 " +
-          esc((typeof manWhere === "function") ? manWhere(m) : m.from) + "</em>" +
-        "<p>" + esc(m.line) + "</p>" +
-        '<span class="rcg">' + esc(manGain(m)) + "</span></button>";
-    }).join("") +
+        })() + "</span>" +
+        '<span class="sp-gain">' + esc(manGain(m)) + "</span></span></span>" +
+        "</span></button>";
+    }).join("") + "</div>" +
+    '<p class="sp-note" id="spn" hidden></p>' +
+    '<button class="btn gbig" id="spgo" disabled>Open all the files first</button>' +
     '<button class="btn ghost" id="rcbk">Not now</button></div>');
 
-  Array.prototype.forEach.call($("main").querySelectorAll(".rcman"), function (b) {
-    b.onclick = function () { swap("rcSure", { id:b.dataset.id }); };
+  var all = Array.prototype.slice.call($("main").querySelectorAll(".sp-c"));
+  function man(id) { return RC.show.filter(function (m) { return m.id === id; })[0]; }
+  function paint() {
+    all.forEach(function (b) { b.classList.toggle("chosen", b.dataset.id === pick); });
+    var done = opened === all.length;
+    $("spgo").disabled = !pick;
+    $("spgo").textContent = pick ? "Appoint " + man(pick).name
+      : done ? "Tap the one you want" : "Open all the files first";
+  }
+  all.forEach(function (b) {
+    b.onclick = function () {
+      var m = man(b.dataset.id);
+      $("spn").hidden = false;
+      $("spn").textContent = m.line;
+      if (!b.classList.contains("up")) {
+        b.classList.add("up"); opened++;
+        b.setAttribute("aria-label", "Choose " + m.name);
+        try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
+        return paint();
+      }
+      if (opened < all.length) return;
+      pick = pick === m.id ? "" : m.id;
+      paint();
+    };
   });
+  $("spgo").onclick = function () { if (pick) go("rcSure", { id:pick }); };
   $("rcbk").onclick = function () { reset(homeBack()); };
 };
 
+
+/* ───────── la lettera di nomina ─────────
+   Il mercato si firma scrivendo il nome. Qui il gesto e' un altro,
+   apposta — due volte lo stesso rito prima del calcio d'inizio stanca:
+   si completa la frase con il ruolo, « head coach » o « head of
+   training », che e' anche una parola da sapere. Giusta, lui firma,
+   cade il timbro APPOINTED, e l'assunzione e' fatta. */
 VIEWS.rcSure = function (d) {
   var m = staffOneMan(d && d.id);
   if (!m) return back();
   paintClub(ME.club);
-  barFlow("Sign him?", esc(m.name), 95);
-  html('<div class="pad"><h1>' + esc(m.name) + "?</h1>" +
-    '<p class="lede">' + esc(manRole(m).toLowerCase()) + " — " +
-    esc(m.line) + "</p>" +
-    '<div class="capnote"><b>' + esc(manGain(m)) + "</b>" +
-    esc(manHe(m, true)) + " is on your bench for the whole competition. The other " +
-    "job stays empty: you take one, not both.</div>" +
-    '<button class="btn" id="rcyes">Sign ' + esc(m.name) + "</button>" +
-    '<button class="btn ghost" id="rcno">Look again</button></div>');
-  $("rcyes").onclick = function () {
+  barFlow("The appointment", m.name + " · " + m.nick, 95);
+  var word = m.role === "fit" ? "training" : "coach";
+  var lead = m.role === "fit" ? "head of" : "head";
+  var kit = (typeof staffKitOf === "function") ? staffKitOf(m.role, ME.club.id) : "";
+  var tries = 0;
+  html('<div class="pad sg">' +
+    '<div class="sg-paper sp-paper" id="sgp">' +
+    '<span class="sg-card sp-jk" aria-hidden="true">' +
+    (kit ? '<img src="' + kit + '" alt="">' : "") + "</span>" +
+    '<p class="sg-k">LETTER OF APPOINTMENT</p>' +
+    '<p class="sg-club">' + esc(ME.club.name) + "</p>" +
+    '<p class="sg-sub">Season 1 · the bench</p>' +
+    '<p class="sp-line">' + esc(ME.club.name) + " appoints <b>" + esc(m.name) + "</b> as " +
+    lead + ' <span class="sp-gap" id="spw" aria-label="missing word"></span> for the whole ' +
+    "season.</p>" +
+    '<p class="sg-k sg-gap">SIGNED</p><div class="sg-line" id="sgl"></div></div>' +
+    '<div id="sgw"><label class="wd-lab" for="sgi">COMPLETE THE LETTER: ' +
+    lead.toUpperCase() + " &hellip;</label>" +
+    '<input type="text" class="wd-in sg-in" id="sgi" autocomplete="off" autocapitalize="off" ' +
+    'autocorrect="off" spellcheck="false" placeholder="the job">' +
+    '<p class="sg-no" id="sgn" role="alert" hidden></p>' +
+    '<button class="btn gbig" id="sgb" disabled>Appoint ' + manHim(m) +
+    "</button>" +
+    '<button class="btn ghost" id="rcno">Look again</button></div>' +
+    '<div class="sg-done" id="sgd" hidden></div></div>');
+
+  var inp = $("sgi"), btn = $("sgb");
+  inp.oninput = function () { btn.disabled = !inp.value.trim(); $("sgn").hidden = true; };
+  inp.onkeydown = function (e) { if (e.key === "Enter" && !btn.disabled) btn.click(); };
+  setTimeout(function () { try { inp.focus(); } catch (e) {} }, 80);
+  $("rcno").onclick = function () { swap("rcPick"); };
+  btn.onclick = function () {
+    if (signNorm(inp.value) !== word) {
+      tries++;
+      var p = $("sgp");
+      p.classList.remove("shake"); void p.offsetWidth; p.classList.add("shake");
+      $("sgn").hidden = false;
+      $("sgn").textContent = tries >= 2
+        ? "Not that job. It starts with " + word.charAt(0) + ": " + lead + " " +
+          word.charAt(0) + " _".repeat(word.length - 1) + "."
+        : "Not that job. Look at the file: what will " + manHe(m, false) + " be?";
+      return;
+    }
+    /* l'assunzione si salva subito: chi chiude l'app adesso ha comunque
+       il suo uomo in panchina */
     var a = stfAll();
     a.who = m.role; a.hired = m.id;
     a.md = (typeof mdNow === "function") ? mdNow() : 1;
     stfSave(a);
-    swap("staff", { id:m.role });
+    $("sgw").hidden = true;
+    $("spw").className = "sp-gap on";
+    $("spw").textContent = word;
+    $("sgl").innerHTML = '<span class="sg-ink">' + esc(m.name) + "</span>" +
+      '<span class="sg-stamp sp-stamp" aria-hidden="true">APPOINTED</span>';
+    $("sgd").hidden = false;
+    $("sgd").innerHTML = '<p class="sg-joins">' + esc(m.name) + " is<br>your " + lead + " " +
+      word + '.</p><p class="sp-from">' + esc(manGain(m)) + ", from the next match.</p>" +
+      '<button class="btn gbig" id="sgx">To my bench</button>';
+    var fl = document.createElement("div");
+    fl.className = "sg-flash"; fl.setAttribute("aria-hidden", "true");
+    document.body.appendChild(fl);
+    setTimeout(function () { if (fl.parentNode) fl.parentNode.removeChild(fl); }, 3400);
+    try { if (navigator.vibrate) navigator.vibrate([20, 60, 20]); } catch (e) {}
+    $("sgx").onclick = function () { swap("staff", { id:m.role }); };
   };
-  $("rcno").onclick = function () { swap("rcPick"); };
 };
 
 
