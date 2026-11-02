@@ -3637,6 +3637,163 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
   .dmfig.vsl-f{animation:vinf .22s cubic-bezier(.2,.8,.2,1) backwards}
   .dmfig.vsl-b{animation:vinb .22s cubic-bezier(.2,.8,.2,1) backwards}
 }
+
+/* ═════════ la porta, la prova e il club: il disegno nuovo ═════════
+   Poche parole e lo stadio grande. La porta e la prova riempiono tutto
+   lo schermo — niente vuoto in fondo — e gli stemmi della prova si
+   toccano: portano alla pagina del club. */
+.gtop{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:10px;
+  padding:14px 16px 0;min-height:58px}
+.gtop.solo{display:flex;justify-content:flex-end}
+.gtop p{text-align:center;font-size:12px;font-weight:800;letter-spacing:.24em;color:var(--gold)}
+.gtop .trchip{height:44px;padding:0 14px;border-radius:999px;background:rgba(4,23,15,.45)}
+.tv-round{width:44px;height:44px;border-radius:50%;border:1px solid rgba(226,251,206,.3);
+  background:rgba(4,23,15,.5);color:inherit;display:grid;place-items:center;cursor:pointer}
+.tv-round svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round}
+.tv-round:focus-visible,.tv-crest:focus-visible,.cb-tab:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.gfull{min-height:calc(100svh - 84px - env(safe-area-inset-bottom));display:flex;
+  flex-direction:column;padding:0 20px 4px}
+@media(min-width:620px) and (min-height:640px){.gfull{min-height:calc(min(858px,94vh) - 84px)}}
+.gbig{height:60px;border-radius:18px;font-size:17px;letter-spacing:.04em;display:flex;
+  align-items:center;justify-content:center;gap:10px;margin-top:14px}
+.gbig svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;
+  stroke-linecap:round;stroke-linejoin:round}
+.gbig:disabled{background:rgba(227,239,38,.22);color:rgba(226,251,206,.55)}
+.glink{display:block;margin:6px auto 0;width:auto;padding:12px 8px;font-size:14px;font-weight:700;
+  color:var(--gold)}
+
+.ga-mark{text-align:center;margin-top:40px}
+.ga-mark h1{font:900 52px/1 var(--brand);letter-spacing:.06em}
+.ga-mark h1 em{font-style:normal;color:var(--gold)}
+.ga-mark p{margin-top:14px;font-size:17px;font-weight:700}
+.ga-grow{flex:1 1 auto;min-height:36px}
+.crestrail{margin:0 -20px;padding:6px 0;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18%,#000 82%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 18%,#000 82%,transparent 100%)}
+.cresttrack{display:flex;gap:22px;width:max-content}
+.cresttrack img{width:60px;height:60px;object-fit:contain;flex:none;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
+@media (prefers-reduced-motion: no-preference){
+  .cresttrack{animation:crestroll 16s linear infinite}
+  @keyframes crestroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+}
+.ga h2{margin:14px 0 22px;font:900 30px/1.1 var(--brand);text-align:center}
+.ga-lab{display:block;text-align:center;font-size:12px;font-weight:800;letter-spacing:.22em;
+  color:var(--gold);margin-bottom:12px}
+.ga-in{width:100%;height:68px;border-radius:18px;border:1.5px solid rgba(226,251,206,.28);
+  background:rgba(4,23,15,.72);color:var(--cream);font:800 30px/1 var(--brand);
+  letter-spacing:.2em;text-align:center;text-transform:uppercase;padding:0 12px}
+.ga-in::placeholder{color:rgba(226,251,206,.32)}
+.ga-in:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(227,239,38,.18)}
+.ga .kerr{text-align:center;font-size:13px}
+.ga .gver{margin-top:4px}
+
+.tv{justify-content:space-between;gap:14px}
+.tv-vs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;margin-top:12px}
+.tv-crest{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;
+  padding:0;color:var(--cream);font:inherit;cursor:pointer}
+.tv-ci{position:relative;display:block;width:124px;height:124px}
+.tv-ci img{width:124px;height:124px;object-fit:contain;filter:drop-shadow(0 10px 22px rgba(0,0,0,.6))}
+.tv-ci i{position:absolute;right:2px;bottom:6px;width:28px;height:28px;border-radius:50%;
+  background:var(--gold);color:#06231D;display:grid;place-items:center;
+  font:italic 900 15px/1 var(--brand);box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.tv-who{font-size:11px;font-weight:800;letter-spacing:.22em;color:var(--gold)}
+.tv-who.bot{color:var(--fog)}
+.tv-crest b{font-size:17px;font-weight:800}
+.tv-crest em{font-style:normal;font-size:12px;font-weight:600;color:var(--fog)}
+.tv-v{margin-top:44px;text-align:center;font:900 46px/1 var(--brand);color:var(--gold)}
+.tv h1{font:900 30px/1.1 var(--brand);text-align:center}
+.tv-lab{font-size:12px;font-weight:800;letter-spacing:.22em;color:var(--fog);margin-bottom:10px}
+.tv-lvls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tv-lv{height:64px;border-radius:14px;border:1px solid var(--edge);background:var(--deep);
+  color:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;cursor:pointer;font:inherit}
+.tv-lv b{font-size:22px;font-weight:900;line-height:1}
+.tv-lv em{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;opacity:.85}
+.tv-lv.on{background:var(--gold);border-color:var(--gold);color:#06231D}
+.tv-lv.off{border-style:dashed;border-color:rgba(168,212,190,.25);background:transparent;
+  color:rgba(168,212,190,.4);cursor:default}
+.tv-seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:4px;border-radius:16px;
+  background:var(--deep);border:1px solid var(--edge)}
+.tv-df{height:56px;border:0;border-radius:12px;background:transparent;color:var(--cream);
+  display:flex;align-items:center;justify-content:center;gap:8px;font:800 15px/1 var(--brand);
+  cursor:pointer}
+.tv-df.on{background:var(--gold);color:#06231D}
+.tv-bars{display:flex;align-items:flex-end;gap:3px;height:16px}
+.tv-bars i{display:block;width:4px;border-radius:2px;background:rgba(168,212,190,.3)}
+.tv-bars i.lit{background:var(--gold)}
+.tv-df.on .tv-bars i{background:rgba(6,35,29,.25)}
+.tv-df.on .tv-bars i.lit{background:#06231D}
+.tv .dmvoice{margin-top:8px}
+
+/* la pagina del club si veste dei colori del club: il fondo e' la sua
+   maglia, non lo stadio di tutti */
+html.cbpage::before{background:var(--cbbg)}
+html.cbpage body{color:var(--cbink)}
+html.cbpage .gtop p{color:var(--cbacc)}
+html.cbpage .tv-round,html.cbpage .gtop .trchip{border-color:var(--cbline);
+  background:transparent;color:var(--cbink)}
+.cb-hero{position:relative;overflow:hidden;padding:8px 20px 20px}
+.cb-kit{position:absolute;right:-78px;top:-8px;width:210px;height:210px;object-fit:contain;
+  opacity:.32;pointer-events:none}
+.cb-id{position:relative;display:flex;align-items:center;gap:16px}
+.cb-id img{width:96px;height:96px;object-fit:contain;flex:none;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
+.cb-id h1{font:900 28px/1.05 var(--brand)}
+.cb-nick{margin-top:4px;font-style:italic;font-size:14px;font-weight:600;opacity:.88}
+.cb-city{margin-top:6px;font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--cbmute)}
+.cb-motto{position:relative;margin-top:18px;font:900 18px/1.2 var(--brand);color:var(--cbacc)}
+.cb-tabs{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  border-bottom:1px solid var(--cbline);padding:0 8px;background:var(--cbbg)}
+.cb-tab{height:48px;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;background:none;
+  color:var(--cbmute);font:800 14px/1 var(--brand);cursor:pointer}
+.cb-tab.on{color:var(--cbacc);border-bottom-color:var(--cbacc)}
+.cb-body{padding:14px 20px 20px}
+.cb-row{display:flex;align-items:center;gap:10px;min-height:36px}
+.cb-role{width:34px;flex:none;padding:4px 0;border-radius:7px;text-align:center;font-size:11px;
+  font-weight:900;letter-spacing:.06em;color:#16233F}
+.cb-role.GK{background:#E3EF26}.cb-role.DF{background:#7FB7E8}
+.cb-role.MF{background:#9FD8A8}.cb-role.FW{background:#F2A97E}
+.cb-nm{flex:1 1 auto;min-width:0;font-size:15px;font-weight:700}
+.cb-nm.none{font-weight:600;font-style:italic;color:var(--cbmute)}
+.cb-cap{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;background:#E3EF26;
+  color:#06231D;font-size:12px;font-weight:900}
+.cb-gem{width:22px;height:22px;display:grid;place-items:center;color:var(--cbacc)}
+.cb-gem svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.cb-q{width:104px;flex:none;text-align:right;font-size:12px;font-weight:600;color:var(--cbmute)}
+.cb-story{font-size:16px;font-weight:500;line-height:1.6}
+.cb-lab{font-size:12px;font-weight:800;letter-spacing:.22em;color:var(--cbmute);margin:20px 0 10px}
+.cb-lab:first-child{margin-top:0}
+.cb-words{display:flex;flex-wrap:wrap;gap:8px}
+.cb-words span{padding:9px 14px;border-radius:999px;border:1px solid var(--cbline);font-size:15px;font-weight:700}
+.cb-card{display:flex;gap:14px;align-items:center;padding:14px;border-radius:18px;
+  background:var(--cbcard);border:1px solid var(--cbline);margin-bottom:12px}
+.cb-card img{width:104px;height:104px;object-fit:contain;flex:none}
+.cb-card .k{font-size:11px;font-weight:800;letter-spacing:.2em;color:var(--cbacc)}
+.cb-card h3{margin-top:5px;font:900 18px/1.15 var(--brand)}
+.cb-card .s{margin-top:5px;font-size:13px;font-weight:500;line-height:1.45}
+.cb-card .st{margin-top:8px;font-size:12px;font-weight:700;color:var(--cbmute)}
+.cb-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cb-stats.three{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:8px}
+.cb-stat{padding:12px 0;border-radius:14px;background:var(--cbcard);text-align:center}
+.cb-stat b{display:block;font-size:26px;font-weight:900}
+.cb-stats.three .cb-stat b{font-size:22px}
+.cb-stat b.hi{color:var(--cbacc)}
+.cb-stat span{display:block;margin-top:4px;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--cbmute)}
+.cb-form{display:flex;gap:8px}
+.cb-form i{width:36px;height:36px;border-radius:10px;border:1.5px dashed var(--cbline);display:grid;
+  place-items:center;font-style:normal;font-size:14px;font-weight:900}
+.cb-form i.W{border:0;background:#9FD8A8;color:#0E3B2C}
+.cb-form i.D{border:0;background:#E7DDB0;color:#3A3216}
+.cb-form i.L{border:0;background:#F2A97E;color:#4A1A0A}
+.cb-none{font-size:15px;font-weight:600;color:var(--cbmute)}
+.cb-act{padding:4px 20px 8px}
+.cb-act .btn{margin-top:0}
+.cb-feet{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.cb-step{min-height:44px;padding:0 6px;border:0;background:none;color:var(--cbink);
+  font:800 14px/1 var(--brand);cursor:pointer}
+.cb-num{font-size:11px;font-weight:800;letter-spacing:.2em;color:var(--cbmute)}
 </style>
 </head>
 <body>
@@ -4565,7 +4722,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "146";
+var APPVER = "147";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8671,83 +8828,9 @@ function drawClubGrid() {
   });
 }
 
-/* ═══════════════ il club, a tutta pagina ═══════════════ */
-VIEWS.club = function (d) {
-  var id = d && d.id;
-  var at = -1, i;
-  for (i = 0; i < CLUBS.length; i++) { if (CLUBS[i].id === id) at = i; }
-  if (at < 0) return back();
-  var c = CLUBS[at];
-  var prev = CLUBS[(at - 1 + CLUBS.length) % CLUBS.length];
-  var next = CLUBS[(at + 1) % CLUBS.length];
-  var w = clubWho(c.id), kit = kitOf(c.id);
-  var mine = ME.club && ME.club.id === c.id, ours = isMine(c.id);
-  /* nella prova la squadra e' una sola, Ravens: le altre si guardano ma
-     non si prendono, come in campionato dove la da' il professore */
-  var demo = (typeof demoOn === "function") && demoOn();
-  var prac = !ME.code && !demo;
-
-  paintNeutral();
-  barFlow(c.name, (at + 1) + " of " + CLUBS.length, 0);
-
-  html('<div class="clubpage" style="--cc:' + c.colour + ";--ci:" + c.ink + '">' +
-    '<div class="chero">' +
-      (kit ? '<img class="chkit" src="' + kit + '" alt="">' : "") +
-      '<span class="chveil" aria-hidden="true"></span>' +
-      '<span class="chfade" aria-hidden="true"></span>' +
-      '<div class="chin">' + clubMark(c, 70) +
-        "<div>" + (c.nick ? '<i class="chnick">' + esc(c.nick) + "</i>" : "") +
-        "<b>" + esc(c.name) + "</b>" +
-        '<span class="chcity">' + esc(c.city).toUpperCase() + "</span></div>" +
-      "</div>" +
-    "</div>" +
-
-    '<div class="cbody2">' +
-      (c.motto ? '<p class="cmotto">&ldquo;' + esc(c.motto) + "&rdquo;</p>" : "") +
-      (c.story ? '<p class="cstory">' + esc(c.story) + "</p>" : "") +
-      '<div class="cwords"><span class="glab2">THE WORDS THEY BRING</span>' +
-      '<div class="lex">' + c.lex.map(function (x) {
-        return "<span>" + esc(x) + "</span>"; }).join("") + "</div></div>" +
-
-      (mine || w.line
-        ? '<div class="cwhorow">' + clubMark(c, 34) +
-          '<span><b>' + (mine ? "This is your club this season"
-                              : "In the league this season") + "</b>" +
-          (w.line ? "<em>" + esc(w.line) + "</em>" : "") + "</span></div>"
-        : "") +
-
-      (mine ? '<button class="btn" id="cgo">Back to my squad</button>'
-       : ours ? '<button class="btn" id="cgo">Back into ' + esc(c.name) + "</button>"
-       : demo ? '<p class="cdemo">Here you play <b>Ravens FC</b>. ' +
-                "In a real season your teacher gives you the club.</p>" +
-                '<button class="btn" id="cgo">Back to Ravens FC</button>'
-       : prac ? '<button class="btn" id="cgo">Try it with ' + esc(c.name) + "</button>"
-       : "") +
-    "</div>" +
-
-    '<div class="cfeet">' +
-      '<button class="cstep" data-c="' + esc(prev.id) + '" type="button">' +
-      clubMark(prev, 20) + "<span>&lsaquo; " + esc(prev.name.split(" ")[0]) + "</span></button>" +
-      '<span class="cnum">' + (at + 1) + " OF " + CLUBS.length + "</span>" +
-      '<button class="cstep rt" data-c="' + esc(next.id) + '" type="button">' +
-      "<span>" + esc(next.name.split(" ")[0]) + " &rsaquo;</span>" + clubMark(next, 20) +
-      "</button>" +
-    "</div></div>");
-
-  if ($("cgo")) {
-    $("cgo").onclick = function () {
-      /* nella prova il bottone riporta a Ravens: non cambia squadra */
-      if (demo) { joinClub(DEMO_CLUB); paintClub(ME.club); return reset("squad"); }
-      if (prac && !mine && !ours) { go("claim", { id:c.id }); return; }
-      if (!mine) joinClub(c.id);
-      paintClub(ME.club);
-      reset("squad");
-    };
-  }
-  Array.prototype.forEach.call($("main").querySelectorAll(".cstep"), function (b) {
-    b.onclick = function () { swap("club", { id:b.dataset.c }); };
-  });
-};
+/* il club a tutta pagina sta piu' avanti, in VIEWS.club accanto alla
+   prova: e' la stessa pagina da qualunque parte ci si arrivi — la
+   griglia dei club, la classifica, gli stemmi della prova */
 
 
 /* ───── 21-land.js ───── */
@@ -9367,46 +9450,47 @@ function nextUp() {
 }
 
 /* ═══════════════ 1. LA PORTA ═══════════════ */
+/* gli stemmi che sfilano alla porta: solo quelli che hanno una figura */
+var GATE_CRESTS = ["RAV", "SHE", "BRA", "ROP", "OXF"];
+var GO_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
 VIEWS.gate = function (d) {
   paintNeutral();
-  $("bar").innerHTML = '<div class="mast"><div class="mk">FOOT<em>EFL</em></div>' +
-    "<p>FOOTBALL LINGUISTIQUE</p></div>";
+  /* lo stadio qui e' il luogo, non un'atmosfera: il velo si alza */
+  paintBg("bg-pitch", true);
+  /* la barra resta vuota: ci entra soltanto il globo delle lingue */
+  $("bar").innerHTML = '<div class="gtop solo"></div>';
   prog(0);
 
   var hint = d && d.hint;
-  html('<div class="pad gpad">' +
-    "<h1>Who are you?</h1>" +
-    '<p class="lede">Your teacher gave you a <b>code</b>. Write it once and this phone ' +
-    "knows you: the competitions he has entered you in, the club he gave you in each " +
-    "one, and the words you have to fix.</p>" +
-    '<div class="lock"><span>YOUR CODE</span>' +
-    "<b>Three letters, a dash, four signs. Like <i>ABC&ndash;7KD3</i>.</b>" +
-    '<input type="text" id="gin" maxlength="9" autocomplete="off" ' +
+  /* due giri della stessa fila: la fila scorre di meta' e ricomincia
+     senza strappo */
+  var crests = GATE_CRESTS.map(function (id) { return crestOf(id); })
+    .filter(function (u) { return !!u; });
+  var rail = crests.concat(crests).map(function (u) {
+    return '<img src="' + u + '" alt="">';
+  }).join("");
+  /* poche parole: la spiegazione del codice sta nell'esempio dentro il
+     campo, e quella della tastiera arriva davanti al dettato, dove serve */
+  html('<div class="gfull ga">' +
+    '<div class="ga-mark"><h1>FOOT<em>EFL</em></h1><p>Write it. Score it.</p></div>' +
+    '<div class="ga-grow"></div>' +
+    (rail ? '<div class="crestrail" aria-hidden="true"><div class="cresttrack">' + rail +
+      "</div></div>" : "") +
+    "<h2>Your club<br>is ready.</h2>" +
+    '<label class="ga-lab" for="gin">YOUR CODE</label>' +
+    '<input type="text" class="ga-in" id="gin" maxlength="9" autocomplete="off" ' +
     'autocapitalize="characters" autocorrect="off" spellcheck="false" ' +
-    'placeholder="XXX-0000" aria-label="Your code">' +
-    '<p class="kerr" id="gerr"' + (hint ? "" : " hidden") + ">" + esc(hint || "") +
-    "</p></div>" +
-    '<button class="btn" id="ggo" disabled>This is me</button>' +
-    '<div class="gside"><b>No code with you?</b>' +
-    "<span>The code is on the card your teacher gave you — it is also in the link " +
-    "he sent, so if you open that link you are in without typing anything. " +
-    "Meanwhile you can still work.</span>" +
-    '<button class="gthin" id="gpr" type="button">Try it &mdash; one whole match &#8250;</button>' +
-    "</div>" +
-    /* il consiglio sulla tastiera, gia' qui alla porta: la spiegazione
-       intera arriva davanti al dettato, dove serve, ma chi apre l'app
-       per la prima volta ha il telefono in mano adesso ed e' adesso che
-       conviene andare nelle impostazioni */
-    '<p class="gkbd">Before you play, turn off your keyboard’s ' +
-    "<b>auto-correction</b> and <b>word suggestions</b>. The words should be " +
-    "yours — the game is better that way, and the app can tell the " +
-    "difference.</p>" +
+    'placeholder="ABC-7KD3">' +
+    '<p class="kerr" id="gerr" role="alert"' + (hint ? "" : " hidden") + ">" + esc(hint || "") +
+    "</p>" +
+    '<button class="btn gbig" id="ggo" disabled>Enter the pitch ' + GO_ARROW + "</button>" +
+    '<button class="gthin glink" id="gpr" type="button">No code? Play one match &#8250;</button>' +
+    '<div id="freshbar"></div>' +
     /* il numero di versione, in fondo alla porta: serve a te quando un
        alunno dice « non mi funziona » — si guarda qui e si sa subito se
        quel telefono ha l'app di oggi o quella di tre settimane fa */
-    '<p class="gver">app ' + esc(APPVER) + "</p>" +
-    '<div id="freshbar"></div>' +
-    '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
+    '<p class="gver">app ' + esc(APPVER) + "</p></div>");
 
   if (typeof drawFresh === "function") drawFresh();
 
@@ -9428,7 +9512,7 @@ VIEWS.gate = function (d) {
     setPract(false);
     $("ggo").disabled = true; $("ggo").textContent = "Looking…";
     pullOnline(function (err) {
-      $("ggo").textContent = "This is me"; $("ggo").disabled = false;
+      $("ggo").innerHTML = "Enter the pitch " + GO_ARROW; $("ggo").disabled = false;
       if (err === "nomatch") {
         return bad("Nobody with this code in your teacher's competitions. Check the " +
           "letters — or he may not have published yet.");
@@ -19746,69 +19830,93 @@ function demoBye() {
 /* ═══════════════ LA SCHERMATA DELLA PROVA ═══════════════ */
 var DPICK = { level:"A1", diff:"even" };
 
+/* uno stemma della prova: si tocca e si apre la pagina del club */
+function tvCrest(id, who, bot) {
+  var c = cbClub(id) || { name:id, city:"" };
+  var u = crestOf(id);
+  return '<button class="tv-crest" type="button" data-club="' + esc(id) + '" ' +
+    'aria-label="' + esc(c.name + ", " + who.toLowerCase() + ": open the club page") + '">' +
+    '<span class="tv-ci">' + (u ? '<img src="' + u + '" alt="">' : "") +
+    '<i aria-hidden="true">i</i></span>' +
+    '<span class="tv-who' + (bot ? " bot" : "") + '">' + who + "</span>" +
+    "<b>" + esc(c.name) + "</b><em>" + esc(String(c.city || "").split(" ·")[0]) + "</em></button>";
+}
+
 VIEWS.tryit = function () {
   paintNeutral();
-  $("bar").innerHTML = '<div class="mast"><div class="mk">FOOT<em>EFL</em></div>' +
-    "<p>TRY IT</p></div>";
+  paintBg("bg-pitch", true);
+  $("bar").innerHTML = '<div class="gtop"><button class="tv-round" id="dtop" type="button" ' +
+    'aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>' +
+    "</button><p>TRY IT</p></div>";
   prog(0);
 
-  html('<div class="pad gpad">' +
+  var foe = cbClub(DEMO_BOT) || { name:"Brass FC" };
+  html('<div class="gfull tv">' +
+    '<div class="tv-vs">' + tvCrest(DEMO_CLUB, "YOU", false) +
+    '<p class="tv-v" aria-hidden="true">VS</p>' + tvCrest(DEMO_BOT, "BOT", true) + "</div>" +
+
     "<h1>One whole matchday.</h1>" +
-    '<p class="lede">No code, no teacher, no season: one match from start to finish, ' +
-    "so you can see what the game is. Pick how hard you want it, and go.</p>" +
 
-    '<div class="dmfix"><div class="dmside">' +
-      '<span class="dmlab">YOU</span><b>Ravens FC</b>' +
-      "<em>In a real season your teacher gives you the club.</em></div>" +
-    '<span class="dmv">v</span>' +
-    '<div class="dmside right"><span class="dmlab">THEM</span><b>Brass FC</b>' +
-      "<em>A bot writes their dictation.</em></div></div>" +
-
-    '<h2 class="sec">Your level</h2>' +
-    '<p class="bnote">The dictations, the grammar and the transfer test all follow it.</p>' +
-    '<div class="dmlvls" id="dlv">' + LEVELS.map(function (v) {
+    '<div><p class="tv-lab" id="dlvl">CHOOSE YOUR LEVEL</p>' +
+    '<div class="tv-lvls" id="dlv" role="group" aria-labelledby="dlvl">' + LEVELS.map(function (v) {
       var pronto = DEMO_LEVELS.indexOf(v) >= 0;
-      return '<button class="dmlv' + (DPICK.level === v ? " on" : "") +
+      return '<button class="tv-lv' + (DPICK.level === v ? " on" : "") +
         (pronto ? "" : " off") + '" data-l="' + v + '" type="button"' +
+        ' aria-pressed="' + (DPICK.level === v) + '"' +
         (pronto ? "" : ' disabled aria-disabled="true"') + "><b>" + v + "</b><em>" +
         (pronto ? esc(LEVEL_NAME[v] || "") : "soon") + "</em></button>";
     }).join("") + "</div>" +
-    '<p class="dmvoice" id="dvo"></p>' +
+    '<p class="dmvoice" id="dvo" hidden></p></div>' +
 
-    '<h2 class="sec">How good is Brass FC?</h2>' +
-    '<div class="dmdiffs" id="ddf">' + TDIFF.map(function (d) {
-      return '<button class="dmdf' + (DPICK.diff === d.id ? " on" : "") +
-        '" data-d="' + d.id + '" type="button"><b>' + esc(d.t) + "</b><em>" +
-        esc(d.s) + "</em></button>";
-    }).join("") + "</div>" +
+    '<div><p class="tv-lab" id="ddfl">' + esc(String(foe.name).toUpperCase()) + " PLAYS</p>" +
+    '<div class="tv-seg" id="ddf" role="group" aria-labelledby="ddfl">' +
+    TDIFF.map(function (d, k) {
+      var bars = [6, 11, 16].map(function (h, j) {
+        return '<i style="height:' + h + 'px"' + (j <= k ? ' class="lit"' : "") + "></i>";
+      }).join("");
+      return '<button class="tv-df' + (DPICK.diff === d.id ? " on" : "") +
+        '" data-d="' + d.id + '" type="button" aria-pressed="' + (DPICK.diff === d.id) + '"' +
+        ' title="' + esc(d.s) + '"><span class="tv-bars" aria-hidden="true">' + bars +
+        "</span>" + esc(d.t) + "</button>";
+    }).join("") + "</div></div>" +
 
-    '<button class="btn" id="dgo">Play the match &rsaquo;</button>' +
-    '<button class="gthin" id="dback" type="button">I have a code after all &#8250;</button>' +
-    '<p class="sig">SEASON 1 &middot; WATCH &mdash; WAIT &mdash; STRIKE</p></div>');
+    '<div><button class="btn gbig" id="dgo">Kick off ' + GO_ARROW + "</button>" +
+    '<button class="gthin glink" id="dback" type="button">I have a code &#8250;</button></div>' +
+    "</div>");
 
   voiceNote();
-  Array.prototype.forEach.call($("dlv").querySelectorAll(".dmlv"), function (b) {
+  Array.prototype.forEach.call($("dlv").querySelectorAll(".tv-lv"), function (b) {
     b.onclick = function () {
       if (DEMO_LEVELS.indexOf(b.dataset.l) < 0) return;
       DPICK.level = b.dataset.l;
       /* si riscrive la classe di tutti: va rimesso anche « spento »,
          se no B2, C1 e C2 si riaccendono al primo tocco su un altro */
-      Array.prototype.forEach.call($("dlv").querySelectorAll(".dmlv"), function (x) {
-        x.className = "dmlv" +
+      Array.prototype.forEach.call($("dlv").querySelectorAll(".tv-lv"), function (x) {
+        x.className = "tv-lv" +
           (x.dataset.l === DPICK.level ? " on" : "") +
           (DEMO_LEVELS.indexOf(x.dataset.l) < 0 ? " off" : "");
+        x.setAttribute("aria-pressed", String(x.dataset.l === DPICK.level));
       });
       voiceNote();
     };
   });
-  Array.prototype.forEach.call($("ddf").querySelectorAll(".dmdf"), function (b) {
+  Array.prototype.forEach.call($("ddf").querySelectorAll(".tv-df"), function (b) {
     b.onclick = function () {
       DPICK.diff = b.dataset.d;
-      Array.prototype.forEach.call($("ddf").querySelectorAll(".dmdf"), function (x) {
-        x.className = "dmdf" + (x.dataset.d === DPICK.diff ? " on" : "");
+      Array.prototype.forEach.call($("ddf").querySelectorAll(".tv-df"), function (x) {
+        x.className = "tv-df" + (x.dataset.d === DPICK.diff ? " on" : "");
+        x.setAttribute("aria-pressed", String(x.dataset.d === DPICK.diff));
       });
     };
   });
+  Array.prototype.forEach.call(document.querySelectorAll(".tv-crest"), function (b) {
+    /* dalla prova si sa gia' chi e' di chi: Ravens e' tuo prima ancora
+       del calcio d'inizio */
+    b.onclick = function () {
+      go("club", { id:b.dataset.club, mine:b.dataset.club === DEMO_CLUB, from:"tryit" });
+    };
+  });
+  $("dtop").onclick = function () { setPract(false); reset("gate"); };
   $("dback").onclick = function () { setPract(false); reset("gate"); };
   $("dgo").onclick = function () {
     setPract(true);
@@ -19821,19 +19929,230 @@ VIEWS.tryit = function () {
     reset("home");
   };
 
-  /* chi legge il dettato, a questo livello */
+  /* chi legge il dettato, a questo livello. La pagina nuova non lo dice
+     piu' sempre: lo dice solo quando c'e' un problema, cioe' quando
+     nessuno ha registrato il livello e il telefono non ha una voce
+     inglese per leggerlo */
   function voiceNote() {
     var rec = (typeof warmSets === "function" ? warmSets(DPICK.level) : []).length;
-    $("dvo").innerHTML = rec
-      ? "&#9679; At " + DPICK.level + " the dictation is read by your teacher's own " +
-        "recordings."
-      : (typeof canSay === "function" && !canSay())
-        ? "&#9679; Nobody has recorded " + DPICK.level + " yet, and this phone has no " +
-          "English voice to read it. Pick A1 or A2, which your teacher has recorded."
-        : "&#9679; Nobody has recorded " + DPICK.level +
-          " yet, so the phone's voice reads the dictation. Same words, same marking.";
+    var mute = !rec && typeof canSay === "function" && !canSay();
+    $("dvo").hidden = !mute;
+    $("dvo").innerHTML = mute
+      ? "&#9679; Nobody has recorded " + DPICK.level + " yet, and this phone has no " +
+        "English voice to read it. Pick A1 or A2, which your teacher has recorded."
+      : "";
   }
 };
+
+/* ═══════════════ LA PAGINA DEL CLUB ═══════════════
+   Si arriva toccando uno stemma nella prova. Quattro schede: la rosa, la
+   storia, i due della panchina e la stagione. Tutto viene dai dati che
+   l'app ha gia' — CLUBS, SQUADS, STAFF, il bollettino — e la pagina si
+   veste dei colori del club. I numeri della stagione sono veri o sono
+   zero: mai inventati. */
+var CBTAB = "squad", CBID = "";
+function cbClub(id) {
+  var u = (typeof aliasOf === "function") ? aliasOf(id) : String(id || "").toUpperCase();
+  for (var i = 0; i < CLUBS.length; i++) if (CLUBS[i].id === u) return CLUBS[i];
+  return null;
+}
+function cbRgba(hex, a) {
+  var m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ""));
+  if (!m) return "rgba(242,230,200," + a + ")";
+  var n = parseInt(m[1], 16);
+  return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+}
+function cbLight(hex) {
+  var m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ""));
+  if (!m) return false;
+  var n = parseInt(m[1], 16);
+  return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) > 150;
+}
+/* i numeri del club: i miei dal riepilogo del gioco, quelli dell'altro
+   dalla classifica della competizione aperta; altrimenti zero */
+function cbStats(id, mine) {
+  var z = { p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0, form:[], live:false };
+  try {
+    if (demoOn()) return z;
+    if (mine && typeof gameStats === "function") {
+      var g = gameStats();
+      if (g.comps) {
+        return { p:g.p, w:g.w, d:g.d, l:g.l, gf:g.gf, ga:g.ga, pts:g.pts,
+                 form:(g.rows[0] || {}).form || [], live:true };
+      }
+    }
+    var b = compBull(scope());
+    var r = ((b && b.table) || []).filter(function (x) {
+      return aliasOf(x.id) === id;
+    })[0];
+    if (r) {
+      return { p:r.p || 0, w:r.w || 0, d:r.d || 0, l:r.l || 0, gf:r.gf || 0,
+               ga:r.ga || 0, pts:r.pts || 0, form:r.form || [], live:true };
+    }
+  } catch (e) {}
+  return z;
+}
+
+VIEWS.club = function (d) {
+  var c = cbClub(d && d.id);
+  if (!c) return back();
+  var at = CLUBS.indexOf(c);
+  var prev = CLUBS[(at - 1 + CLUBS.length) % CLUBS.length];
+  var next = CLUBS[(at + 1) % CLUBS.length];
+  var fromTry = !!(d && d.from === "tryit");
+  var mine = (d && typeof d.mine === "boolean") ? d.mine
+    : !!(ME.club && cbClub(ME.club.id) === c);
+  var ours = !fromTry && typeof isMine === "function" && isMine(c.id);
+  var w = (typeof clubWho === "function") ? clubWho(c.id) : {};
+  /* nella prova la squadra e' una sola, Ravens: le altre si guardano ma
+     non si prendono, come in campionato dove la da' il professore */
+  var demo = (typeof demoOn === "function") && demoOn();
+  var prac = !ME.code && !demo;
+  /* un club nuovo si apre sempre dalla rosa; ridisegnando lo stesso si
+     resta sulla scheda che si stava guardando */
+  if (CBID !== c.id) { CBID = c.id; CBTAB = "squad"; }
+  paintNeutral();
+  /* il fondo della pagina e' il colore del club. Chi ha l'inchiostro
+     scuro (la corda dei Ropewalkers) ha un fondo chiaro: l'oro li' non si
+     legge, e l'accento si fa con l'inchiostro */
+  var light = !cbLight(c.ink), r = document.documentElement.style;
+  r.setProperty("--cbbg", c.colour || "#16233F");
+  r.setProperty("--cbink", c.ink || CREAM);
+  r.setProperty("--cbmute", cbRgba(c.ink, 0.74));
+  r.setProperty("--cbline", cbRgba(c.ink, 0.2));
+  r.setProperty("--cbcard", light ? "rgba(0,0,0,.08)" : "rgba(255,255,255,.07)");
+  r.setProperty("--cbacc", light ? (c.ink || "#18120A") : "#E3EF26");
+  document.documentElement.className = "cbpage";
+
+  $("bar").innerHTML = '<div class="gtop"><button class="tv-round" id="cbk" type="button" ' +
+    'aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>' +
+    "</button><p>" + (mine ? "YOUR CLUB" : fromTry ? "THE OPPONENT" : "THE LEAGUE") +
+    "</p></div>";
+  prog(0);
+
+  var kit = (typeof kitOf === "function") ? kitOf(c.id) : "";
+  var crest = crestOf(c.id);
+  var tabs = [["squad", "Squad"], ["story", "Story"], ["staff", "Staff"], ["season", "Season"]];
+  html('<div class="cb">' +
+    '<div class="cb-hero">' + (kit ? '<img class="cb-kit" src="' + kit + '" alt="">' : "") +
+    '<div class="cb-id">' + (crest ? '<img src="' + crest + '" alt="' + esc(c.name) + ' crest">' : "") +
+    "<div><h1>" + esc(c.name) + "</h1>" +
+    (c.nick ? '<p class="cb-nick">' + esc(c.nick) + "</p>" : "") +
+    '<p class="cb-city">' + esc(String(c.city || "").toUpperCase()) +
+    (w.line ? " · " + esc(w.line) : "") + "</p></div></div>" +
+    (c.motto ? '<p class="cb-motto">' + esc(c.motto) + "</p>" : "") + "</div>" +
+    '<div class="cb-tabs" role="tablist" aria-label="Club sections">' + tabs.map(function (t) {
+      return '<button class="cb-tab" type="button" role="tab" data-t="' + t[0] + '">' +
+        t[1] + "</button>";
+    }).join("") + "</div>" +
+    '<div class="cb-body" id="cbb" role="tabpanel"></div>' +
+
+    /* il bottone di sempre, quando serve: dalla prova no, la freccia in
+       alto basta */
+    (fromTry ? ""
+     : '<div class="cb-act">' +
+       (mine ? '<button class="btn" id="cgo">Back to my squad</button>'
+        : ours ? '<button class="btn" id="cgo">Back into ' + esc(c.name) + "</button>"
+        : demo ? '<button class="btn" id="cgo">Back to Ravens FC</button>'
+        : prac ? '<button class="btn" id="cgo">Try it with ' + esc(c.name) + "</button>"
+        : "") +
+       '<div class="cb-feet">' +
+       '<button class="cb-step" data-c="' + esc(prev.id) + '" type="button">&lsaquo; ' +
+       esc(prev.name.split(" ")[0]) + "</button>" +
+       '<span class="cb-num">' + (at + 1) + " OF " + CLUBS.length + "</span>" +
+       '<button class="cb-step" data-c="' + esc(next.id) + '" type="button">' +
+       esc(next.name.split(" ")[0]) + " &rsaquo;</button></div></div>") +
+    "</div>");
+
+  function paintTab() {
+    Array.prototype.forEach.call(document.querySelectorAll(".cb-tab"), function (b) {
+      var on = b.dataset.t === CBTAB;
+      b.className = "cb-tab" + (on ? " on" : "");
+      b.setAttribute("aria-selected", String(on));
+    });
+    $("cbb").innerHTML = CBTAB === "story" ? cbStory(c)
+      : CBTAB === "staff" ? cbStaff(c, mine)
+      : CBTAB === "season" ? cbSeason(c, mine)
+      : cbSquad(c);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".cb-tab"), function (b) {
+    b.onclick = function () { CBTAB = b.dataset.t; paintTab(); };
+  });
+  $("cbk").onclick = back;
+  if ($("cgo")) {
+    $("cgo").onclick = function () {
+      /* nella prova il bottone riporta a Ravens: non cambia squadra */
+      if (demo) { joinClub(DEMO_CLUB); paintClub(ME.club); return reset("squad"); }
+      if (prac && !mine && !ours) { go("claim", { id:c.id }); return; }
+      if (!mine) joinClub(c.id);
+      paintClub(ME.club);
+      reset("squad");
+    };
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".cb-step"), function (b) {
+    b.onclick = function () { swap("club", { id:b.dataset.c }); };
+  });
+  paintTab();
+};
+
+function cbSquad(c) {
+  var list = (typeof SQUADS !== "undefined" && SQUADS[c.id]) || [];
+  if (!list.length) return '<p class="cb-none">The squad is not out yet.</p>';
+  var gem = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z"/>' +
+    '<path d="M2 9h20"/></svg>';
+  return list.map(function (p) {
+    return '<div class="cb-row"><span class="cb-role ' + esc(p.r) + '">' + esc(p.r) + "</span>" +
+      (p.n ? '<span class="cb-nm">' + esc(p.n) + "</span>"
+           : '<span class="cb-nm none">Not named yet</span>') +
+      (p.cap ? '<span class="cb-cap" aria-label="Captain">C</span>' : "") +
+      (p.gem ? '<span class="cb-gem" aria-label="The gem of the squad">' + gem + "</span>" : "") +
+      '<span class="cb-q">' + esc(String(p.q || "").replace("Northern Irish", "N. Irish")) +
+      (p.a ? " · " + p.a : "") + "</span></div>";
+  }).join("");
+}
+
+function cbStory(c) {
+  return (c.story ? '<p class="cb-story">' + esc(c.story) + "</p>" : "") +
+    ((c.lex || []).length
+      ? '<p class="cb-lab">CLUB WORDS</p><div class="cb-words">' +
+        c.lex.map(function (w) { return "<span>" + esc(w) + "</span>"; }).join("") + "</div>"
+      : "");
+}
+
+function cbStaff(c, mine) {
+  var who = (typeof staffWho === "function") ? staffWho() : "";
+  return (typeof STAFF !== "undefined" ? STAFF : []).slice().reverse().map(function (m) {
+    var pic = (typeof staffKitOf === "function") ? staffKitOf(m.id, c.id) : "";
+    var st = !mine ? "Their dugout"
+      : who === m.id ? "In your dugout" : "Signs after your interview";
+    return '<div class="cb-card">' + (pic ? '<img src="' + pic + '" alt="">' : "") +
+      '<div><p class="k">' + esc(m.k) + "</p><h3>" + esc(m.n) + "</h3>" +
+      '<p class="s">' + esc(m.one) + ".</p>" +
+      '<p class="st">' + st + "</p></div></div>";
+  }).join("");
+}
+
+function cbSeason(c, mine) {
+  var s = cbStats(c.id, mine);
+  function cell(v, l, hi) {
+    return '<div class="cb-stat"><b' + (hi ? ' class="hi"' : "") + ">" + v + "</b><span>" +
+      l + "</span></div>";
+  }
+  var form = (s.form || []).slice(-5);
+  var boxes = "";
+  for (var i = 0; i < 5; i++) {
+    var f = String(form[i] || "").toUpperCase().charAt(0);
+    boxes += f ? '<i class="' + f + '">' + f + "</i>" : "<i></i>";
+  }
+  return '<p class="cb-lab">' + (s.live ? "THIS SEASON" : "SEASON 1 · NOT STARTED") + "</p>" +
+    '<div class="cb-stats">' + cell(s.p, "PLAYED") + cell(s.w, "WON") + cell(s.d, "DRAWN") +
+    cell(s.l, "LOST") + "</div>" +
+    '<div class="cb-stats three">' + cell(s.gf, "SCORED") + cell(s.ga, "CONCEDED") +
+    cell(s.pts, "POINTS", true) + "</div>" +
+    '<p class="cb-lab">LAST FIVE</p>' +
+    '<div class="cb-form"' + (form.length ? "" : ' aria-label="No matches played yet"') + ">" +
+    boxes + "</div>";
+}
 
 
 /* ───── 54-post.js ───── */
