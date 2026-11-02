@@ -3776,10 +3776,10 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .cb-card .s{margin-top:5px;font-size:13px;font-weight:500;line-height:1.45}
 .cb-card .st{margin-top:8px;font-size:12px;font-weight:700;color:var(--cbmute)}
 .cb-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.cb-stats.three{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:8px}
+.cb-stats.cb-three{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:8px}
 .cb-stat{padding:12px 0;border-radius:14px;background:var(--cbcard);text-align:center}
 .cb-stat b{display:block;font-size:26px;font-weight:900}
-.cb-stats.three .cb-stat b{font-size:22px}
+.cb-stats.cb-three .cb-stat b{font-size:22px}
 .cb-stat b.hi{color:var(--cbacc)}
 .cb-stat span{display:block;margin-top:4px;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--cbmute)}
 .cb-form{display:flex;gap:8px}
@@ -3795,6 +3795,91 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .cb-step{min-height:44px;padding:0 6px;border:0;background:none;color:var(--cbink);
   font:800 14px/1 var(--brand);cursor:pointer}
 .cb-num{font-size:11px;font-weight:800;letter-spacing:.2em;color:var(--cbmute)}
+
+/* ═════════ My words e My stats: le tendine sotto la rosa ═════════ */
+.sqmore{margin-top:12px}
+.mw,.ms{padding:0 16px 16px;display:flex;flex-direction:column;gap:14px}
+.mw-star{padding:12px 14px;border-radius:14px;background:var(--deep)}
+.mw-starrow{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-size:13px;font-weight:700}
+.mw-starrow b{color:var(--gold);font-size:16px}
+.mw-bar{margin-top:9px;height:8px;border-radius:999px;background:rgba(226,251,206,.12);overflow:hidden}
+.mw-bar i{display:block;height:100%;border-radius:999px;background:var(--gold)}
+.mw-grp{display:flex;flex-direction:column;gap:8px}
+.mw-gh{display:flex;align-items:center;gap:6px}
+.mw-gh b{font-size:14px;font-weight:800}
+.mw-gh em{flex:1;font-style:normal;font-size:14px;font-weight:700;color:var(--fog)}
+.mw-go{min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--gold);
+  background:none;color:var(--gold);font:800 13px/1 var(--brand);cursor:pointer}
+.mw-go:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.mw-wait{font-size:12px;font-weight:700;color:var(--fog)}
+.mw-chips{display:flex;flex-wrap:wrap;gap:6px}
+.mw-chip{padding:7px 12px;border-radius:999px;background:var(--deep);border:1px solid var(--edge);
+  font-size:15px;font-weight:700}
+.mw-chip.mw-done{color:var(--fog);border-style:dashed}
+.mw-chip.due{border-color:var(--gold)}
+.mw .gbig{margin-top:2px}
+.mw-rest{font-size:14px;font-weight:600;color:var(--fog);text-align:center}
+.mw-rule{font-size:12px;font-weight:600;line-height:1.5;color:var(--fog);text-align:center}
+.ms-box{padding:14px;border-radius:14px;background:var(--deep)}
+.ms-lab{font-size:11px;font-weight:800;letter-spacing:.2em;color:var(--fog);margin-bottom:10px}
+.ms-bars{display:flex;align-items:flex-end;gap:10px;height:104px}
+.ms-col{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  gap:6px;height:100%}
+.ms-col span{font-size:12px;font-weight:800}
+.ms-col i{display:block;width:100%;border-radius:8px 8px 3px 3px;background:var(--edge)}
+.ms-col i.now{background:var(--gold)}
+.ms-slip{display:flex;gap:12px;align-items:flex-start}
+.ms-slip>i{width:36px;height:36px;flex:none;border-radius:10px;background:var(--gold);
+  color:#06231D;display:grid;place-items:center;font:900 18px/1 var(--brand);font-style:normal}
+.ms-slip .ms-lab{margin-bottom:4px}
+.ms-slip b{display:block;font-size:17px;font-weight:800}
+.ms-slip span{display:block;margin-top:4px;font-size:13px;font-weight:500;line-height:1.45;color:var(--fog)}
+.ms-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ms-tiles div{padding:12px 0;border-radius:14px;background:var(--deep);text-align:center}
+.ms-tiles b{display:block;font-size:24px;font-weight:900}
+.ms-tiles b.hi{color:var(--gold)}
+.ms-tiles span{display:block;margin-top:4px;font-size:10.5px;font-weight:800;letter-spacing:.12em;color:var(--fog)}
+
+/* l'esercizio: la parola dentro la sua frase */
+.wdr{display:flex;flex-direction:column}
+.wd-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wd-kind{padding:7px 12px;border-radius:999px;border:1px solid var(--edge);font-size:13px;font-weight:800}
+.wd-due{padding:5px 9px;border-radius:999px;background:var(--gold);color:#06231D;
+  font-size:10.5px;font-weight:900;letter-spacing:.14em}
+.wd-n{margin-left:auto;font-size:12px;font-weight:700;color:var(--fog)}
+.wd-dots{display:flex;gap:5px;width:100%;justify-content:flex-end}
+.wd-dots i{width:18px;height:5px;border-radius:999px;background:rgba(226,251,206,.15)}
+.wd-dots i.on{background:var(--gold)}
+.wd-dots i.now{background:var(--fog)}
+.wd-card{margin-top:16px;padding:18px;border-radius:20px;background:var(--deep);border:1px solid var(--edge)}
+.wd-hear{min-height:48px;padding:0 16px;border-radius:999px;border:0;background:rgba(226,251,206,.08);
+  color:var(--cream);display:inline-flex;align-items:center;gap:10px;font:800 14px/1 var(--brand);cursor:pointer}
+.wd-hear svg{width:20px;height:20px;fill:currentColor}
+.wd-hear:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wd-line{margin-top:16px;font-size:21px;font-weight:700;line-height:1.5}
+.wd-line.wd-solo{font-size:16px;font-weight:600;color:var(--fog)}
+.wd-gap{display:inline-block;min-width:96px;height:1.1em;margin:0 4px;vertical-align:-3px;
+  border-bottom:3px solid var(--gold)}
+.wd-lab{margin-top:20px;font-size:12px;font-weight:800;letter-spacing:.22em;color:var(--fog)}
+.wd-in{margin-top:10px;width:100%;height:64px;border-radius:16px;border:1.5px solid rgba(226,251,206,.28);
+  background:var(--band);color:var(--cream);font:800 26px/1 var(--brand);letter-spacing:.04em;
+  text-align:center;padding:0 12px}
+.wd-in:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(227,239,38,.16)}
+.wd-ok,.wd-no{margin-top:14px;padding:14px 16px;border-radius:16px}
+.wd-ok{display:flex;gap:12px;align-items:center;background:rgba(159,216,168,.14);border:1px solid #9FD8A8}
+.wd-ok>i{width:34px;height:34px;flex:none;border-radius:50%;background:#9FD8A8;color:#0E3B2C;
+  display:grid;place-items:center;font:900 18px/1 var(--brand);font-style:normal}
+.wd-ok b{display:block;font-size:16px;font-weight:800}
+.wd-ok span{display:block;margin-top:3px;font-size:13px;font-weight:500;color:#CDEBD2}
+.wd-no{background:rgba(242,169,126,.12);border:1px solid #F2A97E;display:flex;flex-direction:column;gap:6px}
+.wd-no span{font-size:13px;font-weight:600;color:#F6C9AE}
+.wd-right{font-size:24px;font-weight:900;letter-spacing:.03em}
+.wd-right u{color:var(--gold);text-decoration-thickness:3px;text-underline-offset:5px}
+.wdr .gbig{margin-top:18px}
+.wd-end{text-align:center}
+.wd-score{margin-top:30px;font:900 64px/1 var(--brand);color:var(--gold)}
+.wd-end h1{margin-top:14px}
 </style>
 </head>
 <body>
@@ -4723,7 +4808,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "148";
+var APPVER = "149";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -12412,7 +12497,13 @@ function drawSquadCard() {
         '<div id="shirts"></div>' +
         '<div id="sqstaff"></div></div>'
       : "");
-  $("sqtog").onclick = function () { SQOPEN = !SQOPEN; drawSquadCard(); };
+  $("sqtog").onclick = function () {
+    SQOPEN = !SQOPEN;
+    /* una tendina aperta alla volta: si apre la rosa, si chiudono le altre */
+    if (SQOPEN) MYOPEN = "";
+    drawSquadCard();
+  };
+  drawMyCards();
   if (!SQOPEN) return;
 
   $("sqrole").innerHTML = SQROLES.map(function (x) {
@@ -12431,6 +12522,134 @@ function drawSquadCard() {
   });
   drawShirts();
   if (typeof drawStaffRow === "function") drawStaffRow();
+}
+
+/* ═══════════════ My words e My stats, sotto la rosa ═══════════════
+   Due tendine come quella della squadra. My words era in fondo al campo
+   d'allenamento e quasi nessuno la trovava; le statistiche c'erano gia'
+   (My form) ma come pagina a parte. Qui si vede subito quante parole
+   restano e se i dettati vanno meglio. */
+var MYOPEN = "";
+function drawMyCards() {
+  var sq = $("sqc");
+  if (!sq || !sq.parentNode) return;
+  if (!$("sqw")) {
+    sq.insertAdjacentHTML("afterend", '<div class="sqc sqmore" id="sqw"></div>' +
+      '<div class="sqc sqmore" id="sqs"></div>');
+  }
+  loadMem(); loadStars();
+  drawWordsCard(); drawStatsCard();
+}
+function myToggle(id) {
+  MYOPEN = MYOPEN === id ? "" : id;
+  if (MYOPEN) SQOPEN = false;
+  drawSquadCard();
+}
+function myHead(tag, big, sub, open, id) {
+  return '<button class="sqhead" id="' + id + '" type="button" aria-expanded="' +
+    (open ? "true" : "false") + '"><span class="sqt"><i>' + tag + "</i><b>" + big +
+    "</b><em>" + sub + '</em></span><i class="sqtog">' + (open ? "&minus;" : "+") +
+    "</i></button>";
+}
+
+function drawWordsCard() {
+  var box = $("sqw");
+  if (!box) return;
+  var left = wordsLeft(), today = wordsToday();
+  var ever = Object.keys(STARS.fixedEver || {}).length;
+  var toStar = wordsToNextStar();
+  var open = MYOPEN === "words";
+  var sub = ever + " fixed for good" +
+    (left.length && !today.length ? " &middot; all done for today" : "");
+  var body = "";
+  if (open) {
+    var byKind = {}, kinds = [];
+    left.forEach(function (x) {
+      if (!byKind[x.kind]) { byKind[x.kind] = []; kinds.push(x.kind); }
+      byKind[x.kind].push(x);
+    });
+    kinds.sort(function (a, b) { return byKind[b].length - byKind[a].length; });
+    var pct = Math.round(((WORDS_PER_STAR - toStar) / WORDS_PER_STAR) * 100);
+    body = '<div class="sqbody mw">' +
+      '<div class="mw-star"><div class="mw-starrow"><span>' + toStar +
+      (toStar === 1 ? " more word" : " more words") + " fixed and you earn a star</span>" +
+      "<b>&#9733;</b></div>" +
+      '<div class="mw-bar" role="progressbar" aria-label="Words fixed towards the next star" ' +
+      'aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' +
+      pct + '%"></i></div></div>' +
+      (left.length
+        ? kinds.map(function (k) {
+            var can = wordsToday(k).length;
+            return '<div class="mw-grp"><div class="mw-gh"><b>' + esc(k) + "</b><em>&middot; " +
+              byKind[k].length + "</em>" +
+              (can ? '<button class="mw-go" type="button" data-k="' + esc(k) + '">Practise</button>'
+                   : '<span class="mw-wait">tomorrow</span>') + "</div>" +
+              '<div class="mw-chips">' + byKind[k].map(function (x) {
+                var due = wordDue(x.w), done = wordDoneToday(x.w);
+                return '<span class="mw-chip' + (done ? " mw-done" : "") + (due ? " due" : "") + '"' +
+                  (due ? ' title="Back for a check"' : done ? ' title="Right today"' : "") + ">" +
+                  esc(x.w) + (done ? " &#10003;" : "") + "</span>";
+              }).join("") + "</div></div>";
+          }).join("") +
+          (today.length
+            ? '<button class="btn gbig" id="mwall" type="button">Practise ' +
+              (today.length === left.length ? "all " : "") + today.length + " " +
+              GO_ARROW + "</button>"
+            : '<p class="mw-rest">All done for today. Come back tomorrow.</p>')
+        : '<p class="mw-rest">Nothing to fix. New words arrive with your next dictation.</p>') +
+      '<p class="mw-rule">Right on two different days and a word is fixed.<br>' +
+      "A week later it comes back once, to make sure.</p></div>";
+  }
+  box.innerHTML = myHead("MY WORDS", left.length ? left.length + " to fix" : "Nothing to fix",
+    sub, open, "sqwt") + body;
+  $("sqwt").onclick = function () { myToggle("words"); };
+  Array.prototype.forEach.call(box.querySelectorAll(".mw-go"), function (b) {
+    b.onclick = function () { wordsStart(b.dataset.k); };
+  });
+  if ($("mwall")) $("mwall").onclick = function () { wordsStart(""); };
+}
+
+function drawStatsCard() {
+  var box = $("sqs");
+  if (!box) return;
+  loadForm();
+  var hs = FORM.halves.slice().sort(function (a, b) { return (a.when || 0) - (b.when || 0); });
+  var last = hs.slice(-5), open = MYOPEN === "stats";
+  var big = last.length ? accOf(last[last.length - 1]) + "% last dictation" : "No dictations yet";
+  var sub = last.length > 1
+    ? (accOf(last[last.length - 1]) >= accOf(last[0]) ? "up from " : "down from ") +
+      accOf(last[0]) + "%, " + (last.length - 1) + (last.length === 2 ? " dictation" : " dictations") +
+      " ago"
+    : last.length ? "your first dictation" : "your numbers start with your first match";
+  var body = "";
+  if (open) {
+    var s = season(), top = topKinds(s.kinds, 1)[0];
+    var ever = Object.keys(STARS.fixedEver || {}).length;
+    body = '<div class="sqbody ms">' +
+      (last.length
+        ? '<div class="ms-box"><p class="ms-lab">LAST ' + last.length +
+          (last.length === 1 ? " DICTATION" : " DICTATIONS") + "</p>" +
+          '<div class="ms-bars" role="img" aria-label="Words right: ' +
+          last.map(function (h) { return accOf(h) + "%"; }).join(", ") + '">' +
+          last.map(function (h, j) {
+            var v = accOf(h);
+            return '<div class="ms-col"><span>' + v + '</span><i style="height:' +
+              Math.max(6, Math.round(v * 0.8)) + 'px"' +
+              (j === last.length - 1 ? ' class="now"' : "") + "></i></div>";
+          }).join("") + "</div></div>"
+        : "") +
+      (top
+        ? '<div class="ms-box ms-slip"><i aria-hidden="true">!</i><div>' +
+          '<p class="ms-lab">YOUR MOST COMMON SLIP</p><b>' + esc(top.k) + "</b>" +
+          (TIPS[top.k] ? "<span>" + esc(TIPS[top.k]) + "</span>" : "") + "</div></div>"
+        : "") +
+      '<div class="ms-tiles">' +
+      '<div><b>' + ever + "</b><span>FIXED</span></div>" +
+      '<div><b>' + hs.length + "</b><span>DICTATIONS</span></div>" +
+      '<div><b class="hi">' + s.right + "</b><span>WORDS RIGHT</span></div></div></div>";
+  }
+  box.innerHTML = myHead("MY STATS", big, sub, open, "sqst") + body;
+  $("sqst").onclick = function () { myToggle("stats"); };
 }
 
 /* ───────── le maglie, dodici per schermata ─────────
@@ -20144,7 +20363,7 @@ function cbSeason(c, mine) {
   return '<p class="cb-lab">' + (s.live ? "THIS SEASON" : "SEASON 1 · NOT STARTED") + "</p>" +
     '<div class="cb-stats">' + cell(s.p, "PLAYED") + cell(s.w, "WON") + cell(s.d, "DRAWN") +
     cell(s.l, "LOST") + "</div>" +
-    '<div class="cb-stats three">' + cell(s.gf, "SCORED") + cell(s.ga, "CONCEDED") +
+    '<div class="cb-stats cb-three">' + cell(s.gf, "SCORED") + cell(s.ga, "CONCEDED") +
     cell(s.pts, "POINTS", true) + "</div>" +
     '<p class="cb-lab">LAST FIVE</p>' +
     '<div class="cb-form"' + (form.length ? "" : ' aria-label="No matches played yet"') + ">" +
@@ -28162,14 +28381,17 @@ function learnWords(r, src) {
     var key = String(e.w).toLowerCase();
     var kind = (typeof classify === "function") ? classify(e.w, a.written, e.t) : "";
     if (!kind) kind = a.written ? "Different word" : "Missing word";
+    var ctx = r.noctx ? null : ctxAround(r.els, k);
     if (seen[key]) {
       seen[key].n = (seen[key].n || 1) + 1;
       if (a.written) seen[key].wrote = a.written;
+      if (ctx) seen[key].c = ctx;
       seen[key].when = Date.now();
       return;
     }
     var row = { w:e.w, wrote:a.written || "\u2014", kind:kind, n:1,
                 when:Date.now(), from:src || "" };
+    if (ctx) row.c = ctx;
     l.push(row); seen[key] = row;
   });
   wordListSave(l);
@@ -28188,15 +28410,83 @@ function loadMem() {
   try { MEM = JSON.parse(localStorage.getItem(wKey())) || {}; } catch (e) { MEM = {}; }
 }
 function saveMem() { try { localStorage.setItem(wKey(), JSON.stringify(MEM)); } catch (e) {} }
-function wordHits(w) { return MEM[w] || 0; }
-function wordFixed(w) { return wordHits(w) >= NEED; }
+
+/* ───────── quando una parola e' sistemata ─────────
+   Prima bastavano due risposte giuste, anche di fila: la parola usciva
+   mentre la si aveva ancora in testa, e il giorno dopo era sparita
+   anche dalla testa. Adesso servono due giorni diversi; e una settimana
+   dopo la parola torna una volta sola, per vedere se e' rimasta. Giusta
+   alla verifica, e' sistemata per sempre; sbagliata, si ricomincia.
+   In MEM ogni parola tiene i due giorni (d) e la verifica fatta (c).
+   Un numero e' il formato di prima: chi aveva gia' sistemato una parola
+   la ritrova sistemata. */
+function dayNo() {
+  var t = new Date();
+  return Math.floor((t.getTime() - t.getTimezoneOffset() * 60000) / 86400000);
+}
+function memOf(w) {
+  var m = MEM[w];
+  if (typeof m === "number") return m >= NEED ? { d:[0, 0], c:1 } : (m > 0 ? { d:[0] } : { d:[] });
+  return (m && m.d) ? m : { d:[] };
+}
+function wordHits(w) { return memOf(w).d.length; }
+function wordFixed(w) {
+  var m = memOf(w);
+  if (m.d.length < NEED) return false;
+  return !!m.c || dayNo() - m.d[m.d.length - 1] < 7;
+}
+/* la settimana e' passata: torna per la verifica */
+function wordDue(w) {
+  var m = memOf(w);
+  return m.d.length >= NEED && !m.c && dayNo() - m.d[m.d.length - 1] >= 7;
+}
+/* giusta oggi, ma non ancora sistemata: per oggi basta cosi' */
+function wordDoneToday(w) {
+  return !wordFixed(w) && !wordDue(w) && memOf(w).d.indexOf(dayNo()) >= 0;
+}
+function wordRight(w) {
+  var m = memOf(w), t = dayNo();
+  if (wordDue(w)) m.c = 1;
+  else if (m.d.indexOf(t) < 0) { m.d.push(t); m.d = m.d.slice(-NEED); }
+  MEM[w] = m; saveMem();
+}
+function wordWrong(w) { MEM[w] = { d:[] }; saveMem(); }
 function wordsLeft() {
   return ME.words.filter(function (x) { return !wordFixed(x.w); });
+}
+/* quelle che oggi si possono ancora allenare */
+function wordsToday(kind) {
+  return wordsLeft().filter(function (x) {
+    return !wordDoneToday(x.w) && (!kind || x.kind === kind);
+  });
+}
+
+/* la frase in cui stava la parola, con il buco al suo posto: si
+   ripassa dentro il suo contesto, che si ricorda meglio di una parola
+   sola. Dal punto prima al punto dopo, al massimo dodici parole per
+   parte. */
+function ctxAround(els, k) {
+  function stop(x) { return x && x.t === "ponct" && /[.!?]/.test(x.w); }
+  function join(list) {
+    return list.map(function (x, j) {
+      return (j && x.t !== "ponct" ? " " : "") + x.w;
+    }).join("");
+  }
+  var s = k, e = k;
+  while (s > 0 && !stop(els[s - 1])) s--;
+  while (e < els.length - 1 && !stop(els[e])) e++;
+  var bef = els.slice(s, k), aft = els.slice(k + 1, e + 1);
+  var cut = bef.length > 12;
+  if (cut) bef = bef.slice(-12);
+  var b = join(bef), a = join(aft.slice(0, 12));
+  if (!b && !a) return null;
+  return { b:(cut ? "… " : "") + b, a:(a && aft[0].t !== "ponct" ? " " : "") + a };
 }
 
 /* il campo d'allenamento corregge a blocchi: stesso magazzino, altra forma */
 function learnItems(items, src) {
-  var r = { els:[], answers:[] };
+  /* a blocchi non c'e' una frase: niente contesto */
+  var r = { els:[], answers:[], noctx:true };
   (items || []).forEach(function (it) {
     r.els.push({ w:it.w, t:it.t || "mot" });
     r.answers.push({ written:it.g || "", extra:"", errors:it.k ? 1 : 0 });
@@ -28287,7 +28577,8 @@ VIEWS.words = function () {
     ? '<div class="count"><b>' + left.length + "</b><span>" +
       (left.length === 1 ? "word still to fix" : "words still to fix") + "</span></div>" +
       '<p class="lede">These are words from <b>your own dictations</b>. Listen, write, ' +
-      "and see if it sticks. A word leaves the list when you get it right <b>twice</b>.</p>" +
+      "and see if it sticks. A word leaves the list when you get it right on " +
+      "<b>two different days</b>.</p>" +
       '<div class="kinds">' + kinds.map(function (k) {
         return '<div class="kr"><i></i><b>' + esc(k) + "</b><span>" + byKind[k] +
           "</span></div>"; }).join("") + "</div>"
@@ -28297,24 +28588,33 @@ VIEWS.words = function () {
     '<div class="chips">' + ME.words.map(function (x) {
       return '<span class="chip' + (wordFixed(x.w) ? " done" : "") + '">' + esc(x.w) +
         "</span>"; }).join("") + "</div>" +
-    (left.length ? '<button class="btn" id="gow">Start &middot; ' + left.length +
-      (left.length === 1 ? " word" : " words") + "</button>" : "") +
+    (wordsToday().length ? '<button class="btn" id="gow">Start &middot; ' + wordsToday().length +
+      (wordsToday().length === 1 ? " word" : " words") + "</button>"
+     : left.length ? '<p class="bnote">All done for today. Come back tomorrow.</p>' : "") +
     (done ? '<button class="btn ghost" id="rst">Clear what I fixed</button>' : "") +
     "</div>");
 
-  if ($("gow")) $("gow").onclick = function () {
-    WR = { queue: left.slice().sort(function () { return Math.random() - 0.5; }),
-           i:0, fixedNow:0, again:[] };
-    swap("wDrill");
-  };
+  if ($("gow")) $("gow").onclick = function () { wordsStart(""); };
   if ($("rst")) $("rst").onclick = function () {
     if (!confirm("Put every word back on the list?")) return;
     MEM = {}; saveMem(); swap("words");
   };
 };
 
-/* ───────── 2. l'esercizio ───────── */
-var WR = { queue:[], i:0, fixedNow:0, again:[] };
+/* ───────── 2. l'esercizio ─────────
+   Una parola alla volta, dentro la sua frase: si ascolta, si scrive la
+   parola che manca, si controlla. Sbagliata, si vede quella giusta e la
+   si riscrive subito — ma quella seconda volta non conta, perche' la si
+   e' appena vista. Conta la prima, e conta un giorno alla volta. */
+var WR = { queue:[], i:0, fixedNow:0, right:0, kind:"", retry:false, res:"" };
+function wordsStart(kind) {
+  loadMem();
+  var q = wordsToday(kind);
+  if (!q.length) return;
+  WR = { queue:q.slice().sort(function () { return Math.random() - 0.5; }),
+         i:0, fixedNow:0, right:0, kind:kind || "", retry:false, res:"" };
+  go("wDrill");
+}
 var SPK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/>' +
   '<path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="1.8" ' +
   'stroke-linecap="round"/><path d="M19 6a8.5 8.5 0 0 1 0 12" fill="none" ' +
@@ -28322,59 +28622,82 @@ var SPK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8
 
 VIEWS.wDrill = function () {
   var it = WR.queue[WR.i];
-  barFlow("Listen and write", (WR.i + 1) + " of " + WR.queue.length,
-          Math.round((WR.i / WR.queue.length) * 100));
-  html('<div class="pad">' +
-    '<button class="hear" id="hear" type="button" aria-label="Hear the word">' + SPK +
-    '</button><p class="hearlab">' +
-    (CAN_SPEAK ? "TAP TO HEAR IT AGAIN" : "TAP TO SEE IT FOR A MOMENT") + "</p>" +
-    '<p class="flashword" id="flash"></p>' +
-    '<input type="text" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" ' +
-    'spellcheck="false" placeholder="write the word">' +
-    '<button class="btn" id="chk" disabled>Check</button><div id="res"></div></div>');
+  if (!it) return swap("wEnd");
+  var n = WR.queue.length;
+  barFlow("My words", WR.kind || "All my words", Math.round((WR.i / n) * 100));
+  var due = wordDue(it.w);
+  var dots = n <= 12 ? '<span class="wd-dots" aria-hidden="true">' +
+    WR.queue.map(function (x, j) {
+      return "<i" + (j < WR.i ? ' class="on"' : j === WR.i ? ' class="now"' : "") + "></i>";
+    }).join("") + "</span>" : "";
+  html('<div class="pad wdr">' +
+    '<div class="wd-top"><span class="wd-kind">' + esc(it.kind) + "</span>" +
+    (due ? '<span class="wd-due">CHECK</span>' : "") +
+    '<span class="wd-n">' + (WR.i + 1) + " of " + n + "</span>" + dots + "</div>" +
+    '<div class="wd-card">' +
+    '<button class="wd-hear" id="hear" type="button">' + SPK +
+    (canSay() ? (it.c ? "Hear the sentence" : "Hear the word") : "Show the word") + "</button>" +
+    (it.c
+      ? '<p class="wd-line">' + esc(it.c.b) + '<span class="wd-gap" aria-label="missing word"></span>' +
+        esc(it.c.a) + "</p>"
+      : '<p class="wd-line wd-solo">Listen, and write the word you hear.</p>') +
+    '<p class="flashword" id="flash"></p></div>' +
+    '<label class="wd-lab" for="ans">WRITE THE MISSING WORD</label>' +
+    '<input type="text" class="wd-in" id="ans" autocomplete="off" autocapitalize="off" ' +
+    'autocorrect="off" spellcheck="false" placeholder="&hellip;">' +
+    '<div id="res" role="status"></div>' +
+    '<button class="btn gbig" id="chk" disabled>Check</button></div>');
 
+  /* la frase si legge intera, con la parola dentro: e' quello che si e'
+     sentito nel dettato. Senza una voce inglese la parola si mostra un
+     attimo, come prima. */
   function hear() {
-    var h = $("hear");
-    h.classList.remove("flash"); void h.offsetWidth; h.classList.add("flash");
-    if (!say(it.w)) {
+    var line = it.c ? it.c.b.replace(/^… /, "") + " " + it.w + it.c.a : it.w;
+    var spoke = it.c ? sayLine(line) : say(it.w);
+    if (!spoke) {
       $("flash").textContent = it.w;
       setTimeout(function () { var f = $("flash"); if (f) f.textContent = ""; }, 1600);
     }
   }
   $("hear").onclick = hear;
-  hear();
+  if (canSay()) hear();
 
   var ans = $("ans"), chk = $("chk");
-  ans.oninput = function () { chk.disabled = !ans.value.trim(); };
-  ans.onkeydown = function (e) { if (e.key === "Enter" && ans.value.trim()) check(); };
+  ans.oninput = function () { if (!WR.res) chk.disabled = !ans.value.trim(); };
+  ans.onkeydown = function (e) { if (e.key === "Enter" && !chk.disabled) chk.click(); };
   chk.onclick = check;
   setTimeout(function () { try { ans.focus(); } catch (e) {} }, 80);
 
   function check() {
     var got = ans.value.trim(), right = got === it.w;
-    ans.disabled = true; chk.hidden = true;
-    if (right) {
-      MEM[it.w] = wordHits(it.w) + 1; saveMem();
-      if (wordFixed(it.w)) WR.fixedNow++;
-    } else { MEM[it.w] = 0; saveMem(); WR.again.push(it); }
-    $("res").innerHTML = '<div class="res ' + (right ? "good" : "bad") + '">' +
-      '<div class="hd">' + (right ? "RIGHT" : "NOT YET") + '</div><div class="word">' +
-      (right ? esc(it.w) : markDiff(it.w, got)) + "</div>" +
-      (right ? "" : '<div class="yours">you wrote <s>' + esc(got) + "</s></div>") +
-      (right && wordFixed(it.w)
-        ? '<div class="tip"><b>Fixed.</b>Twice right — this one leaves your list.</div>'
-        : '<div class="tip"><b>' + esc(it.kind) + "</b>" + esc(TIPS[it.kind] || "") +
-          "</div>") + "</div>" +
-      '<button class="btn" id="nx">' +
-      (WR.i + 1 < WR.queue.length ? "Next word" : "Finish") + "</button>";
-    $("nx").onclick = function () {
-      WR.i++;
-      if (WR.i < WR.queue.length) swap("wDrill");
-      else if (WR.again.length) {
-        WR.queue = WR.again; WR.again = []; WR.i = 0; swap("wDrill");
-      } else swap("wEnd");
+    ans.disabled = true;
+    if (!WR.retry) {
+      if (right) {
+        var was = wordFixed(it.w);
+        wordRight(it.w); WR.right++;
+        if (!was && wordFixed(it.w)) WR.fixedNow++;
+      } else wordWrong(it.w);
+    }
+    WR.res = right ? "ok" : "no";
+    var fixed = right && !WR.retry && wordFixed(it.w);
+    $("res").innerHTML = right
+      ? '<div class="wd-ok"><i aria-hidden="true">&#10003;</i><div><b>Right!</b><span>' +
+        (WR.retry ? "Good. It counts the next time you meet it."
+         : fixed ? (due ? "Still there after a week. Fixed for good."
+                        : "Right on two days. It leaves your list.")
+         : "Once more on another day and it is fixed.") + "</span></div></div>"
+      : '<div class="wd-no"><span>You wrote <s>' + esc(got) + "</s></span>" +
+        '<b class="wd-right">' + markDiff(it.w, got) + "</b>" +
+        "<span>" + esc(TIPS[it.kind] || "Listen again, then write it once more.") + "</span></div>";
+    chk.disabled = false;
+    chk.textContent = right ? (WR.i + 1 < WR.queue.length ? "Next word" : "See how it went")
+      : WR.retry ? "Next word" : "Try again";
+    chk.onclick = function () {
+      if (!right && !WR.retry) { WR.retry = true; WR.res = ""; return swap("wDrill"); }
+      WR.retry = false; WR.res = ""; WR.i++;
+      swap(WR.i < WR.queue.length ? "wDrill" : "wEnd");
     };
-    $("nx").focus();
+    chk.focus();
   }
 };
 
@@ -28385,9 +28708,10 @@ VIEWS.wEnd = function () {
   noteFixedWords();
   var won = starsEarned() - before;
   barFlow("Done for today", ME.club ? ME.club.name : "Try it", 100, false);
-  html('<div class="pad"><h1>' + (WR.fixedNow
+  html('<div class="pad wd-end"><p class="wd-score">' + WR.right + "/" + WR.queue.length +
+    "</p><h1>" + (WR.fixedNow
     ? WR.fixedNow + (WR.fixedNow === 1 ? " word fixed." : " words fixed.")
-    : "Good work.") + "</h1>" +
+    : "Right today.") + "</h1>" +
     (won
       ? '<div class="starwon"><b>&#9733; +' + won + "</b><span>" +
         (won === 1 ? "A star" : won + " stars") + " for the words you have fixed for " +
