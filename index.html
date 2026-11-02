@@ -3929,6 +3929,95 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .rs-you{display:block;margin-top:8px;font-size:14px;font-weight:700;color:#F6C9AE}
 .rs-right{display:block;margin-top:3px;font-size:14px;font-weight:800;color:#9FD8A8}
 .rs-clean{margin-top:20px;text-align:center;font-size:15px;font-weight:700;color:var(--fog)}
+
+/* ═════════ il mercato: il ventaglio delle carte e il contratto ═════════ */
+.mkr .lede{text-align:center}
+.mkr-stage{position:relative;height:372px;margin:14px -16px 0;overflow:hidden;perspective:1200px}
+.mkr .flip{position:absolute;left:50%;top:14px;width:250px;aspect-ratio:3/3.9;perspective:1000px;
+  transition:transform .34s cubic-bezier(.2,.8,.2,1),opacity .3s ease}
+.mkr .flip .in{transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
+.mkr .face{border-radius:16px}
+.mkr .face.b{background:repeating-linear-gradient(135deg,var(--deep) 0 14px,var(--band) 14px 28px);
+  border:2px solid var(--edge);gap:12px;box-shadow:0 18px 36px rgba(0,0,0,.55)}
+.mkr .face.b em{width:64px;height:64px;border-width:2px}
+.mkr .face.b b{font-size:12px;font-weight:800;letter-spacing:.22em;color:var(--fog)}
+.mkr .face.b span{margin-top:14px;padding:8px 14px;border-radius:999px;background:var(--gold);
+  color:#06231D;font-size:11px;letter-spacing:.14em}
+.mkr .face.f{padding:9px 10px 4px;box-shadow:0 18px 36px rgba(0,0,0,.55)}
+.mkr .face.f .st{font-size:15px}
+.mkr .face.f .ro{font-size:19px}
+.mkr .cbg{font-size:11px;padding:4px 8px}
+.mkr .cwho b{font-size:18px}
+.mkr .cwho em{font-size:12px}
+.mkr .cfoot b{font-size:24px}
+.mkr .cfoot span{font-size:9.5px}
+.mkr .pickno{min-width:26px;height:26px;font-size:13px}
+.mkr .flip.gold .face.f{border:3px solid #D4A93C;box-shadow:0 18px 36px rgba(0,0,0,.55),0 0 26px rgba(212,169,60,.45)}
+.mkr .flip.holo .face.f{border:3px solid #E3EF26;box-shadow:0 18px 36px rgba(0,0,0,.55),0 0 30px rgba(227,239,38,.5)}
+.mkr .flip.pick .face.f{border-color:var(--gold);box-shadow:0 0 0 6px rgba(227,239,38,.25),0 18px 36px rgba(0,0,0,.55)}
+.mkr .cwin::after{content:"";position:absolute;top:0;bottom:0;left:0;width:45%;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,250,210,.55),transparent);transform:translateX(-120%) skewX(-18deg)}
+.mkr-nav{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:6px}
+.mkr-arr{width:44px;height:44px;border-radius:50%;border:1px solid var(--edge);background:var(--band);
+  color:var(--cream);font:700 20px/1 var(--brand);cursor:pointer}
+.mkr-arr:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.mkr-dots{display:flex;gap:8px}
+.mkr-dots i{width:8px;height:8px;border-radius:999px;background:rgba(226,251,206,.2);transition:width .2s}
+.mkr-dots i.up{background:var(--fog)}
+.mkr-dots i.now{width:22px;background:var(--gold)}
+.mkr .turnhint{text-align:center;font-size:13px}
+@media (prefers-reduced-motion: no-preference){
+  .mkr .flip{animation:mkrDeal .5s cubic-bezier(.2,.9,.3,1.2) backwards}
+  @keyframes mkrDeal{from{transform:translate(-50%,120px) rotate(-14deg) scale(.7);opacity:0}}
+  .mkr .flip.up .cwin::after{animation:mkrShine 1s ease-out .35s both}
+  .mkr .flip.holo.up .cwin::after{animation:mkrShine 1.6s ease-in-out .35s infinite}
+  @keyframes mkrShine{to{transform:translateX(260%) skewX(-18deg)}}
+  .mkr .flip.up .cbg{animation:mkrGlow 1.8s ease-in-out infinite}
+  @keyframes mkrGlow{50%{box-shadow:0 0 14px 3px rgba(227,239,38,.65)}}
+}
+@media (prefers-reduced-motion: reduce){
+  .mkr .flip,.mkr .flip .in{transition:none}
+}
+
+.sg-paper{position:relative;margin:14px 2px 0;padding:22px 20px 20px;border-radius:6px;background:#F4EDDC;
+  color:#1B2A22;box-shadow:0 22px 44px rgba(0,0,0,.55);transform:rotate(-1.2deg)}
+.sg-card{position:absolute;right:-12px;top:-20px;width:70px;height:98px;border-radius:8px;
+  background:var(--band);border:3px solid #D4A93C;transform:rotate(9deg);overflow:hidden;
+  box-shadow:0 10px 20px rgba(0,0,0,.45)}
+.sg-card img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.sg-k{font-size:11px;font-weight:800;letter-spacing:.24em;color:#7A6A3A}
+.sg-gap{margin-top:16px}
+.sg-club{margin-top:6px;font:900 22px/1.1 var(--brand)}
+.sg-sub{margin-top:2px;font-size:12px;font-weight:700;color:#5B6B5F}
+.sg-txt{margin-top:14px;font-size:14px;font-weight:600;line-height:1.55;padding-right:30px}
+.sg-who{margin-top:2px;font-size:17px;font-weight:800}
+.sg-line{position:relative;height:60px;border-bottom:1.5px solid #1B2A22}
+.sg-ink{position:absolute;left:4px;bottom:-4px;white-space:nowrap;color:#16233F;line-height:1;
+  font:400 40px/1 "Snell Roundhand","Segoe Script","Brush Script MT","Dancing Script",cursive;font-style:italic}
+.sg-stamp{position:absolute;right:-6px;bottom:34px;padding:6px 10px;border:3px solid #1C6B4F;border-radius:8px;
+  color:#1C6B4F;font:900 17px/1 var(--brand);letter-spacing:.14em;transform:rotate(-14deg);opacity:.92}
+.sg .wd-lab{display:block}
+.sg .wd-in{text-align:center}
+.sg-in{font-size:22px;letter-spacing:.01em}
+.sg-no{margin-top:10px;text-align:center;font-size:14px;font-weight:700;color:#F6C9AE}
+.sg-no .wd-right{display:block;margin-top:6px;color:var(--cream)}
+.sg .gbig{margin-top:16px}
+.sg-done{margin-top:26px;text-align:center}
+.sg-joins{font:900 24px/1.2 var(--brand)}
+.sg-flash{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0;
+  background:radial-gradient(60% 40% at 70% 30%,#fff 0%,rgba(255,255,255,.4) 40%,transparent 70%)}
+@media (prefers-reduced-motion: no-preference){
+  .sg-paper.shake{animation:sgShake .38s ease}
+  @keyframes sgShake{20%,60%{transform:rotate(-1.2deg) translateX(-8px)}40%,80%{transform:rotate(-1.2deg) translateX(8px)}}
+  .sg-ink{animation:sgInk 1.2s cubic-bezier(.5,.1,.3,1) .1s both}
+  @keyframes sgInk{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+  .sg-stamp{animation:sgStamp .35s cubic-bezier(.2,1.6,.4,1) 1.3s both}
+  @keyframes sgStamp{from{transform:rotate(-14deg) scale(2.2);opacity:0}to{transform:rotate(-14deg) scale(1);opacity:.92}}
+  .sg-flash{animation:sgFlash 1.6s ease-out 1.5s both}
+  @keyframes sgFlash{0%{opacity:0}6%{opacity:.85}14%{opacity:0}30%{opacity:.6}38%{opacity:0}100%{opacity:0}}
+  .sg-done{animation:sgRise .4s ease 1.9s both}
+  @keyframes sgRise{from{opacity:0;transform:translateY(12px)}}
+}
 </style>
 </head>
 <body>
@@ -4858,7 +4947,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "151";
+var APPVER = "152";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -16305,25 +16394,60 @@ VIEWS.mkThree = function () {
   MK.cards = shuffle(poolOf(MK.scout, MK.cont).slice(), r).slice(0, show);
   MK.turned = 0; MK.picked = [];
   barFlow(MK.cards.length + " names", MK.scout.name + (MK.cont ? " · " + MK.cont : ""), 85);
-  html('<div class="pad"><p class="lede">' + esc(MK.scout.name) + " came back with " +
+  /* ───────── il ventaglio ─────────
+     Le carte arrivano una dopo l'altra, coperte, con il nome dello scout
+     sul dorso. Una grande al centro, le altre di lato: si sfogliano con
+     le frecce o toccandole. Il primo tocco la gira, il secondo la
+     sceglie. Le ★★ hanno il bordo d'oro, dalle ★★★ in su un riflesso, e
+     le GEM brillano. */
+  var mkAt = 0;
+  html('<div class="pad mkr"><p class="lede">' + esc(MK.scout.name) + " came back with " +
     MK.cards.length + ". Turn them over, then sign <b>" + cap +
     (cap === 1 ? "</b>." : "</b> of them.") + "</p>" +
-    '<div class="three">' + MK.cards.map(function (c, i) {
-      return '<button class="flip" data-i="' + i + '" type="button" aria-label="Turn over ' +
-        'card ' + (i + 1) + '"><span class="in">' +
-        '<span class="face b"><em></em><span>TURN</span></span>' +
+    '<div class="mkr-stage" id="mkst">' + MK.cards.map(function (c, i) {
+      return '<button class="flip' + (c.stars >= 3 ? " holo" : c.stars >= 2 ? " gold" : "") +
+        '" data-i="' + i + '" type="button" style="animation-delay:' + (i * 120) + 'ms" ' +
+        'aria-label="Turn over card ' + (i + 1) + '"><span class="in">' +
+        '<span class="face b"><em></em><b>' + esc(String(MK.scout.name).toUpperCase()) +
+        "</b><span>TAP TO TURN</span></span>" +
         '<span class="face f">' + cardFace(c) + '<span class="pickno"></span>' +
         "</span></span></button>";
     }).join("") + "</div>" +
+    '<div class="mkr-nav"><button class="mkr-arr" id="mkpv" type="button" ' +
+    'aria-label="The card before">&lsaquo;</button><span class="mkr-dots" id="mkdots" ' +
+    'aria-hidden="true"></span><button class="mkr-arr" id="mknx" type="button" ' +
+    'aria-label="The card after">&rsaquo;</button></div>' +
     '<p class="turnhint" id="hint">Tap each card to turn it over.</p>' +
-    '<button class="btn" id="sign" hidden>Sign</button></div>');
+    '<button class="btn gbig" id="sign" hidden>Sign</button></div>');
 
   var all = Array.prototype.slice.call($("main").querySelectorAll(".flip"));
+  function place() {
+    all.forEach(function (b, i) {
+      var d = i - mkAt;
+      b.style.transform = "translateX(calc(-50% + " + (d * 214) + "px)) rotate(" + (d * 7) +
+        "deg) scale(" + (d ? 0.84 : 1) + ")";
+      b.style.opacity = d ? "0.55" : "1";
+      b.style.zIndex = String(10 - Math.abs(d));
+      b.classList.toggle("here", !d);
+    });
+    $("mkdots").innerHTML = all.map(function (b, i) {
+      return "<i" + (i === mkAt ? ' class="now"' : b.classList.contains("up") ? ' class="up"' : "") + "></i>";
+    }).join("");
+  }
+  place();
+  $("mkpv").onclick = function () { if (mkAt > 0) { mkAt--; place(); } };
+  $("mknx").onclick = function () { if (mkAt < all.length - 1) { mkAt++; place(); } };
   all.forEach(function (b) {
     b.onclick = function () {
       var i = parseInt(b.dataset.i, 10);
+      /* una carta di lato si porta al centro, non si gira da lontano */
+      if (i !== mkAt) { mkAt = i; return place(); }
       if (!b.classList.contains("up")) {
         b.classList.add("up"); MK.turned++;
+        b.setAttribute("aria-label", "Choose " + MK.cards[i].name);
+        /* un colpo leggero, sui telefoni che lo sanno fare */
+        try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
+        place();
         if (MK.turned === MK.cards.length) hint();
         return;
       }
@@ -16362,7 +16486,84 @@ VIEWS.mkThree = function () {
         ".</b> The others stay as reserves."
       : (cap - MK.picked.length) + " more to choose.";
   }
-  $("sign").onclick = function () { go("mkDone"); };
+  $("sign").innerHTML = "Sign";
+  $("sign").onclick = function () { MK.si = 0; go("mkSign"); };
+};
+
+/* ───────── 6b. il contratto ─────────
+   Prima toccare « Sign » bastava. Adesso il contratto si firma davvero:
+   si scrive il nome del giocatore, che viene da mezzo mondo — Théo,
+   Bienvenue, Merryweather — ed e' ancora un esercizio di scrittura.
+   Giusto, la firma si disegna, cade il timbro e scattano i flash; poi
+   la firma vera (mkDone) fa quello che faceva, riserve comprese.
+   Accenti e maiuscole non contano: si guarda l'ortografia, non la
+   tastiera. */
+function signNorm(s) {
+  var t = String(s || "");
+  try { t = t.normalize("NFD").replace(/[̀-ͯ]/g, ""); } catch (e) {}
+  return t.toLowerCase().replace(/\s+/g, " ").trim();
+}
+VIEWS.mkSign = function () {
+  var cap = MK.picked.length, k = MK.si || 0;
+  var c = MK.cards[MK.picked[k]];
+  if (!c) return swap("mkDone");
+  barFlow("The contract", c.name + " · " + (ROLE[c.role] || c.role) + " · " + c.country +
+    (cap > 1 ? " · " + (k + 1) + " of " + cap : ""), 92, false);
+  var tries = 0;
+  html('<div class="pad sg">' +
+    '<div class="sg-paper" id="sgp">' +
+    '<span class="sg-card" aria-hidden="true">' +
+    (kitOf(ME.club.id) ? '<img src="' + kitOf(ME.club.id) + '" alt="">' : "") + "</span>" +
+    '<p class="sg-k">PLAYER CONTRACT</p>' +
+    '<p class="sg-club">' + esc(ME.club.name) + "</p>" +
+    '<p class="sg-sub">Season 1 · ' + esc(String(ME.club.city || "").split(" ·")[0]) + "</p>" +
+    '<p class="sg-txt">' + esc(ME.club.name) + " signs the player below for the whole " +
+    "season. The player agrees to train, to play and to write every word with care.</p>" +
+    '<p class="sg-k sg-gap">PLAYER</p><p class="sg-who">' + esc(c.name) + "</p>" +
+    '<p class="sg-k sg-gap">SIGNATURE</p><div class="sg-line" id="sgl"></div></div>' +
+    '<div id="sgw"><label class="wd-lab" for="sgi">WRITE THE PLAYER’S NAME TO SIGN</label>' +
+    '<input type="text" class="wd-in sg-in" id="sgi" autocomplete="off" autocapitalize="words" ' +
+    'autocorrect="off" spellcheck="false" placeholder="Name Surname">' +
+    '<p class="sg-no" id="sgn" role="alert" hidden></p>' +
+    '<button class="btn gbig" id="sgb" disabled>Sign the contract</button></div>' +
+    '<div class="sg-done" id="sgd" hidden></div></div>');
+
+  var inp = $("sgi"), btn = $("sgb");
+  inp.oninput = function () { btn.disabled = !inp.value.trim(); $("sgn").hidden = true; };
+  inp.onkeydown = function (e) { if (e.key === "Enter" && !btn.disabled) btn.click(); };
+  setTimeout(function () { try { inp.focus(); } catch (e) {} }, 80);
+  btn.onclick = function () {
+    if (signNorm(inp.value) !== signNorm(c.name)) {
+      tries++;
+      var p = $("sgp");
+      p.classList.remove("shake"); void p.offsetWidth; p.classList.add("shake");
+      $("sgn").hidden = false;
+      /* alla seconda volta si vede dove si sbaglia */
+      $("sgn").innerHTML = "The ink will not take. Check each letter of the name." +
+        (tries >= 2 ? '<b class="wd-right">' + markDiff(c.name, inp.value) + "</b>" : "");
+      return;
+    }
+    inp.disabled = true;
+    $("sgw").hidden = true;
+    $("sgl").innerHTML = '<span class="sg-ink">' + esc(c.name) + "</span>" +
+      '<span class="sg-stamp" aria-hidden="true">SIGNED</span>';
+    var last = k + 1 >= cap;
+    $("sgd").hidden = false;
+    $("sgd").innerHTML = '<p class="sg-joins">' + esc(c.name) + "<br>joins " +
+      esc(ME.club.name) + ".</p>" +
+      '<button class="btn gbig" id="sgx">' + (last ? "Seal the deal" : "Next contract") +
+      "</button>";
+    /* i flash dei fotografi: due lampi, una volta */
+    var fl = document.createElement("div");
+    fl.className = "sg-flash"; fl.setAttribute("aria-hidden", "true");
+    document.body.appendChild(fl);
+    setTimeout(function () { if (fl.parentNode) fl.parentNode.removeChild(fl); }, 3400);
+    try { if (navigator.vibrate) navigator.vibrate([20, 60, 20]); } catch (e) {}
+    $("sgx").onclick = function () {
+      if (last) return swap("mkDone");
+      MK.si = k + 1; swap("mkSign");
+    };
+  };
 };
 
 /* ───────── 7. la firma ─────────
