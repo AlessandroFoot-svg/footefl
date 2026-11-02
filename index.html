@@ -3852,6 +3852,14 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .wd-dots i{width:18px;height:5px;border-radius:999px;background:rgba(226,251,206,.15)}
 .wd-dots i.on{background:var(--gold)}
 .wd-dots i.now{background:var(--fog)}
+.wd-mode{margin-top:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:4px;
+  border-radius:14px;background:var(--deep);border:1px solid var(--edge)}
+.wd-mode button{height:44px;border:0;border-radius:10px;background:none;color:var(--cream);
+  font:800 14px/1 var(--brand);cursor:pointer}
+.wd-mode button.on{background:var(--gold);color:#06231D}
+.wd-mode button:disabled{cursor:default;opacity:.6}
+.wd-mode button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wd-voice{display:inline-block;margin-left:10px;font-size:12px;font-weight:700;color:var(--fog)}
 .wd-card{margin-top:16px;padding:18px;border-radius:20px;background:var(--deep);border:1px solid var(--edge)}
 .wd-hear{min-height:48px;padding:0 16px;border-radius:999px;border:0;background:rgba(226,251,206,.08);
   color:var(--cream);display:inline-flex;align-items:center;gap:10px;font:800 14px/1 var(--brand);cursor:pointer}
@@ -4724,8 +4732,9 @@ function joinClub(id) {
     ME.next.away = (bot && bot.name) || "Brass FC";
     ME.next.home = c.name;
     ME.next.atHome = true;
-    ME.next.md = 1;              /* la prova e' sempre la prima giornata */
-    ME.mdPlayed = 0;
+    /* la prova ha due giornate: la seconda si apre a fine della prima */
+    ME.next.md = (DEMO && DEMO.md) || 1;
+    ME.mdPlayed = ME.next.md - 1;
   }
   setAction();
   /* la lista delle parole e' quella vera, scritta dai dettati */
@@ -4808,7 +4817,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "149";
+var APPVER = "150";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -9682,11 +9691,19 @@ VIEWS.home = function () {
 
   /* il saluto, quando gli otto punti sono tutti fatti: si apre qui,
      sopra la lista finita, e il suo bottone chiude la prova */
-  if (typeof demoOver === "function" && demoOver()) {
-    demoTell("bye", "Thank you and see you soon.",
+  if (typeof demoOver === "function" && demoOver() && demoMd() < 2) {
+    demoTell("md1", "Matchday 1 is over.",
       "You have played a whole matchday of FootEFL: the market, the sponsor, the " +
       "training ground, the press room, your chances, both halves and the result." +
-      "<br><br>In a real season this is one week out of six, your club comes from " +
+      "<br><br>There is one more: two new dictations, and before the match the " +
+      "words you missed in this one.",
+      "Play matchday 2", demoNext);
+  }
+  else if (typeof demoOver === "function" && demoOver()) {
+    demoTell("bye", "Thank you and see you soon.",
+      "You have played two matchdays of FootEFL, and fixed the words you missed " +
+      "along the way." +
+      "<br><br>In a real season this is two weeks out of six, your club comes from " +
       "your teacher, and the side facing you is another pupil writing the same " +
       "dictation — not a bot.",
       "Back to the code screen", demoBye);
@@ -16889,7 +16906,9 @@ function mdictOf(ph) {
     var lv = ME.level || "A1";
     if (lv !== "A1" && lv !== "A2" && typeof DICTS !== "undefined" && DICTS[lv]) {
       var list = DICTS[lv];
-      var t = list[(ph === "att" ? 0 : 1) % list.length];
+      /* la giornata 2 della prova legge i due testi dopo */
+      var mdn = (ME.next && ME.next.md) || 1;
+      var t = list[((mdn - 1) * 2 + (ph === "att" ? 0 : 1)) % list.length];
       var hard = "";
       String(t.x).replace(/[A-Za-z']+/g, function (w) {
         if (w.length > hard.length) hard = w;
@@ -18919,10 +18938,41 @@ function tlLines(level) {
   if (!out.length && level !== "A1") return tlLines("A1");
   return out;
 }
+/* ───────── i dettati andati male tornano ─────────
+   Un dettato scritto con piu' del 40% di parole sbagliate non si butta:
+   le sue sei frasi restano da parte, e ogni nuovo dettato ha una
+   probabilita' su due di essere proprio quello, intero, finche' non lo
+   si scrive sotto la soglia. Le frasi sono registrate, non si possono
+   cambiare: si possono riproporre. */
+var TL_HARD = 0.4, TL_AGAIN = 0.5;
+function tlHardKey(lines) {
+  return (lines || []).map(function (l) { return l.t; }).join("|");
+}
+/* a fine tempo: si mette da parte, o si toglie se questa volta e' andato */
+function tlNoteHalf(dict, right, total) {
+  if (!TL || !dict || !dict.lines || !total) return;
+  var key = tlHardKey(dict.lines), bad = 1 - right / total > TL_HARD;
+  TL.hard = (TL.hard || []).filter(function (h) { return h.k !== key; });
+  if (bad) TL.hard.push({ k:key, t:dict.lines.map(function (l) { return l.t; }) });
+}
+function tlAgain() {
+  var hard = (TL && TL.hard) || [];
+  if (!hard.length || Math.random() >= TL_AGAIN) return null;
+  var pick = hard[Math.floor(Math.random() * hard.length)];
+  var all = tlLines(ME.level || "A1");
+  var take = pick.t.map(function (t) {
+    return all.filter(function (l) { return l.t === t; })[0];
+  });
+  /* se il livello e' cambiato e quelle frasi non ci sono piu', niente */
+  return take.every(function (l) { return !!l; }) ? take : null;
+}
 function tlDict(ph) {
-  var all = tlLines(ME.level || "A1").slice(), take = [];
-  for (var i = 0; i < 6 && all.length; i++) {
-    take.push(all.splice(Math.floor(Math.random() * all.length), 1)[0]);
+  var again = tlAgain(), take = again || [];
+  if (!again) {
+    var all = tlLines(ME.level || "A1").slice();
+    for (var i = 0; i < 6 && all.length; i++) {
+      take.push(all.splice(Math.floor(Math.random() * all.length), 1)[0]);
+    }
   }
   var text = take.map(function (l) { return l.t.replace(/[.!?]*$/, "") + "."; }).join(" ");
   /* la parola decisiva e' la piu' lunga: la stessa regola per tutti */
@@ -19022,9 +19072,12 @@ function tlStart(clubId, bots, diff) {
   }
   var tab = {};
   teams.forEach(function (t) { tab[t.id] = { p:0, w:0, d:0, l:0, gf:0, ga:0, form:[] }; });
+  /* i dettati andati male passano da un campionato all'altro: si
+     ricomincia la classifica, non quello che resta da imparare */
+  var hard = (tlLoad() && TL.hard) || [];
   TL = { v:1, club:clubId, diff:diff, md:1, teams:teams, tab:tab,
          fix:tlFixtures(teams.map(function (t) { return t.id; })),
-         hist:[], cur:null };
+         hist:[], cur:null, hard:hard };
   tlSave();
 }
 
@@ -19406,6 +19459,7 @@ VIEWS.tlWrite = function (d) {
       return e.t === "mot" && r.answers[k].errors !== 0;
     }).map(function (e, k) { return e.w; }).slice(0, 12);
     if (typeof learnWords === "function") learnWords(r, "training");
+    tlNoteHalf(dict, r.right, r.total);
     tlSave();
     swap(ph === "att" ? "tlWrite" : "tlResolve", { ph:"def" });
   }
@@ -19603,6 +19657,18 @@ function demoStart(level, diff) {
            made:new Date().toISOString() };
   demoSave();
 }
+function demoMd() { return (DEMO && DEMO.md) || 1; }
+/* la seconda giornata: stessa squadra, stesso livello, la giornata dopo.
+   joinClub rilegge DEMO.md e mette in calendario la 2. */
+function demoNext() {
+  if (!demoOn()) return;
+  DEMO.md = 2; DEMO.wdone = 0;
+  demoSave();
+  joinClub(DEMO_CLUB);
+  paintClub(ME.club);
+  dmReset();
+  reset("home");
+}
 function demoDiff() {
   var id = (DEMO && DEMO.diff) || "even";
   var d = TDIFF.filter(function (x) { return x.id === id; })[0];
@@ -19697,6 +19763,29 @@ function demoSteps() {
   var res = false;
   try { res = !!((liveGet(md) || {}).score); } catch (e) {}
 
+  /* ───────── la seconda giornata ─────────
+     Mercato, sponsor, staff e campo sono gia' fatti: restano le parole
+     sbagliate nella prima partita, la sala stampa e la partita, con i
+     due dettati registrati che vengono dopo. */
+  if (md >= 2) {
+    var wleft = false;
+    try { loadMem(); wleft = wordsToday().length > 0; } catch (e) {}
+    return [
+      { id:"words",  t:"Fix your words", s:"the ones you missed in matchday 1",
+        go:"words",  ok:!!(DEMO && DEMO.wdone) || !wleft },
+      { id:"press",  t:"The press room", s:"before the match, they want a word",
+        go:"pressdoor", ok:!!(press && Object.keys(press).length) },
+      { id:"sheet",  t:"Your chances", s:"who is there when each one opens",
+        go:"sheet",  ok:sheet },
+      { id:"att",    t:"The attack", s:"two new dictations this time",
+        go:"play",   ok:halfPlayed(md, "att") },
+      { id:"def",    t:"The defence", s:"the one you have to hold",
+        go:"play",   ok:halfPlayed(md, "def") },
+      { id:"res",    t:"The result", s:"it lands here when both halves are in",
+        go:"home",   ok:res, wait:true }
+    ];
+  }
+
   /* l'ordine e' quello della settimana vera: prima si costruisce la
      squadra, poi si parla, poi si gioca. */
   return [
@@ -19736,12 +19825,13 @@ function demoOver() { return demoOn() && demoLeft() === 0; }
    portiere. */
 var DMPIC = {
   market:"bg-market", spon:"bg-sponsor", staff:"bg-office", ground:"bg-squad",
-  press:"bg-press", sheet:"bg-chances", att:"bg-attack", def:"bg-defence", res:"crest"
+  press:"bg-press", sheet:"bg-chances", att:"bg-attack", def:"bg-defence", res:"crest",
+  words:"bg-next"
 };
 var DMCLUBPIC = { suit:1, kit:1, gaf:1, gk:1, crest:1 };
 var DMTAG = {
   market:"MARKET", spon:"SPONSOR", staff:"STAFF", ground:"SQUAD", press:"PRESS",
-  sheet:"CHANCES", att:"ATTACK", def:"DEFENCE", res:"RESULT"
+  sheet:"CHANCES", att:"ATTACK", def:"DEFENCE", res:"RESULT", words:"MY WORDS"
 };
 function dmPic(id) {
   var k = DMPIC[id];
@@ -19817,14 +19907,26 @@ function demoCard() {
   var steps = demoSteps(), left = demoLeft(), done = steps.length - left;
 
   if (!left) {
+    /* finita la prima giornata, se ne puo' giocare una seconda: due
+       dettati nuovi, e prima le parole sbagliate nella prima */
+    if (demoMd() < 2) {
+      return '<section class="pad"><div class="dmend">' +
+        '<span class="dmk">TRY IT &middot; MATCHDAY 1 &middot; ' + esc(DEMO.level) + "</span>" +
+        "<b>Matchday 1 is over.</b>" +
+        "<p>There is one more. Two new dictations, and before the match the words " +
+        "you missed in this one.</p>" +
+        '<button class="btn" id="dmnext">Play matchday 2 &rsaquo;</button>' +
+        '<button class="btn ghost" id="dmbye">Finish here</button>' +
+        "</div></section>";
+    }
     return '<section class="pad"><div class="dmend">' +
       '<span class="dmk">TRY IT &middot; ' + esc(demoDiff().t.toUpperCase()) +
       " &middot; " + esc(DEMO.level) + "</span>" +
       "<b>Thank you and see you soon.</b>" +
-      "<p>You have played a whole matchday of FootEFL: the market, the sheet, " +
-      "both halves, the result, the press room and the ground. In a real season " +
-      "this is one week out of six, your club comes from your teacher, and the " +
-      "team on the other side is another pupil writing the same dictation.</p>" +
+      "<p>You have played two matchdays of FootEFL: the market, the sheet, " +
+      "four dictations, the results, the press room, the ground and your words. In a " +
+      "real season this is two weeks out of six, your club comes from your teacher, " +
+      "and the team on the other side is another pupil writing the same dictation.</p>" +
       '<button class="btn" id="dmbye">Thank you and see you soon &rsaquo;</button>' +
       "</div></section>";
   }
@@ -19914,6 +20016,7 @@ function wireDemo() {
     b.onclick = function () { DMI = +b.dataset.k; drawDemo(); };
   });
   if ($("dmbye")) $("dmbye").onclick = demoBye;
+  if ($("dmnext")) $("dmnext").onclick = demoNext;
   if ($("dmgo")) $("dmgo").onclick = demoLeave;
 }
 /* dove porta ogni riga della lista: il foglio e i due tempi hanno la
@@ -28607,6 +28710,43 @@ VIEWS.words = function () {
    si riscrive subito — ma quella seconda volta non conta, perche' la si
    e' appena vista. Conta la prima, e conta un giorno alla volta. */
 var WR = { queue:[], i:0, fixedNow:0, right:0, kind:"", retry:false, res:"" };
+/* due modi: « Read » mostra la frase con il buco, « Listen » la fa
+   soltanto sentire. Il telefono si ricorda quello scelto. */
+var WMKEY = "footefl-wmode";
+function wMode() {
+  try { return localStorage.getItem(WMKEY) === "listen" ? "listen" : "read"; }
+  catch (e) { return "read"; }
+}
+function wModeSet(m) { try { localStorage.setItem(WMKEY, m); } catch (e) {} }
+/* la voce del professore, quando la frase e' una di quelle che ha
+   registrato per il riscaldamento: si cerca la frase intera, senza
+   badare a maiuscole e punteggiatura */
+var WVOICE = null;
+function wNorm(s) { return String(s || "").toLowerCase().replace(/[^a-z' ]+/g, " ").replace(/\s+/g, " ").trim(); }
+function wVoiceOf(line) {
+  if (typeof WARMSETS === "undefined" || typeof WARMAUD === "undefined") return "";
+  if (!WVOICE) {
+    WVOICE = {};
+    Object.keys(WARMSETS).forEach(function (lv) {
+      (WARMSETS[lv] || []).forEach(function (s) {
+        (s.lines || []).forEach(function (l) {
+          if (l.a && WARMAUD[l.a]) WVOICE[wNorm(l.t)] = WARMAUD[l.a];
+        });
+      });
+    });
+  }
+  return WVOICE[wNorm(line)] || "";
+}
+var WAUDIO = null;
+function wPlay(src) {
+  try {
+    if (WAUDIO) WAUDIO.pause();
+    WAUDIO = new Audio(src);
+    var p = WAUDIO.play();
+    if (p && p.catch) p.catch(function () {});
+    return true;
+  } catch (e) { return false; }
+}
 function wordsStart(kind) {
   loadMem();
   var q = wordsToday(kind);
@@ -28630,17 +28770,34 @@ VIEWS.wDrill = function () {
     WR.queue.map(function (x, j) {
       return "<i" + (j < WR.i ? ' class="on"' : j === WR.i ? ' class="now"' : "") + "></i>";
     }).join("") + "</span>" : "";
+  /* la frase intera, come si e' sentita nel dettato */
+  var line = it.c ? it.c.b.replace(/^… /, "") + " " + it.w + it.c.a : it.w;
+  var voice = it.c ? wVoiceOf(line) : "";
+  /* « Listen » senza nessuna voce non si puo' fare: si torna a leggere */
+  var canHear = !!voice || canSay();
+  var mode = canHear ? wMode() : "read";
   html('<div class="pad wdr">' +
     '<div class="wd-top"><span class="wd-kind">' + esc(it.kind) + "</span>" +
     (due ? '<span class="wd-due">CHECK</span>' : "") +
     '<span class="wd-n">' + (WR.i + 1) + " of " + n + "</span>" + dots + "</div>" +
+    (it.c && canHear
+      ? '<div class="wd-mode" role="group" aria-label="How to practise">' +
+        [["read", "Read"], ["listen", "Listen"]].map(function (m) {
+          return '<button type="button" data-m="' + m[0] + '"' +
+            (mode === m[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') +
+            ">" + m[1] + "</button>";
+        }).join("") + "</div>"
+      : "") +
     '<div class="wd-card">' +
     '<button class="wd-hear" id="hear" type="button">' + SPK +
-    (canSay() ? (it.c ? "Hear the sentence" : "Hear the word") : "Show the word") + "</button>" +
-    (it.c
+    (canHear ? (it.c ? "Hear the sentence" : "Hear the word") : "Show the word") + "</button>" +
+    (voice ? '<span class="wd-voice">your teacher’s voice</span>' : "") +
+    (it.c && mode === "read"
       ? '<p class="wd-line">' + esc(it.c.b) + '<span class="wd-gap" aria-label="missing word"></span>' +
         esc(it.c.a) + "</p>"
-      : '<p class="wd-line wd-solo">Listen, and write the word you hear.</p>') +
+      : it.c
+        ? '<p class="wd-line wd-solo">Listen to the sentence, then write the word that is missing.</p>'
+        : '<p class="wd-line wd-solo">Listen, and write the word you hear.</p>') +
     '<p class="flashword" id="flash"></p></div>' +
     '<label class="wd-lab" for="ans">WRITE THE MISSING WORD</label>' +
     '<input type="text" class="wd-in" id="ans" autocomplete="off" autocapitalize="off" ' +
@@ -28652,15 +28809,24 @@ VIEWS.wDrill = function () {
      sentito nel dettato. Senza una voce inglese la parola si mostra un
      attimo, come prima. */
   function hear() {
-    var line = it.c ? it.c.b.replace(/^… /, "") + " " + it.w + it.c.a : it.w;
-    var spoke = it.c ? sayLine(line) : say(it.w);
+    var spoke = voice ? wPlay(voice) : it.c ? sayLine(line) : say(it.w);
     if (!spoke) {
       $("flash").textContent = it.w;
       setTimeout(function () { var f = $("flash"); if (f) f.textContent = ""; }, 1600);
     }
   }
   $("hear").onclick = hear;
-  if (canSay()) hear();
+  if (canHear) hear();
+  Array.prototype.forEach.call(document.querySelectorAll(".wd-mode button"), function (b) {
+    b.onclick = function () {
+      if (b.dataset.m === wMode()) return;
+      wModeSet(b.dataset.m);
+      /* si ridisegna la stessa parola, con quello che si era gia' scritto */
+      var typed = $("ans").value;
+      swap("wDrill");
+      if ($("ans")) { $("ans").value = typed; $("ans").oninput(); }
+    };
+  });
 
   var ans = $("ans"), chk = $("chk");
   ans.oninput = function () { if (!WR.res) chk.disabled = !ans.value.trim(); };
@@ -28671,6 +28837,11 @@ VIEWS.wDrill = function () {
   function check() {
     var got = ans.value.trim(), right = got === it.w;
     ans.disabled = true;
+    /* controllata la risposta, il modo non si cambia piu': ridisegnando
+       si potrebbe controllarla una seconda volta */
+    Array.prototype.forEach.call(document.querySelectorAll(".wd-mode button"), function (b) {
+      b.disabled = true;
+    });
     if (!WR.retry) {
       if (right) {
         var was = wordFixed(it.w);
@@ -28727,9 +28898,17 @@ VIEWS.wEnd = function () {
     "</p></div>" +
     '<button class="btn" id="wb">Back to my words</button>' +
     '<button class="btn ghost" id="wh">' +
-    (ME.club ? "Back to my squad" : "Back to my home") + "</button></div>");
+    ((typeof demoOn === "function" && demoOn()) ? "Back to matchday " + demoMd()
+     : ME.club ? "Back to my squad" : "Back to my home") + "</button></div>");
   $("wb").onclick = function () { swap("words"); };
-  $("wh").onclick = function () { reset(ME.club ? "squad" : "home"); };
+  /* nella prova si torna alla lista delle tappe, e la tappa delle
+     parole della seconda giornata si spunta */
+  if (typeof demoOn === "function" && demoOn() && DEMO && demoMd() >= 2) {
+    DEMO.wdone = 1; demoSave();
+  }
+  $("wh").onclick = function () {
+    reset((typeof demoOn === "function" && demoOn()) ? "home" : ME.club ? "squad" : "home");
+  };
 };
 
 /* ───────── avvio ───────── */
