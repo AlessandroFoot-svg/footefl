@@ -4100,6 +4100,29 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 @media (prefers-reduced-motion: reduce){
   .sp .flip .in{transition:none}
 }
+/* ═════════ le stanze: il carosello delle icone ═════════ */
+.bxc{display:flex;gap:10px;margin:14px -16px 0;padding:4px 16px 8px;overflow-x:auto;
+  scroll-snap-type:x mandatory;scrollbar-width:none}
+.bxc::-webkit-scrollbar{display:none}
+.bxt{flex:none;width:100px;scroll-snap-align:center;padding:12px 6px 12px;border-radius:18px;
+  border:1px solid var(--edge);background:var(--band);color:var(--cream);display:flex;
+  flex-direction:column;align-items:center;gap:9px;font:inherit;cursor:pointer;
+  transition:background-color .18s,border-color .18s,transform .12s ease-out}
+.bxt b{font-size:12.5px;font-weight:800;line-height:1.2;text-align:center}
+.bxi{width:58px;height:58px;border-radius:14px;border:2px solid var(--gold);display:grid;
+  place-items:center;background:rgba(4,23,15,.6);transition:background-color .18s}
+.bxi svg{width:30px;height:30px;fill:none;stroke:var(--cream);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.bxt.on{border-color:var(--gold);background:rgba(227,239,38,.12)}
+.bxt.on .bxi{background:var(--gold)}
+.bxt.on .bxi svg{stroke:#06231D}
+.bxt:active{transform:scale(.97)}
+.bxt:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.bxd{margin-top:8px;padding:14px 16px;border-radius:16px;background:var(--band);border:1px solid var(--edge)}
+.bxd b{display:block;font:900 18px/1.2 var(--brand)}
+.bxd p{margin-top:6px;font-size:14px;font-weight:600;line-height:1.5;color:#CDEBD2}
+.bxm{display:inline-block;margin-top:10px;padding:6px 10px;border-radius:999px;
+  background:rgba(227,239,38,.12);border:1px solid rgba(227,239,38,.35);font-size:12px;font-weight:800}
 </style>
 </head>
 <body>
@@ -5029,7 +5052,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "156";
+var APPVER = "157";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -22640,6 +22663,35 @@ function bodyUp(no) {
 function stepStr(n) { return "+" + (n * GROW_STEP).toFixed(2); }
 
 /* ───────── 1. quale esercizio ───────── */
+/* ───────── le stanze, ognuna con la sua icona ─────────
+   Le icone sono disegnate qui, a linee, nello stesso stile di quelle
+   dello smartwatch: un quadrato con il bordo oro e il segno chiaro
+   dentro. Sotto il carosello una riga dice che cosa si fa nella stanza,
+   cosi' si sceglie sapendo, senza aprirla per vedere. */
+var ROOM_ICON = {
+  run:'<circle cx="15" cy="4.5" r="2"/><path d="M13 7.5l-3 3.5 3 2-2 5M10 11l-4 .5M13 13l4 1 1.5 3M13.5 8l3.5 2 3-1M2 10h3M1.5 14h3"/>',
+  lift:'<path d="M6 8v8M9 6v12M15 6v12M18 8v8M9 12h6M3 12h3M18 12h3"/>',
+  ball:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8.2l3.2 2.3-1.2 3.8h-4l-1.2-3.8zM12 8.2V3.5M15.2 10.5l4.3-1.4M14 14.3l2.6 3.7M10 14.3L7.4 18M8.8 10.5L4.5 9.1"/>',
+  ear:'<path d="M7.5 9.5a4.5 4.5 0 1 1 9 0c0 3.2-3.2 4.2-3.2 7.2a3 3 0 0 1-5.6 1.4"/><path d="M10.3 9.6a1.8 1.8 0 0 1 3.5.4c0 1.4-1.4 1.7-1.4 3"/>',
+  syn:'<rect x="2.5" y="5" width="8" height="10" rx="2"/><rect x="13.5" y="9" width="8" height="10" rx="2"/><path d="M5 9h3M5 11.5h3M16 13h3M16 15.5h3"/>',
+  def:'<path d="M3 6c3-1.2 6-.5 9 2 3-2.5 6-3.2 9-2v12c-3-1.2-6-.5-9 2-3-2.5-6-3.2-9-2zM12 8v12"/>',
+  tra:'<path d="M3 4.5h9v6.5H7.5L4.5 14v-3H3zM12 13h9v6.5h-1.5V22l-3-2.5H12zM14.5 7.5h5M17.5 5.5l2 2-2 2"/>',
+  say:'<path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/>'
+};
+var ROOM_HOW = {
+  run:"Twelve meanings, one at a time, against the clock. Tap the right word before the bar runs out.",
+  lift:"A sentence in pieces. Tap the words in the right order and build it again.",
+  ball:"A sentence with a gap. Type the missing word: the first letter is there, the spelling counts.",
+  ear:"The coach reads a sentence once. Listen, then write it word for word.",
+  syn:"One word and four others. Find the one that means almost the same.",
+  def:"A meaning and four words. Find the word it is talking about.",
+  tra:"A sentence in Italian. Choose the English one that says the same thing.",
+  say:"A situation and two answers. Choose the one a professional would give."
+};
+function roomIcon(id) {
+  return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ROOM_ICON[id] || ROOM_ICON.run) + "</svg>";
+}
+
 VIEWS.boost = function (d) {
   var no = d.no, what = d.what === "lang" ? "lang" : "body";
   var p = (typeof playerOf === "function") ? playerOf(no)
@@ -22690,28 +22742,54 @@ VIEWS.boost = function (d) {
         : '<p class="lede">One action, one room. <b>' + BOOST_MIN +
           "% or better</b> and the bar goes up by one. " +
           "The place is taken the moment you start, so pick the one you can win.</p>" +
-          '<div class="bxk">' + list.map(function (k) {
-            return '<button class="bxb" data-k="' + k.id + '" data-old="' +
-              (k.old ? 1 : 0) + '" type="button">' +
-              "<b>" + esc(k.n) + "</b><span>" + esc(k.s) + "</span><i>&#8250;</i></button>";
-          }).join("") + "</div>") +
+          '<div class="bxc" role="radiogroup" aria-label="Choose a room">' +
+          list.map(function (k, i) {
+            return '<button class="bxt' + (i ? "" : " on") + '" data-k="' + k.id +
+              '" data-old="' + (k.old ? 1 : 0) + '" type="button" role="radio" aria-checked="' +
+              (i ? "false" : "true") + '"><span class="bxi">' + roomIcon(k.id) + "</span>" +
+              "<b>" + esc(k.n) + "</b></button>";
+          }).join("") + "</div>" +
+          '<div class="bxd" id="bxd" aria-live="polite"></div>' +
+          '<button class="btn gbig" id="bxgo"></button>') +
 
     '<button class="btn ghost" id="bxback">Back to the player</button></div>');
 
-  Array.prototype.forEach.call($("main").querySelectorAll(".bxb"), function (b) {
+  /* si sceglie nel carosello, si legge che cosa si fa, si parte */
+  var sel = list[0];
+  function show() {
+    if (!$("bxd") || !sel) return;
+    var r = (!sel.old && typeof roomOf === "function") ? roomOf(sel.id) : null;
+    var n = r ? r.qn : BOOST_N;
+    $("bxd").innerHTML = "<b>" + esc(sel.n) + "</b><p>" + esc(ROOM_HOW[sel.id] || sel.s) + "</p>" +
+      '<span class="bxm">' + n + " questions &middot; " + BOOST_MIN + "% to go up</span>";
+    $("bxgo").textContent = "Start " + sel.n;
+  }
+  Array.prototype.forEach.call($("main").querySelectorAll(".bxt"), function (b) {
     b.onclick = function () {
-      /* le stanze nuove hanno la loro porta e il loro registro */
-      if (b.dataset.old !== "1" && typeof drillStart === "function") {
-        return void drillStart(no, what, b.dataset.k);
-      }
-      var items = what === "lang" ? boostItems(b.dataset.k, lvSafe()) : gymItems();
-      if (!items || !items.length) return;
-      if (!actCan(no, what)) return;
-      actBook(no, what);
-      BX = { no:no, what:what, kind:b.dataset.k, i:0, items:items, right:0, done:[] };
-      go("bxRun");
+      sel = list.filter(function (k) { return k.id === b.dataset.k; })[0];
+      Array.prototype.forEach.call($("main").querySelectorAll(".bxt"), function (x) {
+        var on = x === b;
+        x.classList.toggle("on", on);
+        x.setAttribute("aria-checked", String(on));
+      });
+      try { b.scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" }); } catch (e) {}
+      show();
     };
   });
+  if ($("bxgo")) $("bxgo").onclick = function () {
+    if (!sel) return;
+    /* le stanze nuove hanno la loro porta e il loro registro */
+    if (!sel.old && typeof drillStart === "function") {
+      return void drillStart(no, what, sel.id);
+    }
+    var items = what === "lang" ? boostItems(sel.id, lvSafe()) : gymItems();
+    if (!items || !items.length) return;
+    if (!actCan(no, what)) return;
+    actBook(no, what);
+    BX = { no:no, what:what, kind:sel.id, i:0, items:items, right:0, done:[] };
+    go("bxRun");
+  };
+  show();
   $("bxback").onclick = function () { go("player", { no:no }); };
 };
 
