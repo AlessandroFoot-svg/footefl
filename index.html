@@ -3888,6 +3888,47 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .wd-end{text-align:center}
 .wd-score{margin-top:30px;font:900 64px/1 var(--brand);color:var(--gold)}
 .wd-end h1{margin-top:14px}
+
+/* ═════════ lo scout trial: il rullo e il risultato ═════════ */
+.rl-stage{position:relative;overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 90px),transparent);
+  mask-image:linear-gradient(180deg,#000 calc(100% - 90px),transparent)}
+.rl-card{position:absolute;left:0;right:0;top:6px;padding:18px 16px 9px;border-radius:22px;
+  background:var(--band);border:1px solid var(--edge);transform-origin:50% 0}
+.rl-card .qq{margin-top:8px}
+.rl-card .opts{margin-top:14px}
+.rl-card.now{transform:none;opacity:1}
+.rl-card.next{transform:translateY(var(--rly,380px)) scale(.92);opacity:.38;pointer-events:none}
+.rl-card.gone{transform:translateY(-140px) scale(.96);opacity:0;pointer-events:none}
+@media (prefers-reduced-motion: no-preference){
+  .rl-card{transition:transform .26s cubic-bezier(.2,.8,.2,1),opacity .22s ease}
+}
+@media (prefers-reduced-motion: reduce){
+  .rl-card{transition:opacity .2s ease}
+}
+.rl-roll{margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.rl-roll i{display:block;width:100%;border-radius:999px;transition:height .3s ease;
+  background:repeating-linear-gradient(180deg,rgba(226,251,206,.22) 0 2px,rgba(14,59,44,.9) 2px 5px),var(--deep);
+  box-shadow:inset 0 6px 8px -4px rgba(0,0,0,.6),inset 0 -6px 8px -4px rgba(0,0,0,.6)}
+.rl-roll span{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--fog)}
+.rs .bignum{text-align:center;color:var(--gold)}
+.rs-chips{margin-top:14px;display:flex;justify-content:center;gap:10px}
+.rs-chips span{padding:8px 14px;border-radius:999px;font-size:14px;font-weight:800}
+.rs-ok{background:rgba(159,216,168,.14);border:1px solid #9FD8A8}
+.rs-no{background:rgba(242,169,126,.12);border:1px solid #F2A97E}
+.rs .sec{margin-top:22px}
+.rs-wrong{display:block;width:100%;margin-top:20px;height:56px;border-radius:16px;
+  border:1.5px solid #F2A97E;background:none;color:#F6C9AE;font:800 16px/1 var(--brand);cursor:pointer}
+.rs-wrong:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.rs-list{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.rs-list[hidden]{display:none}
+.rs-item{padding:14px 16px;border-radius:16px;background:var(--band);border:1px solid var(--edge)}
+.rs-item em{display:block;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold)}
+.rs-item p{margin-top:6px;font-size:16px;font-weight:700;line-height:1.4}
+.rs-you{display:block;margin-top:8px;font-size:14px;font-weight:700;color:#F6C9AE}
+.rs-right{display:block;margin-top:3px;font-size:14px;font-weight:800;color:#9FD8A8}
+.rs-clean{margin-top:20px;text-align:center;font-size:15px;font-weight:700;color:var(--fog)}
 </style>
 </head>
 <body>
@@ -4817,7 +4858,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "150";
+var APPVER = "151";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -16041,27 +16082,100 @@ function drawMarketIn() {
 }
 
 /* ───────── 2. la prova ───────── */
-VIEWS.mkQuiz = function () {
-  var q = MK.qs[MK.i];
-  barFlow("The scout trial", "Question " + (MK.i + 1) + " of " + MK.qs.length +
-          " · " + ME.level, Math.round((MK.i / MK.qs.length) * 100), false);
-  html('<div class="pad"><div class="qtop"><span>' + (MK.i + 1) + " / " + MK.qs.length +
-    "</span><em>" + esc(tagLabel(q.t, ME.level)) + '</em></div><p class="qq">' + esc(q.q) + "</p>" +
-    '<div class="opts">' + q.o.map(function (o, i) {
-      return '<button class="opt" data-a="' + i + '" type="button"><u>' + "ABCD"[i] +
+/* ───────── il rullo ─────────
+   Una domanda in cima, e sotto la prossima che si intravede, piu'
+   piccola e spenta, come carta che si srotola. Si risponde: quella in
+   cima esce verso l'alto e la prossima sale al suo posto. Niente
+   cambio di pagina fra una domanda e l'altra, e lo spessore del rotolo
+   in fondo dice quante ne restano. La prossima non si tocca: si vede
+   che c'e', non chiede attenzione. Per 300 ms dopo ogni risposta i
+   tocchi non contano, se no un doppio tocco risponderebbe anche alla
+   domanda appena salita, senza averla letta. */
+var RL_LOCK = 300, RL_MOVE = 260;
+function rlCard(i) {
+  var q = MK.qs[i];
+  var s = document.createElement("section");
+  s.className = "rl-card";
+  s.setAttribute("data-i", i);
+  s.innerHTML = '<div class="qtop"><span>' + (i + 1) + " / " + MK.qs.length + "</span><em>" +
+    esc(tagLabel(q.t, ME.level)) + '</em></div><p class="qq">' + esc(q.q) + "</p>" +
+    '<div class="opts">' + q.o.map(function (o, k) {
+      return '<button class="opt" data-a="' + k + '" type="button"><u>' + "ABCD"[k] +
         "</u>" + esc(o) + "</button>";
-    }).join("") + "</div></div>");
-  Array.prototype.forEach.call($("main").querySelectorAll(".opt"), function (b) {
-    b.onclick = function () {
-      MK.answers[MK.i] = parseInt(b.dataset.a, 10);
-      /* il quaderno dei punti: una riga per risposta, qui dove si tocca */
-      if (typeof tagMark === "function") {
-        tagMark(ME.level, MK.qs[MK.i].t, MK.answers[MK.i] === MK.qs[MK.i].c);
-      }
-      MK.i++;
-      swap(MK.i < MK.qs.length ? "mkQuiz" : "mkScore");
-    };
-  });
+    }).join("") + "</div>";
+  return s;
+}
+/* la prossima e' li', ma non si legge con il lettore e non si tocca */
+function rlInert(s, on) {
+  s.setAttribute("aria-hidden", on ? "true" : "false");
+  if (on) s.setAttribute("inert", ""); else s.removeAttribute("inert");
+  Array.prototype.forEach.call(s.querySelectorAll(".opt"), function (b) { b.disabled = on; });
+}
+function rlBar() {
+  barFlow("The scout trial", "Question " + Math.min(MK.i + 1, MK.qs.length) + " of " +
+          MK.qs.length + " · " + ME.level, Math.round((MK.i / MK.qs.length) * 100), false);
+  var left = MK.qs.length - MK.i;
+  var r = $("rlr"), l = $("rll");
+  if (r) r.style.height = (left ? 8 + left * 2.5 : 4) + "px";
+  if (l) l.textContent = left ? left + " TO GO" : "ALL DONE";
+}
+/* la prossima scende sotto quella in cima, quanto e' alta quella in cima */
+function rlPlace() {
+  var st = $("rls"), now = st && st.querySelector(".rl-card.now");
+  if (!now) return;
+  st.style.setProperty("--rly", (now.offsetHeight + 14) + "px");
+  st.style.height = (now.offsetHeight + 14 + 150) + "px";
+}
+
+VIEWS.mkQuiz = function () {
+  html('<div class="pad rl"><div class="rl-stage" id="rls"></div>' +
+    '<div class="rl-roll" aria-hidden="true"><i id="rlr"></i><span id="rll"></span></div></div>');
+  var st = $("rls");
+  var now = rlCard(MK.i);
+  now.classList.add("now");
+  st.appendChild(now);
+  if (MK.i + 1 < MK.qs.length) {
+    var nx = rlCard(MK.i + 1);
+    nx.classList.add("next"); rlInert(nx, true);
+    st.appendChild(nx);
+  }
+  rlBar(); rlPlace();
+  var busy = false;
+
+  st.onclick = function (e) {
+    var b = e.target.closest ? e.target.closest(".rl-card.now .opt") : null;
+    if (!b || busy) return;
+    busy = true;
+    MK.answers[MK.i] = parseInt(b.dataset.a, 10);
+    /* il quaderno dei punti: una riga per risposta, qui dove si tocca */
+    if (typeof tagMark === "function") {
+      tagMark(ME.level, MK.qs[MK.i].t, MK.answers[MK.i] === MK.qs[MK.i].c);
+    }
+    MK.i++;
+    var gone = st.querySelector(".rl-card.now"), up = st.querySelector(".rl-card.next");
+    gone.classList.remove("now"); gone.classList.add("gone"); rlInert(gone, true);
+    rlBar();
+    if (!up) {
+      /* finite: un attimo per vedere l'ultima che se ne va */
+      return setTimeout(function () { swap("mkScore"); }, RL_MOVE);
+    }
+    up.classList.remove("next"); up.classList.add("now"); rlInert(up, false);
+    /* finche' le opzioni restano spente i tocchi doppi vanno a vuoto */
+    Array.prototype.forEach.call(up.querySelectorAll(".opt"), function (o) { o.disabled = true; });
+    if (MK.i + 1 < MK.qs.length) {
+      var nx = rlCard(MK.i + 1);
+      nx.classList.add("next"); rlInert(nx, true);
+      st.appendChild(nx);
+    }
+    rlPlace();
+    setTimeout(function () { if (gone.parentNode) gone.parentNode.removeChild(gone); }, RL_MOVE + 40);
+    setTimeout(function () {
+      Array.prototype.forEach.call(up.querySelectorAll(".opt"), function (o) { o.disabled = false; });
+      busy = false;
+      /* chi legge con la voce sente la domanda nuova */
+      try { up.querySelector(".qq").setAttribute("tabindex", "-1"); up.querySelector(".qq").focus({ preventScroll:true }); } catch (x) {}
+    }, RL_LOCK);
+  };
 };
 
 /* ───────── 3. il punteggio ───────── */
@@ -16086,17 +16200,43 @@ VIEWS.mkScore = function () {
   var msg = who + " " + (most === least
     ? (most === 1 ? "He signs one player." : "Each of them signs " + most + " players.")
     : "One of them signs " + most + " players, another only " + least + ".");
-  html('<div class="pad"><p class="bignum">' + MK.score + "<em>/ " + MK.qs.length +
-    '</em></p><div class="verdict"><b>' + b.n + (b.n === 1 ? " scout" : " scouts") +
-    " to choose from</b>" + msg + "</div>" +
-    '<div class="capnote"><b>Up to ' + most +
-    (most === 1 ? " signing" : " signings") + "</b>This is your whole season's market. " +
-    "The scout you choose decides how many players you end up with — read their " +
+  /* le sbagliate: la domanda, la risposta data e quella giusta. Si
+     vedono alla fine, quando il punteggio e gli scout sono gia' decisi,
+     e solo a chi le apre */
+  var wrong = [];
+  MK.qs.forEach(function (q, i) {
+    if (MK.answers[i] !== q.c) wrong.push(q);
+  });
+  /* tutto in una pagina: il punteggio, gli scout fra cui scegliere e,
+     in fondo, le risposte sbagliate */
+  barFlow("The scout trial", "Your result · " + ME.level, 45, false);
+  html('<div class="pad rs"><p class="bignum">' + MK.score + "<em>/ " + MK.qs.length +
+    "</em></p>" +
+    '<div class="rs-chips"><span class="rs-ok">&#10003; ' + MK.score + " right</span>" +
+    '<span class="rs-no">&#10005; ' + wrong.length + " wrong</span></div>" +
+    '<div class="verdict"><b>' + b.n + (b.n === 1 ? " scout" : " scouts") +
+    " to choose from</b>" + msg + " This is your whole season's market: read their " +
     "cards before you call.</div>" +
-    '<p class="lede">You will not be told which questions you missed. ' +
-    "Your teacher has the answers.</p>" +
-    '<button class="btn" id="go2">See your scouts</button></div>');
-  $("go2").onclick = function () { swap("mkScouts"); };
+    '<h2 class="sec">Choose your scout</h2>' + scoutCards() +
+    (wrong.length
+      ? '<button class="rs-wrong" id="rsw" type="button" aria-expanded="false" ' +
+        'aria-controls="rswl">Wrong answers &middot; ' + wrong.length + "</button>" +
+        '<div class="rs-list" id="rswl" hidden>' + wrong.map(function (q) {
+          var i = MK.qs.indexOf(q), a = MK.answers[i];
+          return '<div class="rs-item"><em>' + esc(tagLabel(q.t, ME.level)) + "</em>" +
+            "<p>" + esc(q.q) + "</p>" +
+            '<span class="rs-you">You: <s>' + (a == null ? "&mdash;" : esc(q.o[a])) + "</s></span>" +
+            '<span class="rs-right">Right: ' + esc(q.o[q.c]) + "</span></div>";
+        }).join("") + "</div>"
+      : '<p class="rs-clean">Not one wrong. Twenty out of twenty.</p>') +
+    "</div>");
+  wireScouts();
+  if ($("rsw")) $("rsw").onclick = function () {
+    var open = $("rswl").hidden;
+    $("rswl").hidden = !open;
+    $("rsw").setAttribute("aria-expanded", String(open));
+    $("rsw").textContent = open ? "Hide wrong answers" : "Wrong answers · " + wrong.length;
+  };
 };
 
 /* ───────── 4. scegli lo scout ───────── */
@@ -16107,12 +16247,10 @@ function likesLine(s) {
   if (s.roles) return ROLE[s.roles[0]] + " only";
   return "Any position";
 }
-VIEWS.mkScouts = function () {
-  barFlow("Choose your scout", "One call, and that is your season", 55);
-  html('<div class="pad"><p class="lede">Each one looks somewhere different and each ' +
-    "one brings home a different number. <b>You call one</b>, and what he signs is " +
-    "your whole market.</p>" +
-    MK.scouts.map(function (s) {
+/* le carte degli scout: le usa la pagina del risultato, e questa
+   pagina a parte resta per chi ci arriva tornando indietro */
+function scoutCards() {
+  return MK.scouts.map(function (s) {
       return '<button class="sc' + (s.tier === 4 ? " top4" : "") + '" data-s="' + s.id +
         '" type="button"><span class="capbadge">' + s.cap +
         (s.cap === 1 ? " SIGNING" : " SIGNINGS") + "</span>" +
@@ -16124,7 +16262,9 @@ VIEWS.mkScouts = function () {
         "<dt>Likes</dt><dd>" + esc(likesLine(s)) + "</dd>" +
         "<dt>Finds</dt><dd>" + (s.lo === s.hi ? stars(s.hi)
           : stars(s.lo) + " to " + stars(s.hi)) + "</dd></dl></button>";
-    }).join("") + "</div>");
+  }).join("");
+}
+function wireScouts() {
   Array.prototype.forEach.call($("main").querySelectorAll(".sc"), function (b) {
     b.onclick = function () {
       MK.scout = SCOUTS[parseInt(b.dataset.s, 10)];
@@ -16132,6 +16272,13 @@ VIEWS.mkScouts = function () {
       go(MK.scout.conts && MK.scout.conts.length > 1 ? "mkCont" : "mkThree");
     };
   });
+}
+VIEWS.mkScouts = function () {
+  barFlow("Choose your scout", "One call, and that is your season", 55);
+  html('<div class="pad"><p class="lede">Each one looks somewhere different and each ' +
+    "one brings home a different number. <b>You call one</b>, and what he signs is " +
+    "your whole market.</p>" + scoutCards() + "</div>");
+  wireScouts();
 };
 
 /* ───────── 5. il continente ───────── */
