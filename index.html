@@ -4074,6 +4074,11 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .sp .pickno{display:none}
 .sp-note{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--band);
   border:1px solid var(--edge);font-size:13px;font-weight:600;line-height:1.5;color:#CDEBD2}
+.sp-hear{margin-top:10px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--gold);
+  background:rgba(227,239,38,.1);color:var(--gold);display:inline-flex;align-items:center;gap:9px;
+  font:800 14px/1 var(--brand);cursor:pointer}
+.sp-hear svg{width:18px;height:18px;fill:currentColor}
+.sp-hear:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .sp .gbig{margin-top:16px}
 .sp-paper{transform:rotate(1deg)}
 .sp-jk{border-color:var(--edge);transform:rotate(-8deg)}
@@ -5024,7 +5029,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "155";
+var APPVER = "156";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -16888,6 +16893,16 @@ function manGain(m) {
       (m.scout ? " · a note on the other side" : "");
 }
 function manRole(m) { return m.role === "fit" ? "HEAD OF TRAINING" : "HEAD COACH"; }
+/* la voce di chi si presenta: due registrazioni per persona, una per
+   A1-A2 e una per B1-B2 (che vale anche sopra). Chi non ha ancora la
+   sua resta muto, e il bottone non compare. */
+var STAFF_VOICE = { f1:1, f2:1, f3:1, f4:1, cSHE:1, cROP:1, cBRA:1 };
+function staffVoice(m) {
+  if (!m || !STAFF_VOICE[m.id]) return "";
+  var lv = String(ME.level || "A1").toUpperCase();
+  return "au/staff/" + m.id + "-" + (lv === "A1" || lv === "A2" ? "a" : "b") + ".mp3";
+}
+function staffHush() { try { if (typeof WAUDIO !== "undefined" && WAUDIO) WAUDIO.pause(); } catch (e) {} }
 
 /* ───────── quanti ne rispondono ─────────
    Il punteggio decide quanti, la reputazione decide fin dove si arriva.
@@ -17130,12 +17145,22 @@ VIEWS.rcPick = function () {
         '<span class="sp-gain">' + esc(manGain(m)) + "</span></span></span>" +
         "</span></button>";
     }).join("") + "</div>" +
-    '<p class="sp-note" id="spn" hidden></p>' +
+    '<div class="sp-note" id="spn" hidden></div>' +
     '<button class="btn gbig" id="spgo" disabled>Open all the files first</button>' +
     '<button class="btn ghost" id="rcbk">Not now</button></div>');
 
   var all = Array.prototype.slice.call($("main").querySelectorAll(".sp-c"));
   function man(id) { return RC.show.filter(function (m) { return m.id === id; })[0]; }
+  /* sotto le carte: la storia di chi si e' appena toccato e, se ha la
+     sua registrazione, il bottone per sentirlo presentarsi */
+  function note(m) {
+    var v = staffVoice(m);
+    $("spn").hidden = false;
+    $("spn").innerHTML = "<p>" + esc(m.line) + "</p>" + (v
+      ? '<button class="sp-hear" id="sph" type="button">' + SPK + "Hear " + esc(m.name) + "</button>"
+      : "");
+    if ($("sph")) $("sph").onclick = function () { wPlay(v); };
+  }
   function paint() {
     all.forEach(function (b) { b.classList.toggle("chosen", b.dataset.id === pick); });
     var done = opened === all.length;
@@ -17146,8 +17171,7 @@ VIEWS.rcPick = function () {
   all.forEach(function (b) {
     b.onclick = function () {
       var m = man(b.dataset.id);
-      $("spn").hidden = false;
-      $("spn").textContent = m.line;
+      note(m);
       if (!b.classList.contains("up")) {
         b.classList.add("up"); opened++;
         b.setAttribute("aria-label", "Choose " + m.name);
@@ -17159,8 +17183,8 @@ VIEWS.rcPick = function () {
       paint();
     };
   });
-  $("spgo").onclick = function () { if (pick) go("rcSure", { id:pick }); };
-  $("rcbk").onclick = function () { reset(homeBack()); };
+  $("spgo").onclick = function () { staffHush(); if (pick) go("rcSure", { id:pick }); };
+  $("rcbk").onclick = function () { staffHush(); reset(homeBack()); };
 };
 
 
