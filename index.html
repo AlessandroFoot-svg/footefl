@@ -3930,6 +3930,30 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .rs-right{display:block;margin-top:3px;font-size:14px;font-weight:800;color:#9FD8A8}
 .rs-clean{margin-top:20px;text-align:center;font-size:15px;font-weight:700;color:var(--fog)}
 
+/* ═════════ il rullo di tutti gli esercizi a domande ═════════ */
+.rl-now{padding:16px 14px 8px;border-radius:22px;background:var(--band);border:1px solid var(--edge)}
+.rl-now .qq{margin-top:8px}
+.rl-now .opts{margin-top:14px}
+.rl-now .bxq:first-child,.rl-now .hint:first-child{margin-top:0}
+.rl-peek{margin-top:14px;padding:16px 14px 8px;border-radius:22px;background:var(--band);
+  border:1px solid var(--edge);transform:scale(.92);transform-origin:50% 0;opacity:.38;
+  max-height:150px;overflow:hidden;pointer-events:none;
+  -webkit-mask-image:linear-gradient(180deg,#000 35%,transparent);mask-image:linear-gradient(180deg,#000 35%,transparent)}
+.rl-peek .qq,.rl-peek .bxq{margin-top:0}
+.rl-popts{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.rl-popts span{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;
+  border:1px solid var(--edge);background:var(--deep);font-size:15px;font-weight:600}
+.rl-popts u{flex:none;width:24px;height:24px;border-radius:6px;background:rgba(226,251,206,.1);
+  text-decoration:none;display:grid;place-items:center;font-size:11px;font-weight:800}
+.rl-blur{filter:blur(9px)}
+.rl-peek .earb{pointer-events:none}
+@media (prefers-reduced-motion: no-preference){
+  .rl-now.rise{animation:rlRise .28s cubic-bezier(.2,.8,.2,1) backwards}
+  @keyframes rlRise{from{transform:translateY(140px) scale(.92);opacity:.38}}
+  .rl-peek{animation:rlPeekIn .3s ease .12s backwards}
+  @keyframes rlPeekIn{from{opacity:0;transform:translateY(40px) scale(.9)}}
+}
+
 /* ═════════ il mercato: il ventaglio delle carte e il contratto ═════════ */
 .mkr .lede{text-align:center}
 .mkr-stage{position:relative;height:372px;margin:14px -16px 0;overflow:hidden;perspective:1200px}
@@ -4947,7 +4971,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "153"
+var APPVER = "154";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -5148,6 +5172,34 @@ function draw(dir) {
   /* la stessa schermata ridisegnata da se' — una risposta, un
      cronometro — non si muove: tremerebbe sotto le dita */
   if (!same || dir === "f" || dir === "b") moveIn(m, dir);
+  /* tranne negli esercizi a rullo: li' ridisegnarsi vuol dire che la
+     domanda dopo sale dal posto dove si intravedeva */
+  else { var rn = m.querySelector(".rl-now"); if (rn) rn.className += " rise"; }
+}
+
+/* ═══════════════ il rullo degli esercizi ═══════════════
+   Lo stesso dello scout trial, per tutti gli esercizi a domande: la
+   domanda di adesso in una carta, sotto la prossima che si intravede
+   — piu' piccola, spenta, che non si tocca e non si legge col lettore —
+   e in fondo il rotolo che si assottiglia. Si recupera la meta' vuota
+   dello schermo senza aggiungere pagine. Ogni esercizio chiama queste
+   tre e decide lui che cosa mostrare della prossima. */
+function rlNow(inner) { return '<div class="rl-now">' + inner + "</div>"; }
+function rlPeek(inner) {
+  return inner ? '<div class="rl-peek" aria-hidden="true" inert>' + inner + "</div>" : "";
+}
+/* la prossima, quando e' una domanda a scelta: il testo e le risposte,
+   come etichette e non come bottoni */
+function rlPeekQ(q, opts, cls) {
+  return '<p class="' + (cls || "qq") + '">' + esc(q) + "</p>" +
+    '<div class="rl-popts">' + (opts || []).map(function (o, i) {
+      return "<span><u>" + "ABCD"[i] + "</u>" + esc(o) + "</span>";
+    }).join("") + "</div>";
+}
+function rlTail(left) {
+  return '<div class="rl-roll" aria-hidden="true"><i style="height:' +
+    (left ? 8 + left * 2.5 : 4) + 'px"></i><span>' +
+    (left ? left + " TO GO" : "ALL DONE") + "</span></div>";
 }
 /* la pagina entra dalla parte verso cui si va, e le tessere salgono in
    fila; la classe se ne va a movimento finito, se no ripartirebbe ogni
@@ -16920,7 +16972,8 @@ VIEWS.rcQuiz = function () {
           " · " + esc(ME.level || "A1"),
           Math.round((RC.i / RC.qs.length) * 100), false);
 
-  html('<div class="pad">' +
+  var nx = RC.qs[RC.i + 1];
+  html('<div class="pad">' + rlNow(
     '<div class="spbar"><i id="rcb"></i></div>' +
     '<div class="qtop"><span>' + (RC.i + 1) + " / " + RC.qs.length +
     "</span><em>" + esc(tagLabel(q.t, ME.level)) + "</em></div>" +
@@ -16928,7 +16981,8 @@ VIEWS.rcQuiz = function () {
     '<div class="opts" id="rco">' + q.o.map(function (o, i) {
       return '<button class="opt" data-a="' + i + '" type="button"><u>' + "ABCD"[i] +
         "</u>" + esc(o) + "</button>";
-    }).join("") + "</div></div>");
+    }).join("") + "</div>") +
+    rlPeek(nx ? '<div class="rl-blur">' + rlPeekQ(nx.q, nx.o) + "</div>" : "") + rlTail(RC.qs.length - RC.i) + "</div>");
 
   var chiuso = false;
   function avanti(a) {
@@ -19074,12 +19128,14 @@ VIEWS.gsGram = function () {
   var q = GS.qs[GS.i];
   barFlow("Grammar", (GS.i + 1) + " of " + GS.qs.length + " · " + ME.level,
           Math.round((GS.i / GS.qs.length) * 100), false);
-  html('<div class="pad"><div class="qtop"><span>' + (GS.i + 1) + " / " + GS.qs.length +
+  var nx = GS.qs[GS.i + 1];
+  html('<div class="pad">' + rlNow('<div class="qtop"><span>' + (GS.i + 1) + " / " + GS.qs.length +
     "</span><em>" + esc(tagLabel(q.t, myLevelSafe())) + '</em></div><p class="qq">' + esc(q.q) + "</p>" +
     '<div class="opts">' + q.o.map(function (o, i) {
       return '<button class="opt" data-a="' + i + '" type="button"><u>' + "ABCD"[i] +
         "</u>" + esc(o) + "</button>";
-    }).join("") + "</div></div>");
+    }).join("") + "</div>") +
+    rlPeek(nx ? rlPeekQ(nx.q, nx.o) : "") + rlTail(GS.qs.length - GS.i) + "</div>");
   Array.prototype.forEach.call($("main").querySelectorAll(".opt"), function (b) {
     b.onclick = function () {
       GS.answers[GS.i] = parseInt(b.dataset.a, 10);
@@ -22522,13 +22578,16 @@ VIEWS.bxRun = function () {
           pName({ named:!!p.name, name:p.name, no:p.no }) + " · " + n + " of " +
           BX.items.length, Math.round((BX.i / BX.items.length) * 100), false);
 
-  html('<div class="pad">' +
+  var nx = BX.items[BX.i + 1];
+  html('<div class="pad">' + rlNow(
     '<p class="bxq' + (it.two ? " sit" : "") + '">' + esc(it.q) + "</p>" +
     '<div class="bxo' + (it.two ? " two" : "") + '" id="bxo">' +
       it.o.map(function (o, i) {
         return '<button class="bxa" data-i="' + i + '" type="button">' + esc(o) + "</button>";
       }).join("") + "</div>" +
-    '<p class="bxsay" id="bxsay"></p></div>');
+    '<p class="bxsay" id="bxsay"></p>') +
+    rlPeek(nx ? rlPeekQ(nx.q, nx.o, "bxq" + (nx.two ? " sit" : "")) : "") +
+    rlTail(BX.items.length - BX.i) + "</div>");
 
   Array.prototype.forEach.call($("bxo").querySelectorAll(".bxa"), function (b) {
     b.onclick = function () {
@@ -23534,13 +23593,16 @@ VIEWS.bxSpeed = function () {
   paintClub(ME.club);
   drillBar("Shuttle runs");
 
-  html('<div class="pad">' + againNote() +
+  var nx = BX.items[BX.i + 1];
+  html('<div class="pad">' + againNote() + rlNow(
     '<div class="spbar"><i id="spb"></i></div>' +
     '<p class="bxq">' + esc(it.q) + "</p>" +
     '<div class="bxo" id="bxo">' + opts.map(function (o, i) {
       return '<button class="bxa" data-i="' + i + '" type="button">' + esc(o) + "</button>";
     }).join("") + "</div>" +
-    '<p class="bxsay" id="bxsay"></p></div>');
+    '<p class="bxsay" id="bxsay"></p>') +
+    rlPeek(nx ? '<div class="rl-blur">' + rlPeekQ(nx.it.q, shuf(nx.it.o), "bxq") + "</div>" : "") +
+    rlTail(BX.items.length - BX.i) + "</div>");
 
   var closed = false;
   function shut(ok, given) {
@@ -23583,12 +23645,19 @@ VIEWS.bxOrder = function () {
   paintClub(ME.club);
   drillBar("Weights");
 
-  html('<div class="pad">' + againNote() +
+  /* nella prossima le parole si vedono gia' mescolate: l'anteprima non
+     deve dare la frase */
+  var nx = BX.items[BX.i + 1];
+  html('<div class="pad">' + againNote() + rlNow(
     '<p class="hint">Tap the words in the right order. Tap one you have placed ' +
     "to take it back.</p>" +
     '<div class="orline" id="orline"></div>' +
     '<div class="orpool" id="orpool"></div>' +
-    '<p class="bxsay" id="bxsay"></p></div>');
+    '<p class="bxsay" id="bxsay"></p>') +
+    rlPeek(nx ? '<div class="orpool">' + shuf(String(nx.it.s).split(/\s+/)).map(function (w) {
+      return '<span class="orw pool">' + esc(w) + "</span>";
+    }).join("") + "</div>" : "") +
+    rlTail(BX.items.length - BX.i) + "</div>");
 
   function paint() {
     $("orline").innerHTML = put.length
@@ -23642,13 +23711,16 @@ VIEWS.bxType = function () {
   paintClub(ME.club);
   drillBar("Ball work");
 
-  html('<div class="pad">' + againNote() +
+  var nx = BX.items[BX.i + 1];
+  html('<div class="pad">' + againNote() + rlNow(
     '<p class="bxq sit">' + esc(it.s) + "</p>" +
     '<p class="tyhint">' + esc(hint) + " <em>(" + right.length + ")</em></p>" +
     '<input class="tyin" id="tyin" type="text" autocapitalize="off" autocorrect="off" ' +
     'spellcheck="false" autocomplete="off" placeholder="the missing word">' +
     '<button class="btn" id="tygo">Put it in</button>' +
-    '<p class="bxsay" id="bxsay"></p></div>');
+    '<p class="bxsay" id="bxsay"></p>') +
+    rlPeek(nx ? '<p class="bxq sit">' + esc(nx.it.s) + "</p>" : "") +
+    rlTail(BX.items.length - BX.i) + "</div>");
 
   var box = $("tyin");
   try { box.focus(); } catch (er) {}
@@ -23678,7 +23750,9 @@ VIEWS.bxEar = function () {
   paintClub(ME.club);
   drillBar("The coach's ear");
 
-  html('<div class="pad">' + againNote() +
+  /* della prossima si vede solo che c'e' da ascoltare: il testo no */
+  var nx = BX.items[BX.i + 1];
+  html('<div class="pad">' + againNote() + rlNow(
     (mute
       ? '<p class="lede">This phone has no English voice, so the words are on ' +
         "the screen. Read them once, then write them from memory.</p>" +
@@ -23689,7 +23763,9 @@ VIEWS.bxEar = function () {
     '<input class="tyin" id="tyin" type="text" autocapitalize="off" autocorrect="off" ' +
     'spellcheck="false" autocomplete="off" placeholder="write what you heard">' +
     '<button class="btn" id="tygo">That is what I heard</button>' +
-    '<p class="bxsay" id="bxsay"></p></div>');
+    '<p class="bxsay" id="bxsay"></p>') +
+    rlPeek(nx ? '<span class="earb"><span class="eari">▶</span><b>Listen</b></span>' : "") +
+    rlTail(BX.items.length - BX.i) + "</div>");
 
   if (!mute && $("earb")) {
     $("earb").onclick = function () {
