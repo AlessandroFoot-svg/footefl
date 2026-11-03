@@ -5122,7 +5122,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "159";
+var APPVER = "160";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -20326,6 +20326,35 @@ function demoFoe(md) {
 /* le partite che Brass gioca senza di me: giornata 1 con Ropewalkers,
    giornata 2 con Sherwood. Si contano solo quando la mia e' finita. */
 var DEMO_SIDE = [["BRA", "ROP"], ["BRA", "SHE"]];
+/* ───────── i quattro dettati della prova ─────────
+   Amichevole e campionato senza codice pescano sempre da questi quattro.
+   Cambiano gli abbinamenti: lo stesso testo una volta e' l'attacco e
+   un'altra la difesa, e la coppia di una partita non e' quella della
+   volta prima. L'ultimo giro si ricorda in una chiave che la pulizia
+   della prova non tocca, se no ogni prova ripartirebbe da capo. */
+var DEMO_DICTS = ["park", "green", "lighthouse", "morning"];
+var DEMOMIX = "footefl-demomix";
+function demoMix(n) {
+  var pool = [], i, j, last = [], o, k;
+  for (i = 0; i < DEMO_DICTS.length; i++) {
+    for (j = 0; j < DMATCH.length; j++) if (DMATCH[j].id === DEMO_DICTS[i]) pool.push(j);
+  }
+  if (pool.length < 2) pool = [0, 1, 2, 3];
+  try { last = JSON.parse(localStorage.getItem(DEMOMIX) || "[]") || []; } catch (e) { last = []; }
+  /* la stessa coppia in apertura, o lo stesso attacco, si rifa' */
+  function same(a) {
+    if (last.length < 2) return false;
+    var pa = [a[0], a[1]].sort().join(), pl = [last[0], last[1]].sort().join();
+    return pa === pl || a[0] === last[0];
+  }
+  for (k = 0; k < 12; k++) {
+    o = shuf(pool);
+    if (!same(o)) break;
+  }
+  o = o.slice(0, Math.min(n, o.length));
+  try { localStorage.setItem(DEMOMIX, JSON.stringify(o)); } catch (e) {}
+  return o;
+}
 /* quale dei dettati va in questo tempo: il campionato li ha mescolati */
 function demoSlot(ph) {
   var md = (ME.next && ME.next.md) || 1;
@@ -20395,7 +20424,7 @@ function demoStart(level, diff, mode) {
   function g() { return [0, 0, 1, 1, 1, 2, 2, 3][Math.floor(Math.random() * 8)]; }
   DEMO = { on:1, v:1, level:level, diff:diff, club:DEMO_CLUB, bot:DEMO_BOT,
            mode:lg ? "league" : "friendly",
-           order:lg ? shuf([0, 1, 2, 3]) : [0, 1],
+           order:demoMix(lg ? 4 : 2),
            sim:lg ? [[g(), g()], [g(), g()]] : null,
            wx:(typeof climPair === "function") ? climPair() : { att:"cloudy", def:"rain" },
            made:new Date().toISOString() };
@@ -20910,7 +20939,7 @@ function demoBye(again) {
   /* via tutto quello che la prova ha scritto: i fogli, i tempi, il
      risultato, la cassa, il mercato, gli sponsor, la sala stampa, il
      club scelto. Resta solo la lingua del telefono. */
-  var keep = { "footefl-dataurl":1, "footefl-world":1 };
+  var keep = { "footefl-dataurl":1, "footefl-world":1, "footefl-demomix":1 };
   var kill = [], i, k;
   try {
     for (i = 0; i < localStorage.length; i++) {
