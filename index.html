@@ -4167,25 +4167,30 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 }
 /* la classifica della prova: la stessa sulla scelta, in casa e alla fine */
 .lgw{border-radius:20px;overflow:hidden;background:var(--band);border:1px solid var(--edge)}
-.lgt{width:100%;border-collapse:collapse}
-.lgt th{padding:10px 8px;font-size:10.5px;font-weight:800;letter-spacing:.16em;color:var(--fog);
+/* colonne fisse: il nome prende quello che resta e, se non ci sta, si
+   accorcia coi puntini; i punti non escono mai dal riquadro */
+.lgt{width:100%;border-collapse:collapse;table-layout:fixed}
+.lgt th:nth-child(3),.lgt td:nth-child(3){width:26px}
+.lgt th:nth-child(4),.lgt td:nth-child(4){width:34px}
+.lgt th:nth-child(5),.lgt td:nth-child(5){width:38px;padding-right:12px}
+.lgt th{padding:10px 4px;font-size:10.5px;font-weight:800;letter-spacing:.16em;color:var(--fog);
   text-align:center;border-bottom:1px solid var(--edge)}
 .lgt th:nth-child(2){text-align:left}
-.lgt td{padding:8px;text-align:center;font-size:14px;font-weight:700;
+.lgt td{padding:8px 4px;text-align:center;font-size:14px;font-weight:700;
   border-bottom:1px solid rgba(28,107,79,.5)}
 .lgt tr:last-child td{border-bottom:0}
-.lgt th:first-child,.lgt td:first-child{width:22px;padding-left:14px;color:var(--fog);font-weight:800}
+.lgt th:first-child,.lgt td:first-child{width:18px;padding-left:12px;color:var(--fog);font-weight:800}
 .lgt td.c{text-align:left}
 .lgt td.c span{display:flex;align-items:center;gap:10px;min-width:0}
-.lgt td.c img{width:30px;height:30px;object-fit:contain;flex:none}
-.lgt td.c b{font-size:14.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lgt td.c img{width:28px;height:28px;object-fit:contain;flex:none}
+.lgt td.c b{min-width:0;font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lgt td.p{font-size:16px;font-weight:900}
 .lgt tr.me td{background:rgba(227,239,38,.1)}
 .lgt tr.me td:first-child{box-shadow:inset 3px 0 0 var(--gold)}
 .dmlg{margin-top:14px}
 .dmend .lgw{margin:12px 0 4px;text-align:left;color:var(--cream)}
 /* il cartellino giallo ha i suoi <b> grandi: dentro la classifica no */
-.dmend .lgt b{display:inline;margin:0;font-size:14.5px;line-height:1.2;color:inherit}
+.dmend .lgt b{display:block;margin:0;font-size:14px;line-height:1.2;color:inherit}
 </style>
 </head>
 <body>
