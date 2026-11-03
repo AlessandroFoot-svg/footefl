@@ -10019,18 +10019,23 @@ VIEWS.home = function () {
 
   /* il saluto, quando gli otto punti sono tutti fatti: si apre qui,
      sopra la lista finita, e il suo bottone chiude la prova */
-  if (typeof demoOver === "function" && demoOver() && demoMd() < 2) {
+  /* la seconda giornata c'e' solo nel campionato: l'amichevole e' una */
+  if (typeof demoOver === "function" && demoOver() && demoMd() < demoMds()) {
     demoTell("md1", "Matchday 1 is over.",
       "You have played a whole matchday of FootEFL: the market, the sponsor, the " +
       "training ground, the press room, your chances, both halves and the result." +
-      "<br><br>There is one more: two new dictations, and before the match the " +
-      "words you missed in this one.",
+      "<br><br>There is one more, against " +
+      esc((cbClub(demoFoe(2)) || { name:"Ropewalkers" }).name) +
+      ": two new dictations, and before the match the words you missed in this one.",
       "Play matchday 2", demoNext);
   }
   else if (typeof demoOver === "function" && demoOver()) {
     demoTell("bye", "Thank you and see you soon.",
-      "You have played two matchdays of FootEFL, and fixed the words you missed " +
-      "along the way." +
+      (demoLeague()
+        ? "You have played a league of FootEFL, two matchdays, and fixed the words " +
+          "you missed along the way."
+        : "You have played a friendly of FootEFL: one whole matchday, from the market " +
+          "to the result.") +
       "<br><br>In a real season this is two weeks out of six, your club comes from " +
       "your teacher, and the side facing you is another pupil writing the same " +
       "dictation — not a bot.",
