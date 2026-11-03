@@ -4133,6 +4133,57 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .bxf.nopic .bxbig{display:grid}
 .bxf.nopic{background:radial-gradient(120% 80% at 50% 25%,#0E3B2C 0%,var(--deep) 70%)}
 .bxc{margin-top:10px}
+/* ═════════ amichevole o campionato ═════════ */
+.tm{justify-content:flex-start;gap:16px}
+.tm h1{margin-top:30px}
+.tm-foot{margin-top:auto}
+.tm-seg{display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:18px;
+  background:var(--deep);border:1px solid var(--edge)}
+.tm-m{height:58px;border:0;border-radius:14px;background:transparent;color:var(--cream);
+  font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;cursor:pointer;transition:background-color .18s,color .18s}
+.tm-m b{font-size:16px;font-weight:800}
+.tm-m em{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.08em;opacity:.8}
+.tm-m.on{background:var(--gold);color:#06231D}
+.tm-m:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tm-card{padding:20px 16px;border-radius:20px;background:var(--band);border:1px solid var(--edge)}
+.tm-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;text-align:center}
+.tm-vs img{display:block;width:92px;height:92px;object-fit:contain;margin:0 auto 6px}
+.tm-vs b{font-size:15px;font-weight:800}
+.tm-vs i{font:900 34px/1 var(--brand);font-style:normal;color:var(--gold)}
+.tm-card p{margin-top:14px;font-size:13px;font-weight:600;line-height:1.5;color:var(--fog);
+  text-align:center}
+.tm-fx{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.tm-fx span{padding:10px 12px;border-radius:14px;border:1px solid var(--edge);background:var(--band)}
+.tm-fx span.now{border-color:rgba(227,239,38,.4);background:rgba(227,239,38,.07)}
+.tm-fx i{display:block;font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.16em;
+  color:var(--fog)}
+.tm-fx span.now i{color:var(--gold)}
+.tm-fx b{display:block;margin-top:4px;font-size:13.5px;font-weight:800}
+.tm-note{margin-top:10px;font-size:12px;font-weight:600;color:var(--fog);text-align:center}
+@media (prefers-reduced-motion: no-preference){
+  .tm-in{animation:tmin .26s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes tmin{from{opacity:0;transform:translateY(8px)}}
+}
+/* la classifica della prova: la stessa sulla scelta, in casa e alla fine */
+.lgw{border-radius:20px;overflow:hidden;background:var(--band);border:1px solid var(--edge)}
+.lgt{width:100%;border-collapse:collapse}
+.lgt th{padding:10px 8px;font-size:10.5px;font-weight:800;letter-spacing:.16em;color:var(--fog);
+  text-align:center;border-bottom:1px solid var(--edge)}
+.lgt th:nth-child(2){text-align:left}
+.lgt td{padding:8px;text-align:center;font-size:14px;font-weight:700;
+  border-bottom:1px solid rgba(28,107,79,.5)}
+.lgt tr:last-child td{border-bottom:0}
+.lgt th:first-child,.lgt td:first-child{width:22px;padding-left:14px;color:var(--fog);font-weight:800}
+.lgt td.c{text-align:left}
+.lgt td.c span{display:flex;align-items:center;gap:10px;min-width:0}
+.lgt td.c img{width:30px;height:30px;object-fit:contain;flex:none}
+.lgt td.c b{font-size:14.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lgt td.p{font-size:16px;font-weight:900}
+.lgt tr.me td{background:rgba(227,239,38,.1)}
+.lgt tr.me td:first-child{box-shadow:inset 3px 0 0 var(--gold)}
+.dmlg{margin-top:14px}
+.dmend .lgw{margin:12px 0 4px;text-align:left}
 </style>
 </head>
 <body>
@@ -4972,8 +5023,10 @@ function joinClub(id) {
   if (typeof BULL !== "undefined" && BULL) refitNext();   /* il vero avversario */
   /* nella prova l'avversario e' uno solo, e lo scrive un bot */
   if (typeof demoOn === "function" && demoOn()) {
-    var bot = CLUBS.filter(function (x) { return x.id === DEMO_BOT; })[0];
-    ME.next.oppId = DEMO_BOT;
+    /* nel campionato l'avversario cambia a ogni giornata */
+    var foeId = (typeof demoFoe === "function") ? demoFoe((DEMO && DEMO.md) || 1) : DEMO_BOT;
+    var bot = CLUBS.filter(function (x) { return x.id === foeId; })[0];
+    ME.next.oppId = foeId;
     ME.next.away = (bot && bot.name) || "Brass FC";
     ME.next.home = c.name;
     ME.next.atHome = true;
@@ -5062,7 +5115,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "158";
+var APPVER = "159";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -9853,7 +9906,7 @@ VIEWS.gate = function (d) {
     '<p class="kerr" id="gerr" role="alert"' + (hint ? "" : " hidden") + ">" + esc(hint || "") +
     "</p>" +
     '<button class="btn gbig" id="ggo" disabled>Enter the pitch ' + GO_ARROW + "</button>" +
-    '<button class="gthin glink" id="gpr" type="button">No code? Play one match &#8250;</button>' +
+    '<button class="gthin glink" id="gpr" type="button">No code? Try it &#8250;</button>' +
     '<div id="freshbar"></div>' +
     /* il numero di versione, in fondo alla porta: serve a te quando un
        alunno dice « non mi funziona » — si guarda qui e si sa subito se
@@ -9889,7 +9942,7 @@ VIEWS.gate = function (d) {
       landFromCode();
     });
   };
-  $("gpr").onclick = function () { go("tryit"); };
+  $("gpr").onclick = function () { go("trymode"); };
   function bad(m) { $("gerr").hidden = false; $("gerr").textContent = m; }
   setTimeout(function () { try { inp.focus(); } catch (e) {} }, 90);
 };
@@ -10056,10 +10109,10 @@ function drawWho() {
       "competitions and nothing goes to your teacher. Everything you fix here stays " +
       "yours, and the day you put your code in you keep it.</span>" +
       (ME.club ? "" : '<button class="gthin" id="hpick" type="button">' +
-        "Try it &mdash; one whole match &#8250;</button>") +
+        "Try it &mdash; a friendly or a league &#8250;</button>") +
       '<button class="gthin" id="hcode" type="button">I have my code now &#8250;</button>' +
       "</div></div>";
-    if ($("hpick")) $("hpick").onclick = function () { go("tryit"); };
+    if ($("hpick")) $("hpick").onclick = function () { go("trymode"); };
     if (!$("hcode")) return;
     $("hcode").onclick = function () {
       /* anche questa e' un'uscita: dalla prova non si esce lasciando
@@ -17513,7 +17566,7 @@ function mdictOf(ph) {
       var list = DICTS[lv];
       /* la giornata 2 della prova legge i due testi dopo */
       var mdn = (ME.next && ME.next.md) || 1;
-      var t = list[((mdn - 1) * 2 + (ph === "att" ? 0 : 1)) % list.length];
+      var t = list[demoSlot(ph) % list.length];
       var hard = "";
       String(t.x).replace(/[A-Za-z']+/g, function (w) {
         if (w.length > hard.length) hard = w;
@@ -17525,6 +17578,7 @@ function mdictOf(ph) {
       return d;
     }
   }
+  if (typeof demoOn === "function" && demoOn()) return DMATCH[demoSlot(ph) % DMATCH.length];
   var md = (ME.next && ME.next.md) || 1;
   var i = ((md - 1) * 2) % DMATCH.length;
   return ph === "att" ? DMATCH[i] : DMATCH[(i + 1) % DMATCH.length];
@@ -20242,6 +20296,71 @@ var DEMO_BOT  = "BRA";              /* e chi le sta di fronte */
    in una stanza dove la voce non ha ancora letto niente. */
 var DEMO_LEVELS = ["A1", "A2", "B1"];
 
+/* ───────── amichevole o campionato ─────────
+   L'amichevole e' una giornata sola contro Brass. Il campionato ne ha
+   due, contro Sherwood e poi contro Ropewalkers, con una classifica a
+   quattro: Brass gioca le sue partite da se', e il suo risultato esce
+   insieme al mio. I quattro dettati si mescolano a ogni campionato
+   nuovo, cosi' la seconda volta non e' uguale alla prima. */
+var DEMO_FOES = ["SHE", "ROP"];
+var DEMO_LEAGUE = ["RAV", "BRA", "ROP", "SHE"];
+function demoLeague() { return !!(DEMO && DEMO.mode === "league"); }
+function demoMds() { return demoLeague() ? 2 : 1; }
+function demoFoe(md) {
+  if (!demoLeague()) return DEMO_BOT;
+  var i = Math.max(0, Math.min(DEMO_FOES.length - 1, (md || 1) - 1));
+  return DEMO_FOES[i];
+}
+/* le partite che Brass gioca senza di me: giornata 1 con Ropewalkers,
+   giornata 2 con Sherwood. Si contano solo quando la mia e' finita. */
+var DEMO_SIDE = [["BRA", "ROP"], ["BRA", "SHE"]];
+/* quale dei dettati va in questo tempo: il campionato li ha mescolati */
+function demoSlot(ph) {
+  var md = (ME.next && ME.next.md) || 1;
+  var s = (md - 1) * 2 + (ph === "att" ? 0 : 1);
+  var o = DEMO && DEMO.order;
+  return (o && o[s] !== undefined) ? o[s] : s;
+}
+/* la classifica, rifatta ogni volta dai risultati salvati */
+function demoTable() {
+  var rows = DEMO_LEAGUE.map(function (id) {
+    var c = cbClub(id) || { name:id };
+    return { id:id, name:c.name, p:0, f:0, a:0, pts:0 };
+  });
+  function row(id) { return rows.filter(function (r) { return r.id === id; })[0]; }
+  function put(x, y, gx, gy) {
+    var a = row(x), b = row(y);
+    if (!a || !b) return;
+    a.p++; b.p++; a.f += gx; a.a += gy; b.f += gy; b.a += gx;
+    if (gx > gy) a.pts += 3; else if (gx < gy) b.pts += 3; else { a.pts++; b.pts++; }
+  }
+  if (demoLeague()) {
+    [1, 2].forEach(function (md) {
+      var s = (liveGet(md) || {}).score, sim = DEMO.sim && DEMO.sim[md - 1];
+      if (!s) return;
+      put(DEMO_CLUB, demoFoe(md), s.me || 0, s.them || 0);
+      if (sim) put(DEMO_SIDE[md - 1][0], DEMO_SIDE[md - 1][1], sim[0], sim[1]);
+    });
+  }
+  /* a pari punti decide la differenza reti, poi i gol fatti; se e' tutto
+     pari resta l'ordine di partenza */
+  return rows.map(function (r, i) { r.k = i; return r; }).sort(function (x, y) {
+    return (y.pts - x.pts) || ((y.f - y.a) - (x.f - x.a)) || (y.f - x.f) || (x.k - y.k);
+  });
+}
+function demoTableHtml() {
+  return '<div class="lgw"><table class="lgt"><thead><tr><th scope="col">#</th>' +
+    '<th scope="col">THE TABLE</th><th scope="col">P</th><th scope="col">+/-</th>' +
+    '<th scope="col">PTS</th></tr></thead><tbody>' +
+    demoTable().map(function (r, i) {
+      var gd = r.f - r.a, u = crestOf(r.id);
+      return '<tr' + (r.id === DEMO_CLUB ? ' class="me"' : "") + "><td>" + (i + 1) + "</td>" +
+        '<td class="c"><span>' + (u ? '<img src="' + u + '" alt="">' : "") +
+        "<b>" + esc(r.name) + "</b></span></td><td>" + r.p + "</td><td>" +
+        (gd > 0 ? "+" + gd : gd) + '</td><td class="p">' + r.pts + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+}
+
 var DEMO = null;
 function demoLoad() {
   try { DEMO = JSON.parse(localStorage.getItem(DEMOKEY) || "null"); }
@@ -20256,10 +20375,16 @@ function demoOn() {
   if (!DEMO) demoLoad();
   return !!(DEMO && DEMO.on);
 }
-function demoStart(level, diff) {
+function demoStart(level, diff, mode) {
   /* il cielo della prova si estrae all'inizio e resta quello: se si
      ritirasse a ogni schermata, la partita cambierebbe sotto i piedi */
+  var lg = mode === "league";
+  /* i gol di Brass: pochi e verosimili, estratti una volta sola */
+  function g() { return [0, 0, 1, 1, 1, 2, 2, 3][Math.floor(Math.random() * 8)]; }
   DEMO = { on:1, v:1, level:level, diff:diff, club:DEMO_CLUB, bot:DEMO_BOT,
+           mode:lg ? "league" : "friendly",
+           order:lg ? shuf([0, 1, 2, 3]) : [0, 1],
+           sim:lg ? [[g(), g()], [g(), g()]] : null,
            wx:(typeof climPair === "function") ? climPair() : { att:"cloudy", def:"rain" },
            made:new Date().toISOString() };
   demoSave();
@@ -20298,7 +20423,8 @@ function demoBotCard(mine) {
      esattamente la cosa che non torna. */
   var c = tlBotCard(skill, def.clim || "rain", att.clim || "cloudy");
   return {
-    comp:(mine && mine.comp) || "demo", md:(mine && mine.md) || 1, club:DEMO_BOT,
+    comp:(mine && mine.comp) || "demo", md:(mine && mine.md) || 1,
+    club:demoFoe((mine && mine.md) || 1),
     att:{ q:c.att.q, m:c.att.m, w:c.att.w, hm:c.att.hm },
     def:{ q:c.def.q, m:c.def.m, p:c.def.p, hm:c.def.hm },
     sh:c.sh, dv:c.dv,
@@ -20331,7 +20457,7 @@ function demoResolve(md) {
   if (!mine) return false;
   var s = liveScore(mine, demoBotCard(mine));
   st.score = { me:s.me, them:s.them, mine:s.mine, their:s.their, mode:s.mode,
-               opp:DEMO_BOT, home:!!mine.home, when:Date.now(), bot:1 };
+               opp:demoFoe(md), home:!!mine.home, when:Date.now(), bot:1 };
   liveSave(md, st);
   return true;
 }
@@ -20516,25 +20642,47 @@ function demoCard() {
   if (!left) {
     /* finita la prima giornata, se ne puo' giocare una seconda: due
        dettati nuovi, e prima le parole sbagliate nella prima */
-    if (demoMd() < 2) {
+    if (demoMd() < demoMds()) {
+      var nx = cbClub(demoFoe(demoMd() + 1)) || { name:"" };
       return '<section class="pad"><div class="dmend">' +
-        '<span class="dmk">TRY IT &middot; MATCHDAY 1 &middot; ' + esc(DEMO.level) + "</span>" +
-        "<b>Matchday 1 is over.</b>" +
-        "<p>There is one more. Two new dictations, and before the match the words " +
-        "you missed in this one.</p>" +
+        '<span class="dmk">TRY IT &middot; LEAGUE &middot; MATCHDAY 1 &middot; ' +
+        esc(DEMO.level) + "</span>" +
+        "<b>Matchday 1 is over.</b>" + demoTableHtml() +
+        "<p>Next: <b>" + esc(nx.name) + "</b>. Two new dictations, and before the " +
+        "match the words you missed in this one.</p>" +
         '<button class="btn" id="dmmd2">Play matchday 2 &rsaquo;</button>' +
         '<button class="btn ghost" id="dmbye">Finish here</button>' +
         "</div></section>";
     }
+    /* il campionato finisce con la classifica e il posto; l'amichevole
+       con l'invito a provare il campionato */
+    if (demoLeague()) {
+      var tb = demoTable(), pos = 0;
+      tb.forEach(function (r, i) { if (r.id === DEMO_CLUB) pos = i + 1; });
+      var me = cbClub(DEMO_CLUB) || { name:"Ravens FC" };
+      return '<section class="pad"><div class="dmend">' +
+        '<span class="dmk">TRY IT &middot; LEAGUE &middot; ' +
+        esc(demoDiff().t.toUpperCase()) + " &middot; " + esc(DEMO.level) + "</span>" +
+        "<b>" + (pos === 1 ? esc(me.name) + " win the league."
+          : esc(me.name) + " finish " + ["", "1st", "2nd", "3rd", "4th"][pos] + ".") + "</b>" +
+        demoTableHtml() +
+        "<p>You have played a league of FootEFL: the market, the sheet, four dictations, " +
+        "the results, the press room, the ground and your words. In a real season your " +
+        "club comes from your teacher, and the team on the other side is another pupil " +
+        "writing the same dictation.</p>" +
+        '<button class="btn" id="dmbye">Thank you and see you soon &rsaquo;</button>' +
+        '<button class="btn ghost" id="dmagain">Play a new league</button>' +
+        "</div></section>";
+    }
     return '<section class="pad"><div class="dmend">' +
-      '<span class="dmk">TRY IT &middot; ' + esc(demoDiff().t.toUpperCase()) +
+      '<span class="dmk">TRY IT &middot; FRIENDLY &middot; ' + esc(demoDiff().t.toUpperCase()) +
       " &middot; " + esc(DEMO.level) + "</span>" +
       "<b>Thank you and see you soon.</b>" +
-      "<p>You have played two matchdays of FootEFL: the market, the sheet, " +
-      "four dictations, the results, the press room, the ground and your words. In a " +
-      "real season this is two weeks out of six, your club comes from your teacher, " +
-      "and the team on the other side is another pupil writing the same dictation.</p>" +
+      "<p>You have played a friendly of FootEFL: the market, the sponsor, the staff, " +
+      "the ground, the press room, two dictations and the result. The league has two " +
+      "matchdays and a table of four.</p>" +
       '<button class="btn" id="dmbye">Thank you and see you soon &rsaquo;</button>' +
+      '<button class="btn ghost" id="dmagain">Now try the league</button>' +
       "</div></section>";
   }
 
@@ -20543,8 +20691,10 @@ function demoCard() {
      croce e' l'uscita, come il « I have my code now » di prima. */
   return '<section class="pad"><div class="dmbox">' +
     '<div class="dmtop"><span class="t"><b>You are trying FootEFL</b><em>' +
-    esc(demoDiff().t) + " &middot; level " + esc(DEMO.level) +
-    " &middot; Ravens FC v Brass FC</em></span>" +
+    (demoLeague() ? "League &middot; matchday " + demoMd() + " of 2" : "Friendly") +
+    " &middot; " + esc(demoDiff().t) + " &middot; level " + esc(DEMO.level) +
+    " &middot; Ravens FC v " + esc((cbClub(demoFoe(demoMd())) || { name:"Brass FC" }).name) +
+    "</em></span>" +
     '<button class="dmx" id="dmx" type="button" ' +
     'aria-label="Leave the try">&#10005;</button></div>' +
     (true
@@ -20586,6 +20736,8 @@ function demoCard() {
               : "") +
             "</div>";
         })() +
+        /* nel campionato la classifica sta sempre sotto gli occhi */
+        (demoLeague() ? '<div class="dmlg">' + demoTableHtml() + "</div>" : "") +
         '<p class="dmnote">Nothing here reaches a teacher and nothing is kept: ' +
         "when the list is finished the phone goes back to the code screen empty.</p>" +
         '<button class="dmout" id="dmgo" type="button">Leave the try now &#8250;</button>' +
@@ -20622,7 +20774,10 @@ function wireDemo() {
   Array.prototype.forEach.call(document.querySelectorAll(".dmstop"), function (b) {
     b.onclick = function () { DMI = +b.dataset.k; drawDemo(); };
   });
-  if ($("dmbye")) $("dmbye").onclick = demoBye;
+  if ($("dmbye")) $("dmbye").onclick = function () { demoBye(); };
+  /* rigiocare vuol dire ripartire da zero: il telefono si pulisce e si
+     torna alla scelta, gia' sul campionato */
+  if ($("dmagain")) $("dmagain").onclick = function () { demoBye("league"); };
   /* il bottone della seconda giornata ha un nome suo: « dmnext » e' la
      freccia che sfoglia le tappe, e con lo stesso nome la freccia
      faceva partire la giornata 2 */
@@ -20739,7 +20894,7 @@ function demoExitBtn(box) {
 }
 
 /* ───────── il saluto, e il telefono torna pulito ───────── */
-function demoBye() {
+function demoBye(again) {
   /* via tutto quello che la prova ha scritto: i fogli, i tempi, il
      risultato, la cassa, il mercato, gli sponsor, la sala stampa, il
      club scelto. Resta solo la lingua del telefono. */
@@ -20757,11 +20912,75 @@ function demoBye() {
   DEMO = null;
   ME.club = null; ME.student = ""; ME.code = "";
   try { setPract(false); } catch (e) {}
+  if (again) { DPICK.mode = again; return reset("trymode"); }
   reset("gate", { hint:"" });
 }
 
 /* ═══════════════ LA SCHERMATA DELLA PROVA ═══════════════ */
-var DPICK = { level:"A1", diff:"even" };
+var DPICK = { level:"A1", diff:"even", mode:"friendly" };
+
+/* ───────── amichevole o campionato: la scelta ─────────
+   Viene prima del livello. L'interruttore cambia sotto: il faccia a
+   faccia con Brass per l'amichevole, la classifica a quattro e le due
+   giornate per il campionato. */
+VIEWS.trymode = function () {
+  paintNeutral();
+  paintBg("bg-pitch", true);
+  $("bar").innerHTML = '<div class="gtop"><button class="tv-round" id="tmtop" type="button" ' +
+    'aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>' +
+    "</button><p>TRY IT</p></div>";
+  prog(0);
+  html('<div class="gfull tv tm">' +
+    '<h1 id="tmh"></h1>' +
+    '<div class="tm-seg" id="tmseg" role="group" aria-label="Game mode">' +
+    [["friendly", "Friendly", "1 MATCH"], ["league", "League", "2 MATCHES"]].map(function (m) {
+      return '<button class="tm-m" type="button" data-m="' + m[0] + '"><b>' + m[1] +
+        "</b><em>" + m[2] + "</em></button>";
+    }).join("") + "</div>" +
+    '<div id="tmbody"></div>' +
+    '<div class="tm-foot"><button class="btn gbig" id="tmgo">Choose the level ' + GO_ARROW +
+    "</button>" +
+    '<button class="gthin glink" id="tmback" type="button">I have a code &#8250;</button></div>' +
+    "</div>");
+
+  function face(id) {
+    var c = cbClub(id) || { name:id }, u = crestOf(id);
+    return "<span>" + (u ? '<img src="' + u + '" alt="">' : "") + "<b>" + esc(c.name) + "</b></span>";
+  }
+  function show(anim) {
+    var lg = DPICK.mode === "league";
+    $("tmh").textContent = lg ? "Four clubs. One table." : "One whole matchday.";
+    Array.prototype.forEach.call($("tmseg").querySelectorAll(".tm-m"), function (b) {
+      var on = b.dataset.m === DPICK.mode;
+      b.className = "tm-m" + (on ? " on" : "");
+      b.setAttribute("aria-pressed", String(on));
+    });
+    $("tmbody").className = anim ? "tm-in" : "";
+    $("tmbody").innerHTML = lg
+      ? demoTableHtml() +
+        '<div class="tm-fx">' + DEMO_FOES.map(function (id, i) {
+          return '<span class="' + (i ? "" : "now") + '"><i>MATCHDAY ' + (i + 1) + "</i><b>v " +
+            esc((cbClub(id) || { name:id }).name) + "</b></span>";
+        }).join("") + "</div>" +
+        '<p class="tm-note">4 dictations, in a new order every league.</p>'
+      : '<div class="tm-card"><div class="tm-vs">' + face(DEMO_CLUB) +
+        '<i aria-hidden="true">VS</i>' + face(DEMO_BOT) + "</div>" +
+        "<p>One matchday from the market to the final whistle. Two dictations, " +
+        "one for each half.</p></div>";
+    if (anim) { void $("tmbody").offsetWidth; }
+  }
+  Array.prototype.forEach.call($("tmseg").querySelectorAll(".tm-m"), function (b) {
+    b.onclick = function () {
+      if (DPICK.mode === b.dataset.m) return;
+      DPICK.mode = b.dataset.m;
+      show(true);
+    };
+  });
+  show(false);
+  $("tmtop").onclick = function () { setPract(false); reset("gate"); };
+  $("tmback").onclick = function () { setPract(false); reset("gate"); };
+  $("tmgo").onclick = function () { go("tryit"); };
+};
 
 /* uno stemma della prova: si tocca e si apre la pagina del club */
 function tvCrest(id, who, bot) {
@@ -20783,12 +21002,15 @@ VIEWS.tryit = function () {
     "</button><p>TRY IT</p></div>";
   prog(0);
 
-  var foe = cbClub(DEMO_BOT) || { name:"Brass FC" };
+  var lg = DPICK.mode === "league";
+  var foeId = lg ? DEMO_FOES[0] : DEMO_BOT;
+  var foe = cbClub(foeId) || { name:"Brass FC" };
   html('<div class="gfull tv">' +
     '<div class="tv-vs">' + tvCrest(DEMO_CLUB, "YOU", false) +
-    '<p class="tv-v" aria-hidden="true">VS</p>' + tvCrest(DEMO_BOT, "BOT", true) + "</div>" +
+    '<p class="tv-v" aria-hidden="true">VS</p>' +
+    tvCrest(foeId, lg ? "MATCHDAY 1" : "BOT", true) + "</div>" +
 
-    "<h1>One whole matchday.</h1>" +
+    "<h1>" + (lg ? "Two matchdays. One table." : "One whole matchday.") + "</h1>" +
 
     '<div><p class="tv-lab" id="dlvl">CHOOSE YOUR LEVEL</p>' +
     '<div class="tv-lvls" id="dlv" role="group" aria-labelledby="dlvl">' + LEVELS.map(function (v) {
@@ -20801,7 +21023,8 @@ VIEWS.tryit = function () {
     }).join("") + "</div>" +
     '<p class="dmvoice" id="dvo" hidden></p></div>' +
 
-    '<div><p class="tv-lab" id="ddfl">' + esc(String(foe.name).toUpperCase()) + " PLAYS</p>" +
+    '<div><p class="tv-lab" id="ddfl">' +
+    (lg ? "THE OTHER CLUBS PLAY" : esc(String(foe.name).toUpperCase()) + " PLAYS") + "</p>" +
     '<div class="tv-seg" id="ddf" role="group" aria-labelledby="ddfl">' +
     TDIFF.map(function (d, k) {
       var bars = [6, 11, 16].map(function (h, j) {
@@ -20849,12 +21072,16 @@ VIEWS.tryit = function () {
       go("club", { id:b.dataset.club, mine:b.dataset.club === DEMO_CLUB, from:"tryit" });
     };
   });
-  $("dtop").onclick = function () { setPract(false); reset("gate"); };
+  /* la freccia torna alla scelta della modalita' */
+  $("dtop").onclick = function () {
+    if (STACK.length) return back();
+    reset("trymode");
+  };
   $("dback").onclick = function () { setPract(false); reset("gate"); };
   $("dgo").onclick = function () {
     setPract(true);
     setLevel(DPICK.level);
-    demoStart(DPICK.level, DPICK.diff);
+    demoStart(DPICK.level, DPICK.diff, DPICK.mode);
     ME.student = "You";
     saveMyClaim(DEMO_CLUB, ME.student);
     joinClub(DEMO_CLUB);
