@@ -4191,6 +4191,35 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .dmend .lgw{margin:12px 0 4px;text-align:left;color:var(--cream)}
 /* il cartellino giallo ha i suoi <b> grandi: dentro la classifica no */
 .dmend .lgt b{display:block;margin:0;font-size:14px;line-height:1.2;color:inherit}
+/* ═════════ staff: la scelta veloce ═════════ */
+.rq h1{margin-top:6px}
+.rq-two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.rq-c{display:block;width:100%;padding:0;border-radius:18px;overflow:hidden;border:2px solid var(--edge);
+  background:var(--band);color:var(--cream);font:inherit;text-align:left;cursor:pointer;
+  transition:transform .2s cubic-bezier(.2,.8,.2,1),border-color .2s,opacity .2s}
+.rq-c:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.rq-c.on{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 16px 30px rgba(0,0,0,.45)}
+.rq-c.off{opacity:.62}
+.rq-pic{position:relative;display:block;height:196px;overflow:hidden;background:#08231A}
+.rq-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+.rq-pic:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(8,35,26,.96) 100%)}
+.rq-pic b{position:absolute;left:12px;bottom:10px;z-index:1;font:900 24px/1 var(--brand)}
+.rq-ok{position:absolute;top:10px;right:10px;z-index:1;width:30px;height:30px;border-radius:50%;
+  background:var(--gold);display:none;place-items:center;box-shadow:0 4px 10px rgba(0,0,0,.4)}
+.rq-ok svg{width:16px;height:16px;fill:none;stroke:#06231D;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.rq-c.on .rq-ok{display:grid}
+.rq-g{display:flex;flex-direction:column;gap:8px;padding:12px 12px 14px}
+.rq-g span{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;line-height:1.25}
+.rq-g i,.rq-info i{flex:none;display:grid;place-items:center;border:1.5px solid var(--gold);border-radius:9px;
+  width:30px;height:30px}
+.rq-g svg,.rq-info svg{width:16px;height:16px;fill:none;stroke:var(--gold);stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round}
+.rq-info{display:flex;align-items:center;gap:12px;margin-top:16px;padding:12px 14px;border-radius:16px;
+  background:var(--band);border:1px solid var(--edge);font-size:13px;font-weight:600;line-height:1.4;color:#CDEBD2}
+.rq-info i{width:40px;height:40px;border:0;border-radius:12px;background:rgba(227,239,38,.12)}
+.rq-info svg{width:20px;height:20px;stroke-width:2}
+.rq-info b{color:var(--cream)}
+@media (prefers-reduced-motion: reduce){.rq-c{transition:none}}
 </style>
 </head>
 <body>
@@ -5122,7 +5151,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "161";
+var APPVER = "162";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -16884,7 +16913,7 @@ VIEWS.mkDone = function () {
 var RC_N = 10;               /* dieci domande, non venti */
 var RC_SECS = 11;            /* e undici secondi l'una: si pensa, non si medita */
 
-var RC = { i:0, qs:[], answers:[], score:0, show:[], t:null };
+var RC = { i:0, qs:[], answers:[], score:0, show:[], t:null, role:"" };
 
 /* ───────── chi puo' arrivare ─────────
    Quattro gradini per ruolo. Il numero che cambia e' uno solo, e si
@@ -17020,8 +17049,17 @@ function rcCeiling(score) {
   var byFame = ((typeof fameTier === "function") ? fameTier() : 3) + 2;
   return Math.max(1, Math.min(byScore, byFame));
 }
-function rcOffer(score) {
+function rcOffer(score, only) {
   var top = rcCeiling(score), n = rcBand(score), out = [], role, i;
+  /* scelto il ruolo prima del colloquio, rispondono solo quelli: il
+     migliore che il punteggio raggiunge, poi i gradini sotto */
+  if (only === "fit" || only === "gaf") {
+    return STAFF_POOL.filter(function (m) {
+      return m.role === only && m.tier <= top && rcMine(m);
+    }).sort(function (a, b) {
+      return (b.tier - a.tier) || ((b.club ? 1 : 0) - (a.club ? 1 : 0));
+    }).slice(0, n);
+  }
   ["fit", "gaf"].forEach(function (r) {
     var lane = STAFF_POOL.filter(function (m) {
       return m.role === r && m.tier <= top && rcMine(m);
@@ -17064,64 +17102,57 @@ VIEWS.recruit = function () {
       })();
   }
 
-  var t = (typeof fameTier === "function") ? fameTier() : 3;
-  var fb = (typeof fameBand === "function") ? fameBand() : { n:"" };
-  html('<div class="pad"><h1>Two jobs.<br>One of them is yours to fill.</h1>' +
-    '<p class="lede">A squad is not only the twelve who play. You can hire ' +
-    "<b>one</b> member of staff for this competition — and only one, so the " +
-    "choice is a real one.</p>" +
-
-    '<div class="rcrole"><span class="rck">HEAD OF TRAINING</span>' +
-    "<b>More work in the week</b>" +
-    "<p>He decides how many sessions the squad can take, and how many of your " +
-    "twelve you can reach. He makes nobody stronger — the ceiling per player " +
-    "stays where it is — he lets you look after more of them.</p></div>" +
-
-    '<div class="rcrole"><span class="rck">HEAD COACH</span>' +
-    "<b>A better half time</b>" +
-    "<p>A head coach does not train legs. The talk comes at the break: which " +
-    "mistake cost you the first half, and a free hand to change the side that " +
-    "walks back out. The best of them read the opposition for you too.</p></div>" +
-
-    /* ── l'allenatore della squadra ──
-       Il traguardo va detto prima, non scoperto dopo: un alunno che sa
-       che c'è un nome suo da convincere ha un motivo in più per fare
-       bene il colloquio. */
-    (function () {
-      var own = STAFF_POOL.filter(function (m) {
-        return m.role === "gaf" && m.club && rcMine(m);
-      })[0];
-      if (!own) return "";
-      var reach = t >= own.tier;
-      return '<div class="rcown"><span class="rck">THE CLUB’S OWN COACH</span>' +
-        "<b>" + esc(own.name) + "</b>" +
-        '<em>' + esc(own.nick + " · " +
-          ((typeof manWhere === "function") ? manWhere(own) : own.from)) + "</em>" +
-        "<p>" + esc(own.line) + "</p>" +
-        '<span class="rcown2' + (reach ? " ok" : "") + '">' + (reach
-          ? "Your name is big enough. Answer well and the job is " +
-            (own.she ? "hers" : "his") + "."
-          : "Not yet: a club with a bigger name is asking too. Win, and speak to "
-            + "the press.") + "</span></div>";
-    })() +
-
-    '<p class="lede">Now the interview: <b>' + RC_N + " questions at " +
-    esc(ME.level || "A1") + "</b>, and the clock runs on each one. " +
-    "How you do decides <b>how many of them take your call</b>.</p>" +
-
-    '<div class="rcfame"><span><i>THE CITY</i><b>' + esc(fb.n) + "</b></span>" +
-    "<em>" + (t >= 4
-      ? "At this level the best names will listen to you."
-      : t >= 3
-        ? "Good names will listen. The very best want a club with a bigger name."
-        : "Only the local ones will come. Win matches and speak to the press, and "
-          + "better staff start answering the phone.") + "</em></div>" +
-
-    '<button class="btn" id="rcgo">Start the interview</button>' +
+  /* ───────── la scelta veloce ─────────
+     Prima c'era una pagina di spiegazioni: due ruoli, il coach del club,
+     la reputazione, il colloquio. Troppe frasi per una scelta sola. Adesso
+     due carte con la giacca, due righe ciascuna, e si tocca. Quello che
+     ognuno porta in numeri si legge dopo, nei fascicoli. */
+  var club = ME.club ? ME.club.id : "RAV";
+  var CH = [
+    { role:"fit", t:"Trainer", g:[
+      ["More actions every matchday", "M6 8v8M9 6v12M15 6v12M18 8v8M9 12h6M3 12h3M18 12h3"],
+      ["More players to train", "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M17 11a3 3 0 1 0 0-6M21 20c0-2.8-1.7-5-4-5.7"]] },
+    { role:"gaf", t:"Coach", g:[
+      ["A listening room", "M7.5 9.5a4.5 4.5 0 1 1 9 0c0 3.2-3.2 4.2-3.2 7.2a3 3 0 0 1-5.6 1.4M10.3 9.6a1.8 1.8 0 0 1 3.5.4c0 1.4-1.4 1.7-1.4 3"],
+      ["Changes at half time", "M7 4v14M3 14l4 4 4-4M17 20V6M13 10l4-4 4 4"]] }
+  ];
+  html('<div class="pad rq"><h1>Who do you want<br>on your bench?</h1>' +
+    '<div class="rq-two" role="radiogroup" aria-label="The job">' + CH.map(function (c) {
+      var kit = (typeof staffKitOf === "function") ? staffKitOf(c.role, club) : "";
+      return '<button class="rq-c" type="button" role="radio" aria-checked="false" data-r="' +
+        c.role + '"><span class="rq-pic">' +
+        (kit ? '<img src="' + kit + '" alt="" onerror="this.parentNode.removeChild(this)">' : "") +
+        '<i class="rq-ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></i>' +
+        "<b>" + c.t + "</b></span>" +
+        '<span class="rq-g">' + c.g.map(function (g) {
+          return '<span><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="' + g[1] +
+            '"/></svg></i>' + g[0] + "</span>";
+        }).join("") + "</span></button>";
+    }).join("") + "</div>" +
+    '<div class="rq-info"><i aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/>' +
+    '<path d="M12 9v4l2.5 2M9 2h6"/></svg></i><span><b>' + RC_N + " questions at " +
+    esc(ME.level || "A1") + ", against the clock.</b> The better you do, the better the " +
+    "names that call back.</span></div>" +
+    '<button class="btn gbig" id="rcgo" disabled>Choose one to start</button>' +
     '<button class="btn ghost" id="rcbk">' +
     ((typeof homeBackName === "function") ? homeBackName() : "Back") + "</button></div>");
 
+  RC.role = "";
+  Array.prototype.forEach.call($("main").querySelectorAll(".rq-c"), function (b) {
+    b.onclick = function () {
+      RC.role = b.dataset.r;
+      Array.prototype.forEach.call($("main").querySelectorAll(".rq-c"), function (x) {
+        var on = x === b;
+        x.classList.toggle("on", on);
+        x.classList.toggle("off", !on);
+        x.setAttribute("aria-checked", String(on));
+      });
+      $("rcgo").disabled = false;
+      $("rcgo").textContent = "Interview a " + (RC.role === "fit" ? "trainer" : "coach");
+    };
+  });
   $("rcgo").onclick = function () {
+    if (!RC.role) return;
     RC.qs = (typeof drawQuestions === "function")
       ? drawQuestions(ME.level || "A1", RC_N) : [];
     if (!RC.qs.length) return;
@@ -17186,7 +17217,7 @@ VIEWS.rcScore = function () {
   rcStop();
   RC.score = 0;
   RC.qs.forEach(function (q, i) { if (RC.answers[i] === q.c) RC.score++; });
-  RC.show = rcOffer(RC.score);
+  RC.show = rcOffer(RC.score, RC.role);
   var top = rcCeiling(RC.score);
   var t = (typeof fameTier === "function") ? fameTier() : 3;
   var byScore = RC.score >= 9 ? 4 : RC.score >= 7 ? 3 : RC.score >= 5 ? 2 : 1;
@@ -17199,8 +17230,8 @@ VIEWS.rcScore = function () {
     (RC.show.length === 1 ? " answer" : " answers") + "</b>" +
     (RC.score >= 9 ? "They were queuing up. Take your pick."
      : RC.score >= 7 ? "Good. Two or three of them will come."
-     : "Enough to choose from — and one of each job, so the decision is still "
-       + "yours.") + "</div>" +
+     : RC.show.length > 1 ? "Enough to choose from."
+     : "Only one called back. Do better and more of them pick up the phone.") + "</div>" +
     (byScore > t
       ? '<div class="capnote"><b>Your answers were worth more than your name</b>' +
         "The best of them do not call back a club the city barely knows. Win, and " +
@@ -17215,7 +17246,7 @@ VIEWS.rcScore = function () {
 VIEWS.rcPick = function () {
   paintClub(ME.club);
   barFlow("Who called back", "One of them, and that is your bench", 85);
-  if (!RC.show.length) RC.show = rcOffer(RC.score || 0);
+  if (!RC.show.length) RC.show = rcOffer(RC.score || 0, RC.role);
 
   /* ───────── i fascicoli sul tavolo ─────────
      Prima erano schede come tutte le altre, per la scelta che pesa di
@@ -17224,8 +17255,11 @@ VIEWS.rcPick = function () {
      quando sono aperti tutti se ne sceglie uno. La storia lunga di
      ognuno sta sotto, perche' nella carta stretta non ci sta. */
   var opened = 0, pick = "";
-  html('<div class="pad sp"><p class="lede">' + RC.show.length + " files on the desk. " +
-    "Open them all, then appoint <b>one</b>.<br><span>There is no second interview " +
+  html('<div class="pad sp"><p class="lede">' + RC.show.length +
+    (RC.show.length === 1 ? " file on the desk. Open it, then appoint " +
+      (RC.show[0] && RC.show[0].she ? "her" : "him") + "."
+      : " files on the desk. Open them all, then appoint <b>one</b>.") +
+    "<br><span>There is no second interview " +
     "this competition.</span></p>" +
     '<div class="sp-grid">' + RC.show.map(function (m, i) {
       var kit = (typeof staffKitOf === "function") ? staffKitOf(m.role, ME.club.id) : "";
@@ -24421,8 +24455,15 @@ VIEWS.bxEar = function () {
   /* parola per parola, senza punteggiatura e senza maiuscole: si misura
      l'orecchio, non la virgola */
   function plain(t) {
-    return String(t || "").toLowerCase().replace(/[^a-z0-9' ]+/g, " ")
-      .replace(/\s+/g, " ").trim();
+    /* « don't » e « do not » si sentono diversi ma vogliono dire lo
+       stesso: qui si misura l'orecchio, e chi scrive l'una o l'altra ha
+       capito. Le forme in 's e 'd no: possono essere due parole diverse. */
+    return String(t || "").toLowerCase().replace(/[\u2018\u2019]/g, "'")
+      .replace(/\bcan't\b/g, "can not").replace(/\bcannot\b/g, "can not")
+      .replace(/\bwon't\b/g, "will not").replace(/n't\b/g, " not")
+      .replace(/'m\b/g, " am").replace(/'re\b/g, " are")
+      .replace(/'ve\b/g, " have").replace(/'ll\b/g, " will")
+      .replace(/[^a-z0-9' ]+/g, " ").replace(/\s+/g, " ").trim();
   }
   var box = $("tyin");
   try { box.focus(); } catch (er) {}
