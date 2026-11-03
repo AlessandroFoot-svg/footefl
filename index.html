@@ -4220,6 +4220,8 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .rq-info svg{width:20px;height:20px;stroke-width:2}
 .rq-info b{color:var(--cream)}
 @media (prefers-reduced-motion: reduce){.rq-c{transition:none}}
+/* tre fascicoli: il terzo va in mezzo, non resta solo a sinistra */
+.sp-grid>.sp-c:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 6px)}
 </style>
 </head>
 <body>
