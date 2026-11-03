@@ -4183,7 +4183,9 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .lgt tr.me td{background:rgba(227,239,38,.1)}
 .lgt tr.me td:first-child{box-shadow:inset 3px 0 0 var(--gold)}
 .dmlg{margin-top:14px}
-.dmend .lgw{margin:12px 0 4px;text-align:left}
+.dmend .lgw{margin:12px 0 4px;text-align:left;color:var(--cream)}
+/* il cartellino giallo ha i suoi <b> grandi: dentro la classifica no */
+.dmend .lgt b{display:inline;margin:0;font-size:14.5px;line-height:1.2;color:inherit}
 </style>
 </head>
 <body>
@@ -20648,7 +20650,7 @@ function demoCard() {
         '<span class="dmk">TRY IT &middot; LEAGUE &middot; MATCHDAY 1 &middot; ' +
         esc(DEMO.level) + "</span>" +
         "<b>Matchday 1 is over.</b>" + demoTableHtml() +
-        "<p>Next: <b>" + esc(nx.name) + "</b>. Two new dictations, and before the " +
+        "<p>Next: <strong>" + esc(nx.name) + "</strong>. Two new dictations, and before the " +
         "match the words you missed in this one.</p>" +
         '<button class="btn" id="dmmd2">Play matchday 2 &rsaquo;</button>' +
         '<button class="btn ghost" id="dmbye">Finish here</button>' +
