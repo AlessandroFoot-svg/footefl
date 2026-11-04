@@ -3841,6 +3841,102 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .ms-tiles b.hi{color:var(--gold)}
 .ms-tiles span{display:block;margin-top:4px;font-size:10.5px;font-weight:800;letter-spacing:.12em;color:var(--fog)}
 
+
+/* ═════════ My golden words: la tendina, la storia, le due pagine ═════════ */
+:root{--golden:#F5C542}
+.gw-card{border-color:var(--golden)}
+.gw-card .sqt i,.gw-card .sqtog{color:var(--golden)}
+.gw-list{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
+.gw-cr{display:block;flex:none;width:30px;height:30px;object-fit:contain}
+.gw-cr.big{width:46px;height:46px}
+.gw-cr.huge{width:56px;height:56px;margin:0 auto}
+.gw-cr.tiny{width:20px;height:20px}
+.gw-cr.champ{width:92px;height:92px;margin:0 auto}
+.gw-pin{display:flex;align-items:center;gap:12px;width:100%;padding:16px;border:0;border-radius:16px;
+  background:var(--golden);color:#06231D;text-align:left;cursor:pointer;font-family:var(--brand)}
+.gw-pin span{flex:1;min-width:0}
+.gw-pin i{display:block;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.16em}
+.gw-pin b{display:block;margin-top:6px;font-size:34px;font-weight:900;line-height:1.05;overflow-wrap:anywhere}
+.gw-pin em{display:block;margin-top:5px;font-style:normal;font-size:13px;font-weight:700;line-height:1.3}
+.gw-row{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:8px 10px;
+  border-radius:14px;border:1px solid var(--edge);background:var(--deep);color:var(--cream);
+  text-align:left;cursor:pointer;font-family:var(--brand)}
+.gw-row span{flex:1;min-width:0}
+.gw-row b{display:block;font-size:17px;font-weight:800;line-height:1.15;color:var(--golden);overflow-wrap:anywhere}
+.gw-row em{display:block;margin-top:2px;font-style:normal;font-size:12px;font-weight:600;color:var(--fog)}
+.gw-sc{flex:none;min-width:48px;padding:6px 8px;box-sizing:border-box;border-radius:10px;text-align:center;
+  font-style:normal;font-size:14px;font-weight:900}
+.gw-sc.w{background:var(--gold);color:#06231D}
+.gw-sc.d{background:var(--cream);color:#06231D}
+.gw-sc.l{border:1px solid var(--edge);color:var(--fog)}
+.gw-more{min-height:44px;margin-top:4px;border-radius:999px;border:1px solid var(--edge);background:none;
+  color:var(--cream);font:800 13px/1 var(--brand);cursor:pointer}
+.gw-old{display:flex;flex-wrap:wrap;gap:6px}
+.gw-chip{min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--edge);background:var(--deep);
+  color:var(--golden);font:700 14px/1 var(--brand);cursor:pointer}
+.gw-pin:focus-visible,.gw-row:focus-visible,.gw-more:focus-visible,.gw-chip:focus-visible,.gw-in:focus-visible{
+  outline:2px solid var(--gold);outline-offset:3px}
+.gw-story,.gw-new,.gw-check{display:flex;flex-direction:column;gap:14px}
+.gw-tags{display:flex;flex-wrap:wrap;gap:6px}
+.gw-tags span{padding:5px 10px;border-radius:999px;border:1px solid var(--golden);color:var(--golden);
+  font-size:11px;font-weight:800;letter-spacing:.1em}
+.gw-big{margin:-4px 0 0;font:900 54px/1 var(--brand);letter-spacing:-.01em;color:var(--golden);overflow-wrap:anywhere}
+.gw-why{margin:-4px 0 0;font-size:16px;font-weight:600;line-height:1.45}
+.gw-box{padding:14px;border-radius:18px;border:1px solid var(--edge);background:var(--band)}
+.gw-box.deep{border:0;background:var(--deep)}
+.gw-box.wait{border-style:dashed;background:none}
+.gw-box.won{border:1.5px solid var(--golden)}
+.gw-k{margin:0;font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--fog)}
+.gw-k.center{text-align:center}
+.gw-vs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;margin-top:12px}
+.gw-vs span{display:block;text-align:center}
+.gw-vs span b{display:block;margin-top:6px;font-size:13px;font-weight:700;line-height:1.2}
+.gw-vs strong{font-size:40px;font-weight:900;white-space:nowrap}
+.gw-goals{margin-top:12px;display:flex;flex-direction:column;gap:4px}
+.gw-g{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 10px;border-radius:10px;border:1px solid transparent}
+.gw-g i{flex:none;width:32px;font-style:normal;font-size:13px;font-weight:800;color:var(--fog)}
+.gw-g span{flex:1;min-width:0;font-size:14px;font-weight:600;color:var(--fog);overflow-wrap:anywhere}
+.gw-g.mine span{font-weight:700;color:var(--cream)}
+.gw-g.hot{background:var(--deep);border-color:var(--golden)}
+.gw-g.hot span{font-weight:900;color:var(--golden)}
+.gw-g b{font-size:14px;font-weight:800}
+.gw-head{margin:6px 0 0;font-size:19px;font-weight:800;line-height:1.25}
+.gw-txt{margin:10px 0 0;font-size:14px;font-weight:600;line-height:1.45}
+.gw-tb{display:flex;flex-direction:column;gap:4px}
+.gw-box .gw-tb{margin-top:10px}
+.gw-tb div{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 10px;border-radius:10px;
+  background:var(--deep);font-size:14px}
+.gw-tb i{flex:none;width:18px;font-style:normal;font-weight:800}
+.gw-tb span{flex:1;min-width:0;font-weight:700}
+.gw-tb b{font-weight:900}
+.gw-tb .me{background:var(--golden);color:#06231D}
+.gw-sent{margin:8px 0 0;font-size:17px;font-weight:600;line-height:1.45}
+.gw-sent b{font-weight:900;color:var(--golden)}
+.gw-sent.big{margin:0;font-size:22px}
+.gw-sent .gap{letter-spacing:.08em;white-space:nowrap}
+.gw-lab{display:block;margin-bottom:-8px;font-size:13px;font-weight:700;color:var(--fog)}
+.gw-in{box-sizing:border-box;width:100%;height:56px;padding:0 16px;border-radius:14px;border:1px solid var(--edge);
+  background:var(--band);color:var(--cream);font:700 20px/1 var(--brand)}
+.gw-res{padding:16px;border-radius:18px;border:1px solid var(--golden);background:var(--band)}
+.gw-res b{display:block;font-size:22px;font-weight:900}
+.gw-res em{font-style:normal;color:var(--golden)}
+.gw-res p{margin:4px 0 0;font-size:14px;font-weight:600;line-height:1.45;color:var(--fog)}
+.gw-res.yes{border:0;background:var(--golden);color:#06231D}
+.gw-res.yes p{color:#06231D}
+.gw-gold{padding:24px 20px;border-radius:22px;background:var(--golden);color:#06231D;text-align:center}
+.gw-gold i{display:block;font-style:normal;font-size:12px;font-weight:800;letter-spacing:.2em}
+.gw-gold>b{display:block;margin-top:12px;font-size:52px;font-weight:900;line-height:1;overflow-wrap:anywhere}
+.gw-gold strong{display:block;margin-top:14px;font-size:16px;font-weight:800;line-height:1.3}
+.gw-gold p{margin:8px 0 0;font-size:15px;font-weight:600;line-height:1.45}
+.gw-gold .sent{margin-top:16px;padding-top:14px;border-top:1px solid rgba(6,35,29,.3)}
+.gw-gold .sent b{font-weight:900}
+.gw-rule{margin:0;font-size:13px;font-weight:600;line-height:1.45;color:var(--fog);text-align:center}
+.gw-rule b{color:var(--cream)}
+.gw-new .gw-vs{margin-top:0}
+.gw-sea{text-align:center}
+.gw-sea .gw-k{margin-top:10px}
+.gw-sea h1{margin:4px 0 0;font:900 32px/1.1 var(--brand)}
+
 /* l'esercizio: la parola dentro la sua frase */
 .wdr{display:flex;flex-direction:column}
 .wd-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -5153,7 +5249,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "162";
+var APPVER = "163";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -12629,7 +12725,7 @@ VIEWS.squad = function () {
   if (demo) {
     /* e la rosa si apre gia' aperta: si e' entrati per vedere le
        maglie, non per trovare un'altra cosa da toccare */
-    SQOPEN = true;
+    SQOPEN = !MYOPEN;
     html('<section class="pad"><div class="sqc" id="sqc"></div></section>' +
       '<section class="pad" id="signs" hidden><h2 class="sec">Signed in the market</h2>' +
       '<div class="panel" id="signbox"></div></section>');
@@ -12921,10 +13017,10 @@ function drawMyCards() {
   if (!sq || !sq.parentNode) return;
   if (!$("sqw")) {
     sq.insertAdjacentHTML("afterend", '<div class="sqc sqmore" id="sqw"></div>' +
-      '<div class="sqc sqmore" id="sqs"></div>');
+      '<div class="sqc sqmore" id="sqg"></div><div class="sqc sqmore" id="sqs"></div>');
   }
   loadMem(); loadStars();
-  drawWordsCard(); drawStatsCard();
+  drawWordsCard(); drawGoldCard(); drawStatsCard();
 }
 function myToggle(id) {
   MYOPEN = MYOPEN === id ? "" : id;
@@ -15216,6 +15312,9 @@ VIEWS.live = function () {
   if (!s) return back();
   /* la prima volta la partita si guarda scorrere */
   if (!st.shown) return swap("ftRun");
+  /* prima del tabellino, la parola d'oro nata in questa partita */
+  var gv = goldAfter(md);
+  if (gv) return swap(gv.name, gv.data);
 
   var them = oppName(s.opp), win = s.me > s.them, draw = s.me === s.them;
   var cmp = COMPS.filter(function (m) { return m.id === scope(); })[0];
@@ -29561,6 +29660,567 @@ function elValue(err, t) {
   return [100, 75, 50, 25, 0][Math.min(4, err)];
 }
 
+
+/* ───── 49-gold.js ───── */
+/* ═══════════════ MY GOLDEN WORDS ═══════════════
+   My words tiene le parole sbagliate; qui stanno quelle che hanno deciso
+   una partita: il gol vittoria, il pareggio di una partita che si stava
+   perdendo, il wonder goal, il rigore evitato. Una per partita, dieci in
+   vista, le altre in archivio.
+
+   Non serve salvare niente in piu' mentre si gioca: il tempo registrato
+   tiene gia' dove si e' aperta ogni azione (ats) e tutte le parole
+   (items), e la partita il minuto di ogni gol. Cosi' valgono anche le
+   partite giocate prima di questa versione.
+
+   Le storie si copiano in una chiave sola, perche' devono restare quando
+   la competizione cambia. Stanno sul telefono e non viaggiano. */
+var GOLD = null, GOLD_MORE = false;
+var GOLD_RANK = { win:4, eq:3, wonder:2, pen:1 };
+/* parole troppo piccole per ricordarsene: se l'azione si apre su una di
+   queste, si prende la parola vera piu' vicina nella stessa frase */
+var GOLD_SMALL = {};
+("with from that this they their there these those have been were will then when " +
+ "some than into what very each your them also just only here where which while " +
+ "after before about over under").split(" ").forEach(function (w) { GOLD_SMALL[w] = 1; });
+
+function goldKey() { return "footefl-golden-" + (ME.code || "x"); }
+function goldLoad() {
+  try { GOLD = JSON.parse(localStorage.getItem(goldKey()) || "null"); } catch (e) { GOLD = null; }
+  if (!GOLD || !GOLD.list) GOLD = { list:[], season:{} };
+  if (!GOLD.season) GOLD.season = {};
+  return GOLD;
+}
+function goldSave() {
+  /* cento storie bastano: la lista si taglia dalle meno importanti */
+  GOLD.list = goldSorted().slice(0, 100);
+  try { localStorage.setItem(goldKey(), JSON.stringify(GOLD)); } catch (e) {}
+}
+function goldRk(r) { return r.title ? 5 : (GOLD_RANK[r.kind] || 0); }
+function goldSorted() {
+  return GOLD.list.slice().sort(function (a, b) {
+    return goldRk(b) - goldRk(a) || (b.when || 0) - (a.when || 0);
+  });
+}
+function goldById(id) { return GOLD.list.filter(function (r) { return r.id === id; })[0] || null; }
+function goldOrd(n) {
+  var t = n % 100;
+  if (t >= 11 && t <= 13) return n + "th";
+  return n + (["th", "st", "nd", "rd"][n % 10] || "th");
+}
+
+/* la parola vera piu' vicina a quella su cui si e' aperta l'azione: ci
+   puo' essere arrivato un « the » o un punto, e non sono un ricordo. Si
+   resta nella stessa frase e fra le parole scritte giuste. */
+function goldNear(items, ix) {
+  if (!items || !items.length || typeof ix !== "number") return -1;
+  ix = Math.max(0, Math.min(items.length - 1, ix));
+  function stop(x) { return x && x.t === "ponct" && /[.!?]/.test(x.w); }
+  function right(it) { return it && it.t !== "ponct" && !it.k; }
+  function strong(it) {
+    var w = right(it) ? String(it.w).toLowerCase() : "";
+    return w.length >= 4 && !GOLD_SMALL[w];
+  }
+  var s = ix, e = ix, d;
+  while (s > 0 && !stop(items[s - 1])) s--;
+  while (e < items.length - 1 && !stop(items[e])) e++;
+  [strong, right].some(function (ok) {
+    for (d = 0; d <= e - s; d++) {
+      if (ix - d >= s && ok(items[ix - d])) { d = ix - d; return true; }
+      if (ix + d <= e && ok(items[ix + d])) { d = ix + d; return true; }
+    }
+    d = -1;
+    return false;
+  });
+  return d;
+}
+function goldHardIx(h) {
+  if (typeof h.hardIx === "number" && h.hardIx >= 0) return h.hardIx;
+  var at = -1;
+  (h.items || []).forEach(function (it, k) { if (at < 0 && it.w === h.hardWord) at = k; });
+  return at;
+}
+
+/* tutti i gol della partita, in ordine di minuto, con il punteggio */
+function goldGoals(s) {
+  var seq = [];
+  function side(h, mine) {
+    (h.duels || []).forEach(function (d) {
+      if (d.goal) seq.push({ m:(h.mins || [])[d.n - 1] || null, mine:mine, how:"play", n:d.n });
+    });
+    if (h.sources && h.sources.bdo) seq.push({ m:h.bdoMin || null, mine:mine, how:"bdo" });
+    if (h.penalty && h.penalty.outcome === "goal") {
+      seq.push({ m:h.penMin || null, mine:mine, how:"pen" });
+    }
+  }
+  side(s.mine, true); side(s.their, false);
+  seq.forEach(function (g, i) { g.i = i; });
+  seq.sort(function (a, b) {
+    var x = a.m == null ? 999 : a.m, y = b.m == null ? 999 : b.m;
+    return x - y || a.i - b.i;
+  });
+  var a = 0, b = 0;
+  seq.forEach(function (g) {
+    g.before = [a, b];
+    if (g.mine) a++; else b++;
+    g.at = a + "–" + b;
+  });
+  return seq;
+}
+function goldLeft(m) {
+  if (m == null) return "";
+  if (m >= 90) return " in the last minute";
+  var n = 90 - m;
+  return " with " + n + (n === 1 ? " minute" : " minutes") + " left";
+}
+
+/* la storia di una partita: quale parola, e perche' */
+function goldBuild(md, s) {
+  var hs = formHalves(scope(), ME.club.id).filter(function (h) { return h.md === md; });
+  var att = hs.filter(function (h) { return h.ph === "att"; })[0];
+  var def = hs.filter(function (h) { return h.ph === "def"; })[0];
+  var seq = goldGoals(s), me = s.me, th = s.them, them = oppName(s.opp);
+  var hot = null, kind = "", half = att, ix = -1, why = "";
+
+  function wordOf(g) {
+    if (!att || !att.items) return -1;
+    if (g.how === "bdo") return goldHardIx(att);
+    if (g.how === "play" && att.ats) return goldNear(att.items, att.ats[g.n - 1]);
+    return -1;     /* un rigore non ha una parola: l'errore e' dell'altro */
+  }
+  /* il gol vittoria c'e' solo quando vinci di uno: in un 3-0 nessun gol,
+     da solo, ha fatto la differenza */
+  if (me - th === 1) {
+    var c = 0;
+    seq.forEach(function (g) { if (g.mine && ++c === th + 1) hot = g; });
+    kind = "win";
+  } else if (me === th && me > 0) {
+    var last = seq[seq.length - 1];
+    /* il pareggio conta se stavi perdendo: se il gol ultimo e' loro,
+       il pareggio l'hanno fatto loro */
+    if (last && last.mine) { hot = last; kind = "eq"; }
+  }
+  if (hot) ix = wordOf(hot);
+  if (ix < 0) { hot = null; kind = ""; }
+  if (!hot && s.mine.sources && s.mine.sources.bdo) {
+    hot = seq.filter(function (g) { return g.mine && g.how === "bdo"; })[0] || null;
+    if (hot) { ix = wordOf(hot); kind = ix >= 0 ? "wonder" : ""; }
+    if (!kind) hot = null;
+  }
+  if (!kind && def && def.items && def.hard && def.hardOk && (me === th || me - th === 1)) {
+    ix = goldHardIx(def);
+    if (ix >= 0) { kind = "pen"; half = def; }
+  }
+  if (!kind || !half.items[ix]) return null;
+
+  if (kind === "win") {
+    var a = hot.before[0], b = hot.before[1];
+    if (seq.length === 1) why = "Nil-nil" + goldLeft(hot.m) + ". This was the only goal of the match.";
+    else if (a === b) why = "You were level at " + a + "–" + b + goldLeft(hot.m) +
+      ". This word put you ahead for good.";
+    else why = "You were " + a + "–" + b + " up. This is the goal they never caught.";
+  } else if (kind === "eq") {
+    why = "You were losing " + hot.before[0] + "–" + hot.before[1] + goldLeft(hot.m) +
+      ". This word saved a point.";
+  } else if (kind === "wonder") {
+    why = me < th ? "You lost this one, but nobody could stop this word."
+      : "The hardest word in the dictation, written perfectly.";
+  } else {
+    why = "One wrong letter here and " + them + " had a penalty. " +
+      (me === th ? "The match finished level." : "You won by a single goal.");
+  }
+  var ctx = ctxAround(half.items, ix) || { b:"", a:"" };
+  var word = half.items[ix].w;
+  var rows = seq.map(function (g) {
+    return { m:g.m, mine:g.mine, at:g.at, hot:g === hot,
+             lab:!g.mine ? them : g.how === "pen" ? "Penalty"
+               : g === hot ? word
+               : (function () { var k = wordOf(g); return k >= 0 ? att.items[k].w : "Goal"; })() };
+  });
+  if (kind === "pen") rows.push({ m:null, mine:true, at:"", hot:true, lab:word + " · no penalty" });
+  var cmp = COMPS.filter(function (m) { return m.id === scope(); })[0];
+  return { id:scope() + "|" + ME.club.id + "|" + md, comp:scope(), compName:cmp ? cmp.name : "",
+           club:ME.club.id, clubName:ME.club.name, md:md, w:word, pre:ctx.b, post:ctx.a,
+           dict:half.dname || "", kind:kind, wonder:!!(hot && hot.how === "bdo"),
+           min:hot ? hot.m : null, foe:s.opp || "", foeName:them, me:me, th:th, why:why,
+           rows:rows, when:s.when || Date.now(), seen:false, title:false, end:null };
+}
+
+/* la classifica di adesso: quella della prova o quella del professore.
+   Una coppa non ne ha una, e allora non si dice niente sul campionato. */
+function goldTable() {
+  var rows = [], over = false;
+  if (demoOnSafe()) {
+    if (!demoLeague()) return null;
+    over = !!((liveGet(1) || {}).score && (liveGet(2) || {}).score);
+    rows = demoTable().map(function (r) {
+      return { id:r.id, name:r.name, pts:r.pts, gf:r.f, gd:r.f - r.a };
+    });
+  } else {
+    if (typeof BULL === "undefined" || !BULL) return null;
+    var cmp = COMPS.filter(function (m) { return m.id === scope(); })[0];
+    if (cmp && (cmp.kind === "cup" || cmp.kind === "shield" || cmp.kind === "friendly")) return null;
+    over = seasonOver();
+    rows = leagueRows().map(function (r) {
+      return { id:r.id, name:r.name, pts:r.pts, gf:r.gf, gd:r.gd };
+    });
+  }
+  if (rows.length < 2) return null;
+  return { over:over, rows:goldRank(rows) };
+}
+function goldRank(rows) {
+  return rows.sort(function (a, b) {
+    return b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || (a.name < b.name ? -1 : 1);
+  }).map(function (r, i) { r.pos = i + 1; return r; });
+}
+/* la stessa classifica senza quel gol: da vittoria a pareggio, o da
+   pareggio a sconfitta, e un gol in meno nella differenza reti */
+function goldWithout(T, r) {
+  var rows = T.rows.map(function (x) {
+    var y = { id:x.id, name:x.name, pts:x.pts, gf:x.gf, gd:x.gd };
+    if (x.id === r.club) { y.pts -= r.kind === "win" ? 2 : 1; y.gf--; y.gd--; }
+    if (x.id === r.foe) { y.pts += r.kind === "win" ? 1 : 2; y.gd++; }
+    return y;
+  });
+  return goldRank(rows).filter(function (x) { return x.id === r.club; })[0] || null;
+}
+/* alla fine della stagione ogni storia si completa, e la parola piu'
+   vicina al titolo diventa quella che l'ha vinto */
+function goldClose(sc, cid) {
+  var T = goldTable();
+  if (!T || !T.over) return false;
+  var mine = T.rows.filter(function (x) { return x.id === cid; })[0];
+  if (!mine) return false;
+  var list = GOLD.list.filter(function (r) { return r.comp === sc && r.club === cid; });
+  var champ = mine.pos === 1, won = null;
+  list.forEach(function (r) {
+    r.title = false;
+    if (r.kind !== "win" && r.kind !== "eq") return;
+    r.alt = goldWithout(T, r);
+    if (champ && r.alt && r.alt.pos > 1 && (!won || r.md > won.md)) won = r;
+  });
+  if (won) won.title = true;
+  var ends = champ ? r0(" won the league with ") : r0(" finished " + goldOrd(mine.pos) + " with ");
+  function r0(mid) { return list.length ? list[0].clubName + mid + mine.pts + " points." : ""; }
+  list.forEach(function (r) {
+    var alt = r.alt, was = (r.me - 1) + "–" + r.th, head = "", text = ends, table = null;
+    if (alt) {
+      var without = "Without this goal: " + was + ", " + alt.pts + " points, " +
+        goldOrd(alt.pos) + " place.";
+      if (r.title) {
+        head = r.clubName + " won the league."; text = without;
+        table = T.rows.slice(0, 3).map(function (x) {
+          return { pos:x.pos, id:x.id, name:x.name, pts:x.pts, me:x.id === cid };
+        });
+      } else if (alt.pos !== mine.pos) {
+        head = "It moved you up the table.";
+        text = "You finished " + goldOrd(mine.pos) + ". " + without;
+      } else {
+        head = r.kind === "win" ? "Two more points." : "One more point.";
+      }
+    } else if (r.kind === "wonder") {
+      head = r.me < r.th ? "It did not change the result."
+        : r.me > r.th ? "It made the win safe." : "The hardest word of the day.";
+    } else {
+      head = r.me === r.th ? "It kept the point." : "It kept the win.";
+    }
+    r.end = { head:head, text:text, table:table };
+    delete r.alt;
+  });
+  var key = sc + "|" + cid, old = GOLD.season[key] || {};
+  GOLD.season[key] = { pos:mine.pos, pts:mine.pts, seen:!!old.seen,
+    top:T.rows.slice(0, 2).concat(mine.pos > 2 ? [mine] : []).map(function (x) {
+      return { pos:x.pos, id:x.id, name:x.name, pts:x.pts, me:x.id === cid };
+    }) };
+  return true;
+}
+/* si passano le partite con un risultato: quelle nuove diventano storie */
+function goldSync() {
+  goldLoad();
+  if (!ME.club) return GOLD;
+  var sc = scope(), cid = ME.club.id, mds = {}, changed = false;
+  formHalves(sc, cid).forEach(function (h) { mds[h.md] = 1; });
+  Object.keys(mds).forEach(function (k) {
+    var md = Number(k), st = liveGet(md), s = st && st.score;
+    if (!s || !s.mine || !s.their) return;
+    var id = sc + "|" + cid + "|" + md, old = goldById(id);
+    if (old && old.me === s.me && old.th === s.them) return;
+    var rec = goldBuild(md, s);
+    GOLD.list = GOLD.list.filter(function (r) { return r.id !== id; });
+    if (rec) { GOLD.list.push(rec); changed = true; }
+  });
+  if (goldClose(sc, cid)) changed = true;
+  if (changed) goldSave();
+  return GOLD;
+}
+/* dopo la partita: prima la parola nuova, poi la fine della stagione */
+function goldAfter(md) {
+  try {
+    goldSync();
+    if (!ME.club) return null;
+    var sc = scope(), cid = ME.club.id;
+    var r = goldById(sc + "|" + cid + "|" + md);
+    if (r && !r.seen) return { name:"goldNew", data:{ id:r.id } };
+    var S = GOLD.season[sc + "|" + cid];
+    if (S && !S.seen && goldOfSeason(sc, cid)) return { name:"goldSeason", data:{ then:"live" } };
+  } catch (e) {}
+  return null;
+}
+function goldOfSeason(sc, cid) {
+  return goldSorted().filter(function (r) { return r.comp === sc && r.club === cid; })[0] || null;
+}
+function goldKindLab(r) {
+  if (r.title) return "Won the league";
+  if (r.kind === "win") return "The winner" + (r.wonder ? " · wonder goal" : "");
+  if (r.kind === "eq") return "The equaliser" + (r.wonder ? " · wonder goal" : "");
+  return r.kind === "wonder" ? "Wonder goal" : "Penalty avoided";
+}
+function goldCrest(id, cls) {
+  var u = crestOf(id);
+  return u ? '<img class="' + cls + '" src="' + u + '" alt="">' : "";
+}
+function goldLine(r) {
+  return r.clubName + " " + r.me + "–" + r.th + " " + r.foeName +
+    (r.min != null ? " · " + r.min + "’" : "");
+}
+
+/* ───────── la tendina sotto la rosa ───────── */
+function drawGoldCard() {
+  var box = $("sqg");
+  if (!box) return;
+  try { goldSync(); } catch (e) { goldLoad(); }
+  var all = goldSorted(), top = all.slice(0, 10), rest = all.slice(10);
+  var open = MYOPEN === "gold", best = all[0], body = "";
+  var big = top.length
+    ? top.length + (top.length === 1 ? " word that decided it" : " words that decided it")
+    : "None yet";
+  var sub = !best ? "the word that decides a match lands here"
+    : best.title ? "‘" + best.w + "’ won you the league"
+    : "‘" + best.w + "’ · " + goldKindLab(best).toLowerCase() + " v " + best.foeName;
+  if (open) {
+    var rowsHtml = top.map(function (r, i) {
+      var res = r.me > r.th ? "w" : r.me === r.th ? "d" : "l";
+      if (i === 0 && r.title) {
+        return '<button class="gw-pin" type="button" data-id="' + esc(r.id) + '"><span>' +
+          '<i>WON THE LEAGUE</i><b>' + esc(r.w) + "</b><em>" + esc(goldLine(r)) + "</em></span>" +
+          goldCrest(r.foe, "gw-cr big") + "</button>";
+      }
+      return '<button class="gw-row" type="button" data-id="' + esc(r.id) + '">' +
+        goldCrest(r.foe, "gw-cr") + "<span><b>" + esc(r.w) + "</b><em>" + esc(goldKindLab(r)) +
+        '</em></span><i class="gw-sc ' + res + '">' + r.me + "–" + r.th + "</i></button>";
+    }).join("");
+    body = '<div class="sqbody gw-list">' + (rowsHtml ||
+      '<p class="mw-rest">A winner, an equaliser from behind, a wonder goal, a penalty ' +
+      "avoided: when one word decides a match, you find it here with its story.</p>") +
+      (rest.length
+        ? '<button class="gw-more" id="gwmore" type="button" aria-expanded="' +
+          (GOLD_MORE ? "true" : "false") + '">All my golden words · ' + all.length + "</button>" +
+          (GOLD_MORE ? '<div class="gw-old">' + rest.map(function (r) {
+            return '<button class="gw-chip" type="button" data-id="' + esc(r.id) + '">' +
+              esc(r.w) + "</button>";
+          }).join("") + "</div>" : "")
+        : "") +
+      (top.length ? '<p class="mw-rule">One word for each match. A bigger moment<br>' +
+        "pushes the weakest word to your archive.</p>" : "") + "</div>";
+  }
+  box.className = "sqc sqmore gw-card";
+  box.innerHTML = myHead("MY GOLDEN WORDS", big, sub, open, "sqgt") + body;
+  $("sqgt").onclick = function () { myToggle("gold"); };
+  Array.prototype.forEach.call(box.querySelectorAll("[data-id]"), function (b) {
+    b.onclick = function () { go("goldWord", { id:b.dataset.id }); };
+  });
+  if ($("gwmore")) $("gwmore").onclick = function () { GOLD_MORE = !GOLD_MORE; drawGoldCard(); };
+}
+
+/* la tendina aperta, dove sta: nella prova e' la pagina della rosa, con
+   il codice e' il riquadro dentro la pagina della competizione */
+function goldOpen() {
+  MYOPEN = "gold"; SQOPEN = false;
+  if (demoOnSafe()) {
+    /* tornando indietro si arriva al tabellino, non di nuovo qui */
+    HERE = { name:"live" };
+    go("squad");
+  } else {
+    reset(ME.code ? "home" : homeBack());
+  }
+  setTimeout(function () {
+    var el = $("sqg");
+    if (el && el.scrollIntoView) el.scrollIntoView({ block:"start" });
+  }, 120);
+}
+
+/* ───────── la storia della parola ───────── */
+VIEWS.goldWord = function (d) {
+  goldSync();
+  var r = goldById(d && d.id);
+  if (!r) return back();
+  barFlow("My golden words", goldKindLab(r), 0);
+  var tags = [];
+  if (r.title) tags.push("WON THE LEAGUE");
+  else if (r.kind === "win") tags.push("THE WINNER");
+  else if (r.kind === "eq") tags.push("THE EQUALISER");
+  else if (r.kind === "pen") tags.push("PENALTY AVOIDED");
+  if (r.wonder) tags.push("WONDER GOAL");
+  var T = null;
+  try { T = goldTable(); } catch (e) {}
+  var here = r.comp === scope() && r.club === (ME.club && ME.club.id);
+  var end = r.end;
+  /* la stagione e' ancora aperta: si dice, e si torna a dirlo alla fine */
+  if (!end && here && T && !T.over) {
+    end = { head:"The season is still on.", wait:true,
+            text:"When it ends, this page will tell you how much it counted." };
+  }
+  html('<div class="pad gw-story">' +
+    '<div class="gw-tags">' + tags.map(function (t) { return "<span>" + t + "</span>"; }).join("") + "</div>" +
+    '<h1 class="gw-big">' + esc(r.w) + "</h1>" +
+    '<p class="gw-why">' + esc(r.why) + "</p>" +
+    '<div class="gw-box"><p class="gw-k center">MATCHDAY ' + r.md +
+    (r.compName ? " · " + esc(r.compName.toUpperCase()) : "") + "</p>" +
+    '<div class="gw-vs"><span>' + goldCrest(r.club, "gw-cr huge") + "<b>" + esc(r.clubName) + "</b></span>" +
+    '<strong>' + r.me + "–" + r.th + "</strong>" +
+    "<span>" + goldCrest(r.foe, "gw-cr huge") + "<b>" + esc(r.foeName) + "</b></span></div>" +
+    '<div class="gw-goals">' + r.rows.map(function (g) {
+      return '<div class="gw-g' + (g.hot ? " hot" : "") + (g.mine ? " mine" : "") + '"><i>' +
+        (g.m != null ? g.m + "’" : "–") + "</i>" + goldCrest(g.mine ? r.club : r.foe, "gw-cr tiny") +
+        "<span>" + esc(g.lab) + "</span><b>" + esc(g.at || "") + "</b></div>";
+    }).join("") + "</div></div>" +
+    (end ? '<div class="gw-box' + (end.wait ? " wait" : "") + (end.table ? " won" : "") + '">' +
+      '<p class="gw-k">WHAT IT MEANT</p><p class="gw-head">' + esc(end.head) + "</p>" +
+      (end.table ? '<div class="gw-tb">' + end.table.map(function (x) {
+        return '<div class="' + (x.me ? "me" : "") + '"><i>' + x.pos + "</i>" +
+          goldCrest(x.id, "gw-cr tiny") + "<span>" + esc(x.name) + "</span><b>" + x.pts + "</b></div>";
+      }).join("") + "</div>" : "") +
+      '<p class="gw-txt">' + esc(end.text) + "</p></div>" : "") +
+    '<div class="gw-box deep"><p class="gw-k">IN YOUR DICTATION' +
+    (r.dict ? " · " + esc(r.dict.toUpperCase()) : "") + "</p>" +
+    '<p class="gw-sent">' + esc(r.pre) + (r.pre ? " " : "") + "<b>" + esc(r.w) + "</b>" + esc(r.post) + "</p></div>" +
+    '<button class="btn gbig" id="gwcheck" type="button">Can you still write it?</button></div>');
+  $("gwcheck").onclick = function () { go("goldCheck", { id:r.id }); };
+};
+
+/* ───────── si sa ancora scrivere? ─────────
+   Non da' punti. Sbagliata resta d'oro, ma entra anche in My words: e'
+   li' che si recupera. */
+function goldMiss(r, wrote) {
+  var l = wordList(), key = String(r.w).toLowerCase();
+  var hit = l.filter(function (x) { return String(x.w).toLowerCase() === key; })[0];
+  if (hit) { hit.n = (hit.n || 1) + 1; hit.wrote = wrote; hit.when = Date.now(); }
+  else {
+    l.push({ w:r.w, wrote:wrote, kind:classify(r.w, wrote, "mot") || "Different word", n:1,
+             when:Date.now(), from:"golden", c:{ b:r.pre, a:r.post } });
+  }
+  wordListSave(l);
+  ME.words = wordList();
+  loadMem();
+  if (MEM[r.w]) { delete MEM[r.w]; saveMem(); }
+}
+VIEWS.goldCheck = function (d) {
+  goldLoad();
+  var r = goldById(d && d.id);
+  if (!r) return back();
+  barFlow("Can you still write it?", "No points here. It is just for you.", 0);
+  var gap = r.w.charAt(0);
+  for (var i = 1; i < r.w.length; i++) gap += " _";
+  html('<div class="pad gw-check"><p class="gw-sent big">' + esc(r.pre) + (r.pre ? " " : "") +
+    '<b class="gap">' + esc(gap) + "</b>" + esc(r.post) + "</p>" +
+    '<label class="gw-lab" for="gwin">The missing word</label>' +
+    '<input class="gw-in" id="gwin" type="text" autocomplete="off" autocapitalize="off" ' +
+    'autocorrect="off" spellcheck="false">' +
+    '<button class="btn gbig" id="gwok" type="button" disabled>Check</button>' +
+    '<div id="gwres" role="status"></div></div>');
+  var inp = $("gwin"), ok = $("gwok"), done = false;
+  inp.oninput = function () { ok.disabled = done || !inp.value.trim(); };
+  function check() {
+    var got = inp.value.trim();
+    if (!got || done) return;
+    done = true; ok.disabled = true; inp.disabled = true;
+    function tidy(s) { return String(s).replace(/’/g, "'"); }
+    /* le maiuscole contano solo dove la parola ne ha una: il telefono ne
+       mette una da solo all'inizio, e non e' un errore dell'alunno */
+    var w = tidy(r.w), g = tidy(got);
+    var right = w === g || (w === w.toLowerCase() && w === g.toLowerCase());
+    if (!right) goldMiss(r, got);
+    $("gwres").innerHTML = right
+      ? '<div class="gw-res yes"><b>Still yours.</b><p>You scored with it, and you can still write it.</p></div>'
+      : '<div class="gw-res"><b>It was <em>' + esc(r.w) + "</em>.</b>" +
+        "<p>It stays golden, and it goes on My words too, so you can get it back.</p></div>";
+  }
+  ok.onclick = check;
+  inp.onkeydown = function (e) { if (e.key === "Enter") { e.preventDefault(); check(); } };
+};
+
+/* ───────── a fine partita: la parola nuova ───────── */
+VIEWS.goldNew = function (d) {
+  goldSync();
+  var r = goldById(d && d.id);
+  if (!r) return swap("live");
+  r.seen = true; goldSave();
+  var all = goldSorted(), no = all.indexOf(goldById(r.id)) + 1;
+  var out = no <= 10 && all.length > 10 ? all[10] : null;
+  barFlow("Full time", r.clubName + " v " + r.foeName, 100, false);
+  html('<div class="pad gw-new"><p class="gw-k center">FULL TIME · MATCHDAY ' + r.md + "</p>" +
+    '<div class="gw-vs"><span>' + goldCrest(r.club, "gw-cr huge") + "<b>" + esc(r.clubName) + "</b></span>" +
+    "<strong>" + r.me + "–" + r.th + "</strong>" +
+    "<span>" + goldCrest(r.foe, "gw-cr huge") + "<b>" + esc(r.foeName) + "</b></span></div>" +
+    '<div class="gw-gold"><i>NEW GOLDEN WORD</i><b>' + esc(r.w) + "</b>" +
+    "<strong>" + esc(goldKindLab(r)) + (r.min != null ? " · " + r.min + "’" : "") + "</strong>" +
+    "<p>" + esc(r.why) + "</p>" +
+    '<p class="sent">' + esc(r.pre) + (r.pre ? " " : "") + "<b>" + esc(r.w) + "</b>" + esc(r.post) + "</p></div>" +
+    '<p class="gw-rule">' + (no <= 10
+      ? "<b>No. " + no + "</b> in your top 10." + (out ? " ‘" + esc(out.w) + "’ moves to your archive." : "")
+      : "It goes to your archive: your top 10 is full of bigger moments.") + "</p>" +
+    '<button class="btn gbig" id="gwsee" type="button">See my golden words ' + GO_ARROW + "</button>" +
+    '<button class="btn ghost" id="gwon" type="button">Carry on</button></div>');
+  $("gwsee").onclick = goldOpen;
+  $("gwon").onclick = function () { swap("live"); };
+};
+
+/* ───────── a fine stagione: la parola del titolo ───────── */
+VIEWS.goldSeason = function (d) {
+  goldSync();
+  var then = (d && d.then) || homeView();
+  function carry() { if (then === "live") swap("live"); else reset(then); }
+  if (!ME.club) return carry();
+  var sc = scope(), cid = ME.club.id, key = sc + "|" + cid, S = GOLD.season[key];
+  var r = goldOfSeason(sc, cid);
+  if (!S || !r) return carry();
+  S.seen = true; goldSave();
+  barFlow("The season is over", ME.club.name, 100, false);
+  html('<div class="pad gw-new"><div class="gw-sea">' + goldCrest(cid, "gw-cr champ") +
+    '<p class="gw-k center">THE SEASON IS OVER</p><h1>' +
+    (S.pos === 1 ? esc(r.clubName) + " are champions"
+      : esc(r.clubName) + " finished " + goldOrd(S.pos)) + "</h1></div>" +
+    '<div class="gw-tb">' + S.top.map(function (x) {
+      return '<div class="' + (x.me ? "me" : "") + '"><i>' + x.pos + "</i>" +
+        goldCrest(x.id, "gw-cr tiny") + "<span>" + esc(x.name) + "</span><b>" + x.pts + "</b></div>";
+    }).join("") + "</div>" +
+    '<div class="gw-gold"><i>' + (r.title ? "THE WORD THAT WON IT" : "THE WORD OF YOUR SEASON") + "</i>" +
+    "<b>" + esc(r.w) + "</b><strong>Matchday " + r.md + " · " + esc(goldLine(r)) + "</strong>" +
+    "<p>" + esc(r.title && r.end ? r.end.text : r.why) + "</p></div>" +
+    '<button class="btn gbig" id="gwstory" type="button">See its story ' + GO_ARROW + "</button>" +
+    '<button class="btn ghost" id="gwon" type="button">Carry on</button></div>');
+  $("gwstory").onclick = function () { go("goldWord", { id:r.id }); };
+  $("gwon").onclick = carry;
+};
+
+/* la stagione puo' chiudersi con il bollettino del professore, senza
+   passare da una partita: la pagina si mostra entrando, una volta sola */
+["home", "land"].forEach(function (n) {
+  var prev = VIEWS[n];
+  if (!prev) return;
+  VIEWS[n] = function (d) {
+    try {
+      if (ME.club) {
+        goldSync();
+        var S = GOLD.season[scope() + "|" + ME.club.id];
+        if (S && !S.seen && goldOfSeason(scope(), ME.club.id)) {
+          return swap("goldSeason", { then:n });
+        }
+      }
+    } catch (e) {}
+    return prev(d);
+  };
+});
 
 /* ───── 50-words.js ───── */
 /* ═══════════════ my words: ascolta, scrivi, sistema ═══════════════ */
