@@ -3937,6 +3937,84 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .gw-sea .gw-k{margin-top:10px}
 .gw-sea h1{margin:4px 0 0;font:900 32px/1.1 var(--brand)}
 
+
+/* ═════════ Sponsors: le tre caselle, in grande, e Info ═════════ */
+.spx{padding:14px 0 24px}
+.spx-off{margin:0 16px 14px;padding:14px 16px;border-radius:18px;background:var(--gold);color:#06231D}
+.spx-off p{margin:0;display:flex;justify-content:space-between;font-size:11px;font-weight:800;letter-spacing:.16em}
+.spx-off b{display:block;margin-top:6px;font:900 24px/1.1 var(--brand)}
+.spx-off em{display:block;margin-top:3px;font-style:normal;font-size:14px;font-weight:600}
+.spx-track{display:flex;gap:12px;padding:0 16px;overflow-x:auto;scroll-snap-type:x mandatory;
+  scroll-padding-left:16px;scrollbar-width:none}
+.spx-track::-webkit-scrollbar{display:none;height:0}
+.spx-track:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.spx-c{position:relative;flex:0 0 86%;scroll-snap-align:start;border-radius:22px;border:1px solid var(--edge);
+  background:var(--band);overflow:hidden}
+.spx-lab{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:999px;background:#04170F;
+  color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.14em}
+.spx-pic{position:relative;height:280px;overflow:hidden;background:var(--deep)}
+.spx-kit{position:absolute;display:block;height:auto;max-width:none}
+.front .spx-kit{left:50%;top:-18px;width:270px;margin-left:-135px}
+.sleeve .spx-kit{left:calc(50% - 142px);top:-349px;width:1064px}
+.spx-mark{position:absolute;display:block}
+.spx-mark.plate{left:50%;top:112px;height:48px;transform:translateX(-50%)}
+.spx-mark.patch{left:calc(50% - 60px);top:112px;height:34px;transform:rotate(-14deg)}
+.spx-mark.txt{height:auto;padding:7px 10px;border-radius:6px;background:#16233F;color:var(--cream);white-space:nowrap;
+  font-size:13px;font-weight:900;letter-spacing:.03em}
+.spx-mark.txt.free{border:1.5px dashed var(--cream);background:rgba(4,23,15,.78)}
+.spx-pitch{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.spx-strip{position:absolute;left:0;right:0;top:150px;height:44px;background-repeat:repeat-x;background-size:auto 44px}
+.spx-strip.txt{display:flex;align-items:center;padding:0 12px;overflow:hidden;white-space:nowrap;background:#04170F;
+  border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);color:var(--gold);font-size:14px;font-weight:900;letter-spacing:.04em}
+.spx-strip.txt.free{color:var(--fog)}
+.spx-cap{padding:14px 16px 16px;min-height:118px;box-sizing:border-box}
+.spx-cap>b{display:block;font:800 20px/1.15 var(--brand);color:#FFFDEE}
+.spx-cap>b.free{font-size:22px;color:var(--fog)}
+.spx-cap>p{margin:4px 0 0;font-size:14px;font-weight:600;line-height:1.4}
+.spx-cap>em{display:block;margin-top:6px;font-style:normal;font-size:13px;font-weight:700;color:var(--fog)}
+.spx-cap>u{display:block;margin-top:6px;text-decoration:none;font-size:14px;font-weight:800;color:var(--gold)}
+.spx-cap .spx-amt{margin:0;font:900 26px/1.15 var(--brand);color:#FFFDEE}
+.spx-amt small{display:block;margin-top:2px;font-size:13px;font-weight:700;color:var(--fog)}
+.spx-cap .spx-put{margin:12px 0 0;width:100%}
+.spx-dots{display:flex;justify-content:center}
+.spx-dots button{display:flex;align-items:center;justify-content:center;width:44px;height:36px;padding:0;border:0;
+  background:none;cursor:pointer}
+.spx-dots i{display:block;width:8px;height:8px;border-radius:999px;background:var(--edge);transition:width .2s}
+.spx-dots .on i{width:24px;background:var(--gold)}
+.spx-dots button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.spx-low{padding:2px 16px 0;display:flex;flex-direction:column;gap:12px}
+.spx-low .gbig{margin:0}
+.spx-say{margin:0;padding:14px 16px;border-radius:16px;background:var(--deep);font-size:14px;font-weight:700;line-height:1.4}
+.spx-say b{color:var(--gold)}
+.spx-no{padding:14px 16px;border-radius:16px;border:1px dashed var(--fog)}
+.spx-no b{display:block;font:800 18px/1.2 var(--brand)}
+.spx-no span{display:block;margin-top:4px;font-size:14px;font-weight:600;line-height:1.45;color:var(--fog)}
+.spx-fame{padding:14px 16px;border-radius:18px;border:1px solid var(--edge);background:var(--band)}
+.spx-fh{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.spx-fh i{display:block;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--fog)}
+.spx-fh p{margin:5px 0 0;font-size:17px;font-weight:800}
+.spx-fh p b{font-weight:900;color:var(--gold)}
+.spx-fh p em{font-style:normal;font-size:12px;color:var(--fog)}
+.spx-info{display:flex;align-items:center;gap:6px;flex:none;min-width:44px;height:44px;padding:0 14px;border-radius:999px;
+  border:1px solid var(--gold);background:none;color:var(--gold);font:800 13px/1 var(--brand);cursor:pointer}
+.spx-info svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.spx-info:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.spx-fame .fmbar{margin-top:10px}
+.spx-fame>span{display:block;margin-top:9px;font-size:13px;font-weight:600;line-height:1.4;color:var(--fog)}
+.spx-fame>span b{color:var(--cream)}
+.spi{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(4,23,15,.82)}
+.spi-s{box-sizing:border-box;width:100%;max-width:560px;max-height:88vh;margin:0 auto;padding:18px 16px 22px;overflow-y:auto;
+  border-radius:24px 24px 0 0;border-top:1px solid var(--edge);background:#0B2A1F;color:var(--cream);font-family:var(--brand)}
+.spi-h{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.spi-h h2{margin:0;font:800 20px/1.2 var(--brand)}
+.spi-x{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--edge);background:var(--deep);
+  color:var(--cream);font-size:16px;cursor:pointer}
+.spi-t{margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:4px;border-radius:14px;background:#04170F}
+.spi-t button{min-height:44px;border:0;border-radius:10px;background:none;color:var(--cream);font:800 13px/1 var(--brand);cursor:pointer}
+.spi-t .on{background:var(--gold);color:#06231D}
+.spi-x:focus-visible,.spi-t button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.spi-b{margin-top:6px}
+
 /* l'esercizio: la parola dentro la sua frase */
 .wdr{display:flex;flex-direction:column}
 .wd-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -5249,7 +5327,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "163";
+var APPVER = "164";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -25332,20 +25410,6 @@ function fameMoves() {
     row(FAME_SILENT, "a matchday goes by and you say nothing") +
     "</div>";
 }
-/* il blocco grande, per la pagina degli sponsor */
-function fameBig() {
-  if (!ME.club) return "";
-  fameCatchUp();
-  var v = fame(), b = fameBand(v), t = fameTier(v), stars = "", i;
-  for (i = 0; i < 5; i++) stars += '<i class="' + (i < t ? "on" : "") + '">★</i>';
-  return '<div class="fmbig"><span class="fmk">HOW THE CITY SEES YOU</span>' +
-    '<div class="fmbr"><b>' + v + "<em>/100</em></b>" +
-    '<span class="fmbw">' + esc(b.n) + '<i class="fmst">' + stars + "</i></span></div>" +
-    '<div class="fmbar big"><i style="width:' + v + '%"></i></div>' +
-    "<p>" + esc(b.s) + "</p>" + fameLadder() +
-    '<p class="fmwhy">What moves it</p>' + fameMoves() + "</div>";
-}
-
 /* ───────── la riga nella home ───────── */
 function fameCard() {
   if (!ME.club) return "";
@@ -26412,9 +26476,9 @@ VIEWS.confFix = function (d) {
    ═══════════════════════════════════════════════════════════════════ */
 
 var SPOTS = [
-  { id:"front",  n:"Shirt front", s:"The big one, across the chest" },
-  { id:"sleeve", n:"Sleeve",      s:"Small, and everybody sees it" },
-  { id:"boards", n:"The boards",  s:"Around the pitch, on every photograph" }
+  { id:"front",  n:"Shirt front", s:"The big one, across the chest", w:"Worth the most" },
+  { id:"sleeve", n:"Sleeve",      s:"Small, and everybody sees it", w:"Worth the least" },
+  { id:"boards", n:"The boards",  s:"Around the pitch, on every photograph", w:"In between" }
 ];
 /* quanto vale una casella: il petto porta il doppio dei cartelloni */
 var SPOT_MULT = { front:1, sleeve:0.6, boards:0.75 };
@@ -26540,91 +26604,183 @@ function wireSpon() {
   if ($("hspon")) $("hspon").onclick = function () { go("spon"); };
 }
 
-/* ───────── la stanza ───────── */
-var SP = { offer:null, spot:null };
+/* ───────── i marchi ─────────
+   Ogni sponsor ha tre immagini: il petto, la manica, un pezzo di cartellone
+   che si ripete. Sono immagini perche' i loro caratteri, offline, non ci
+   sarebbero. Un nome che non sta qui si vede scritto. */
+var SP_LOGO = {
+  "Harper's Bakery":"harper", "The Mile End Café":"mileend", "Patel Corner Shop":"patel",
+  "Town Hall · sport fund":"townhall", "Hedge & Sons Builders":"hedge",
+  "Rowan Street Garage":"rowan", "Greenline Buses":"greenline", "The Anchor":"anchor",
+  "Kestrel Sportswear":"kestrel", "Marlow Print":"marlow", "Fenwick Foods":"fenwick",
+  "City Energy":"cityenergy", "Northern Mutual":"northern", "Castle Bank":"castle",
+  "Aldgate Logistics":"aldgate", "Verity Health":"verity", "Meridian Airlines":"meridian",
+  "Orbit Telecom":"orbit", "Cromwell Group":"cromwell"
+};
+function spLogo(name, form) {
+  var id = SP_LOGO[name];
+  return id ? "im/sp-" + id + "-" + form + ".webp" : "";
+}
+/* la maglia del club; chi non ha la foto ha una maglia disegnata nel suo colore */
+function spKit() {
+  var u = kitOf(ME.club.id);
+  if (u) return '<img class="spx-kit" src="' + u + '" alt="">';
+  return '<svg class="spx-kit" viewBox="0 0 560 699" aria-hidden="true"><path fill="var(--club)" ' +
+    'stroke="var(--edge)" stroke-width="4" d="M190 60h180l160 140-10 130-100-30v340H140V300L40 330 30 200z"/></svg>';
+}
+/* l'immagine di una casella, con sopra il nome di chi c'e' o di chi sta per esserci */
+function spArt(s, who) {
+  var free = !who;
+  function badge(form) {
+    var u = who ? spLogo(who, form) : "";
+    return u ? '<img class="spx-mark ' + form + '" src="' + u + '" alt="' + esc(who) + '">'
+      : '<span class="spx-mark ' + form + " txt" + (free ? " free" : "") + '">' +
+        (free ? "YOUR SPONSOR" : esc(who)) + "</span>";
+  }
+  if (s.id === "front") return '<div class="spx-pic front">' + spKit() + badge("plate") + "</div>";
+  if (s.id === "sleeve") return '<div class="spx-pic sleeve">' + spKit() + badge("patch") + "</div>";
+  var tile = who ? spLogo(who, "strip") : "";
+  return '<div class="spx-pic boards"><img class="spx-pitch" src="' + imgOf("bg-pitch") + '" alt="">' +
+    (tile
+      ? '<div class="spx-strip" role="img" aria-label="' + esc(who) +
+        '" style="background-image:url(' + tile + ')"></div>'
+      : '<div class="spx-strip txt' + (free ? " free" : "") + '">' +
+        (free ? "YOUR SPONSOR &middot; YOUR SPONSOR &middot; YOUR SPONSOR" : esc(who)) + "</div>") +
+    "</div>";
+}
+
+/* ───────── la reputazione, in una riga ─────────
+   La scala e quello che la muove stanno dietro al bottone Info: qui basta
+   sapere a che punto sei e chi risponde adesso. */
+function spFameRow() {
+  if (typeof fameCatchUp === "function") fameCatchUp();
+  var v = fame(), b = fameBand(v), t = fameTier(v);
+  return '<div class="spx-fame"><div class="spx-fh"><div><i>HOW THE CITY SEES YOU</i>' +
+    "<p><b>" + v + "</b><em>/100</em> &middot; " + esc(b.n) + "</p></div>" +
+    '<button class="spx-info" id="spinfo" type="button" aria-haspopup="dialog">' +
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>' +
+    "Info</button></div>" +
+    '<div class="fmbar" role="progressbar" aria-label="How the city sees you" aria-valuemin="0" ' +
+    'aria-valuemax="100" aria-valuenow="' + v + '"><i style="width:' + v + '%"></i></div>' +
+    "<span>Who answers now: <b>" + esc(FAME_WHO[t - 1]) + "</b></span></div>";
+}
+function spInfoOpen(tab) {
+  spInfoClose();
+  var moves = tab !== "who";
+  document.body.insertAdjacentHTML("beforeend",
+    '<div class="spi" id="spi"><div class="spi-s" role="dialog" aria-modal="true" aria-labelledby="spih">' +
+    '<div class="spi-h"><h2 id="spih">How the city sees you</h2>' +
+    '<button class="spi-x" id="spix" type="button" aria-label="Close">&#10005;</button></div>' +
+    '<div class="spi-t" role="group" aria-label="What to show">' +
+    '<button type="button" id="spim" class="' + (moves ? "on" : "") + '" aria-pressed="' + moves + '">What moves it</button>' +
+    '<button type="button" id="spiw" class="' + (moves ? "" : "on") + '" aria-pressed="' + !moves + '">Who answers</button></div>' +
+    '<div class="spi-b">' + (moves ? fameMoves() : fameLadder()) + "</div></div></div>");
+  $("spix").focus();
+  $("spix").onclick = function () { spInfoClose(true); };
+  $("spim").onclick = function () { spInfoOpen("moves"); };
+  $("spiw").onclick = function () { spInfoOpen("who"); };
+  $("spi").onclick = function (e) { if (e.target === this) spInfoClose(true); };
+  $("spi").onkeydown = function (e) { if (e.key === "Escape") spInfoClose(true); };
+}
+function spInfoClose(refocus) {
+  var el = $("spi");
+  if (el) el.parentNode.removeChild(el);
+  if (refocus && $("spinfo")) $("spinfo").focus();
+}
+
+/* ───────── la stanza ─────────
+   Prima le tre caselle, grandi, una alla volta. Quando qualcuno risponde il
+   suo nome compare gia' sulla maglia: si sfoglia e si sceglie dove metterlo. */
+var SP = { offer:null, silent:false, key:"" };
 
 VIEWS.spon = function () {
-  var d = spDeals(), free = spFree(), v = (typeof fame === "function") ? fame() : 50;
-  var band = (typeof fameBand === "function") ? fameBand(v) : { n:"" };
+  /* la risposta vale per la giornata e per il club in cui e' arrivata */
+  var key = spKey() + "|" + mdNow();
+  if (SP.key !== key) { SP.offer = null; SP.silent = false; SP.key = key; }
+  var d = spDeals(), free = spFree(), o = SP.offer;
+  var sold = SPOTS.length - free.length, per = spPerMatch();
   paintClub(ME.club);
-  barFlow("Sponsors", (ME.club ? ME.club.name : "") + " · " + band.n, 0);
+  barFlow("Sponsors", (ME.club ? ME.club.name : "") + " · " + sold + " of 3 sold" +
+    (per ? " · " + money(per) + " a match" : ""), 0);
 
-  html('<div class="pad">' +
-    '<p class="lede">A club lives on what it sells around the pitch. Who answers ' +
-    "the telephone depends on how the city sees you — so here it is, in full.</p>" +
-    /* la reputazione in grande, con la scala: e' questa pagina che la
-       rende concreta, perche' e' qui che si vede chi risponde e chi no */
-    ((typeof fameBig === "function") ? fameBig() : "") +
+  var slides = (o ? free : SPOTS).map(function (s) {
+    var deal = d[s.id], m = SPOT_MULT[s.id] || 1, cap;
+    if (o) {
+      var cash = Math.round(o.cash * m), pm = Math.round(o.per * m * 10) / 10;
+      cap = '<p class="spx-amt">' + money(cash) + "<small>" +
+        (pm ? "up front + " + money(pm) + " a match" : "up front · " + s.w.toLowerCase()) + "</small></p>" +
+        '<button class="btn spx-put" data-s="' + s.id + '" type="button">Put them here</button>';
+    } else if (deal) {
+      cap = "<b>" + esc(deal.n) + "</b><p>" + esc(deal.w) + "</p>" +
+        "<u>" + (deal.per ? money(deal.per) + " a match" : "paid up front") + "</u>";
+    } else {
+      cap = '<b class="free">Free</b><p>' + esc(s.s) + "</p><em>" + esc(s.w) + "</em>";
+    }
+    return '<article class="spx-c" aria-label="' + esc(s.n) + '">' +
+      spArt(s, deal ? deal.n : o ? o.n : "") +
+      '<span class="spx-lab">' + esc(s.n.toUpperCase()) + "</span>" +
+      '<div class="spx-cap">' + cap + "</div></article>";
+  });
 
-    '<div class="spgrid">' + SPOTS.map(function (s) {
-      var deal = d[s.id];
-      return '<div class="spcell' + (deal ? " on" : "") + '">' +
-        "<i>" + esc(s.n.toUpperCase()) + "</i>" +
-        (deal
-          ? "<b>" + esc(deal.n) + "</b><em>" + esc(deal.w) + "</em>" +
-            '<u>' + (deal.per ? money(deal.per) + " a match" : "paid up front") + "</u>"
-          : "<b class=\"empty\">Free</b><em>nobody on this one yet</em>") +
-        "</div>";
+  var stars = "";
+  if (o) for (var i = 0; i < 5; i++) stars += i < o.t ? "★" : "☆";
+
+  html('<div class="spx">' +
+    (o ? '<div class="spx-off"><p><span>SOMEONE ANSWERED</span><span aria-label="' + o.t +
+      ' stars out of 5">' + stars + "</span></p><b>" + esc(o.n) + "</b><em>" + esc(o.w) + "</em></div>" : "") +
+    '<div class="spx-track" id="sptrack" tabindex="0" aria-label="Sponsor spots">' + slides.join("") + "</div>" +
+    '<div class="spx-dots" role="group" aria-label="Choose a sponsor spot">' +
+    slides.map(function (x, k) {
+      return '<button type="button" data-k="' + k + '" aria-label="Spot ' + (k + 1) + " of " + slides.length +
+        '"><i></i></button>';
     }).join("") + "</div>" +
+    '<div class="spx-low">' +
+    (o ? ""
+      : !free.length
+        ? '<p class="spx-say">All three are sold for this season. Together they bring <b>' +
+          money(per) + "</b> at every match.</p>"
+      : SP.silent
+        ? '<div class="spx-no" role="status"><b>Nobody answered.</b><span>Win something, say something ' +
+          "worth printing, and the telephone starts working the other way round. It rings again " +
+          "next matchday.</span></div>"
+      : spCallsLeft()
+        ? '<button class="btn gbig" id="spcall" type="button">Make the call · one a matchday</button>'
+        : '<p class="spx-say">You have called this matchday. The telephone rings again on the next one.</p>') +
+    spFameRow() + "</div></div>");
 
-    (free.length
-      ? (spCallsLeft()
-          ? '<button class="btn" id="spcall">Make the call · one a matchday</button>'
-          : '<p class="lede">You have already made your call this matchday. ' +
-            "The telephone rings again on the next one.</p>")
-      : '<p class="lede">All three are sold for this season. ' +
-        "Together they bring <b>" + money(spPerMatch()) + "</b> at every match.</p>") +
-
-    '<div id="spbox"></div>' +
-    '<button class="btn ghost" id="spbk">' +
-    ((typeof demoOn === "function" && demoOn()) ? "Back to the homepage" : "Back") +
-    "</button></div>");
+  var tr = $("sptrack"), dots = document.querySelectorAll(".spx-dots button");
+  function step() {
+    var c = tr.firstChild;
+    return c ? c.offsetWidth + 12 : 1;
+  }
+  function mark() {
+    var at = Math.round(tr.scrollLeft / step());
+    Array.prototype.forEach.call(dots, function (b, k) {
+      b.className = k === at ? "on" : "";
+      b.setAttribute("aria-current", k === at ? "true" : "false");
+    });
+  }
+  mark();
+  tr.onscroll = mark;
+  Array.prototype.forEach.call(dots, function (b) {
+    b.onclick = function () { tr.scrollTo({ left:Number(b.dataset.k) * step(), behavior:"smooth" }); };
+  });
 
   if ($("spcall")) $("spcall").onclick = function () {
     spMarkCall();
     SP.offer = spCall();
-    drawOffer();
+    SP.silent = !SP.offer;
+    swap("spon");
   };
-  $("spbk").onclick = function () { reset("home"); };
-};
-
-function drawOffer() {
-  var box = $("spbox");
-  if (!box) return;
-  if (!SP.offer) {
-    box.innerHTML = '<div class="spno"><b>Nobody answered.</b>' +
-      "<span>Three calls, three polite noes. Win something, say something worth " +
-      "printing, and the telephone starts working the other way round.</span></div>";
-    if ($("spcall")) $("spcall").disabled = true;
-    return;
-  }
-  var o = SP.offer, free = spFree();
-  box.innerHTML = '<div class="spoff"><span class="spt">' +
-    (function () { var s = "", i;
-      for (i = 0; i < 5; i++) s += '<i class="' + (i < o.t ? "on" : "") + '">★</i>';
-      return s; })() + "</span>" +
-    "<b>" + esc(o.n) + "</b><em>" + esc(o.w) + "</em>" +
-    '<div class="spnum"><span><i>UP FRONT</i><b>' + money(o.cash) + "</b></span>" +
-    "<span><i>EVERY MATCH</i><b>" + (o.per ? money(o.per) : "—") + "</b></span></div>" +
-    '<p class="sphint">Where do you put them? The chest is worth the most, ' +
-    "the sleeve the least.</p>" +
-    '<div class="sppick">' + free.map(function (s) {
-      var m = SPOT_MULT[s.id] || 1;
-      return '<button class="spb" data-s="' + s.id + '" type="button"><b>' + esc(s.n) +
-        "</b><span>" + money(Math.round(o.cash * m)) +
-        (o.per ? " + " + money(Math.round(o.per * m * 10) / 10) + " a match" : "") +
-        "</span></button>";
-    }).join("") + "</div></div>";
-
-  Array.prototype.forEach.call(box.querySelectorAll(".spb"), function (b) {
+  $("spinfo").onclick = function () { spInfoOpen("moves"); };
+  Array.prototype.forEach.call(document.querySelectorAll(".spx-put"), function (b) {
     b.onclick = function () {
-      var deal = spSign(b.dataset.s, SP.offer);
+      spSign(b.dataset.s, SP.offer);
       SP.offer = null;
       reset("spon");
     };
   });
-  if ($("spcall")) $("spcall").disabled = true;
-}
+};
 
 
 /* ───── 60-help.js ───── */
