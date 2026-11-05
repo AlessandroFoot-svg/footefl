@@ -4325,6 +4325,7 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 /* ═════════ le stanze: la figurina si sfoglia con il dito ═════════ */
 /* la figurina grande della stanza, sorella di quella della prova */
 .bxf{height:360px;margin-top:14px;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.bxf{cursor:grab}
 .bxf.drag{transition:none;animation:none;cursor:grabbing}
 .bxf:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bxf img{-webkit-user-drag:none}
@@ -5360,7 +5361,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "167";
+var APPVER = "168";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -16873,6 +16874,26 @@ VIEWS.mkCont = function () {
   });
 };
 
+/* ───────── le due dita sul touchpad ─────────
+   Sul computer lo sfoglio non arriva come trascinamento ma come rotella
+   di lato. Un gesto solo fa un passo solo: il touchpad continua a mandare
+   movimento anche dopo aver staccato le dita, e senza il blocco le schede
+   correrebbero via. Su e giu' resta alla pagina. */
+function swipeWheel(el, step) {
+  var sum = 0, lock = 0;
+  el.addEventListener("wheel", function (e) {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    var now = Date.now();
+    if (now < lock) { lock = Math.max(lock, now + 120); return; }
+    sum += e.deltaX;
+    if (Math.abs(sum) < 40) return;
+    step(sum > 0 ? 1 : -1);
+    sum = 0;
+    lock = now + 450;
+  }, { passive:false });
+}
+
 /* ───────── 6. le carte ─────────
    Lo scout ne porta sempre due in piu' di quanti puo' firmarne: cosi'
    una scelta vera c'e' anche per chi ha diritto a tre. */
@@ -16962,6 +16983,10 @@ VIEWS.mkThree = function () {
   }
   st.onpointerup = function (e) { swipeEnd(e); };
   st.onpointercancel = function (e) { swipeEnd(e, true); };
+  swipeWheel(st, function (d) {
+    mkAt = Math.max(0, Math.min(all.length - 1, mkAt + d));
+    place();
+  });
   /* chi usa la tastiera sfoglia con le frecce della tastiera */
   st.onkeydown = function (e) {
     if (e.key === "ArrowLeft" && mkAt > 0) { mkAt--; place(); }
@@ -23443,6 +23468,7 @@ VIEWS.boost = function (d) {
       sw = null;
       rest();
     };
+    swipeWheel(f, function (d) { pick(at0 + d, d > 0 ? "f" : "b"); });
     f.onkeydown = function (e) {
       if (e.key === "ArrowLeft") pick(at0 - 1, "b");
       else if (e.key === "ArrowRight") pick(at0 + 1, "f");
