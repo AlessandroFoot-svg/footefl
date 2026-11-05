@@ -5327,7 +5327,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "164";
+var APPVER = "165";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -26621,6 +26621,14 @@ function spLogo(name, form) {
   var id = SP_LOGO[name];
   return id ? "im/sp-" + id + "-" + form + ".webp" : "";
 }
+/* le foto vere, per club e sponsor: maglia, manica e tribuna. Dove non c'e'
+   ancora una foto, il marchio si appoggia sulla maglia come prima. */
+var SP_PHOTO = { RAV:{ harper:1, mileend:1 } };
+function spPhoto(name, spot) {
+  var id = SP_LOGO[name], club = imgId(ME.club.id);
+  return (id && SP_PHOTO[club] && SP_PHOTO[club][id])
+    ? "im/spp-" + club + "-" + id + "-" + spot + ".webp" : "";
+}
 /* la maglia del club; chi non ha la foto ha una maglia disegnata nel suo colore */
 function spKit() {
   var u = kitOf(ME.club.id);
@@ -26630,7 +26638,11 @@ function spKit() {
 }
 /* l'immagine di una casella, con sopra il nome di chi c'e' o di chi sta per esserci */
 function spArt(s, who) {
-  var free = !who;
+  var free = !who, photo = who ? spPhoto(who, s.id) : "";
+  if (photo) {
+    return '<div class="spx-pic"><img class="spx-pitch" src="' + photo + '" alt="' +
+      esc(who + " · " + s.n) + '"></div>';
+  }
   function badge(form) {
     var u = who ? spLogo(who, form) : "";
     return u ? '<img class="spx-mark ' + form + '" src="' + u + '" alt="' + esc(who) + '">'
