@@ -5327,7 +5327,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "165";
+var APPVER = "166";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -26623,7 +26623,7 @@ function spLogo(name, form) {
 }
 /* le foto vere, per club e sponsor: maglia, manica e tribuna. Dove non c'e'
    ancora una foto, il marchio si appoggia sulla maglia come prima. */
-var SP_PHOTO = { RAV:{ harper:1, mileend:1 } };
+var SP_PHOTO = { RAV:{ harper:1, mileend:1, patel:1, townhall:1, hedge:1, rowan:1 } };
 function spPhoto(name, spot) {
   var id = SP_LOGO[name], club = imgId(ME.club.id);
   return (id && SP_PHOTO[club] && SP_PHOTO[club][id])
