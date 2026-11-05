@@ -4156,10 +4156,58 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .mkr .flip.pick .face.f{border-color:var(--gold);box-shadow:0 0 0 6px rgba(227,239,38,.25),0 18px 36px rgba(0,0,0,.55)}
 .mkr .cwin::after{content:"";position:absolute;top:0;bottom:0;left:0;width:45%;pointer-events:none;
   background:linear-gradient(90deg,transparent,rgba(255,250,210,.55),transparent);transform:translateX(-120%) skewX(-18deg)}
-.mkr-nav{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:6px}
-.mkr-arr{width:44px;height:44px;border-radius:50%;border:1px solid var(--edge);background:var(--band);
-  color:var(--cream);font:700 20px/1 var(--brand);cursor:pointer}
-.mkr-arr:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.phero{position:relative}
+.pinfo{position:absolute;right:6px;top:6px;width:44px;height:44px;padding:0;border:0;background:none;
+  color:var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.pinfo svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.pinfo:focus-visible,.ppst:focus-visible,.ppx:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.phero .pwho b{padding-right:38px}
+.ppst{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;margin-top:10px;padding:10px 6px;
+  border-radius:14px;border:1px solid var(--edge);background:var(--band);color:var(--cream);font-family:var(--brand);cursor:pointer}
+.ppst span{text-align:center}
+.ppst b{display:block;font-size:18px;font-weight:900}
+.ppst i{display:block;margin-top:2px;font-style:normal;font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--fog)}
+.pph{margin:16px 0 10px;font:800 20px/1.2 var(--brand)}
+.ppx{position:relative;display:block;width:100%;height:148px;margin-bottom:10px;padding:0;border-radius:20px;
+  border:1px solid var(--edge);background:var(--deep);color:#FFFDEE;overflow:hidden;text-align:left;
+  font-family:var(--brand);cursor:pointer}
+.ppx img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ppx img.body{object-position:60% 12%}
+.ppx img.lang{object-position:50% 62%}
+.ppx-s{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,23,15,.96) 30%,rgba(4,23,15,.1) 85%)}
+.ppx-t{position:absolute;left:16px;top:18px;width:210px;display:block}
+.ppx-t b{display:block;font-size:26px;font-weight:900;line-height:1}
+.ppx-t em{display:block;margin-top:5px;font-style:normal;font-size:12px;font-weight:600;color:var(--cream)}
+.ppx-b{display:flex;gap:4px;margin-top:10px}
+.ppx-b i{display:block;width:22px;height:6px;border-radius:999px;background:rgba(226,251,206,.28)}
+.ppx-b i.up{background:var(--gold)}
+.ppx-t u{display:block;margin-top:7px;text-decoration:none;font-size:13px;font-weight:800;color:var(--gold)}
+.ppx-go{position:absolute;right:14px;bottom:14px;width:44px;height:44px;border-radius:50%;background:var(--gold);
+  color:#06231D;display:flex;align-items:center;justify-content:center}
+.ppx-go svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ppx.off{cursor:default}
+.ppx.off img{filter:grayscale(1) brightness(.55)}
+.ppw{display:flex;align-items:center;gap:12px;margin-top:2px;padding:12px 14px;border-radius:14px;
+  border:1px solid var(--edge);background:var(--band)}
+.ppw.full{border-color:var(--gold)}
+.ppw>b{flex:none;font-size:22px;font-weight:900;color:var(--gold)}
+.ppw span{min-width:0}
+.ppw i{display:block;font-style:normal;font-size:13px;font-weight:800}
+.ppw em{display:block;margin-top:2px;font-style:normal;font-size:12px;font-weight:600;color:var(--fog)}
+.ppi{margin-top:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ppi div{padding:12px;border-radius:14px;background:var(--deep)}
+.ppi i{display:block;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--fog)}
+.ppi b{display:block;margin-top:4px;font-size:26px;font-weight:900}
+.ppi em{display:block;margin-top:2px;font-style:normal;font-size:12px;font-weight:600;color:var(--fog)}
+.ppi-t{margin:14px 0 0;font-size:13px;font-weight:600;line-height:1.5;color:var(--fog)}
+.pgv{display:flex;align-items:baseline;justify-content:center;gap:5px;min-height:14px;margin-top:3px}
+.pgv i{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--fog)}
+.pgv b{font-size:12px;font-weight:900;color:var(--gold)}
+.mkr-stage{touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.mkr-stage img{-webkit-user-drag:none}
+.mkr-stage.drag{cursor:grabbing}
+.mkr-stage.drag .flip{transition:none}
+.mkr-nav{display:flex;align-items:center;justify-content:center;min-height:28px;margin-top:6px}
 .mkr-dots{display:flex;gap:8px}
 .mkr-dots i{width:8px;height:8px;border-radius:999px;background:rgba(226,251,206,.2);transition:width .2s}
 .mkr-dots i.up{background:var(--fog)}
@@ -4274,26 +4322,12 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 @media (prefers-reduced-motion: reduce){
   .sp .flip .in{transition:none}
 }
-/* ═════════ le stanze: il carosello delle icone ═════════ */
-.bxc{display:flex;gap:10px;margin:14px -16px 0;padding:4px 16px 8px;overflow-x:auto;
-  scroll-snap-type:x mandatory;scrollbar-width:none}
-.bxc::-webkit-scrollbar{display:none}
-.bxt{flex:none;width:100px;scroll-snap-align:center;padding:12px 6px 12px;border-radius:18px;
-  border:1px solid var(--edge);background:var(--band);color:var(--cream);display:flex;
-  flex-direction:column;align-items:center;gap:9px;font:inherit;cursor:pointer;
-  transition:background-color .18s,border-color .18s,transform .12s ease-out}
-.bxt b{font-size:12.5px;font-weight:800;line-height:1.2;text-align:center}
-.bxi{width:58px;height:58px;border-radius:14px;border:2px solid var(--gold);display:grid;
-  place-items:center;background:rgba(4,23,15,.6);transition:background-color .18s}
-.bxi svg{width:30px;height:30px;fill:none;stroke:var(--cream);stroke-width:1.7;
-  stroke-linecap:round;stroke-linejoin:round}
-.bxt.on{border-color:var(--gold);background:rgba(227,239,38,.12)}
-.bxt.on .bxi{background:var(--gold)}
-.bxt.on .bxi svg{stroke:#06231D}
-.bxt:active{transform:scale(.97)}
-.bxt:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+/* ═════════ le stanze: la figurina si sfoglia con il dito ═════════ */
 /* la figurina grande della stanza, sorella di quella della prova */
-.bxf{height:360px;margin-top:14px}
+.bxf{height:360px;margin-top:14px;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.bxf.drag{transition:none;animation:none;cursor:grabbing}
+.bxf:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.bxf img{-webkit-user-drag:none}
 .bxf img{object-position:50% 30%}
 .bxf .dmcap{right:16px}
 .bxf .dmcap em{font-size:13.5px}
@@ -4306,7 +4340,6 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
   stroke-linecap:round;stroke-linejoin:round}
 .bxf.nopic .bxbig{display:grid}
 .bxf.nopic{background:radial-gradient(120% 80% at 50% 25%,#0E3B2C 0%,var(--deep) 70%)}
-.bxc{margin-top:10px}
 /* ═════════ amichevole o campionato ═════════ */
 .tm{justify-content:flex-start;gap:16px}
 .tm h1{margin-top:30px}
@@ -5327,7 +5360,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "166";
+var APPVER = "167";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -12886,6 +12919,11 @@ function pegHtml(p) {
     (p.name ? esc(surname(p.name)) +
       (sexMark(p.name) ? '<i class="psx">' + sexMark(p.name) + "</i>" : "")
             : "&mdash;") + "</span>" +
+    /* il ruolo e quanto porta alla squadra: il numero e' quello che conta
+       in campo, carta del mercato per chi e' comprato, palestra e inglese
+       per chi e' cresciuto */
+    '<span class="pgv">' + (p.role ? "<i>" + esc(p.role) + "</i>" : "") +
+    (plusCents(p.no) ? "<b>+" + fmt(plusCents(p.no)) + "</b>" : "") + "</span>" +
     '<span class="steps">' + st + "</span></button>";
 }
 function cardHtml(p) {
@@ -13039,10 +13077,14 @@ function drawSquadCard() {
   var box = $("sqc");
   if (!box) return;
   var all = squadAll();
-  var grown = all.filter(function (p) { return p.grown; }).length;
+  /* chi e' cresciuto davvero: si legge dove sta il conto, palestra e inglese */
+  var grown = all.filter(function (p) { return !p.bought && growCents(p.no) > 0; }).length;
+  /* quanto porta la rosa intera, carte e crescita insieme */
+  var worth = all.reduce(function (n, p) { return n + plusCents(p.no); }, 0);
   box.innerHTML = '<button class="sqhead" id="sqtog" type="button" aria-expanded="' +
     (SQOPEN ? "true" : "false") + '"><span class="sqt"><i>MY SQUAD</i><b>' +
     all.length + " players</b><em>" +
+    (worth ? "+" + fmt(worth) + " in all &middot; " : "") +
     (grown ? grown + (grown === 1 ? " has grown" : " have grown") : "nobody has grown yet") +
     /* lo stato della panchina si legge anche a scheda chiusa: se no due
        assunzioni restano nascoste dietro un tocco che nessuno fa */
@@ -13276,6 +13318,9 @@ function heroHtml(p) {
       ? '<img src="' + shirtOf(p) + '" alt="">'
       : '<svg viewBox="0 0 100 100"><use href="#jersey"/></svg>') +
       '<span class="pno">' + p.no + "</span></span>" +
+    '<button class="pinfo" type="button" data-no="' + p.no + '" aria-haspopup="dialog" aria-label="' +
+      esc(p.name || ("Shirt " + p.no)) + ': the season">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button>' +
     '<span class="pwho"><b>' + esc(p.name || ("Shirt " + p.no)) + "</b>" +
       '<span class="prow2">' + (p.role ? '<i class="rl">' + esc(p.role) + "</i>" : "") +
       (sexSay(p.name) ? '<i class="rl sx' + (sexOf(p.name) === "n" ? " nbx" : "") +
@@ -13299,7 +13344,14 @@ VIEWS.player = function (d) {
   for (i = 0; i < line.length; i++) if (line[i].no === no) at = i;
 
   paintClub(ME.club);
-  barFlow(pName({ named:!!p.name, name:p.name, no:p.no }), ME.club.name, 0);
+  /* la freccia torna alla rosa: da qui si passa alle stanze e si rientra,
+     e la pila non deve portare avanti e indietro fra le due */
+  function pBar(x) {
+    barFlow(pName({ named:!!x.name, name:x.name, no:x.no }), ME.club.name, 0);
+    /* nella prova la rosa e' una pagina sua, con il codice sta nella competizione */
+    if ($("bk")) $("bk").onclick = demoOnSafe() ? function () { reset("squad"); } : toSquad;
+  }
+  pBar(p);
 
   html('<div class="pad">' +
     ((typeof actBar === "function") ? actBar() : "") +
@@ -13339,15 +13391,46 @@ VIEWS.player = function (d) {
         k = Math.max(0, Math.min(line.length - 1, k));
         if (line[k] && line[k].no !== (HERE.data || {}).no) {
           HERE.data = { no:line[k].no };
-          barFlow(pName({ named:!!line[k].name, name:line[k].name, no:line[k].no }),
-                  ME.club.name, 0);
+          pBar(line[k]);
           drawPlayerBody(line[k].no);
         }
       }, 90);
     };
   }
   drawPlayerBody(no);
+  Array.prototype.forEach.call(document.querySelectorAll(".pinfo"), function (b) {
+    b.onclick = function () { pInfoOpen(parseInt(b.dataset.no, 10), b); };
+  });
 };
+
+/* ───────── i numeri della stagione, dietro al bottone Info ───────── */
+function pInfoOpen(no, from) {
+  var p = playerOf(no);
+  if (!p) return;
+  var st = sqStats()[no] || { m:0, g:0, s:0, y:0, r:0 };
+  function cell(k, v, n) {
+    return "<div><i>" + k + "</i><b>" + v + "</b><em>" + n + "</em></div>";
+  }
+  spInfoClose();
+  document.body.insertAdjacentHTML("beforeend",
+    '<div class="spi" id="spi"><div class="spi-s" role="dialog" aria-modal="true" aria-labelledby="spih">' +
+    '<div class="spi-h"><h2 id="spih">' + esc(p.name || ("Shirt " + p.no)) + "</h2>" +
+    '<button class="spi-x" id="spix" type="button" aria-label="Close">&#10005;</button></div>' +
+    '<div class="ppi">' +
+    cell("MOMENTS", st.m, "played this season") + cell("GOALS", st.g, "scored") +
+    cell("SAVES", st.s, "kept out") +
+    cell("CARDS", st.y + st.r, st.y + " yellow &middot; " + st.r + " red") + "</div>" +
+    '<p class="ppi-t">' + (no >= 13
+      ? "The weight on the pitch comes from the market card."
+      : "The gym and English fill the same weight, up to +" + fmt(CENTS_MAX) +
+        ". It goes on the starting points of the department this player lines up in.") +
+    "</p></div></div>");
+  function shut() { spInfoClose(); if (from) from.focus(); }
+  $("spix").focus();
+  $("spix").onclick = shut;
+  $("spi").onclick = function (e) { if (e.target === this) shut(); };
+  $("spi").onkeydown = function (e) { if (e.key === "Escape") shut(); };
+}
 
 /* tutto quello che sta sotto la testata, per un giocatore */
 function drawPlayerBody(no) {
@@ -13361,73 +13444,62 @@ function drawPlayerBody(no) {
   var whyB = (typeof actWhy === "function") ? actWhy(no, "body") : "";
   var whyL = (typeof actWhy === "function") ? actWhy(no, "lang") : "";
 
-  function bar2(k, v, at, max, note) {
-    var o = "", i;
-    for (i = 0; i < max; i++) o += '<i class="' + (i < at ? "up" : "") + '"></i>';
-    return '<div class="pgrow"><span><i>' + k + "</i><b>" + v + "</b></span>" +
-      '<span class="pbars">' + o + "</span><em>" + esc(note) + "</em></div>";
+  /* le due strade: la fotografia dice dove si va, le barre a che punto sei.
+     Una strada chiusa resta in vista, spenta, e sotto si dice perche'. */
+  function road(id, what, title, pic, sub, level, at, max, why, full) {
+    var bars = "", i, shut = why || full;
+    for (i = 0; i < max; i++) bars += '<i class="' + (i < at ? "up" : "") + '"></i>';
+    return '<button class="ppx' + (shut ? " off" : "") + '" id="' + id + '" type="button"' +
+      (shut ? " disabled" : "") + ">" +
+      (imgOf(pic) ? '<img src="' + imgOf(pic) + '" alt="" class="' + what + '">' : "") +
+      '<span class="ppx-s" aria-hidden="true"></span><span class="ppx-t"><b>' + title + "</b>" +
+      "<em>" + esc(full || sub) + '</em><span class="ppx-b">' + bars + "</span>" +
+      "<u>" + esc(level) + "</u></span>" +
+      (shut ? "" : '<span class="ppx-go" aria-hidden="true">' + GO_ARROW + "</span>") + "</button>";
   }
-  function cell(k, v, s2) {
-    return '<div class="pst"><i>' + k + "</i><b>" + v + "</b>" +
-      (s2 ? "<u>" + s2 + "</u>" : "") + "</div>";
-  }
+  var rB = drillRooms("body").length || GKINDS.length;
+  var rL = LKINDS.length + drillRooms("lang").length;
+  var worth = plusCents(no);
+  var whyNow = (grown < GROWN_MAX && whyB) || (lang < LANG_MAX && whyL) || "";
 
   box.innerHTML =
     (ban
       ? '<div class="pban">Suspended for matchday ' + (ME.next ? ME.next.md : "") +
         " &mdash; " + (ban.why === "red" ? "sent off" : "two yellows") + "</div>"
       : hurt
-        ? '<div class="pban hurt">Injured &mdash; he ran ' + hurt.moments +
-          " moments last matchday. A physio would have him fit.</div>"
+        ? '<div class="pban hurt">Injured &mdash; ' + hurt.moments +
+          " moments last matchday. A physio would have this player fit.</div>"
         : "") +
 
-    '<div class="pstats">' +
-      cell("MOMENTS", st.m, "played this season") +
-      cell("GOALS", st.g, "scored") +
-      cell("SAVES", st.s, "kept out") +
-      cell("CARDS", st.y + st.r, st.y + " yellow &middot; " + st.r + " red") +
-    "</div>" +
+    '<button class="ppst" id="pstatb" type="button" aria-haspopup="dialog" aria-label="The season: open the numbers">' +
+    [["MOMENTS", st.m], ["GOALS", st.g], ["SAVES", st.s], ["CARDS", st.y + st.r]].map(function (c) {
+      return "<span><b>" + c[1] + "</b><i>" + c[0] + "</i></span>";
+    }).join("") + "</button>" +
 
-    bar2("STRENGTH", stepStr(grown), grown, GROWN_MAX,
-         grown >= GROWN_MAX ? "fully grown"
-           : grown ? grown + (grown === 1 ? " session done" : " sessions done")
-                   : "no sessions yet") +
-    bar2("ENGLISH", lang + " of " + LANG_MAX, lang, LANG_MAX, LANGSAY[lang]) +
+    '<h2 class="pph">What do you want to train?</h2>' +
+    road("pboost", "body", "Body", "room-run",
+         "The gym \u00b7 " + rB + (rB === 1 ? " room" : " rooms"),
+         "Strength " + stepStr(grown), grown, GROWN_MAX, whyB,
+         grown >= GROWN_MAX ? "The body is at its best" : "") +
+    road("plang", "lang", "English", "bg-press",
+         "Exercises \u00b7 " + rL + (rL === 1 ? " room" : " rooms"),
+         lang + " of " + LANG_MAX + " \u00b7 " + LANGSAY[lang], lang, LANG_MAX, whyL,
+         lang >= LANG_MAX ? "This one speaks for the club" : "") +
+    (whyNow ? '<p class="hint bxleft">' + esc(whyNow) + "</p>" : "") +
 
-    /* quanto pesa davvero in campo: palestra e inglese versano nello
-       stesso salvadanaio, e il salvadanaio si ferma a 0,15 */
-    (typeof growCents === "function"
-      ? '<div class="wgt' + (atCap(no) ? " full" : "") + '"><span>WEIGHT ON THE PITCH</span>' +
-        "<b>+" + fmt(growCents(no)) + "</b><em>of +0,15 &middot; " +
-        (atCap(no)
-          ? "at the ceiling: more sessions still sharpen the English, " +
-            "but the department starts no higher"
-          : "it goes on the starting points of the department he plays in") +
-        "</em></div>"
-      : "") +
+    /* quanto pesa davvero in campo: lo stesso numero sotto la maglia */
+    '<div class="ppw' + (no < 13 && atCap(no) ? " full" : "") + '"><b>+' + fmt(worth) + "</b><span><i>Weight on the pitch</i><em>" +
+    (no >= 13 ? "from the market card"
+      : atCap(no) ? "at the ceiling of +" + fmt(CENTS_MAX) + ": the department starts no higher"
+      : "of +" + fmt(CENTS_MAX) + ", for the department") + "</em></span></div>";
 
-    (whyB && whyL && grown < GROWN_MAX && lang < LANG_MAX
-      ? '<p class="hint bxleft">' + esc(whyB === whyL ? whyB : whyB + " " + whyL) + "</p>"
-      : "") +
-    (grown >= GROWN_MAX
-      ? '<button class="btn ghost" disabled>The body is at its best</button>'
-      : '<button class="btn' + (whyB ? " ghost" : "") + '" id="pboost"' +
-        (whyB ? " disabled" : "") + ">Boost the body &middot; the gym</button>" +
-        (whyB && !whyL ? '<p class="hint bxleft">' + esc(whyB) + "</p>" : "")) +
-    (lang >= LANG_MAX
-      ? '<button class="btn ghost" disabled>This one speaks for the club</button>'
-      : '<button class="btn ' + (whyL ? "ghost" : "gold2") + '" id="plang"' +
-        (whyL ? " disabled" : "") + ">Boost the English &middot; four exercises</button>" +
-        (whyL && !whyB ? '<p class="hint bxleft">' + esc(whyL) + "</p>" : "")) +
-    '<button class="btn ghost" id="pbk">Back to the squad</button>';
-
+  $("pstatb").onclick = function () { pInfoOpen(no, $("pstatb")); };
   if ($("pboost") && !whyB) {
     $("pboost").onclick = function () { go("boost", { no:no, what:"body" }); };
   }
   if ($("plang") && !whyL) {
     $("plang").onclick = function () { go("boost", { no:no, what:"lang" }); };
   }
-  $("pbk").onclick = function () { toSquad(); };
 }
 
 function drawSignings() {
@@ -16813,10 +16885,10 @@ VIEWS.mkThree = function () {
   /* ───────── il ventaglio ─────────
      Le carte arrivano una dopo l'altra, coperte, con il nome dello scout
      sul dorso. Una grande al centro, le altre di lato: si sfogliano con
-     le frecce o toccandole. Il primo tocco la gira, il secondo la
+     il dito, che se le porta dietro, o toccandole. Il primo tocco la gira, il secondo la
      sceglie. Le ★★ hanno il bordo d'oro, dalle ★★★ in su un riflesso, e
      le GEM brillano. */
-  var mkAt = 0;
+  var mkAt = 0, mkDrag = 0, mkSwiped = false;
   html('<div class="pad mkr"><p class="lede">' + esc(MK.scout.name) + " came back with " +
     MK.cards.length + ". Turn them over, then sign <b>" + cap +
     (cap === 1 ? "</b>." : "</b> of them.") + "</p>" +
@@ -16829,32 +16901,78 @@ VIEWS.mkThree = function () {
         '<span class="face f">' + cardFace(c) + '<span class="pickno"></span>' +
         "</span></span></button>";
     }).join("") + "</div>" +
-    '<div class="mkr-nav"><button class="mkr-arr" id="mkpv" type="button" ' +
-    'aria-label="The card before">&lsaquo;</button><span class="mkr-dots" id="mkdots" ' +
-    'aria-hidden="true"></span><button class="mkr-arr" id="mknx" type="button" ' +
-    'aria-label="The card after">&rsaquo;</button></div>' +
-    '<p class="turnhint" id="hint">Tap each card to turn it over.</p>' +
+    '<div class="mkr-nav"><span class="mkr-dots" id="mkdots" aria-hidden="true"></span></div>' +
+    '<p class="turnhint" id="hint">Swipe to see them all. Tap a card to turn it over.</p>' +
     '<button class="btn gbig" id="sign" hidden>Sign</button></div>');
 
   var all = Array.prototype.slice.call($("main").querySelectorAll(".flip"));
   function place() {
     all.forEach(function (b, i) {
-      var d = i - mkAt;
+      /* mentre il dito tira, le carte stanno a meta' strada fra due posti */
+      var d = i - mkAt + mkDrag / 214, far = Math.min(1, Math.abs(d));
       b.style.transform = "translateX(calc(-50% + " + (d * 214) + "px)) rotate(" + (d * 7) +
-        "deg) scale(" + (d ? 0.84 : 1) + ")";
-      b.style.opacity = d ? "0.55" : "1";
-      b.style.zIndex = String(10 - Math.abs(d));
-      b.classList.toggle("here", !d);
+        "deg) scale(" + (1 - far * 0.16) + ")";
+      b.style.opacity = String(1 - far * 0.45);
+      b.style.zIndex = String(10 - Math.round(Math.abs(d)));
+      b.classList.toggle("here", i === mkAt);
     });
     $("mkdots").innerHTML = all.map(function (b, i) {
       return "<i" + (i === mkAt ? ' class="now"' : b.classList.contains("up") ? ' class="up"' : "") + "></i>";
     }).join("");
   }
   place();
-  $("mkpv").onclick = function () { if (mkAt > 0) { mkAt--; place(); } };
-  $("mknx").onclick = function () { if (mkAt < all.length - 1) { mkAt++; place(); } };
+  /* ───────── il dito ─────────
+     Sotto gli otto pixel e' un tocco, e la carta si gira; sopra e' uno
+     sfoglio, e il tocco non conta. Su e giu' resta alla pagina. */
+  var st = $("mkst"), sw = null;
+  st.onpointerdown = function (e) {
+    if (e.button) return;
+    sw = { x:e.clientX, t:Date.now(), id:e.pointerId, on:false };
+  };
+  st.onpointermove = function (e) {
+    if (!sw || e.pointerId !== sw.id) return;
+    var dx = e.clientX - sw.x;
+    if (!sw.on) {
+      if (Math.abs(dx) < 8) return;
+      sw.on = true;
+      st.classList.add("drag");
+      try { st.setPointerCapture(sw.id); } catch (er) {}
+    }
+    /* oltre la prima e l'ultima la carta si muove appena: non c'e' altro */
+    var edge = (mkAt === 0 && dx > 0) || (mkAt === all.length - 1 && dx < 0);
+    mkDrag = edge ? dx * 0.3 : dx;
+    place();
+  };
+  function swipeEnd(e, cancel) {
+    if (!sw || e.pointerId !== sw.id) return;
+    var was = sw;
+    sw = null;
+    if (!was.on) return;
+    st.classList.remove("drag");
+    var dx = e.clientX - was.x, steps = Math.round(-dx / 214);
+    /* basta poco, o un colpo veloce, per passare alla carta dopo */
+    if (!steps && (Math.abs(dx) > 40 || (Math.abs(dx) > 15 && Date.now() - was.t < 250))) {
+      steps = dx < 0 ? 1 : -1;
+    }
+    if (!cancel) mkAt = Math.max(0, Math.min(all.length - 1, mkAt + steps));
+    mkDrag = 0;
+    mkSwiped = true;
+    setTimeout(function () { mkSwiped = false; }, 60);
+    place();
+  }
+  st.onpointerup = function (e) { swipeEnd(e); };
+  st.onpointercancel = function (e) { swipeEnd(e, true); };
+  /* chi usa la tastiera sfoglia con le frecce della tastiera */
+  st.onkeydown = function (e) {
+    if (e.key === "ArrowLeft" && mkAt > 0) { mkAt--; place(); }
+    else if (e.key === "ArrowRight" && mkAt < all.length - 1) { mkAt++; place(); }
+    else return;
+    e.preventDefault();
+    all[mkAt].focus();
+  };
   all.forEach(function (b) {
     b.onclick = function () {
+      if (mkSwiped) return;
       var i = parseInt(b.dataset.i, 10);
       /* una carta di lato si porta al centro, non si gira da lontano */
       if (i !== mkAt) { mkAt = i; return place(); }
@@ -23245,21 +23363,18 @@ VIEWS.boost = function (d) {
         : '<p class="lede">One action, one room. <b>' + BOOST_MIN +
           "% or better</b> and the bar goes up by one. " +
           "The place is taken the moment you start, so pick the one you can win.</p>" +
-          '<div class="dmfig bxf" id="bxf" aria-live="polite"></div>' +
-          '<div class="bxc" role="radiogroup" aria-label="Choose a room">' +
-          list.map(function (k, i) {
-            return '<button class="bxt' + (i ? "" : " on") + '" data-k="' + k.id +
-              '" data-old="' + (k.old ? 1 : 0) + '" type="button" role="radio" aria-checked="' +
-              (i ? "false" : "true") + '"><span class="bxi">' + roomIcon(k.id) + "</span>" +
-              "<b>" + esc(k.n) + "</b></button>";
-          }).join("") + "</div>" +
+          '<div class="dmfig bxf" id="bxf" aria-live="polite" tabindex="0" ' +
+          'aria-label="Choose a room. Swipe, or use the arrow keys."></div>' +
+          (list.length > 1
+            ? '<div class="mkr-nav"><span class="mkr-dots" id="bxdots" aria-hidden="true"></span></div>'
+            : "") +
           '<button class="btn gbig" id="bxgo"></button>') +
 
     '<button class="btn ghost" id="bxback">Back to the player</button></div>');
 
   /* si sceglie nella figurina grande, come nella prova: la fotografia
-     dice dove si va, il titolo e la riga dicono che cosa si fa. Le
-     icone sotto sono il tracciato, e si possono toccare anche loro.
+     dice dove si va, il titolo e la riga dicono che cosa si fa. Si sfoglia
+     con il dito e i pallini dicono a che punto sei.
      Toccare la figurina non fa partire niente: partire costa l'azione,
      e per quello c'e' il bottone sotto. */
   var at0 = 0, sel = list[0];
@@ -23276,48 +23391,64 @@ VIEWS.boost = function (d) {
       '<div class="dmchip"><span>' + (what === "lang" ? "ENGLISH" : "GYM") + "</span>" +
       '<span class="done">' + n + " QUESTIONS</span></div>" +
       '<div class="dmcap"><b>' + esc(sel.n) + '</b><em class="dmsub">' +
-      esc(ROOM_HOW[sel.id] || sel.s) + "</em></div>" +
-      (list.length > 1
-        ? '<button class="dmarr l" id="bxprev" type="button" aria-label="The room before">&#8249;</button>' +
-          '<button class="dmarr r" id="bxnext" type="button" aria-label="The room after">&#8250;</button>'
-        : "");
+      esc(ROOM_HOW[sel.id] || sel.s) + "</em></div>";
     /* la classe si toglie e si rimette, cosi' lo scivolo riparte */
     f.className = "dmfig bxf" + (pic ? "" : " nopic");
     if (dir) { void f.offsetWidth; f.className += " vsl-" + dir; }
-    if ($("bxprev")) $("bxprev").onclick = function () { pick(at0 - 1, "b"); };
-    if ($("bxnext")) $("bxnext").onclick = function () { pick(at0 + 1, "f"); };
+    if ($("bxdots")) {
+      $("bxdots").innerHTML = list.map(function (x, k) {
+        return "<i" + (k === at0 ? ' class="now"' : "") + "></i>";
+      }).join("");
+    }
     $("bxgo").textContent = "Start " + sel.n;
   }
   function pick(i, dir) {
     at0 = (i + list.length) % list.length;
     sel = list[at0];
-    Array.prototype.forEach.call($("main").querySelectorAll(".bxt"), function (x) {
-      var on = x.dataset.k === sel.id;
-      x.classList.toggle("on", on);
-      x.setAttribute("aria-checked", String(on));
-      if (on) {
-        try { x.scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" }); } catch (e) {}
-      }
-    });
     show(dir);
   }
-  Array.prototype.forEach.call($("main").querySelectorAll(".bxt"), function (b) {
-    b.onclick = function () {
-      var i, j = at0;
-      for (i = 0; i < list.length; i++) if (list[i].id === b.dataset.k) j = i;
-      if (j !== at0) pick(j, j > at0 ? "f" : "b");
-    };
-  });
-  /* e col dito, come si sfoglia una figurina */
+  /* col dito: la figurina segue il dito e, lasciata, passa alla stanza dopo.
+     Su e giu' resta alla pagina. */
   if ($("bxf") && list.length > 1) (function (f) {
-    var x0 = null;
-    f.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive:true });
-    f.addEventListener("touchend", function (e) {
-      if (x0 === null) return;
-      var dx = e.changedTouches[0].clientX - x0;
-      x0 = null;
-      if (Math.abs(dx) > 44) pick(at0 + (dx < 0 ? 1 : -1), dx < 0 ? "f" : "b");
-    }, { passive:true });
+    var sw = null;
+    function rest() { f.style.transform = ""; f.style.opacity = ""; f.classList.remove("drag"); }
+    f.onpointerdown = function (e) {
+      if (e.button) return;
+      sw = { x:e.clientX, t:Date.now(), id:e.pointerId, on:false };
+    };
+    f.onpointermove = function (e) {
+      if (!sw || e.pointerId !== sw.id) return;
+      var dx = e.clientX - sw.x;
+      if (!sw.on) {
+        if (Math.abs(dx) < 8) return;
+        sw.on = true;
+        f.classList.add("drag");
+        try { f.setPointerCapture(sw.id); } catch (er) {}
+      }
+      f.style.transform = "translateX(" + dx + "px)";
+      f.style.opacity = String(Math.max(0.5, 1 - Math.abs(dx) / 500));
+    };
+    f.onpointerup = function (e) {
+      if (!sw || e.pointerId !== sw.id) return;
+      var was = sw, dx = e.clientX - was.x;
+      sw = null;
+      if (!was.on) return;
+      rest();
+      if (Math.abs(dx) > 44 || (Math.abs(dx) > 15 && Date.now() - was.t < 250)) {
+        pick(at0 + (dx < 0 ? 1 : -1), dx < 0 ? "f" : "b");
+      }
+    };
+    f.onpointercancel = function (e) {
+      if (!sw || e.pointerId !== sw.id) return;
+      sw = null;
+      rest();
+    };
+    f.onkeydown = function (e) {
+      if (e.key === "ArrowLeft") pick(at0 - 1, "b");
+      else if (e.key === "ArrowRight") pick(at0 + 1, "f");
+      else return;
+      e.preventDefault();
+    };
   })($("bxf"));
   if ($("bxgo")) $("bxgo").onclick = function () {
     if (!sel) return;
