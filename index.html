@@ -5361,7 +5361,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "168";
+var APPVER = "169";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -26778,12 +26778,16 @@ function spLogo(name, form) {
   var id = SP_LOGO[name];
   return id ? "im/sp-" + id + "-" + form + ".webp" : "";
 }
-/* le foto vere, per club e sponsor: maglia, manica e tribuna. Dove non c'e'
-   ancora una foto, il marchio si appoggia sulla maglia come prima. */
-var SP_PHOTO = { RAV:{ harper:1, mileend:1, patel:1, townhall:1, hedge:1, rowan:1 } };
+/* le foto vere, per club e sponsor: maglia, manica e tribuna. 1 vuol dire
+   tutte e tre; chi ne ha solo alcune le elenca. Dove non c'e' ancora una
+   foto, il marchio si appoggia sulla maglia come prima. */
+var SP_PHOTO = { RAV:{ harper:1, mileend:1, patel:1, townhall:1, hedge:1, rowan:1,
+  anchor:1, greenline:1, kestrel:1, cityenergy:1,
+  marlow:1, fenwick:1 } };
 function spPhoto(name, spot) {
   var id = SP_LOGO[name], club = imgId(ME.club.id);
-  return (id && SP_PHOTO[club] && SP_PHOTO[club][id])
+  var has = id && SP_PHOTO[club] && SP_PHOTO[club][id];
+  return (has === 1 || (has && has[spot]))
     ? "im/spp-" + club + "-" + id + "-" + spot + ".webp" : "";
 }
 /* la maglia del club; chi non ha la foto ha una maglia disegnata nel suo colore */
