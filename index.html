@@ -4015,6 +4015,108 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .spi-x:focus-visible,.spi-t button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .spi-b{margin-top:6px}
 
+
+/* ═════════ gli effetti delle pagine nuove ═════════
+   Solo transform e opacity, cosi' restano fluidi anche sui telefoni vecchi.
+   Il riempimento e' « backwards »: finito l'ingresso l'elemento torna libero,
+   e la pressione del dito puo' muoverlo. */
+@keyframes fxUp{from{opacity:0;transform:translateY(14px)}}
+@keyframes fxFade{from{opacity:0}}
+@keyframes fxSheet{from{transform:translateY(100%)}}
+@keyframes fxPop{0%{opacity:0;transform:scale(.72)}60%{opacity:1;transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes fxStamp{0%{opacity:0;transform:scale(1.7)}55%{opacity:1;transform:scale(.96)}100%{transform:scale(1)}}
+@keyframes fxDrop{0%{opacity:0;transform:translateY(-46px) scale(.8)}65%{opacity:1;transform:translateY(5px) scale(1.04)}100%{transform:none}}
+@keyframes fxGrow{from{transform:scaleX(0)}}
+@keyframes fxSheen{from{transform:translateX(-130%) skewX(-18deg)}to{transform:translateX(330%) skewX(-18deg)}}
+@keyframes fxKen{from{transform:scale(1.09)}to{transform:scale(1)}}
+@keyframes fxGlow{0%,100%{box-shadow:0 0 0 0 rgba(245,197,66,0)}50%{box-shadow:0 0 0 5px rgba(245,197,66,.28)}}
+@keyframes fxShake{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes fxRing{0%,100%{transform:rotate(0)}25%{transform:rotate(-1.4deg)}75%{transform:rotate(1.4deg)}}
+@keyframes fxSigned{0%{opacity:0;transform:translate(-50%,-50%) rotate(-12deg) scale(1.8)}18%{opacity:1;transform:translate(-50%,-50%) rotate(-12deg) scale(1)}70%{opacity:1;transform:translate(-50%,-50%) rotate(-12deg) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) rotate(-12deg) scale(1)}}
+@keyframes fxFlash{from{opacity:.75}to{opacity:0}}
+@keyframes fxBit{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(var(--r))}}
+/* i coriandoli d'oro: uno strato sopra tutto, che non si tocca e non allarga la pagina */
+.fx-layer{position:fixed;inset:0;z-index:70;overflow:hidden;pointer-events:none}
+.fx-bit{position:absolute;width:9px;height:14px;border-radius:2px;animation:fxBit 1.15s cubic-bezier(.15,.7,.35,1) both}
+/* My golden words */
+.gw-pin{position:relative;overflow:hidden;animation:fxPop .38s cubic-bezier(.2,.9,.3,1) backwards}
+.gw-pin::after,.gw-gold::after{content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:34%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);pointer-events:none;
+  animation:fxSheen 1.1s ease-out .3s both}
+.gw-row{animation:fxUp .28s ease-out backwards;transition:transform .15s ease-out}
+.gw-row:nth-child(2){animation-delay:40ms}.gw-row:nth-child(3){animation-delay:80ms}
+.gw-row:nth-child(4){animation-delay:120ms}.gw-row:nth-child(5){animation-delay:160ms}
+.gw-row:nth-child(6){animation-delay:200ms}.gw-row:nth-child(n+7){animation-delay:240ms}
+.gw-row:active,.gw-pin:active,.gw-chip:active,.gw-more:active{transform:scale(.97)}
+.gw-pin{transition:transform .15s ease-out}
+.gw-big{animation:fxStamp .42s cubic-bezier(.2,.9,.3,1) backwards}
+.gw-why,.gw-tags{animation:fxUp .28s ease-out .1s backwards}
+.gw-story .gw-box{animation:fxUp .3s ease-out .16s backwards}
+.gw-story .gw-box+.gw-box{animation-delay:.24s}
+.gw-g.hot{animation:fxGlow 1s ease-in-out .45s 2}
+.gw-box .gw-tb .me{animation:fxPop .36s cubic-bezier(.2,.9,.3,1) .5s backwards}
+.gw-gold{position:relative;overflow:hidden;animation:fxPop .42s cubic-bezier(.2,.9,.3,1) .08s backwards}
+.gw-gold>b{animation:fxStamp .4s cubic-bezier(.2,.9,.3,1) .3s backwards}
+.gw-new .gw-vs{animation:fxFade .3s ease-out backwards}
+.gw-new>.btn,.gw-rule{animation:fxUp .28s ease-out .55s backwards}
+.gw-cr.champ{animation:fxDrop .55s cubic-bezier(.2,.9,.3,1) backwards}
+.gw-sea h1{animation:fxUp .3s ease-out .25s backwards}
+.gw-new>.gw-tb{animation:fxUp .3s ease-out .32s backwards}
+.gw-res{animation:fxPop .32s cubic-bezier(.2,.9,.3,1) backwards}
+.gw-in.no{animation:fxShake .36s ease-out}
+/* Sponsors */
+.spx-c{transition:transform .25s ease-out,opacity .25s ease-out}
+.spx-c:not(.on){transform:scale(.95);opacity:.72}
+.spx-c.on .spx-pitch{animation:fxKen 5s ease-out both}
+.spx-c.on .spx-mark{animation:fxFade .3s ease-out .08s backwards}
+.spx-off{animation:fxDrop .46s cubic-bezier(.2,.9,.3,1) backwards}
+.spx-low .btn.ring{animation:fxRing .22s linear infinite}
+.spx-low .btn.ring:disabled{opacity:1}
+.spx-put{transition:transform .12s ease-out}
+.spx-put:active{transform:scale(.97)}
+.spx-fame .fmbar i{transform-origin:left;animation:fxGrow .6s ease-out .15s backwards}
+.spx-no{animation:fxShake .36s ease-out}
+.spx-c.just .spx-pic::before{content:"";position:absolute;inset:0;z-index:2;background:#FFFDEE;pointer-events:none;
+  animation:fxFlash .45s ease-out both}
+.spx-c.just .spx-pic::after{content:"SIGNED";position:absolute;left:50%;top:50%;z-index:3;padding:8px 16px;border:3px solid var(--gold);
+  border-radius:8px;background:rgba(4,23,15,.82);color:var(--gold);font:900 26px/1 var(--brand);letter-spacing:.12em;pointer-events:none;
+  animation:fxSigned 1.5s ease-out both}
+.spi{animation:fxFade .2s ease-out backwards}
+.spi-s{animation:fxSheet .3s cubic-bezier(.2,.9,.3,1) backwards}
+.spi.still,.spi.still .spi-s{animation:none}
+/* La scheda del giocatore */
+.ppst{animation:fxFade .25s ease-out backwards;transition:transform .12s ease-out}
+.ppst:active{transform:scale(.98)}
+.ppx{animation:fxUp .3s ease-out .05s backwards;transition:transform .14s ease-out}
+.ppx+.ppx{animation-delay:.11s}
+.ppx img{transition:transform .35s ease-out}
+.ppx-go{transition:transform .18s ease-out}
+.ppx:not(.off):active{transform:scale(.98)}
+.ppx:not(.off):active img{transform:scale(1.06)}
+.ppx:not(.off):active .ppx-go{transform:translateX(4px)}
+@media(hover:hover){
+  .ppx:not(.off):hover img{transform:scale(1.05)}
+  .ppx:not(.off):hover .ppx-go{transform:translateX(4px)}
+}
+.ppx-b i.up{transform-origin:left;animation:fxGrow .34s ease-out .3s backwards}
+.ppx-b i.up:nth-child(2){animation-delay:.38s}.ppx-b i.up:nth-child(3){animation-delay:.46s}
+.ppx-b i.up:nth-child(4){animation-delay:.54s}.ppx-b i.up:nth-child(5){animation-delay:.62s}
+.ppw>b{animation:fxPop .34s cubic-bezier(.2,.9,.3,1) .36s backwards}
+/* Le stanze */
+.bxf img{animation:fxKen 5s ease-out both}
+.bxf .dmcap{animation:fxUp .28s ease-out .06s backwards}
+.bxf .bxbig{animation:fxPop .34s cubic-bezier(.2,.9,.3,1) backwards}
+@media(prefers-reduced-motion:reduce){
+  .fx-layer,.gw-pin,.gw-pin::after,.gw-gold::after,.gw-row,.gw-big,.gw-why,.gw-tags,.gw-story .gw-box,.gw-g.hot,.gw-box .gw-tb .me,
+  .gw-gold,.gw-gold>b,.gw-new .gw-vs,.gw-new>.btn,.gw-rule,.gw-cr.champ,.gw-sea h1,.gw-new>.gw-tb,.gw-res,.gw-in.no,
+  .spx-c,.spx-c.on .spx-pitch,.spx-c.on .spx-mark,.spx-off,.spx-low .btn.ring,.spx-put,.spx-fame .fmbar i,.spx-no,
+  .spx-c.just .spx-pic::before,.spi,.spi-s,.ppst,.ppx,.ppx img,.ppx-go,.ppx-b i.up,.ppw>b,.bxf img,.bxf .dmcap,.bxf .bxbig{
+    animation:none!important;transition:none!important}
+  .gw-pin::after,.gw-gold::after{display:none}
+  .spx-c:not(.on){transform:none;opacity:1}
+  .spx-c.just .spx-pic::after{animation:none;opacity:1;transform:translate(-50%,-50%) rotate(-12deg)}
+}
+
 /* l'esercizio: la parola dentro la sua frase */
 .wdr{display:flex;flex-direction:column}
 .wd-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -5361,7 +5463,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "169";
+var APPVER = "170";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -26838,10 +26940,11 @@ function spFameRow() {
     "<span>Who answers now: <b>" + esc(FAME_WHO[t - 1]) + "</b></span></div>";
 }
 function spInfoOpen(tab) {
+  var was = !!$("spi");
   spInfoClose();
   var moves = tab !== "who";
   document.body.insertAdjacentHTML("beforeend",
-    '<div class="spi" id="spi"><div class="spi-s" role="dialog" aria-modal="true" aria-labelledby="spih">' +
+    '<div class="spi' + (was ? " still" : "") + '" id="spi"><div class="spi-s" role="dialog" aria-modal="true" aria-labelledby="spih">' +
     '<div class="spi-h"><h2 id="spih">How the city sees you</h2>' +
     '<button class="spi-x" id="spix" type="button" aria-label="Close">&#10005;</button></div>' +
     '<div class="spi-t" role="group" aria-label="What to show">' +
@@ -26864,7 +26967,7 @@ function spInfoClose(refocus) {
 /* ───────── la stanza ─────────
    Prima le tre caselle, grandi, una alla volta. Quando qualcuno risponde il
    suo nome compare gia' sulla maglia: si sfoglia e si sceglie dove metterlo. */
-var SP = { offer:null, silent:false, key:"" };
+var SP = { offer:null, silent:false, key:"", just:"" };
 
 VIEWS.spon = function () {
   /* la risposta vale per la giornata e per il club in cui e' arrivata */
@@ -26932,6 +27035,17 @@ VIEWS.spon = function () {
       b.className = k === at ? "on" : "";
       b.setAttribute("aria-current", k === at ? "true" : "false");
     });
+    /* la carta davanti e' piena, quelle di lato arretrano */
+    Array.prototype.forEach.call(tr.children, function (c, k) { c.classList.toggle("on", k === at); });
+  }
+  /* appena firmato: si torna sulla casella, con il timbro */
+  if (SP.just) {
+    var jk = (o ? free : SPOTS).map(function (s) { return s.id; }).indexOf(SP.just);
+    if (jk >= 0 && tr.children[jk]) {
+      tr.scrollLeft = jk * step();
+      tr.children[jk].classList.add("just");
+    }
+    SP.just = "";
   }
   mark();
   tr.onscroll = mark;
@@ -26943,13 +27057,20 @@ VIEWS.spon = function () {
     spMarkCall();
     SP.offer = spCall();
     SP.silent = !SP.offer;
-    swap("spon");
+    /* il telefono squilla un momento: la risposta e' gia' decisa */
+    var bc = $("spcall");
+    bc.disabled = true;
+    bc.classList.add("ring");
+    bc.textContent = "Calling\u2026";
+    setTimeout(function () { if (HERE && HERE.name === "spon") swap("spon"); }, fxCalm() ? 0 : 1100);
   };
   $("spinfo").onclick = function () { spInfoOpen("moves"); };
   Array.prototype.forEach.call(document.querySelectorAll(".spx-put"), function (b) {
     b.onclick = function () {
       spSign(b.dataset.s, SP.offer);
       SP.offer = null;
+      SP.just = b.dataset.s;
+      try { if (navigator.vibrate) navigator.vibrate(14); } catch (e) {}
       reset("spon");
     };
   });
@@ -30468,7 +30589,7 @@ VIEWS.goldCheck = function (d) {
        mette una da solo all'inizio, e non e' un errore dell'alunno */
     var w = tidy(r.w), g = tidy(got);
     var right = w === g || (w === w.toLowerCase() && w === g.toLowerCase());
-    if (!right) goldMiss(r, got);
+    if (!right) { goldMiss(r, got); inp.classList.add("no"); }
     $("gwres").innerHTML = right
       ? '<div class="gw-res yes"><b>Still yours.</b><p>You scored with it, and you can still write it.</p></div>'
       : '<div class="gw-res"><b>It was <em>' + esc(r.w) + "</em>.</b>" +
@@ -30477,6 +30598,35 @@ VIEWS.goldCheck = function (d) {
   ok.onclick = check;
   inp.onkeydown = function (e) { if (e.key === "Enter") { e.preventDefault(); check(); } };
 };
+
+/* ───────── i coriandoli d'oro ─────────
+   Solo nei due momenti che li meritano: la parola nuova e la fine della
+   stagione. Partono dal centro della carta e spariscono da soli. */
+function fxCalm() {
+  try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+  catch (e) { return false; }
+}
+function fxBurst(el) {
+  if (!el || fxCalm()) return;
+  var r = el.getBoundingClientRect(), layer = document.createElement("div"), i, cols = ["#F5C542", "#E3EF26", "#FFFDEE", "#FFB020"];
+  layer.className = "fx-layer";
+  layer.setAttribute("aria-hidden", "true");
+  for (i = 0; i < 26; i++) {
+    var b = document.createElement("i"), a = (i / 26) * Math.PI * 2, far = 110 + Math.random() * 130;
+    b.className = "fx-bit";
+    b.style.left = (r.left + r.width / 2) + "px";
+    b.style.top = (r.top + r.height / 2) + "px";
+    b.style.background = cols[i % cols.length];
+    b.style.setProperty("--x", Math.round(Math.cos(a) * far) + "px");
+    b.style.setProperty("--y", Math.round(Math.sin(a) * far + 70) + "px");
+    b.style.setProperty("--r", Math.round(Math.random() * 620 - 310) + "deg");
+    b.style.animationDelay = Math.round(Math.random() * 90) + "ms";
+    layer.appendChild(b);
+  }
+  document.body.appendChild(layer);
+  setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 1500);
+  try { if (navigator.vibrate) navigator.vibrate(14); } catch (e) {}
+}
 
 /* ───────── a fine partita: la parola nuova ───────── */
 VIEWS.goldNew = function (d) {
@@ -30502,6 +30652,7 @@ VIEWS.goldNew = function (d) {
     '<button class="btn ghost" id="gwon" type="button">Carry on</button></div>');
   $("gwsee").onclick = goldOpen;
   $("gwon").onclick = function () { swap("live"); };
+  setTimeout(function () { fxBurst(document.querySelector(".gw-gold")); }, 380);
 };
 
 /* ───────── a fine stagione: la parola del titolo ───────── */
@@ -30530,6 +30681,7 @@ VIEWS.goldSeason = function (d) {
     '<button class="btn ghost" id="gwon" type="button">Carry on</button></div>');
   $("gwstory").onclick = function () { go("goldWord", { id:r.id }); };
   $("gwon").onclick = carry;
+  setTimeout(function () { fxBurst(document.querySelector(".gw-gold")); }, 380);
 };
 
 /* la stagione puo' chiudersi con il bollettino del professore, senza
