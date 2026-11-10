@@ -4143,6 +4143,11 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .shp-read p{display:flex;align-items:flex-start;gap:10px;margin:10px 0 0;font-size:13px;font-weight:600;line-height:1.45;color:#C3D6C6}
 .shp-read p i{flex:none;width:8px;height:8px;margin-top:5px;border-radius:999px}
 .shp-read i.best{background:var(--gold)}.shp-read i.thin{background:#5E8C74}.shp-read i.dark{background:var(--edge)}
+.shp-src{margin-top:12px;padding:12px 15px;border:1px solid var(--edge);border-radius:16px}
+.shp-src>span{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--fog)}
+.shp-src p{display:flex;justify-content:space-between;gap:10px;margin:8px 0 0;font-size:13px;font-weight:600;color:#C3D6C6}
+.shp-src p b{font-weight:800;color:var(--cream)}
+.shp-src em{display:block;margin-top:9px;font-style:normal;font-size:12px;font-weight:600;line-height:1.45;color:var(--fog)}
 .shp-foot{margin:14px 6px 0;font-size:12px;font-weight:600;line-height:1.45;color:var(--fog);text-align:center}
 .shp .shp-area{transform-origin:50% 47.8%;animation:fxShape .6s cubic-bezier(.2,.9,.3,1) backwards}
 .shp .shp-line{stroke-dasharray:900;animation:fxDraw .9s ease-out .1s backwards}
@@ -5496,7 +5501,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "172";
+var APPVER = "173";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -28457,6 +28462,7 @@ function tagMark(level, tag, ok) {
   if (ok) e.r++; else e.w++;
   e.at = Date.now();
   puntiSave();
+  if (typeof shapeLog === "function") shapeLog(tag, ok);
 }
 /* una prova intera, quando serve (non la uso per ora: le prove si
    segnano domanda per domanda) */
@@ -30766,6 +30772,21 @@ var SHAPE_AXES = [
     say:"the words in your dictations" }
 ];
 var SHAPE_MIN = 12;        /* risposte di grammatica sotto le quali la punta resta tratteggiata */
+var SHAPE_RECENT = 40;     /* per ogni punta contano le ultime quaranta: cosi' l'allenamento si vede */
+var SHAPE_H_KEY = "footefl-shape-h", SHAPE_H_MAX = 600;
+/* le risposte una dopo l'altra, l'etichetta e se era giusta. Il quaderno
+   dei punti tiene solo i totali, e un totale di mesi non si muove piu':
+   chi si allena su un punto debole deve vedere la punta crescere. */
+function shapeLog(tag, ok) {
+  var h = [];
+  try { h = JSON.parse(localStorage.getItem(SHAPE_H_KEY) || "[]") || []; } catch (e) { h = []; }
+  h.push([String(tag), ok ? 1 : 0]);
+  if (h.length > SHAPE_H_MAX) h = h.slice(-SHAPE_H_MAX);
+  try { localStorage.setItem(SHAPE_H_KEY, JSON.stringify(h)); } catch (e) {}
+}
+function shapeHist() {
+  try { return JSON.parse(localStorage.getItem(SHAPE_H_KEY) || "[]") || []; } catch (e) { return []; }
+}
 var SHAPE_MIN_WORDS = 30;  /* parole di dettato, per lo spelling */
 
 /* i valori delle sette punte: v da 0 a 100, oppure null se non si sa */
@@ -30779,6 +30800,17 @@ function shapeData() {
     if (!tot[f]) tot[f] = { r:0, w:0 };
     tot[f].r += e.r || 0; tot[f].w += e.w || 0;
   });
+  /* le ultime risposte, punta per punta, dalla piu' recente */
+  var axisOf = {}, recent = {};
+  SHAPE_AXES.forEach(function (a) { a.fam.forEach(function (f) { axisOf[f] = a.id; }); });
+  var H = shapeHist(), hi;
+  for (hi = H.length - 1; hi >= 0; hi--) {
+    var ax = axisOf[fam[H[hi][0]]];
+    if (!ax) continue;
+    if (!recent[ax]) recent[ax] = { r:0, n:0 };
+    if (recent[ax].n >= SHAPE_RECENT) continue;
+    recent[ax].n++; recent[ax].r += H[hi][1];
+  }
   var all = 0;
   SHAPE_AXES.forEach(function (a) {
     var r = 0, w = 0;
@@ -30791,8 +30823,10 @@ function shapeData() {
     }
     a.fam.forEach(function (f) { if (tot[f]) { r += tot[f].r; w += tot[f].w; } });
     all += r + w;
-    out.push({ id:a.id, n:a.n, say:a.say, count:r + w,
-               v:r + w >= SHAPE_MIN ? Math.round(r / (r + w) * 100) : null });
+    var rc = recent[a.id], v = null;
+    if (rc && rc.n >= SHAPE_MIN) v = Math.round(rc.r / rc.n * 100);
+    else if (r + w >= SHAPE_MIN) v = Math.round(r / (r + w) * 100);
+    out.push({ id:a.id, n:a.n, say:a.say, count:r + w, v:v });
   });
   out.answers = all;
   return out;
@@ -30870,6 +30904,24 @@ function shapeReads(A) {
   return out;
 }
 
+/* da dove vengono i numeri: la grammatica oggi arriva tutta dall'allenamento
+   (mercato, colloquio, campo), le partite portano lo spelling dei dettati */
+function shapeFrom(A) {
+  var mw = 0, tw = 0;
+  ((typeof allHalves === "function") ? allHalves() : []).forEach(function (h) {
+    (h.items || []).forEach(function (it) {
+      if (it.t === "ponct") return;
+      if (h.ph === "grd") tw++; else mw++;
+    });
+  });
+  function n(x, one, many) { return x + " " + (x === 1 ? one : many); }
+  return '<div class="shp-src"><span>WHERE THE NUMBERS COME FROM</span>' +
+    "<p><b>Training</b>" + n(A.answers, "grammar answer", "grammar answers") +
+    (tw ? " · " + n(tw, "dictation word", "dictation words") : "") + "</p>" +
+    "<p><b>Matches</b>" + (mw ? n(mw, "dictation word", "dictation words") + ", for spelling" : "no dictations yet") + "</p>" +
+    "<em>Each side counts your last " + SHAPE_RECENT + " answers, so what you train shows.</em></div>";
+}
+
 /* ───────── la riga dentro My stats ───────── */
 function shapeRow() {
   var A = shapeData(), known = A.filter(function (a) { return a.v != null; });
@@ -30905,8 +30957,7 @@ VIEWS.shape = function () {
     shapeReads(A).map(function (r) {
       return '<p><i class="' + r.c + '" aria-hidden="true"></i>' + esc(r.t) + "</p>";
     }).join("") + "</div>" +
-    '<p class="shp-foot">Grammar questions in matches, friendlies and the gym fill the shape. ' +
-    "Spelling comes from your dictations.</p></div>");
+    shapeFrom(A) + "</div>");
 };
 
 /* ───── 50-words.js ───── */
