@@ -5501,7 +5501,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "173";
+var APPVER = "174";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -30780,7 +30780,7 @@ var SHAPE_H_KEY = "footefl-shape-h", SHAPE_H_MAX = 600;
 function shapeLog(tag, ok) {
   var h = [];
   try { h = JSON.parse(localStorage.getItem(SHAPE_H_KEY) || "[]") || []; } catch (e) { h = []; }
-  h.push([String(tag), ok ? 1 : 0]);
+  h.push([String(tag), ok ? 1 : 0, Date.now()]);
   if (h.length > SHAPE_H_MAX) h = h.slice(-SHAPE_H_MAX);
   try { localStorage.setItem(SHAPE_H_KEY, JSON.stringify(h)); } catch (e) {}
 }
@@ -30788,6 +30788,130 @@ function shapeHist() {
   try { return JSON.parse(localStorage.getItem(SHAPE_H_KEY) || "[]") || []; } catch (e) { return []; }
 }
 var SHAPE_MIN_WORDS = 30;  /* parole di dettato, per lo spelling */
+
+/* ───────── le parole del dettato, punta per punta ─────────
+   Il dettato non sa che grammatica contiene: qui la si legge dal testo,
+   parola per parola, con regole semplici e prudenti. Una parola che puo'
+   voler dire due cose (read, put, left, that) non va su nessuna punta:
+   meglio una parola in meno che una punta che mente. Funziona bene sui
+   testi di A1 e A2, che sono fatti di frasi semplici; non e' un'analisi
+   grammaticale vera. */
+var DT_PAST = {};
+("was were had did went came saw made took got gave found knew thought told became began " +
+ "brought bought caught felt kept left lost met paid ran said sat sold sent slept spoke " +
+ "stood swam taught understood wore won wrote ate drank drove fell flew forgot grew heard " +
+ "held hung lay led meant rang rode rose shook shone sang sank stole struck threw woke " +
+ "been done gone seen taken given eaten written known flown driven broken chosen spoken " +
+ "stolen forgotten").split(" ").forEach(function (w) { DT_PAST[w] = 1; });
+var DT_NOT_ED = {};
+("bed red need seed speed feed shed hundred bread head ahead instead indeed sled wed shred " +
+ "naked wicked sacred").split(" ").forEach(function (w) { DT_NOT_ED[w] = 1; });
+var DT_WHERE = {};
+("in on at behind between near under from into next opposite above below inside outside " +
+ "across along around through towards toward over beside among").split(" ").forEach(function (w) { DT_WHERE[w] = 1; });
+var DT_ASK = {};
+("can can't cannot must mustn't should shouldn't could couldn't may might would wouldn't " +
+ "please").split(" ").forEach(function (w) { DT_ASK[w] = 1; });
+var DT_QWORD = { what:1, where:1, when:1, who:1, why:1, how:1, which:1, whose:1 };
+var DT_JOIN = {};
+("and but because so or while although though if unless before after until " +
+ "then first").split(" ").forEach(function (w) { DT_JOIN[w] = 1; });
+var DT_PRES = {};
+("is are am isn't aren't 'm 's do does don't doesn't").split(" ").forEach(function (w) { DT_PRES[w] = 1; });
+var DT_SUBJ = { he:1, she:1, it:1, everyone:1, everybody:1, nobody:1, somebody:1, someone:1,
+                everything:1, nothing:1, there:0 };
+var DT_DET = { the:1, a:1, an:1, my:1, your:1, his:1, her:1, our:1, their:1, its:1, this:1,
+               that:0, home:1, school:1, work:1, bed:1 };
+var DT_FREQ = { always:1, usually:1, often:1, never:1, sometimes:1, rarely:1, also:1, just:1 };
+var DT_BE = { is:1, are:1, am:1, was:1, were:1, be:1, been:1, get:1, gets:1, got:1, very:1,
+              so:1, too:1, feel:1, feels:1, look:1, looks:1 };
+
+/* restituisce, per ogni elemento, la punta (id di SHAPE_AXES) o "" */
+function dictTag(items) {
+  var out = [], i, words = items.map(function (x) { return String(x.w || ""); });
+  var low = words.map(function (w) { return w.toLowerCase(); });
+  var names = {}, k0;
+  for (k0 = 1; k0 < items.length; k0++) {
+    if (items[k0].t !== "ponct" && /^[A-Z][a-z]/.test(words[k0]) && items[k0 - 1].t !== "ponct") names[low[k0]] = 1;
+  }
+  function isP(k) { return !items[k] || items[k].t === "ponct"; }
+  function prev(k) { var j = k - 1; while (j >= 0 && items[j].t === "ponct") j--; return j; }
+  function next(k) { var j = k + 1; while (j < items.length && items[j].t === "ponct") j++; return j; }
+  /* dove finisce la frase: serve a sapere se e' una domanda */
+  function endOf(k) {
+    for (var j = k; j < items.length; j++) {
+      if (items[j].t === "ponct" && /[.!?]/.test(items[j].w)) return items[j].w;
+    }
+    return ".";
+  }
+  /* la frase ha un soggetto di terza persona prima di qui? */
+  function third(k) {
+    for (var j = k - 1; j >= 0; j--) {
+      if (items[j].t === "ponct" && /[.!?;]/.test(items[j].w)) return false;
+      if (items[j].t === "ponct") continue;
+      if (DT_SUBJ[low[j]] || names[low[j]]) return true;
+      if (/^(they|we|you|i)$/.test(low[j])) return false;
+    }
+    return false;
+  }
+  for (i = 0; i < items.length; i++) {
+    var w = low[i], tag = "";
+    if (isP(i)) { out.push(""); continue; }
+    var p = prev(i), n = next(i), pw = p >= 0 ? low[p] : "", nw = n < items.length ? low[n] : "";
+    if (w === "will" || w === "shall" || w === "won't" || w === "'ll") tag = "future";
+    else if (w === "going" && nw === "to") tag = "future";
+    else if (w === "to" && pw === "going") tag = "future";
+    else if (DT_PAST[w]) tag = "past";
+    else if (/ed$/.test(w) && w.length > 4 && !DT_NOT_ED[w] && !DT_BE[pw]) tag = "past";
+    else if ((w === "have" || w === "has") && DT_PAST[nw] || (w === "have" || w === "has") && /ed$/.test(nw)) tag = "past";
+    else if (DT_ASK[w]) tag = "asking";
+    /* do not ... a inizio frase e' un ordine, non un presente */
+    else if ((w === "do" || w === "don't") && (p < 0 || /[.!?]/.test(items[i - 1] ? items[i - 1].w : ".") || pw === "please")) tag = "asking";
+    else if (DT_QWORD[w] && endOf(i) === "?") tag = "asking";
+    else if (w === "there" && (nw === "is" || nw === "are" || nw === "isn't" || nw === "aren't")) tag = "where";
+    else if ((w === "is" || w === "are") && pw === "there") tag = "where";
+    else if (DT_WHERE[w]) tag = "where";
+    else if (w === "to" && (DT_DET[nw] || /^[A-Z]/.test(words[n] || ""))) tag = "where";
+    else if (DT_PRES[w]) tag = "present";
+    else if ((w === "has" || w === "have") && nw === "got") tag = "present";
+    else if (w === "got" && (pw === "has" || pw === "have")) tag = "present";
+    else if (/ing$/.test(w) && w.length > 4 && (pw === "is" || pw === "are" || pw === "am")) tag = "present";
+    else if (/[^s'u]s$/.test(w) && w.length > 2 && !/^(this|its|his|has|was|is|us|yes|bus|plus)$/.test(w) &&
+             (DT_SUBJ[pw] || (DT_FREQ[pw] && third(i)) || ((pw === "and" || pw === "then") && third(i)) ||
+              (names[pw] && !/(ish|ese|ian)$/.test(pw)))) tag = "present";
+    else if (w === "a" || w === "an" || w === "the") tag = "sentence";
+    else if (DT_JOIN[w]) tag = "sentence";
+    out.push(tag);
+  }
+  return out;
+}
+/* gli errori di grammatica e quelli di ortografia non sono la stessa cosa:
+   «play» al posto di «played» e' grammatica, «Wenesday» e' ortografia */
+var DT_GRAM_ERR = { "Skipped word":1, "Different word":1, "Word ending":1 };
+
+/* le parole dei dettati giocati, come risposte: ogni parola etichettata
+   e' una risposta giusta o sbagliata sulla sua punta. Un errore di sola
+   ortografia su una parola di grammatica conta giusto per la grammatica
+   (la forma l'ha scelta bene) e sbagliato per lo spelling. */
+function shapeDictWords() {
+  var out = { gram:[], spellR:0, spellN:0, match:0, matchGram:0, train:0 };
+  ((typeof allHalves === "function") ? allHalves() : []).forEach(function (h) {
+    var its = h.items || [], tags = dictTag(its), at = h.when || 0;
+    its.forEach(function (it, k) {
+      if (it.t === "ponct") return;
+      var gramErr = it.k && DT_GRAM_ERR[it.k];
+      if (h.ph === "grd") out.train++; else out.match++;
+      if (tags[k]) {
+        out.gram.push({ ax:tags[k], ok:gramErr ? 0 : 1, at:at });
+        if (h.ph !== "grd") out.matchGram++;
+        if (gramErr) return;          /* un errore di grammatica non e' di ortografia */
+      }
+      out.spellN++;
+      if (!it.k) out.spellR++;
+    });
+  });
+  return out;
+}
 
 /* i valori delle sette punte: v da 0 a 100, oppure null se non si sa */
 function shapeData() {
@@ -30803,25 +30927,31 @@ function shapeData() {
   /* le ultime risposte, punta per punta, dalla piu' recente */
   var axisOf = {}, recent = {};
   SHAPE_AXES.forEach(function (a) { a.fam.forEach(function (f) { axisOf[f] = a.id; }); });
-  var H = shapeHist(), hi;
-  for (hi = H.length - 1; hi >= 0; hi--) {
+  var H = shapeHist(), hi, DW = shapeDictWords(), pool = {}, extra = {};
+  for (hi = 0; hi < H.length; hi++) {
     var ax = axisOf[fam[H[hi][0]]];
     if (!ax) continue;
-    if (!recent[ax]) recent[ax] = { r:0, n:0 };
-    if (recent[ax].n >= SHAPE_RECENT) continue;
-    recent[ax].n++; recent[ax].r += H[hi][1];
+    (pool[ax] = pool[ax] || []).push({ ok:H[hi][1], at:H[hi][2] || 0, o:hi });
   }
+  DW.gram.forEach(function (g, j) {
+    (pool[g.ax] = pool[g.ax] || []).push({ ok:g.ok, at:g.at, o:j });
+    if (!extra[g.ax]) extra[g.ax] = { r:0, w:0 };
+    if (g.ok) extra[g.ax].r++; else extra[g.ax].w++;
+  });
+  Object.keys(pool).forEach(function (ax) {
+    var L = pool[ax].sort(function (x, y) { return (y.at - x.at) || (y.o - x.o); }).slice(0, SHAPE_RECENT);
+    recent[ax] = { n:L.length, r:L.reduce(function (s, x) { return s + x.ok; }, 0) };
+  });
   var all = 0;
   SHAPE_AXES.forEach(function (a) {
     var r = 0, w = 0;
     if (a.id === "spell") {
-      var s = statsOf((typeof allHalves === "function") ? allHalves() : []);
-      r = s.perfect; w = s.words - s.perfect;
-      out.push({ id:a.id, n:a.n, say:a.say, count:s.words,
-                 v:s.words >= SHAPE_MIN_WORDS ? Math.round(r / s.words * 100) : null });
+      out.push({ id:a.id, n:a.n, say:a.say, count:DW.spellN,
+                 v:DW.spellN >= SHAPE_MIN_WORDS ? Math.round(DW.spellR / DW.spellN * 100) : null });
       return;
     }
     a.fam.forEach(function (f) { if (tot[f]) { r += tot[f].r; w += tot[f].w; } });
+    if (extra[a.id]) { r += extra[a.id].r; w += extra[a.id].w; }
     all += r + w;
     var rc = recent[a.id], v = null;
     if (rc && rc.n >= SHAPE_MIN) v = Math.round(rc.r / rc.n * 100);
@@ -30829,6 +30959,7 @@ function shapeData() {
     out.push({ id:a.id, n:a.n, say:a.say, count:r + w, v:v });
   });
   out.answers = all;
+  out.words = DW;
   return out;
 }
 
@@ -30907,18 +31038,14 @@ function shapeReads(A) {
 /* da dove vengono i numeri: la grammatica oggi arriva tutta dall'allenamento
    (mercato, colloquio, campo), le partite portano lo spelling dei dettati */
 function shapeFrom(A) {
-  var mw = 0, tw = 0;
-  ((typeof allHalves === "function") ? allHalves() : []).forEach(function (h) {
-    (h.items || []).forEach(function (it) {
-      if (it.t === "ponct") return;
-      if (h.ph === "grd") tw++; else mw++;
-    });
-  });
+  var DW = A.words || shapeDictWords(), mw = DW.match, tw = DW.train, q = 0;
+  /* le domande vere: tutte le risposte meno le parole dei dettati */
+  q = A.answers - DW.gram.length;
   function n(x, one, many) { return x + " " + (x === 1 ? one : many); }
   return '<div class="shp-src"><span>WHERE THE NUMBERS COME FROM</span>' +
-    "<p><b>Training</b>" + n(A.answers, "grammar answer", "grammar answers") +
+    "<p><b>Training</b>" + n(Math.max(0, q), "grammar answer", "grammar answers") +
     (tw ? " · " + n(tw, "dictation word", "dictation words") : "") + "</p>" +
-    "<p><b>Matches</b>" + (mw ? n(mw, "dictation word", "dictation words") + ", for spelling" : "no dictations yet") + "</p>" +
+    "<p><b>Matches</b>" + (mw ? n(mw, "dictation word", "dictation words") + " \u00b7 " + DW.matchGram + " on grammar" : "no dictations yet") + "</p>" +
     "<em>Each side counts your last " + SHAPE_RECENT + " answers, so what you train shows.</em></div>";
 }
 
