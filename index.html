@@ -4117,6 +4117,39 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
   .spx-c.just .spx-pic::after{animation:none;opacity:1;transform:translate(-50%,-50%) rotate(-12deg)}
 }
 
+
+/* ═════════ My shape: la tela a sette punte ═════════ */
+.shp-row{display:flex;align-items:center;gap:12px;width:100%;padding:8px 12px 8px 6px;border-radius:14px;border:1px solid var(--edge);
+  background:var(--deep);color:var(--cream);text-align:left;font-family:var(--brand);cursor:pointer;transition:transform .12s ease-out}
+.shp-row:active{transform:scale(.98)}
+.shp-row:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.shp-row svg{flex:none;width:92px;height:auto}
+.shp-row span{flex:1;min-width:0}
+.shp-row i{display:block;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--fog)}
+.shp-row b{display:block;margin-top:3px;font-size:16px;font-weight:800}
+.shp-row em{display:block;margin-top:2px;font-style:normal;font-size:12px;font-weight:600;color:var(--gold)}
+.shp-row u{flex:none;text-decoration:none;font-size:22px;color:var(--fog)}
+.shp-chart{position:relative;width:100%;max-width:340px;margin:6px auto 0}
+.shp-chart .shp-svg{display:block;width:100%;height:auto}
+.shp-lab{position:absolute;transform:translate(-50%,-50%);width:86px;text-align:center;font-size:10px;font-weight:800;
+  letter-spacing:.06em;text-transform:uppercase;line-height:1.25;color:#C3D6C6}
+.shp-lab.r{transform:translate(0,-50%);width:64px;text-align:left}
+.shp-lab.l{transform:translate(-100%,-50%);width:64px;text-align:right}
+.shp-lab i{display:block;margin-top:2px;font-style:normal;font-size:14px;letter-spacing:0;color:var(--gold)}
+.shp-lab.dim,.shp-lab.dim i{color:#6E9A82}
+.shp-note{margin:4px 8px 0;font-size:12px;font-weight:600;line-height:1.45;color:var(--fog);text-align:center}
+.shp-read{margin-top:16px;padding:14px 15px;border:1px solid var(--edge);border-radius:16px;background:var(--band)}
+.shp-read>span{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--fog)}
+.shp-read p{display:flex;align-items:flex-start;gap:10px;margin:10px 0 0;font-size:13px;font-weight:600;line-height:1.45;color:#C3D6C6}
+.shp-read p i{flex:none;width:8px;height:8px;margin-top:5px;border-radius:999px}
+.shp-read i.best{background:var(--gold)}.shp-read i.thin{background:#5E8C74}.shp-read i.dark{background:var(--edge)}
+.shp-foot{margin:14px 6px 0;font-size:12px;font-weight:600;line-height:1.45;color:var(--fog);text-align:center}
+.shp .shp-area{transform-origin:50% 47.8%;animation:fxShape .6s cubic-bezier(.2,.9,.3,1) backwards}
+.shp .shp-line{stroke-dasharray:900;animation:fxDraw .9s ease-out .1s backwards}
+@keyframes fxShape{from{opacity:0;transform:scale(.3)}}
+@keyframes fxDraw{from{stroke-dashoffset:900}}
+@media(prefers-reduced-motion:reduce){.shp .shp-area,.shp .shp-line{animation:none}}
+
 /* l'esercizio: la parola dentro la sua frase */
 .wdr{display:flex;flex-direction:column}
 .wd-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -5463,7 +5496,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "171";
+var APPVER = "172";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -13330,7 +13363,7 @@ function drawStatsCard() {
   if (open) {
     var s = season(), top = topKinds(s.kinds, 1)[0];
     var ever = Object.keys(STARS.fixedEver || {}).length;
-    body = '<div class="sqbody ms">' +
+    body = '<div class="sqbody ms">' + shapeRow() +
       (last.length
         ? '<div class="ms-box"><p class="ms-lab">LAST ' + last.length +
           (last.length === 1 ? " DICTATION" : " DICTATIONS") + "</p>" +
@@ -13355,6 +13388,7 @@ function drawStatsCard() {
   }
   box.innerHTML = myHead("MY STATS", big, sub, open, "sqst") + body;
   $("sqst").onclick = function () { myToggle("stats"); };
+  if ($("shprow")) $("shprow").onclick = function () { go("shape"); };
 }
 
 /* ───────── le maglie, dodici per schermata ─────────
@@ -30702,6 +30736,178 @@ VIEWS.goldSeason = function (d) {
     return prev(d);
   };
 });
+
+/* ───── 49-shape.js ───── */
+/* ═══════════════ MY SHAPE: la tela a sette punte ═══════════════
+   Le quattordici famiglie dei TEMI raccolte in sette punte, piu' lo
+   spelling dei dettati. L'ordine e' fisso e non si tocca: i tre tempi
+   stanno vicini, cosi' un buco sui tempi si legge come una sola
+   ammaccatura, e dopo un mese l'alunno riconosce la sua figura.
+
+   I numeri vengono dal quaderno dei punti (63-punti.js), che segna ogni
+   risposta di grammatica con la sua etichetta, e dai tempi dei dettati.
+   Una punta con poche risposte non si disegna corta: si disegna
+   tratteggiata, perche' chi non ha mai incontrato i modali non e'
+   scarso nei modali, non lo sappiamo ancora. */
+var SHAPE_AXES = [
+  { id:"past",     n:"The past",        fam:["passato", "perfetto"],
+    say:"the past simple and the present perfect" },
+  { id:"present",  n:"The present",     fam:["presente", "essere"],
+    say:"the present, to be and have got" },
+  { id:"future",   n:"The future",      fam:["futuro", "condizionali"],
+    say:"will, going to and if" },
+  { id:"asking",   n:"Asking & modals", fam:["chiedere"],
+    say:"questions, can, must and should" },
+  { id:"where",    n:"Where & when",    fam:["dovequando"],
+    say:"prepositions and there is / there are" },
+  { id:"sentence", n:"Sentences",       fam:["nome", "confronto", "forme", "unire", "passivo", "indiretto"],
+    say:"articles, plurals, comparing and joining" },
+  { id:"spell",    n:"Spelling",        fam:[],
+    say:"the words in your dictations" }
+];
+var SHAPE_MIN = 12;        /* risposte di grammatica sotto le quali la punta resta tratteggiata */
+var SHAPE_MIN_WORDS = 30;  /* parole di dettato, per lo spelling */
+
+/* i valori delle sette punte: v da 0 a 100, oppure null se non si sa */
+function shapeData() {
+  var fam = {}, out = [], P = (typeof puntiLoad === "function") ? puntiLoad() : { t:{} };
+  TEMI.forEach(function (t) { t.t.forEach(function (tag) { fam[tag] = t.id; }); });
+  var tot = {};
+  Object.keys(P.t || {}).forEach(function (k) {
+    var tag = k.slice(k.indexOf("|") + 1), f = fam[tag], e = P.t[k];
+    if (!f) return;
+    if (!tot[f]) tot[f] = { r:0, w:0 };
+    tot[f].r += e.r || 0; tot[f].w += e.w || 0;
+  });
+  var all = 0;
+  SHAPE_AXES.forEach(function (a) {
+    var r = 0, w = 0;
+    if (a.id === "spell") {
+      var s = statsOf((typeof allHalves === "function") ? allHalves() : []);
+      r = s.perfect; w = s.words - s.perfect;
+      out.push({ id:a.id, n:a.n, say:a.say, count:s.words,
+                 v:s.words >= SHAPE_MIN_WORDS ? Math.round(r / s.words * 100) : null });
+      return;
+    }
+    a.fam.forEach(function (f) { if (tot[f]) { r += tot[f].r; w += tot[f].w; } });
+    all += r + w;
+    out.push({ id:a.id, n:a.n, say:a.say, count:r + w,
+               v:r + w >= SHAPE_MIN ? Math.round(r / (r + w) * 100) : null });
+  });
+  out.answers = all;
+  return out;
+}
+
+/* la tela come SVG: anelli, raggi, area, bordo pieno dove la punta dopo e'
+   nota e tratteggiato dove la scavalca, i buchi segnati sul bordo */
+function shapeSvg(A, size, label) {
+  var N = A.length, W = size, H = Math.round(size * 0.935);
+  var cx = W / 2, cy = H * 0.478, R = W * 0.3;
+  function at(i, r) {
+    var a = (-90 + i * 360 / N) * Math.PI / 180;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  }
+  function f1(x) { return x.toFixed(1); }
+  function poly(r) {
+    var d = "", i, p;
+    for (i = 0; i < N; i++) { p = at(i, r); d += (i ? "L" : "M") + f1(p[0]) + " " + f1(p[1]) + " "; }
+    return d + "Z ";
+  }
+  var rings = "", spokes = "", k, e;
+  [0.25, 0.5, 0.75, 1].forEach(function (f) { rings += poly(R * f); });
+  for (k = 0; k < N; k++) { e = at(k, R); spokes += "M" + f1(cx) + " " + f1(cy) + "L" + f1(e[0]) + " " + f1(e[1]) + " "; }
+  var known = [];
+  A.forEach(function (a, i) { if (a.v != null) known.push({ i:i, p:at(i, R * Math.max(4, a.v) / 100) }); });
+  var area = "", solid = "", dash = "", dots = "", holes = "";
+  var dr = size > 200 ? 4 : 2.6, hr = size > 200 ? 5 : 3.2;
+  known.forEach(function (o, j) {
+    area += (j ? "L" : "M") + f1(o.p[0]) + " " + f1(o.p[1]) + " ";
+    if (known.length > 1) {
+      var nx = known[(j + 1) % known.length];
+      var seg = "M" + f1(o.p[0]) + " " + f1(o.p[1]) + "L" + f1(nx.p[0]) + " " + f1(nx.p[1]) + " ";
+      if ((nx.i - o.i + N) % N === 1) solid += seg; else dash += seg;
+    }
+    dots += "M" + f1(o.p[0] - dr) + " " + f1(o.p[1]) + "a" + dr + " " + dr + " 0 1 0 " + (2 * dr) + " 0a" +
+      dr + " " + dr + " 0 1 0 " + (-2 * dr) + " 0 ";
+  });
+  A.forEach(function (a, i) {
+    if (a.v != null) return;
+    var p = at(i, R);
+    holes += "M" + f1(p[0] - hr) + " " + f1(p[1]) + "a" + hr + " " + hr + " 0 1 0 " + (2 * hr) + " 0a" +
+      hr + " " + hr + " 0 1 0 " + (-2 * hr) + " 0 ";
+  });
+  return '<svg class="shp-svg" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" ' +
+    (label ? 'role="img" aria-label="' + esc(label) + '"' : 'aria-hidden="true"') + ">" +
+    '<path d="' + rings + '" fill="none" stroke="#143326" stroke-width="1"/>' +
+    '<path d="' + spokes + '" fill="none" stroke="#143326" stroke-width="1"/>' +
+    (known.length > 2 ? '<path class="shp-area" d="' + area + 'Z" fill="rgba(227,239,38,0.14)"/>' : "") +
+    '<path class="shp-line" d="' + solid + '" fill="none" stroke="#E3EF26" stroke-width="' + (size > 200 ? 2.5 : 1.8) +
+      '" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '<path d="' + dash + '" fill="none" stroke="#5E8C74" stroke-width="' + (size > 200 ? 2 : 1.4) + '" stroke-dasharray="4 4"/>' +
+    '<path d="' + dots + '" fill="#E3EF26"/>' +
+    '<path d="' + holes + '" fill="#04170F" stroke="#5E8C74" stroke-width="' + (size > 200 ? 2 : 1.4) + '"/>' +
+    "</svg>";
+}
+
+/* tre righe in parole: il lato migliore, quello sottile, quello che non si vede */
+function shapeReads(A) {
+  var known = A.filter(function (a) { return a.v != null; }), out = [];
+  var dark = A.filter(function (a) { return a.v == null; });
+  if (known.length) {
+    var best = known.slice().sort(function (x, y) { return y.v - x.v; })[0];
+    var thin = known.slice().sort(function (x, y) { return x.v - y.v; })[0];
+    out.push({ c:"best", t:best.n + " is your best side. Keep it: it is what holds a match together." });
+    if (thin !== best && thin.v < 70) out.push({ c:"thin", t:thin.n + " is thin — " + thin.say + "." });
+  }
+  if (dark.length) {
+    var d0 = dark[0];
+    out.push({ c:"dark", t:d0.n + " is still dotted: " + d0.count +
+      (d0.id === "spell" ? (d0.count === 1 ? " word" : " words") : (d0.count === 1 ? " answer" : " answers")) +
+      " is not enough to tell." + (dark.length > 1 ? " " + (dark.length - 1) + " more " +
+      (dark.length === 2 ? "side is" : "sides are") + " dotted too." : "") });
+  }
+  if (!out.length) out.push({ c:"dark", t:"Nothing to read yet. Every question you answer draws a little more of it." });
+  return out;
+}
+
+/* ───────── la riga dentro My stats ───────── */
+function shapeRow() {
+  var A = shapeData(), known = A.filter(function (a) { return a.v != null; });
+  var best = known.slice().sort(function (x, y) { return y.v - x.v; })[0];
+  return '<button class="shp-row" id="shprow" type="button">' + shapeSvg(A, 92, "") +
+    '<span><i>MY SHAPE</i><b>Seven areas of English</b><em>' +
+    (best ? "Best side: " + esc(best.n) : "It draws itself as you answer") + "</em></span>" +
+    '<u aria-hidden="true">&rsaquo;</u></button>';
+}
+
+/* ───────── la pagina ───────── */
+VIEWS.shape = function () {
+  var A = shapeData(), lv = (typeof lvSafe === "function") ? lvSafe() : "A1";
+  if (ME.club) paintClub(ME.club);
+  barFlow("My shape", (ME.club ? ME.club.name + " · " : "") + "level " + lv + " · " +
+    A.answers + (A.answers === 1 ? " answer" : " answers") + " so far", 0);
+  var size = 340, H = Math.round(size * 0.935), N = A.length, cx = size / 2, cy = H * 0.478, R = size * 0.3;
+  var labels = A.map(function (a, i) {
+    var ang = (-90 + i * 360 / N) * Math.PI / 180;
+    /* ai lati l'etichetta si appoggia fuori dalla punta, in alto e in basso
+       sta centrata: cosi' non copre il cerchietto della punta */
+    var c = Math.cos(ang), side = c > 0.3 ? 'r' : c < -0.3 ? 'l' : '';
+    var far = side ? R + 10 : R + 30;
+    var x = cx + far * c, y = cy + far * Math.sin(ang);
+    return '<span class="shp-lab' + (side ? ' ' + side : '') + (a.v == null ? ' dim' : '') + '" style="left:' + (x / size * 100).toFixed(2) +
+      '%;top:' + (y / H * 100).toFixed(2) + '%">' + esc(a.n) + "<i>" + (a.v == null ? "—" : a.v) + "</i></span>";
+  }).join("");
+  html('<div class="pad shp">' +
+    '<div class="shp-chart">' + shapeSvg(A, size, "Seven areas of English, scored out of one hundred: " +
+      A.map(function (a) { return a.n + " " + (a.v == null ? "not known yet" : a.v); }).join(", ")) + labels + "</div>" +
+    '<p class="shp-note">The dotted side is the part we cannot see yet. Answer more questions on it and the shape closes.</p>' +
+    '<div class="shp-read"><span>WHAT THE SHAPE SAYS</span>' +
+    shapeReads(A).map(function (r) {
+      return '<p><i class="' + r.c + '" aria-hidden="true"></i>' + esc(r.t) + "</p>";
+    }).join("") + "</div>" +
+    '<p class="shp-foot">Grammar questions in matches, friendlies and the gym fill the shape. ' +
+    "Spelling comes from your dictations.</p></div>");
+};
 
 /* ───── 50-words.js ───── */
 /* ═══════════════ my words: ascolta, scrivi, sistema ═══════════════ */
