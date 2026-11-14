@@ -13,7 +13,7 @@
    vecchia viene buttata e il telefono riparte pulito.
    ═══════════════════════════════════════════════════════════════════ */
 
-var VER = "175";
+var VER = "176";
 var BOX = "footefl-" + VER;
 var SHELL = ["./", "./index.html", "./manifest.webmanifest",
              "./icon-192.png", "./icon-512.png"];

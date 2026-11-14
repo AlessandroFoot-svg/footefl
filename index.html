@@ -4134,6 +4134,47 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .rdy-say{margin:13px 0 0;font-size:13px;font-weight:600;line-height:1.45;color:#C3D6C6}
 .rdy-say b{color:var(--cream)}
 .rdy-go{margin-top:11px}
+/* ═════════ obiettivi, questionario, chi e' fuori ═════════ */
+.cch{padding:14px 15px;border:1px solid var(--edge);border-radius:16px;background:var(--band);margin-bottom:12px}
+.cch-k{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--gold)}
+.cch>b{display:block;margin:5px 0 10px;font-size:19px;font-weight:800;color:var(--cream)}
+.cch>em{display:block;margin-top:8px;font-style:normal;font-size:13px;font-weight:600;line-height:1.45;color:#C3D6C6}
+.cch-b{display:flex;gap:8px;margin-top:11px}
+.cch-b .btn{margin:0;flex:1}
+.rdy-bar.obj{position:relative;overflow:visible}
+.rdy-bar.obj s{position:absolute;top:-3px;bottom:-3px;width:2px;border-radius:2px;background:var(--cream);opacity:.7}
+.pln{display:flex;align-items:center;gap:13px;margin-top:10px;padding:12px 14px;border:1px solid var(--edge);border-radius:16px;background:var(--band)}
+.pln.past{opacity:.65}
+.pln.now{border-color:var(--gold)}
+.pln-md{flex:none;width:44px;text-align:center;font-size:10px;font-weight:800;letter-spacing:.14em;color:var(--fog)}
+.pln-md b{display:block;font-size:22px;letter-spacing:0;color:var(--cream)}
+.pln-m{flex:1;min-width:0}
+.pln-m>b{display:block;margin-bottom:8px;font-size:15px;font-weight:800;color:var(--cream)}
+.pln-m>b i{margin-left:6px;font-style:normal;font-size:10px;letter-spacing:.14em;color:var(--gold)}
+.pln-m em{display:block;margin-top:7px;font-style:normal;font-size:12px;font-weight:600;color:var(--fog)}
+.pln+.btn{margin-top:16px}
+.feel{margin:14px 0;padding:13px 15px;border:1px solid var(--edge);border-radius:16px;background:var(--band)}
+.feel>span{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--fog)}
+.feel-b{display:flex;gap:8px;margin-top:10px}
+.feel-o{flex:1;min-height:46px;border-radius:12px;border:1px solid var(--edge);background:transparent;color:var(--cream);
+  font:800 14px var(--brand);cursor:pointer;transition:transform .12s ease-out}
+.feel-o:active{transform:scale(.97)}
+.feel-o:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.feel-o.on{background:var(--gold);border-color:var(--gold);color:#0A2419}
+.feel em{display:block;margin-top:9px;font-style:normal;font-size:12px;font-weight:600;line-height:1.45;color:var(--fog)}
+.out-r{display:flex;align-items:center;gap:11px;padding:11px 8px;border-bottom:1px solid var(--edge)}
+.out-r>i{flex:none;width:42px;padding:5px 0;border-radius:8px;text-align:center;font-style:normal;font-size:10px;font-weight:800;letter-spacing:.1em;
+  background:rgba(201,85,63,.16);color:#E8A89A}
+.out-r.inj>i{background:rgba(227,200,74,.14);color:#E3C84A}
+.out-r.fit>i{background:rgba(226,251,206,.12);color:var(--cream)}
+.out-r>span{flex:1;min-width:0}
+.out-r b{display:block;font-size:14px;font-weight:800;color:var(--cream)}
+.out-r em{display:block;margin-top:2px;font-style:normal;font-size:12px;font-weight:600;color:var(--fog)}
+.out-r>u{flex:none;max-width:86px;text-align:right;text-decoration:none;font-size:11px;font-weight:700;line-height:1.3;color:#C3D6C6}
+.out-how{margin:12px 6px 4px}
+.out-how>span{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--fog)}
+.out-how p{margin:7px 0 0;font-size:12.5px;font-weight:600;line-height:1.5;color:#C3D6C6}
+.out-how p b{color:var(--cream)}
 .brf-door{margin-top:16px}
 .brf-who{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--edge);border-radius:18px;background:var(--band)}
 .brf-who b{display:block;font-size:18px;font-weight:800;color:var(--cream)}
@@ -5531,7 +5572,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "175";
+var APPVER = "176";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -8220,7 +8261,7 @@ VIEWS.bulletin = function () {
 function compTema() {
   try {
     if (typeof BULL === "undefined" || !BULL) return "";
-    return String(BULL.tema || "");
+    return (typeof objTema === "function") ? objTema() : String(BULL.tema || "");
   } catch (e) { return ""; }
 }
 function compTemaNome() {
@@ -10420,7 +10461,7 @@ VIEWS.home = function () {
   var dmHere = (typeof demoOn === "function") && demoOn();
   if (typeof dmReset === "function") dmReset();
   html('<div id="hwho"></div><div id="hdemo"></div><div id="hlive"></div>' +
-       '<div id="hnext"></div>' +
+       '<div id="hnext"></div><div id="hobj"></div>' +
        (dmHere ? ""
                : '<section class="pad" id="hsq"><div class="sqc" id="sqc"></div></section>') +
        '<div id="htab"></div>' +
@@ -10429,7 +10470,8 @@ VIEWS.home = function () {
 
   drawWho(); drawDemo(); drawLive(); drawNextUp(); drawHomeSquad(); drawHomeTable();
   drawHomeGround();
-  popIn(["hwho", "hdemo", "hlive", "hnext", "hsq", "htab", "stadbar"]);
+  if (typeof drawObjective === "function") drawObjective();
+  popIn(["hwho", "hdemo", "hlive", "hnext", "hobj", "hsq", "htab", "stadbar"]);
 
   /* il saluto, quando gli otto punti sono tutti fatti: si apre qui,
      sopra la lista finita, e il suo bottone chiude la prova */
@@ -13307,10 +13349,12 @@ function drawMyCards() {
   var sq = $("sqc");
   if (!sq || !sq.parentNode) return;
   if (!$("sqw")) {
-    sq.insertAdjacentHTML("afterend", '<div class="sqc sqmore" id="sqw"></div>' +
+    sq.insertAdjacentHTML("afterend", '<div class="sqc sqmore" id="sqo"></div>' +
+      '<div class="sqc sqmore" id="sqw"></div>' +
       '<div class="sqc sqmore" id="sqg"></div><div class="sqc sqmore" id="sqs"></div>');
   }
   loadMem(); loadStars();
+  if (typeof drawOutCard === "function") drawOutCard();
   drawWordsCard(); drawGoldCard(); drawStatsCard();
 }
 function myToggle(id) {
@@ -14222,6 +14266,11 @@ function reportOf(md) {
   if (typeof tagsForReport === "function") {
     var tg = tagsForReport();
     if (tg) out.tags = tg;
+  }
+  /* com'e' andata, secondo lui: partita e allenamenti di questa giornata */
+  if (typeof feelFor === "function") {
+    var fl = feelFor(md);
+    if (fl.length) out.feel = fl;
   }
   if (SHEET && SHEET.call) {
     out.calls = { side:SHEET.call.att.side, taker:SHEET.call.att.taker,
@@ -19065,6 +19114,7 @@ VIEWS.mReport = function () {
       ((a ? a.red : 0) + (d ? d.red : 0)) + "R</b></div>" +
     "</div>" +
 
+    ((typeof feelBox === "function") ? feelBox("m", md, "") : "") +
     reportBox(md, "rsend") +
     '<p class="lede">Your language report for this matchday is ready in ' +
     "<b>My form</b>, with every word and every kind of mistake. You can download it " +
@@ -19077,6 +19127,7 @@ VIEWS.mReport = function () {
         '<button class="btn ghost" id="rpb">Back to my squad</button>') +
     "</div>");
   wireReport(md, "rsend");
+  if (typeof feelWire === "function") feelWire();
   if ($("rpf")) $("rpf").onclick = function () { reset("form"); };
   $("rpb").onclick = function () { reset(demoOnSafe() ? "home" : "squad"); };
 };
@@ -19754,7 +19805,7 @@ VIEWS.ground = function (d) {
 
 function drawSessions() {
   var left = sessLeft(), g = growLeft();
-  $("sessbox").innerHTML = SESSIONS.map(function (s) {
+  $("sessbox").innerHTML = ((typeof coachCard === "function") ? coachCard() : "") + SESSIONS.map(function (s) {
     var done = didSession(s.id);
     var shut = done || !left;
     return '<button class="sess' + (done ? " done2" : shut ? " shut2" : "") +
@@ -19779,6 +19830,7 @@ function drawSessions() {
       else go("words");
     };
   });
+  if (typeof coachWire === "function") coachWire();
 }
 
 function drawYard(groups) {
@@ -20048,12 +20100,14 @@ VIEWS.gsEnd = function () {
           }).join("");
         })() + "</div>"
       : "") +
+    ((typeof feelBox === "function") ? feelBox("t", mdNow(), GS.kind) : "") +
     '<p class="lede">This session fills the till. ' +
     "To make a player grow &mdash; the body or the English &mdash; open " +
     "<b>my squad</b>, tap the player and spend one of your six actions.</p>" +
     '<button class="btn ghost" id="gagain">Back to the ground</button></div>');
 
   $("gagain").onclick = function () { reset("ground"); };
+  if (typeof feelWire === "function") feelWire();
 };
 
 /* ───────── 4. chi cresce ───────── */
@@ -31201,14 +31255,7 @@ function readyHtml(ph, quiet) {
 function readyStart(ph, ax) {
   var a = SHAPE_AXES.filter(function (x) { return x.id === ax; })[0];
   if (!a) return;
-  var lv = myLevelSafe(), fam = a.fam[Math.floor(Math.random() * a.fam.length)];
-  var all = drawQuestions(lv, 30, fam), ok = {}, qs;
-  TEMI.forEach(function (t) { if (a.fam.indexOf(t.id) > -1) t.t.forEach(function (g) { ok[g] = 1; }); });
-  /* drawQuestions riempie con altro se il tema non basta: qui si tiene solo il tema */
-  qs = all.filter(function (q) { return ok[q.t]; }).slice(0, RDY_N);
-  if (!qs.length) qs = all.slice(0, RDY_N);
-  RDY = { ph:ph, n:a.n, i:0, right:0, qs:qs };
-  go("rdyWarm");
+  drillFree(a.n, a.fam);
 }
 VIEWS.rdyWarm = function () {
   if (!RDY) return reset("home");
@@ -31216,8 +31263,8 @@ VIEWS.rdyWarm = function () {
     barFlow("Warm-up done", RDY.n, 100, false);
     html('<div class="pad"><p class="bignum">' + RDY.right + "<em>/" + RDY.qs.length + "</em></p>" +
       '<div class="verdict"><b>' + (RDY.right === RDY.qs.length ? "Sharp." : "Warmed up.") + "</b>" +
-      "These answers count in My shape. Now the match.</div>" +
-      '<button class="btn" id="rdyback">Back to the team</button></div>');
+      "These answers count in My shape.</div>" +
+      '<button class="btn" id="rdyback">Done</button></div>');
     $("rdyback").onclick = function () { RDY = null; back(); };
     return;
   }
@@ -31343,6 +31390,271 @@ VIEWS.brief = function (d) {
   $("brkick").onclick = function () { swap("walkout", { ph:ph }); };
   if ($("rdygo")) $("rdygo").onclick = function () { readyStart(ph, $("rdygo").dataset.ax); };
 };
+
+/* ───── 49-plan.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   GLI OBIETTIVI, L'ALLENATORE CHE CONSIGLIA, IL QUESTIONARIO, CHI E' FUORI
+   Quattro cose che fanno della stagione un percorso e non una fila di
+   partite:
+     · il piano: il professore decide, giornata per giornata, il punto di
+       grammatica su cui lavorare (BULL.plan). L'alunno lo vede e sa
+       perche' si allena su quello;
+     · l'allenatore che consiglia: senza un obiettivo del professore, il
+       consiglio e' la punta piu' debole di My shape;
+     · il questionario: un tocco dopo la partita e dopo l'allenamento.
+       Abitua a valutarsi, e al professore dice chi fa fatica anche
+       quando i numeri sembrano buoni. Viaggia nel referto, col codice;
+     · chi e' fuori: infortunati e squalificati in un posto solo, con la
+       regola scritta sotto, cosi' non sembra un capriccio del gioco.
+   ═══════════════════════════════════════════════════════════════════ */
+var OBJ_GOAL = 70;         /* la stessa soglia del riscaldamento */
+
+/* ───────── il piano del professore ───────── */
+function planList() {
+  var p = [];
+  try { p = (typeof BULL !== "undefined" && BULL && BULL.plan) || []; } catch (e) { p = []; }
+  return p.filter(function (x) { return x && x.md && temaById(x.tema); })
+    .sort(function (a, b) { return Number(a.md) - Number(b.md); });
+}
+/* l'obiettivo di una giornata: quello del piano, se no il tema della
+   competizione (le amichevoli a tema), se no niente */
+function objTema(md) {
+  md = md || ((typeof ME !== "undefined" && ME.next) ? ME.next.md : 1);
+  var p = planList().filter(function (x) { return Number(x.md) === md; })[0];
+  if (p) return p.tema;
+  try { return String((BULL && BULL.tema) || ""); } catch (e) { return ""; }
+}
+/* quanto vale l'alunno su una o piu' famiglie: le ultime risposte se
+   bastano, se no i totali del quaderno */
+function famScore(fams) {
+  var tags = {}, r = 0, w = 0, H = shapeHist(), i, rr = 0, rn = 0;
+  TEMI.forEach(function (t) {
+    if (fams.indexOf(t.id) > -1) t.t.forEach(function (g) { tags[g] = 1; });
+  });
+  var P = (typeof puntiLoad === "function") ? puntiLoad() : { t:{} };
+  Object.keys(P.t || {}).forEach(function (k) {
+    var e = P.t[k];
+    if (tags[k.slice(k.indexOf("|") + 1)]) { r += e.r || 0; w += e.w || 0; }
+  });
+  for (i = H.length - 1; i >= 0 && rn < SHAPE_RECENT; i--) {
+    if (tags[H[i][0]]) { rn++; rr += H[i][1]; }
+  }
+  return { n:r + w,
+           v:rn >= SHAPE_MIN ? Math.round(rr / rn * 100)
+             : r + w >= SHAPE_MIN ? Math.round(r / (r + w) * 100) : null };
+}
+
+/* ───────── che cosa allenare adesso ───────── */
+function coachPick() {
+  var t = temaById(objTema());
+  if (t) {
+    var s = famScore([t.id]);
+    return { kind:"obj", n:t.n, fams:[t.id], v:s.v };
+  }
+  var low = null;
+  shapeData().forEach(function (a) {
+    if (a.id === "spell" || a.v === null) return;
+    if (!low || a.v < low.v) low = a;
+  });
+  if (!low) return null;
+  var ax = SHAPE_AXES.filter(function (x) { return x.id === low.id; })[0];
+  return { kind:"weak", n:low.n, fams:ax.fam, v:low.v };
+}
+function objBar(v) {
+  return '<div class="rdy-bar obj">' + (v === null ? "" : '<u style="width:' + v + '%"></u>') +
+    '<s style="left:' + OBJ_GOAL + '%"></s></div>';
+}
+function coachCard() {
+  var c;
+  try { c = coachPick(); } catch (e) { c = null; }
+  if (!c) return "";
+  var obj = c.kind === "obj";
+  return '<div class="cch"><span class="cch-k">' +
+    (obj ? "OBJECTIVE &middot; MATCHDAY " + mdNow() : "COACH SUGGESTS") + "</span>" +
+    "<b>" + esc(c.n) + "</b>" + objBar(c.v) + "<em>" +
+    (obj
+      ? "Set by your teacher. " +
+        (c.v === null ? "Not tested yet: the target is " + OBJ_GOAL + "."
+         : c.v >= OBJ_GOAL ? "You are at " + c.v + ": target reached."
+         : "You are at " + c.v + ", the target is " + OBJ_GOAL + ".")
+      : "Your weakest side: you are at " + c.v + ", the target is " + OBJ_GOAL + ".") + "</em>" +
+    '<div class="cch-b"><button class="btn ghost" id="cchgo" type="button">Train it &middot; ' +
+    RDY_N + " questions</button>" +
+    (planList().length ? '<button class="btn ghost" id="cchplan" type="button">Season plan</button>' : "") +
+    "</div></div>";
+}
+function coachWire() {
+  var c;
+  try { c = coachPick(); } catch (e) { c = null; }
+  if ($("cchgo") && c) $("cchgo").onclick = function () { drillFree(c.n, c.fams); };
+  if ($("cchplan")) $("cchplan").onclick = function () { go("plan"); };
+}
+/* cinque domande di una o piu' famiglie: non pagano e non consumano
+   sessioni, contano solo in My shape */
+function drillFree(label, fams) {
+  var lv = myLevelSafe(), ok = {}, pool = [], seen = {}, qs, i, j, x;
+  TEMI.forEach(function (t) {
+    if (fams.indexOf(t.id) > -1) t.t.forEach(function (g) { ok[g] = 1; });
+  });
+  fams.forEach(function (f) { pool = pool.concat(drawQuestions(lv, 30, f)); });
+  /* drawQuestions riempie con altro se il tema non basta: qui resta solo il tema */
+  qs = pool.filter(function (q) {
+    if (!ok[q.t] || seen[q.q]) return false;
+    seen[q.q] = 1; return true;
+  });
+  for (i = qs.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1)); x = qs[i]; qs[i] = qs[j]; qs[j] = x;
+  }
+  qs = qs.slice(0, RDY_N);
+  if (!qs.length) qs = pool.slice(0, RDY_N);
+  if (!qs.length) return;
+  RDY = { n:label, i:0, right:0, qs:qs };
+  go("rdyWarm");
+}
+function drawObjective() {
+  var box = $("hobj");
+  if (!box) return;
+  var card = ((typeof demoOn === "function") && demoOn()) ? "" : coachCard();
+  box.innerHTML = card ? '<section class="pad">' + card + "</section>" : "";
+  coachWire();
+}
+
+/* ───────── il piano, giornata per giornata ───────── */
+VIEWS.plan = function () {
+  if (ME.club) paintClub(ME.club);
+  var P = planList(), now = mdNow();
+  barFlow("Season plan", ME.club ? ME.club.name : "", 0);
+  if (!P.length) {
+    return html('<div class="pad"><p class="lede">Your teacher has not set a plan for ' +
+      "this season yet.</p></div>");
+  }
+  html('<div class="pad"><p class="lede">What your teacher wants you to master, matchday ' +
+    "by matchday. The target is <b>" + OBJ_GOAL + "</b> on each one.</p>" +
+    P.map(function (x) {
+      var t = temaById(x.tema), s = famScore([t.id]), md = Number(x.md);
+      var st = md < now ? "past" : md === now ? "now" : "next";
+      return '<div class="pln ' + st + '"><span class="pln-md">MD<b>' + md + "</b></span>" +
+        '<span class="pln-m"><b>' + esc(t.n) + (st === "now" ? " <i>NOW</i>" : "") + "</b>" +
+        objBar(s.v) + "<em>" +
+        (s.v === null ? "not tested yet"
+         : s.v >= OBJ_GOAL ? "target reached &middot; " + s.v : "you are at " + s.v) +
+        "</em></span></div>";
+    }).join("") +
+    (temaById(objTema())
+      ? '<button class="btn" id="cchgo" type="button">Train this matchday&rsquo;s objective</button>'
+      : "") + "</div>");
+  coachWire();
+};
+
+/* ───────── il questionario: un tocco ───────── */
+var FEEL_NAME = ["", "Easy", "OK", "Hard"];
+var FEEL_SAY = ["", "Noted. You are ready for more.", "Noted. Keep going like this.",
+                "Noted. Hard is fine: train it before the next one."];
+function feelKey() {
+  return "footefl-feel-" + scope() + "-" + (ME.club ? ME.club.id : "x");
+}
+function feelAll() {
+  try { return JSON.parse(localStorage.getItem(feelKey()) || "[]") || []; }
+  catch (e) { return []; }
+}
+function feelGet(k, md, s) {
+  var x = feelAll().filter(function (e) { return e.k === k && e.md === md && e.s === s; })[0];
+  return x ? x.v : 0;
+}
+function feelSet(k, md, s, v) {
+  var a = feelAll().filter(function (e) { return !(e.k === k && e.md === md && e.s === s); });
+  a.push({ k:k, md:md, s:s, v:v, at:Date.now() });
+  if (a.length > 120) a = a.slice(-120);
+  try { localStorage.setItem(feelKey(), JSON.stringify(a)); } catch (e) {}
+}
+/* per il referto: solo numeri — partita o allenamento, quale sessione, 1-2-3 */
+function feelFor(md) {
+  return feelAll().filter(function (e) { return e.md === md; })
+    .map(function (e) { return { k:e.k, s:e.s, v:e.v }; });
+}
+function feelBox(k, md, s) {
+  var v = feelGet(k, md, s);
+  return '<div class="feel" id="feel" data-k="' + k + '" data-md="' + md + '" data-s="' + esc(s) + '">' +
+    "<span>HOW DID IT FEEL?</span>" + '<div class="feel-b">' +
+    [1, 2, 3].map(function (i) {
+      return '<button class="feel-o' + (v === i ? " on" : "") + '" type="button" data-v="' + i +
+        '" aria-pressed="' + (v === i) + '">' + FEEL_NAME[i] + "</button>";
+    }).join("") + '</div><em id="feelsay">' +
+    (v ? FEEL_SAY[v]
+       : ((typeof demoOn === "function") && demoOn()) ? "One tap, just for you."
+       : "One tap. Your teacher sees it with your report.") + "</em></div>";
+}
+function feelWire() {
+  var box = $("feel");
+  if (!box) return;
+  var bs = box.querySelectorAll(".feel-o");
+  Array.prototype.forEach.call(bs, function (b) {
+    b.onclick = function () {
+      var v = parseInt(b.dataset.v, 10);
+      feelSet(box.dataset.k, parseInt(box.dataset.md, 10), box.dataset.s, v);
+      Array.prototype.forEach.call(bs, function (x) {
+        x.className = "feel-o" + (x === b ? " on" : "");
+        x.setAttribute("aria-pressed", x === b ? "true" : "false");
+      });
+      $("feelsay").textContent = FEEL_SAY[v];
+    };
+  });
+}
+
+/* ───────── chi e' fuori per questa giornata ───────── */
+function outList() {
+  if (!ME.next) return [];
+  var md = ME.next.md, out = [], seen = {}, all = injAll(), k, phys = false;
+  suspFor(md).forEach(function (x) {
+    var p = playerNo(x.no);
+    if (!p) return;
+    seen[x.no] = 1;
+    out.push({ p:p, kind:"ban", tag:"BAN",
+               why:x.why === "red" ? "sent off last matchday" : "two yellows last matchday" });
+  });
+  if (typeof built === "function") { loadGround(); phys = built("physio"); }
+  for (k in all) {
+    if (!all.hasOwnProperty(k)) continue;
+    var x = all[k];
+    if (!x || x.no == null || x.until !== md || seen[x.no]) continue;
+    var p = playerNo(x.no);
+    if (!p) continue;
+    out.push(phys
+      ? { p:p, kind:"fit", tag:"FIT", why:"hurt last matchday, your physio has him ready" }
+      : { p:p, kind:"inj", tag:"INJ", why:"injured after " + x.moments +
+            (x.moments === 1 ? " moment" : " moments") + " last matchday" });
+  }
+  return out;
+}
+function drawOutCard() {
+  var box = $("sqo");
+  if (!box) return;
+  var L = [];
+  try { L = outList(); } catch (e) { L = []; }
+  var n = L.filter(function (x) { return x.kind !== "fit"; }).length;
+  var open = MYOPEN === "out", md = ME.next ? ME.next.md : 0;
+  box.innerHTML = myHead("UNAVAILABLE",
+      n ? n + (n === 1 ? " player out" : " players out") : "Everyone is fit",
+      (md ? "matchday " + md + " &middot; " : "") + "injuries and bans", open, "sqout") +
+    (open
+      ? '<div class="sqbody">' +
+        (L.length
+          ? L.map(function (x) {
+              return '<div class="out-r ' + x.kind + '"><i>' + x.tag + "</i><span><b>" +
+                esc(pName(x.p)) + "</b><em>" + (x.p.role ? esc(x.p.role) + " &middot; " : "") +
+                esc(x.why) + "</em></span><u>" +
+                (x.kind === "fit" ? "plays" : "back on matchday " + (md + 1)) + "</u></div>";
+            }).join("")
+          : '<p class="hint">Nobody is injured or suspended for this matchday.</p>') +
+        '<div class="out-how"><span>HOW IT WORKS</span>' +
+        "<p><b>Injury.</b> After a match, the player who took the most moments can get " +
+        "hurt: about one matchday in three, and never more than one player. He misses " +
+        "the next matchday. Spread the moments, or build a physio.</p>" +
+        "<p><b>Ban.</b> Every card comes from a wrong word. A red card, or two yellows " +
+        "in one match, and he misses the next matchday.</p></div></div>"
+      : "");
+  $("sqout").onclick = function () { myToggle("out"); };
+}
 
 /* ───── 50-words.js ───── */
 /* ═══════════════ my words: ascolta, scrivi, sistema ═══════════════ */
