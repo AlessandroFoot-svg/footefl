@@ -4118,6 +4118,36 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 }
 
 
+/* ═════════ Match readiness: pronto per questo tempo? ═════════ */
+.rdy{margin-top:16px;padding:14px 15px;border:1px solid var(--edge);border-radius:16px;background:var(--band)}
+.rdy-top{display:flex;align-items:center;gap:14px}
+.rdy-top svg{flex:none;width:68px;height:68px}
+.rdy-top b{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--fog)}
+.rdy-top span{display:block;margin-top:4px;font-size:13px;font-weight:600;line-height:1.45;color:#C3D6C6}
+.rdy-row{margin-top:12px}
+.rdy-row p{display:flex;justify-content:space-between;gap:10px;margin:0 0 5px;font-size:13px;font-weight:700;color:var(--cream)}
+.rdy-row p i{font-style:normal;font-weight:600;color:var(--fog)}
+.rdy-row p b{font-weight:800;color:var(--gold)}
+.rdy-row.dim p b{color:#6E9A82;font-size:11px;letter-spacing:.06em}
+.rdy-bar{height:6px;border-radius:999px;background:rgba(226,251,206,.1);overflow:hidden}
+.rdy-bar u{display:block;height:100%;border-radius:999px;background:var(--gold);transform-origin:0 50%;animation:rdyGrow .6s ease-out backwards}
+.rdy-say{margin:13px 0 0;font-size:13px;font-weight:600;line-height:1.45;color:#C3D6C6}
+.rdy-say b{color:var(--cream)}
+.rdy-go{margin-top:11px}
+.brf-door{margin-top:16px}
+.brf-who{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--edge);border-radius:18px;background:var(--band)}
+.brf-who b{display:block;font-size:18px;font-weight:800;color:var(--cream)}
+.brf-who i{display:block;margin-top:3px;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.brf-l{position:relative;margin:12px 0 0 18px;padding:12px 14px;border-radius:4px 16px 16px 16px;background:rgba(226,251,206,.08);
+  font-size:15px;font-weight:600;line-height:1.45;color:var(--cream);animation:brfIn .45s ease-out backwards}
+.brf-kick{margin-top:14px}
+@keyframes brfIn{from{opacity:0;transform:translateY(8px)}}
+@media(prefers-reduced-motion:reduce){.brf-l{animation:none}}
+.opt.rdy-ok{border-color:var(--gold)}
+.opt.rdy-no{opacity:.55}
+@keyframes rdyGrow{from{transform:scaleX(0)}}
+@media(prefers-reduced-motion:reduce){.rdy-bar u{animation:none}}
+
 /* ═════════ My shape: la tela a sette punte ═════════ */
 .shp-row{display:flex;align-items:center;gap:12px;width:100%;padding:8px 12px 8px 6px;border-radius:14px;border:1px solid var(--edge);
   background:var(--deep);color:var(--cream);text-align:left;font-family:var(--brand);cursor:pointer;transition:transform .12s ease-out}
@@ -5501,7 +5531,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "174";
+var APPVER = "175";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -30118,11 +30148,14 @@ VIEWS.mGo = function (d) {
     "<div><span>" + (ph === "att" ? "Shots at most" : "Saves at most") +
     "</span><b>" + n + "</b></div></div>" +
     startBox(ph) +
+    ((typeof briefDoor === "function") ? briefDoor(ph) : "") +
     '<p class="lede">Write what you hear. Nothing is corrected on screen until the ' +
     "end — this is the match, not practice.</p>" +
     '<button class="btn" id="kick">' +
     (ph === "att" ? "Kick off" : "Take your place") + "</button></div>");
   $("kick").onclick = function () { swap("walkout", { ph:ph }); };
+  if ($("rdygo")) $("rdygo").onclick = function () { readyStart(ph, $("rdygo").dataset.ax); };
+  if ($("brgo")) $("brgo").onclick = function () { go("brief", { ph:ph }); };
 };
 
 var MT = { ph:"att", i:0, answers:[], el:[] };
@@ -31085,6 +31118,230 @@ VIEWS.shape = function () {
       return '<p><i class="' + r.c + '" aria-hidden="true"></i>' + esc(r.t) + "</p>";
     }).join("") + "</div>" +
     shapeFrom(A) + "</div>");
+};
+
+/* ───── 49-ready.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   MATCH READINESS
+   Prima di ogni tempo l'app sa gia' quale testo verra' dettato, e dalle
+   parole sa quale grammatica contiene. Qui la confronta con My shape:
+   l'alunno vede su che cosa si gioca e dove e' debole PRIMA di giocare,
+   quando puo' ancora fare qualcosa. Il riscaldamento non paga e non
+   consuma sessioni: serve solo a imparare, e conta in My shape.
+   ═══════════════════════════════════════════════════════════════════ */
+var RDY_WEAK = 70;      /* sotto questo valore l'allenatore consiglia di scaldarsi */
+var RDY_N = 5;          /* domande del riscaldamento: poche, la partita aspetta */
+var RDY = null;
+
+/* il testo del dettato a pezzi, come li vuole dictTag */
+function readyItems(x) {
+  return (String(x || "").match(/[A-Za-z\u2019']+|[.,!?;:]/g) || []).map(function (w) {
+    return /^[.,!?;:]$/.test(w) ? { w:w, t:"ponct" } : { w:w.replace(/\u2019/g, "'"), t:"mot" };
+  });
+}
+function readyOf(ph) {
+  var d = mdictOf(ph), its = readyItems(d && d.x), tags = dictTag(its);
+  var cnt = {}, words = 0, by = {}, A = shapeData();
+  its.forEach(function (it, k) {
+    if (it.t === "mot") words++;
+    /* the, and, but ci sono in ogni testo: non dicono di che cosa parla questo */
+    if (tags[k] && tags[k] !== "sentence") cnt[tags[k]] = (cnt[tags[k]] || 0) + 1;
+  });
+  A.forEach(function (a) { by[a.id] = a; });
+  var rows = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).slice(0, 2)
+    .map(function (id) { return { id:id, n:by[id].n, say:by[id].say, c:cnt[id], v:by[id].v }; });
+  var gs = 0, gw = 0, weak = null;
+  rows.forEach(function (r) {
+    if (r.v === null) { if (!weak) weak = r; return; }
+    gs += r.v * r.c; gw += r.c;
+    if (r.v < RDY_WEAK && (!weak || weak.v === null || r.v < weak.v)) weak = r;
+  });
+  var sp = by.spell, g = gw ? gs / gw : null, score = null;
+  /* meta' grammatica e meta' spelling: se contassero le parole, lo
+     spelling (tutto il testo) coprirebbe sempre la grammatica */
+  if (g !== null && sp.v !== null) score = Math.round((g + sp.v) / 2);
+  else if (g !== null) score = Math.round(g);
+  else if (sp.v !== null) score = sp.v;
+  return { rows:rows, spell:{ n:sp.n, c:words, v:sp.v }, score:score, weak:weak };
+}
+function readyHtml(ph, quiet) {
+  var R;
+  try { R = readyOf(ph); } catch (e) { return ""; }
+  if (!R) return "";
+  var C = 2 * Math.PI * 28, s = R.score;
+  function row(n, c, v) {
+    return '<div class="rdy-row' + (v === null ? " dim" : "") + '"><p><span>' + esc(n) +
+      " <i>&middot; " + c + (c === 1 ? " word" : " words") + "</i></span><b>" +
+      (v === null ? "NOT TESTED YET" : v) + '</b></p><div class="rdy-bar">' +
+      (v === null ? "" : '<u style="width:' + v + '%"></u>') + "</div></div>";
+  }
+  var about = R.rows.map(function (r) { return r.n.toLowerCase(); }).join(" and ");
+  var say = R.weak
+    ? "<b>Coach says:</b> warm up on <b>" + esc(R.weak.n.toLowerCase()) + "</b> before you go out."
+    : s === null ? "<b>Coach says:</b> play this half and your numbers will show here."
+    : "<b>Coach says:</b> you are ready. Go and play.";
+  return '<div class="rdy"><div class="rdy-top">' +
+    '<svg viewBox="0 0 68 68" role="img" aria-label="Match readiness ' + (s === null ? "not known yet" : s + " out of 100") + '">' +
+    '<circle cx="34" cy="34" r="28" fill="none" stroke="rgba(226,251,206,.12)" stroke-width="6"/>' +
+    (s === null ? "" : '<circle cx="34" cy="34" r="28" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" ' +
+      'stroke-dasharray="' + (C * s / 100).toFixed(1) + " " + C.toFixed(1) + '" transform="rotate(-90 34 34)"/>') +
+    '<text x="34" y="40" text-anchor="middle" style="font:800 18px var(--brand);fill:var(--cream)">' +
+    (s === null ? "?" : s) + "</text></svg>" +
+    "<div><b>MATCH READINESS</b><span>" +
+    (about ? "This half is about " + esc(about) + "." : "This half is about listening and spelling.") +
+    "</span></div></div>" +
+    R.rows.map(function (r) { return row(r.n, r.c, r.v); }).join("") +
+    row(R.spell.n, R.spell.c, R.spell.v) +
+    (quiet ? "" : '<p class="rdy-say">' + say + "</p>") +
+    (R.weak ? '<button class="btn ghost rdy-go" id="rdygo" type="button" data-ax="' + R.weak.id +
+      '">Warm up &middot; ' + RDY_N + " questions</button>" : "") + "</div>";
+}
+/* il riscaldamento: cinque domande della punta debole, la risposta giusta
+   si vede subito, poi si torna alla pagina della partita */
+function readyStart(ph, ax) {
+  var a = SHAPE_AXES.filter(function (x) { return x.id === ax; })[0];
+  if (!a) return;
+  var lv = myLevelSafe(), fam = a.fam[Math.floor(Math.random() * a.fam.length)];
+  var all = drawQuestions(lv, 30, fam), ok = {}, qs;
+  TEMI.forEach(function (t) { if (a.fam.indexOf(t.id) > -1) t.t.forEach(function (g) { ok[g] = 1; }); });
+  /* drawQuestions riempie con altro se il tema non basta: qui si tiene solo il tema */
+  qs = all.filter(function (q) { return ok[q.t]; }).slice(0, RDY_N);
+  if (!qs.length) qs = all.slice(0, RDY_N);
+  RDY = { ph:ph, n:a.n, i:0, right:0, qs:qs };
+  go("rdyWarm");
+}
+VIEWS.rdyWarm = function () {
+  if (!RDY) return reset("home");
+  if (RDY.i >= RDY.qs.length) {
+    barFlow("Warm-up done", RDY.n, 100, false);
+    html('<div class="pad"><p class="bignum">' + RDY.right + "<em>/" + RDY.qs.length + "</em></p>" +
+      '<div class="verdict"><b>' + (RDY.right === RDY.qs.length ? "Sharp." : "Warmed up.") + "</b>" +
+      "These answers count in My shape. Now the match.</div>" +
+      '<button class="btn" id="rdyback">Back to the team</button></div>');
+    $("rdyback").onclick = function () { RDY = null; back(); };
+    return;
+  }
+  var q = RDY.qs[RDY.i], lock = false;
+  barFlow("Warm-up", RDY.n + " · " + (RDY.i + 1) + " of " + RDY.qs.length,
+          Math.round((RDY.i / RDY.qs.length) * 100), false);
+  html('<div class="pad"><div class="qtop"><span>' + (RDY.i + 1) + " / " + RDY.qs.length +
+    "</span><em>" + esc(tagLabel(q.t, myLevelSafe())) + '</em></div><p class="qq">' + esc(q.q) + "</p>" +
+    '<div class="opts">' + q.o.map(function (o, i) {
+      return '<button class="opt" data-a="' + i + '" type="button"><u>' + "ABCD"[i] +
+        "</u>" + esc(o) + "</button>";
+    }).join("") + "</div></div>");
+  var btns = $("main").querySelectorAll(".opt");
+  Array.prototype.forEach.call(btns, function (b) {
+    b.onclick = function () {
+      if (lock) return;
+      lock = true;
+      var a = parseInt(b.dataset.a, 10), good = a === q.c;
+      if (typeof tagMark === "function") tagMark(myLevelSafe(), q.t, good);
+      if (good) RDY.right++;
+      /* la giusta resta accesa, le altre si spengono: si impara anche sbagliando */
+      Array.prototype.forEach.call(btns, function (x, k) {
+        x.className = "opt " + (k === q.c ? "rdy-ok" : "rdy-no");
+      });
+      setTimeout(function () { if (RDY) { RDY.i++; swap("rdyWarm"); } }, good ? 700 : 1500);
+    };
+  });
+};
+
+/* ───── 49-brief.js ───── */
+/* ═══════════════════════════════════════════════════════════════════
+   TEAM TALK
+   La « scouting note » che l'Head coach promette da sempre. Prima del
+   tempo l'allenatore chiama la squadra e dice che cosa aspettarsi dal
+   dettato: il tema, la grammatica, la parola difficile. Mai il testo.
+   E' un premio: lo da' solo chi studia l'avversario (scout), e in forma
+   corta chi e' di terzo gradino. Il riscaldamento invece resta a tutti,
+   perche' imparare non si compra con la panchina.
+   ═══════════════════════════════════════════════════════════════════ */
+var BRIEF_THEME = {
+  welcome:"It is about a new football world and where its players come from.",
+  athome:"It is a match day: the team, the shirts and the weather.",
+  morning:"It is somebody's morning at home, step by step.",
+  market:"It is a trip to buy food, with a lot of things on the list.",
+  green:"It is about a stadium that looks after the planet.",
+  park:"It is a quiet place near a school, with rules to follow.",
+  ferry:"It is a short trip on the water, and the weather matters.",
+  lighthouse:"It is by the sea, at night, in bad weather."
+};
+/* il tipo di parole, non le parole del testo */
+var BRIEF_AX = {
+  where:"where things are: little words like in, on and under",
+  present:"what people do every day: watch the -s after he and she",
+  past:"what happened before: -ed endings and the irregular verbs",
+  future:"what comes next: will and going to",
+  asking:"orders and questions: can, must, please"
+};
+/* 0 niente, 1 corto, 2 completo */
+function briefLevel() {
+  var m = (typeof staffMan === "function") ? staffMan() : null;
+  if (!m || m.role !== "gaf") return 0;
+  if (m.scout) return 2;
+  return m.tier >= 3 ? 1 : 0;
+}
+/* senza rapporto non si sa di che cosa parla il testo: ci si scalda
+   sulla punta piu' debole di My shape, o su una a caso se e' tutto nuovo */
+function briefAnyAx() {
+  var A = shapeData().filter(function (a) { return a.id !== "spell"; }), low = null;
+  A.forEach(function (a) { if (a.v !== null && (!low || a.v < low.v)) low = a; });
+  return (low || A[Math.floor(Math.random() * A.length)]).id;
+}
+function briefDoor(ph) {
+  var lv = briefLevel(), m = staffMan();
+  if (!lv) {
+    return '<div class="rdy"><p class="rdy-say" style="margin-top:0"><b>No team talk today.</b> ' +
+      "Nobody on your bench has a report on this match. A head coach who studies " +
+      "the other side gives you one.</p>" +
+      '<button class="btn ghost rdy-go" id="rdygo" type="button" data-ax="' + briefAnyAx() +
+      '">Warm up &middot; ' + RDY_N + " questions</button></div>";
+  }
+  return '<button class="btn ghost rdy-go brf-door" id="brgo" type="button">Team talk with ' +
+    esc(m.name) + "</button>";
+}
+function briefLines(ph, lv, R) {
+  var d = mdictOf(ph) || {}, out = [];
+  out.push("Listen up. " + (BRIEF_THEME[d.id] || "Today's text is a new one. Keep your ears open."));
+  if (R.rows[0] && BRIEF_AX[R.rows[0].id]) out.push("Expect a lot of " + BRIEF_AX[R.rows[0].id] + ".");
+  if (lv < 2) { out.push("That is all I have. Listen well."); return out; }
+  if (R.rows[1] && BRIEF_AX[R.rows[1].id]) out.push("Then, " + BRIEF_AX[R.rows[1].id] + ".");
+  var w = String((ph === "att" ? d.bdo : d.pen) || "");
+  if (/^[A-Za-z]{4,}$/.test(w)) {
+    out.push("One word will test you: " + w.length + " letters, and it starts with " +
+      (/^[A-Z]/.test(w) ? "a capital " : "") + w.charAt(0).toUpperCase() +
+      (/([a-z])\1/.test(w) ? ". It has a double letter." : "."));
+  }
+  if (R.weak) {
+    out.push((R.weak.v === null ? "I have not seen you on " + R.weak.n.toLowerCase() + " yet."
+      : "You are at " + R.weak.v + " on " + R.weak.n.toLowerCase() + ".") +
+      " Five questions with me before we go out.");
+  } else if (R.score !== null) out.push("You are ready. Go and play your game.");
+  return out;
+}
+VIEWS.brief = function (d) {
+  var ph = (d && d.ph) === "def" ? "def" : "att", lv = briefLevel(), m = staffMan(), R;
+  if (!lv || !m) return swap("mGo", { ph:ph });
+  try { R = readyOf(ph); } catch (e) { return swap("mGo", { ph:ph }); }
+  var kit = (typeof staffKitOf === "function" && ME.club) ? staffKitOf("gaf", ME.club.id) : "";
+  var L = briefLines(ph, lv, R);
+  barFlow("Team talk", (ph === "att" ? "Before the first half" : "Before the second half"), 0);
+  html('<div class="pad brf">' +
+    '<div class="brf-who"><span class="pkit">' +
+    (kit ? '<img src="' + kit + '" alt="" onerror="coatBack(this)">'
+         : '<svg viewBox="2 5 96 91"><use href="#coat"/></svg>') + "</span>" +
+    "<span><b>" + esc(m.name) + "</b><i>" + esc(m.nick || "head coach") + "</i></span></div>" +
+    L.map(function (t, i) {
+      return '<p class="brf-l" style="animation-delay:' + (0.2 + i * 0.9).toFixed(1) + 's">' + esc(t) + "</p>";
+    }).join("") +
+    (lv >= 2 ? readyHtml(ph, true)
+      : (R.rows[0] ? '<button class="btn ghost rdy-go" id="rdygo" type="button" data-ax="' + R.rows[0].id +
+          '">Warm up &middot; ' + RDY_N + " questions</button>" : "")) +
+    '<button class="btn brf-kick" id="brkick">' + (ph === "att" ? "Kick off" : "Take your place") +
+    "</button></div>");
+  $("brkick").onclick = function () { swap("walkout", { ph:ph }); };
+  if ($("rdygo")) $("rdygo").onclick = function () { readyStart(ph, $("rdygo").dataset.ax); };
 };
 
 /* ───── 50-words.js ───── */
