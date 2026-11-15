@@ -4118,6 +4118,49 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 }
 
 
+/* ═════════ le animazioni che mancavano ═════════
+   Tre regole. Ogni movimento dice qualcosa: ho toccato, si e' aperto,
+   e' giusto. Dura poco, fra 120 e 300 millesimi. Usa solo transform e
+   opacity (il cerchio fa eccezione: e' un tratto solo). Chi ha chiesto
+   meno movimento non ne vede nessuno. */
+@keyframes fxYes{0%{transform:scale(1)}45%{transform:scale(1.045)}100%{transform:scale(1)}}
+@keyframes rdyRing{from{stroke-dashoffset:var(--l)}}
+/* il dito si sente: prima cambiava solo il bordo, o niente */
+.opt,.sess,.tile,.sqhead,.gtab{transition:transform .12s ease-out,border-color .12s ease-out}
+.opt:active,.sess:not(:disabled):active,.tile:active,.gtab:active{transform:scale(.98)}
+.sqhead:active{transform:scale(.99)}
+/* le tendine sotto la rosa si aprono, non compaiono */
+.sqmore .sqbody{animation:fxUp .22s ease-out backwards}
+/* le liste salgono una riga dopo l'altra */
+.pln,.out-r,#sessbox .sess,#sessbox .cch{animation:fxUp .26s ease-out backwards}
+.pln:nth-child(3),.out-r:nth-child(2),#sessbox .sess:nth-of-type(2){animation-delay:45ms}
+.pln:nth-child(4),.out-r:nth-child(3),#sessbox .sess:nth-of-type(3){animation-delay:90ms}
+.pln:nth-child(5),.out-r:nth-child(n+4){animation-delay:135ms}
+.pln:nth-child(n+6){animation-delay:180ms}
+/* le barre del quaderno crescono da sinistra */
+.gr .gb i{transform-origin:0 50%;animation:fxGrow .5s ease-out backwards}
+/* al campo, cambiando scheda il contenuto sfuma */
+#yard{animation:fxFade .2s ease-out backwards}
+/* il riscaldamento: la giusta risponde, quella toccata per sbaglio scuote.
+   Il segno accanto serve a chi i colori non li distingue. */
+.opt.rdy-ok{animation:fxYes .32s ease-out}
+.opt.rdy-ok::after{content:"\2713";margin-left:auto;font-weight:800;color:var(--gold)}
+.opt.rdy-bad{opacity:.6;animation:fxShake .34s ease-out}
+.opt.rdy-bad::after{content:"\2715";margin-left:auto;font-weight:800;color:#E8A89A}
+/* il questionario: il bottone scelto risponde, la frase cambia sfumando */
+.feel-o.on{animation:fxYes .3s ease-out}
+.feel em.chg{animation:fxFade .25s ease-out}
+/* il cerchio della readiness si disegna, e le schede salgono */
+.rdy-ring{animation:rdyRing .7s cubic-bezier(.2,.8,.3,1) .15s backwards}
+.rdy,.feel,.brf-who{animation:fxUp .28s ease-out backwards}
+/* i numeri che contano non ballano mentre salgono */
+.bignum{font-variant-numeric:tabular-nums}
+@media(prefers-reduced-motion:reduce){
+  .opt,.sess,.tile,.sqhead,.gtab{transition:none}
+  .sqmore .sqbody,.pln,.out-r,#sessbox .sess,#sessbox .cch,.gr .gb i,#yard,.opt.rdy-ok,.opt.rdy-bad,
+  .feel-o.on,.feel em.chg,.rdy-ring,.rdy,.feel,.brf-who{animation:none}
+}
+
 /* ═════════ Match readiness: pronto per questo tempo? ═════════ */
 .rdy{margin-top:16px;padding:14px 15px;border:1px solid var(--edge);border-radius:16px;background:var(--band)}
 .rdy-top{display:flex;align-items:center;gap:14px}
@@ -5572,7 +5615,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "176";
+var APPVER = "177";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -5768,6 +5811,7 @@ function draw(dir) {
   var m = $("main"), same = m.getAttribute("data-v") === HERE.name;
   m.innerHTML = "";
   v(HERE.data);
+  if (typeof fxCount === "function") fxCount(m);
   toTop();
   m.setAttribute("data-v", HERE.name);
   /* la stessa schermata ridisegnata da se' — una risposta, un
@@ -30733,6 +30777,34 @@ function fxCalm() {
   try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
   catch (e) { return false; }
 }
+/* ───────── i numeri che salgono ─────────
+   Un risultato che compare gia' scritto non si guarda; uno che sale si
+   aspetta. Vale per i numeri grandi delle pagine di fine prova e per il
+   punteggio della readiness: solo numeri interi, e solo se positivi.
+   Se la pagina e' in secondo piano i fotogrammi non arrivano: dopo
+   nove decimi il numero vero viene scritto comunque. */
+function fxCount(root) {
+  if (!root || fxCalm() || !window.requestAnimationFrame) return;
+  var els = root.querySelectorAll(".bignum,.fx-n");
+  Array.prototype.forEach.call(els, function (el) {
+    var node = el.firstChild;
+    if (!node || node.nodeType !== 3) return;
+    var txt = String(node.nodeValue).replace(/^\s+|\s+$/g, ""), to = parseInt(txt, 10);
+    if (!(to > 0) || String(to) !== txt) return;
+    var t0 = 0, done = false;
+    function end() { if (!done) { done = true; node.nodeValue = String(to); } }
+    function step(t) {
+      if (done) return;
+      if (!t0) t0 = t;
+      var p = Math.min(1, (t - t0) / 600);
+      node.nodeValue = String(Math.round(to * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) window.requestAnimationFrame(step); else end();
+    }
+    node.nodeValue = "0";
+    window.requestAnimationFrame(step);
+    setTimeout(end, 900);
+  });
+}
 function fxBurst(el) {
   if (!el || fxCalm()) return;
   var r = el.getBoundingClientRect(), layer = document.createElement("div"), i, cols = ["#F5C542", "#E3EF26", "#FFFDEE", "#FFB020"];
@@ -31238,8 +31310,8 @@ function readyHtml(ph, quiet) {
     '<svg viewBox="0 0 68 68" role="img" aria-label="Match readiness ' + (s === null ? "not known yet" : s + " out of 100") + '">' +
     '<circle cx="34" cy="34" r="28" fill="none" stroke="rgba(226,251,206,.12)" stroke-width="6"/>' +
     (s === null ? "" : '<circle cx="34" cy="34" r="28" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" ' +
-      'stroke-dasharray="' + (C * s / 100).toFixed(1) + " " + C.toFixed(1) + '" transform="rotate(-90 34 34)"/>') +
-    '<text x="34" y="40" text-anchor="middle" style="font:800 18px var(--brand);fill:var(--cream)">' +
+      'class="rdy-ring" style="--l:' + (C * s / 100).toFixed(1) + '" stroke-dasharray="' + (C * s / 100).toFixed(1) + " " + C.toFixed(1) + '" transform="rotate(-90 34 34)"/>') +
+    '<text class="fx-n" x="34" y="40" text-anchor="middle" style="font:800 18px var(--brand);fill:var(--cream)">' +
     (s === null ? "?" : s) + "</text></svg>" +
     "<div><b>MATCH READINESS</b><span>" +
     (about ? "This half is about " + esc(about) + "." : "This half is about listening and spelling.") +
@@ -31287,7 +31359,7 @@ VIEWS.rdyWarm = function () {
       if (good) RDY.right++;
       /* la giusta resta accesa, le altre si spengono: si impara anche sbagliando */
       Array.prototype.forEach.call(btns, function (x, k) {
-        x.className = "opt " + (k === q.c ? "rdy-ok" : "rdy-no");
+        x.className = "opt " + (k === q.c ? "rdy-ok" : x === b ? "rdy-bad" : "rdy-no");
       });
       setTimeout(function () { if (RDY) { RDY.i++; swap("rdyWarm"); } }, good ? 700 : 1500);
     };
@@ -31596,7 +31668,9 @@ function feelWire() {
         x.className = "feel-o" + (x === b ? " on" : "");
         x.setAttribute("aria-pressed", x === b ? "true" : "false");
       });
-      $("feelsay").textContent = FEEL_SAY[v];
+      var sy = $("feelsay");
+      sy.textContent = FEEL_SAY[v];
+      sy.className = ""; void sy.offsetWidth; sy.className = "chg";
     };
   });
 }
