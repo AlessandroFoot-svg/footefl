@@ -4558,6 +4558,24 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 @media (prefers-reduced-motion: reduce){
   .pk-pack .pk-in,.pk-tap,.pk-body::after,.mk2-art .pk-in,.mk2-col,.mk2-steps li{animation:none}
 }
+/* la maglia nuova brilla, una volta: riflesso, alone e due scintille */
+@keyframes pgGlow{0%,100%{filter:drop-shadow(0 4px 9px rgba(0,0,0,.45))}40%{filter:brightness(1.35) drop-shadow(0 0 16px rgba(245,197,66,.95))}}
+@keyframes pgSweep{from{background-position:130% 0}to{background-position:-60% 0}}
+@keyframes pgStar{0%{opacity:0;transform:scale(.2) rotate(0)}40%{opacity:1;transform:scale(1.1) rotate(40deg)}100%{opacity:0;transform:scale(.6) rotate(90deg)}}
+.peg.glint .shirt.ph img,.peg.glint .shirt svg{animation:pgGlow 1.1s ease-in-out 2}
+.peg.glint .shirt.ph::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.82) 50%,transparent 62%) no-repeat;
+  background-size:260% 100%;background-position:130% 0;
+  -webkit-mask:var(--kit) center/100% 100% no-repeat;mask:var(--kit) center/100% 100% no-repeat;
+  animation:pgSweep 1.1s ease-out 2}
+.peg.glint::before,.peg.glint::after{content:"\2726";position:absolute;z-index:3;color:var(--gold);font-size:18px;line-height:1;
+  opacity:0;pointer-events:none;animation:pgStar .9s ease-out 2}
+.peg.glint::before{left:5%;top:36%}
+.peg.glint::after{right:5%;top:8%;font-size:14px;animation-delay:.25s}
+.peg.glint .pgnew{animation:fxYes .4s ease-out 2}
+@media (prefers-reduced-motion: reduce){
+  .peg.glint .shirt.ph img,.peg.glint .shirt svg,.peg.glint .shirt.ph::after,.peg.glint::before,.peg.glint::after,.peg.glint .pgnew{animation:none}
+}
 /* il mercato chiuso: il cartello col lucchetto davanti allo stadio */
 @keyframes mkcSwing{0%,100%{transform:rotate(-3.5deg)}50%{transform:rotate(3.5deg)}}
 .mkc{position:relative;min-height:min(86vh,860px);overflow:hidden}
@@ -5806,7 +5824,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "181";
+var APPVER = "182";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -13710,6 +13728,47 @@ function drawStatsCard() {
    guarda: si scorre di lato, dodici alla volta, con i pallini sotto che
    dicono a che pagina si e'. */
 var SQPAGE = 12;
+/* ───────── la maglia nuova brilla, una volta ─────────
+   Il giocatore comprato entra in rosa con il cartellino NEW, che resta.
+   La prima volta che la sua maglia si vede davvero sullo schermo, brilla:
+   un riflesso che la attraversa, un alone d'oro e due scintille. Poi mai
+   piu', perche' una cosa che brilla sempre non la guarda nessuno. Gli
+   acquisti stanno in fondo alla rosa, spesso nella seconda pagina: per
+   questo si aspetta che la maglia sia in vista, non che sia disegnata. */
+function glintKey() {
+  return "footefl-glint-" + scope() + "-" + (ME.club ? ME.club.id : "x");
+}
+function glintSeen() {
+  try { return JSON.parse(localStorage.getItem(glintKey()) || "{}") || {}; }
+  catch (e) { return {}; }
+}
+function glintId(p) { return p.no + "|" + (p.name || ""); }
+function glintWatch(box) {
+  var els = box.querySelectorAll(".peg.glint-wait");
+  if (!els.length) return;
+  function fire(el) {
+    if (!el.parentNode || el.getAttribute("data-gl")) return;
+    el.setAttribute("data-gl", "1");
+    el.classList.remove("glint-wait");
+    el.classList.add("glint");
+    var s = glintSeen();
+    s[el.getAttribute("data-gid")] = 1;
+    try { localStorage.setItem(glintKey(), JSON.stringify(s)); } catch (e) {}
+    try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
+  }
+  if (!("IntersectionObserver" in window)) {
+    return Array.prototype.forEach.call(els, fire);
+  }
+  var io = new IntersectionObserver(function (list) {
+    list.forEach(function (en) {
+      if (!en.isIntersecting || en.intersectionRatio < 0.6) return;
+      io.unobserve(en.target);
+      /* un attimo dopo, quando la pagina ha finito di entrare */
+      setTimeout(function () { fire(en.target); }, 300);
+    });
+  }, { threshold:[0.6] });
+  Array.prototype.forEach.call(els, function (el) { io.observe(el); });
+}
 function drawShirts() {
   var box = $("shirts"), per = 3, list = sqList();
   if (!box) return;
@@ -13718,13 +13777,21 @@ function drawShirts() {
     return;
   }
   var key = (SQSORT.filter(function (x) { return x.id === SQF.sort; })[0] || {}).k;
+  var seen = glintSeen();
   function peg(r) {
     var tag = key ? (key === "c"
       ? ((r.y ? r.y + "Y" : "") + (r.r ? (r.y ? " " : "") + r.r + "R" : "")) || "0"
       : String(r[key])) : "";
-    return pegHtml(r.p).replace("</button>", (tag
+    var h = pegHtml(r.p).replace("</button>", (tag
       ? '<span class="pgst' + (tag === "0" ? " nil" : "") + '">' + tag + "</span>"
       : "") + (r.p.bought ? '<span class="pgnew">NEW</span>' : "") + "</button>");
+    /* l'acquisto che non si e' ancora visto in rosa aspetta di brillare */
+    if (r.p.bought && !seen[glintId(r.p)]) {
+      var kit = shirtOf(r.p);
+      h = h.replace('class="peg"', 'class="peg glint-wait" data-gid="' + esc(glintId(r.p)) + '"' +
+        (kit ? " style=\"--kit:url('" + kit + "')\"" : ""));
+    }
+    return h;
   }
   var pages = [], i, j;
   for (i = 0; i < list.length; i += SQPAGE) {
@@ -13741,6 +13808,7 @@ function drawShirts() {
         }).join("") + "</div>" +
         '<p class="hint sqslide">Slide sideways for the rest of the squad &rsaquo;</p>'
       : "");
+  glintWatch(box);
 
   Array.prototype.forEach.call(box.querySelectorAll(".peg"), function (b) {
     b.onclick = function () { go("player", { no:parseInt(b.dataset.no, 10) }); };
