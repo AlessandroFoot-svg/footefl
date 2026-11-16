@@ -4622,6 +4622,50 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 .sg-no .wd-right{display:block;margin-top:6px;color:var(--cream)}
 .sg .gbig{margin-top:16px}
 .sg-done{margin-top:26px;text-align:center}
+/* il contratto in tre mosse */
+.sg-two{display:flex;gap:18px}
+.sg-two>div{flex:1;min-width:0}
+.sg-wage{color:#9A8B5C}
+.sg-wage.set{color:#16233F;animation:fxYes .32s ease-out}
+.sg-steps{list-style:none;display:flex;gap:6px;margin:16px 0 0;padding:0}
+.sg-steps li{flex:1;padding:9px 4px;border-radius:999px;border:1px solid var(--edge);text-align:center;
+  font-size:12px;font-weight:800;color:var(--fog);transition:background-color .2s ease-out,color .2s ease-out}
+.sg-steps li.on{border-color:var(--gold);color:var(--gold)}
+.sg-steps li.ok{border-color:transparent;background:rgba(227,239,38,.16);color:var(--cream)}
+.sg-ask{margin:14px 0 0;padding:12px 14px;border-radius:4px 16px 16px 16px;background:rgba(226,251,206,.08);
+  font-size:15px;font-weight:600;line-height:1.45;color:var(--cream);animation:fxUp .26s ease-out backwards}
+.sg-ask b{color:var(--gold)}
+.sg .wd-lab{display:block}
+.sg .orline{margin-top:14px}
+.sg-parts{display:block;margin-top:8px;font-size:15px;font-weight:800;line-height:1.5;color:var(--cream)}
+.sg-said{margin:0 0 12px;font-size:16px;font-weight:700;font-style:italic;line-height:1.4;color:var(--gold)}
+/* la presentazione del giocatore */
+@keyframes unvStamp{0%{opacity:0;transform:rotate(-12deg) scale(1.9)}60%{opacity:1;transform:rotate(-12deg) scale(.95)}100%{transform:rotate(-12deg) scale(1)}}
+.unv{text-align:center}
+.unv .kick{font-size:11px}
+.unv h1{margin-top:8px}
+.unv .lost{text-align:left}
+.mkr.pkv.unv-c{--cw:200px;--cw:min(calc(100vw - 130px),calc((100vh - 480px) / 1.3),290px);display:flex;justify-content:center;
+  gap:14px;margin:14px -16px 0;padding:6px 16px 12px}
+@supports(height:100dvh){.mkr.pkv.unv-c{--cw:min(calc(100vw - 130px),calc((100dvh - 480px) / 1.3),290px)}}
+.mkr.pkv.unv-c.many{justify-content:flex-start;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.mkr.pkv.unv-c .flip{position:relative;left:auto;top:auto;flex:none;width:var(--cw);cursor:default;scroll-snap-align:center;
+  animation:fxDrop .6s cubic-bezier(.2,.9,.3,1) backwards}
+.mkr.pkv.unv-c .cwho b{font-size:22px}
+.mkr.pkv.unv-c .cfoot b{font-size:30px}
+.unv-stamp{position:absolute;right:-12px;top:36%;z-index:3;padding:7px 12px;border:3px solid var(--gold);border-radius:9px;
+  background:rgba(4,23,15,.86);color:var(--gold);font:900 16px/1 var(--brand);letter-spacing:.14em;
+  transform:rotate(-12deg);animation:unvStamp .42s cubic-bezier(.2,.9,.3,1) .55s backwards}
+.unv-gain p{display:flex;align-items:baseline;justify-content:center;gap:12px;margin:4px 0 0}
+.unv-gain span{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--fog)}
+.unv-gain b{font-size:30px;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums}
+.unv-note{margin:10px 0 0;font-size:13.5px;font-weight:600;line-height:1.5;color:#C3D6C6}
+.unv-note b{color:var(--cream)}
+.unv-shut{margin:6px 0 0;font-size:12px;font-weight:600;line-height:1.45;color:var(--fog)}
+@media (prefers-reduced-motion: reduce){
+  .sg-wage.set,.sg-ask,.mkr.pkv.unv-c .flip,.unv-stamp{animation:none}
+  .sg-steps li{transition:none}
+}
 .sg-joins{font:900 24px/1.2 var(--brand)}
 .sg-flash{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0;
   background:radial-gradient(60% 40% at 70% 30%,#fff 0%,rgba(255,255,255,.4) 40%,transparent 70%)}
@@ -5733,7 +5777,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "179";
+var APPVER = "180";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -17523,13 +17567,71 @@ function signNorm(s) {
   try { t = t.normalize("NFD").replace(/[̀-ͯ]/g, ""); } catch (e) {}
   return t.toLowerCase().replace(/\s+/g, " ").trim();
 }
+/* ───────── i numeri in lettere, all'inglese ─────────
+   « four hundred and fifty », « two thousand five hundred »: il trattino
+   fra decine e unita' e l'« and » dopo le centinaia sono quelli dei libri
+   di scuola britannici. */
+function numWords(n) {
+  var one = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+             "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
+             "eighteen", "nineteen"];
+  var ten = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+  function two(x) {
+    return x < 20 ? one[x] : ten[Math.floor(x / 10)] + (x % 10 ? "-" + one[x % 10] : "");
+  }
+  function three(x) {
+    var h = Math.floor(x / 100), r = x % 100;
+    return (h ? one[h] + " hundred" + (r ? " and " : "") : "") + (r ? two(r) : "");
+  }
+  n = Math.floor(n);
+  if (n < 1000) return n === 0 ? "zero" : three(n);
+  var t = Math.floor(n / 1000), r = n % 1000;
+  return three(t) + " thousand" + (r ? (r < 100 ? " and " : " ") + three(r) : "");
+}
+function numComma(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+/* lo stipendio: non entra in cassa e non cambia niente, e' un numero da
+   leggere in lettere e scrivere in cifre. Ad A1 centinaia, dopo migliaia;
+   piu' stelle, piu' alto. Lo stesso giocatore chiede sempre la stessa cifra. */
+function wageOf(c) {
+  var r = rng("wage|" + c.name + "|" + (ME.club ? ME.club.id : "")), st = c.stars || 1;
+  if (ME.level === "A1") {
+    var lo = st >= 3 ? 600 : st === 2 ? 350 : 120, hi = st >= 3 ? 980 : st === 2 ? 590 : 340;
+    return lo + Math.floor(r() * ((hi - lo) / 10 + 1)) * 10;
+  }
+  var lo2 = st >= 3 ? 6000 : st === 2 ? 2500 : 1100, hi2 = st >= 3 ? 12900 : st === 2 ? 5900 : 2400;
+  return lo2 + Math.floor(r() * ((hi2 - lo2) / 50 + 1)) * 50;
+}
+/* l'aiuto alla seconda volta: il numero a pezzi, come si legge */
+function wageParts(n) {
+  var out = [], t = Math.floor(n / 1000), h = Math.floor((n % 1000) / 100), r = n % 100;
+  if (t) out.push(numWords(t) + " thousand = " + numComma(t * 1000));
+  if (h) out.push(numWords(h) + " hundred = " + (h * 100));
+  if (r) out.push(numWords(r) + " = " + r);
+  return out.join(" · ");
+}
+/* il benvenuto del presidente: parole da mettere in ordine */
+var SG_WELCOME = {
+  easy:["Welcome to our club, {n}!", "We are very happy to have you here.",
+        "You are one of us now, {n}.", "This is your new home, {n}."],
+  hard:["We have been looking for a player like you.",
+        "I am sure you will enjoy playing here, {n}.",
+        "Everybody at the club is looking forward to meeting you."]
+};
+function welcomeOf(c) {
+  var L = SG_WELCOME[(ME.level === "A1" || ME.level === "A2") ? "easy" : "hard"];
+  var r = rng("welcome|" + c.name);
+  return L[Math.floor(r() * L.length)].replace("{n}", String(c.name).split(" ")[0]);
+}
+
 VIEWS.mkSign = function () {
   var cap = MK.picked.length, k = MK.si || 0;
   var c = MK.cards[MK.picked[k]];
   if (!c) return swap("mkDone");
+  /* le tre mosse solo per il primo contratto: tre giocatori di fila
+     vorrebbero dire nove esercizi prima di vedere la squadra */
+  var full = k === 0, wage = full ? wageOf(c) : 0, said = "";
   barFlow("The contract", c.name + " · " + (ROLE[c.role] || c.role) + " · " + c.country +
     (cap > 1 ? " · " + (k + 1) + " of " + cap : ""), 92, false);
-  var tries = 0;
   html('<div class="pad sg">' +
     '<div class="sg-paper" id="sgp">' +
     '<span class="sg-card" aria-hidden="true">' +
@@ -17539,40 +17641,155 @@ VIEWS.mkSign = function () {
     '<p class="sg-sub">Season 1 · ' + esc(String(ME.club.city || "").split(" ·")[0]) + "</p>" +
     '<p class="sg-txt">' + esc(ME.club.name) + " signs the player below for the whole " +
     "season. The player agrees to train, to play and to write every word with care.</p>" +
-    '<p class="sg-k sg-gap">PLAYER</p><p class="sg-who">' + esc(c.name) + "</p>" +
+    '<div class="sg-two"><div><p class="sg-k sg-gap">PLAYER</p><p class="sg-who">' + esc(c.name) + "</p></div>" +
+    (full ? '<div><p class="sg-k sg-gap">WEEKLY WAGE</p><p class="sg-who sg-wage" id="sgwg">&pound; &middot;&middot;&middot;</p></div>' : "") +
+    "</div>" +
     '<p class="sg-k sg-gap">SIGNATURE</p><div class="sg-line" id="sgl"></div></div>' +
-    '<div id="sgw"><label class="wd-lab" for="sgi">WRITE THE PLAYER’S NAME TO SIGN</label>' +
-    '<input type="text" class="wd-in sg-in" id="sgi" autocomplete="off" autocapitalize="words" ' +
-    'autocorrect="off" spellcheck="false" placeholder="Name Surname">' +
-    '<p class="sg-no" id="sgn" role="alert" hidden></p>' +
-    '<button class="btn gbig" id="sgb" disabled>Sign the contract</button></div>' +
+    (full ? '<ol class="sg-steps" id="sgs" aria-label="Three steps"><li>1 &middot; Name</li>' +
+            "<li>2 &middot; Wage</li><li>3 &middot; Welcome</li></ol>" : "") +
+    '<div id="sgw"></div>' +
     '<div class="sg-done" id="sgd" hidden></div></div>');
 
-  var inp = $("sgi"), btn = $("sgb");
-  inp.oninput = function () { btn.disabled = !inp.value.trim(); $("sgn").hidden = true; };
-  inp.onkeydown = function (e) { if (e.key === "Enter" && !btn.disabled) btn.click(); };
-  setTimeout(function () { try { inp.focus(); } catch (e) {} }, 80);
-  btn.onclick = function () {
-    if (signNorm(inp.value) !== signNorm(c.name)) {
-      tries++;
-      var p = $("sgp");
-      p.classList.remove("shake"); void p.offsetWidth; p.classList.add("shake");
-      $("sgn").hidden = false;
-      /* alla seconda volta si vede dove si sbaglia */
-      $("sgn").innerHTML = "The ink will not take. Check each letter of the name." +
-        (tries >= 2 ? '<b class="wd-right">' + markDiff(c.name, inp.value) + "</b>" : "");
-      return;
+  function mark(n) {
+    if (!$("sgs")) return;
+    Array.prototype.forEach.call($("sgs").children, function (li, i) {
+      li.className = i < n ? "ok" : i === n ? "on" : "";
+      if (i === n) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
+    });
+  }
+  function shake() {
+    var p = $("sgp");
+    p.classList.remove("shake"); void p.offsetWidth; p.classList.add("shake");
+  }
+
+  /* ── 1. il nome: ortografia, lettera per lettera ── */
+  function stepName() {
+    var tries = 0;
+    mark(0);
+    $("sgw").innerHTML = '<label class="wd-lab" for="sgi">WRITE THE PLAYER’S NAME TO SIGN</label>' +
+      '<input type="text" class="wd-in sg-in" id="sgi" autocomplete="off" autocapitalize="words" ' +
+      'autocorrect="off" spellcheck="false" placeholder="Name Surname">' +
+      '<p class="sg-no" id="sgn" role="alert" hidden></p>' +
+      '<button class="btn gbig" id="sgb" disabled>' + (full ? "Write the name" : "Sign the contract") + "</button>";
+    var inp = $("sgi"), btn = $("sgb");
+    inp.oninput = function () { btn.disabled = !inp.value.trim(); $("sgn").hidden = true; };
+    inp.onkeydown = function (e) { if (e.key === "Enter" && !btn.disabled) btn.click(); };
+    setTimeout(function () { try { inp.focus(); } catch (e) {} }, 80);
+    btn.onclick = function () {
+      if (signNorm(inp.value) !== signNorm(c.name)) {
+        tries++;
+        shake();
+        $("sgn").hidden = false;
+        /* alla seconda volta si vede dove si sbaglia */
+        $("sgn").innerHTML = "The ink will not take. Check each letter of the name." +
+          (tries >= 2 ? '<b class="wd-right">' + markDiff(c.name, inp.value) + "</b>" : "");
+        return;
+      }
+      /* una firma lunga si scrive piu' piccola, se no esce dal foglio */
+      $("sgl").innerHTML = '<span class="sg-ink" style="font-size:' +
+        Math.max(20, Math.min(40, Math.floor(470 / String(c.name).length))) + 'px">' + esc(c.name) + "</span>";
+      if (full) stepWage(); else finish();
+    };
+  }
+
+  /* ── 2. lo stipendio: un numero in lettere, da scrivere in cifre ── */
+  function stepWage() {
+    var tries = 0;
+    mark(1);
+    $("sgw").innerHTML = '<p class="sg-ask">The agent says: <b>“My player asks for ' + numWords(wage) +
+      ' pounds a week.”</b></p>' +
+      '<label class="wd-lab" for="sgi">WRITE THE WAGE IN FIGURES</label>' +
+      '<input type="text" class="wd-in sg-in" id="sgi" inputmode="numeric" autocomplete="off" ' +
+      'placeholder="£ a week">' +
+      '<p class="sg-no" id="sgn" role="alert" hidden></p>' +
+      '<button class="btn gbig" id="sgb" disabled>Write the wage</button>';
+    var inp = $("sgi"), btn = $("sgb");
+    inp.oninput = function () { btn.disabled = !/\d/.test(inp.value); $("sgn").hidden = true; };
+    inp.onkeydown = function (e) { if (e.key === "Enter" && !btn.disabled) btn.click(); };
+    setTimeout(function () { try { inp.focus(); } catch (e) {} }, 80);
+    btn.onclick = function () {
+      if (parseInt(String(inp.value).replace(/[^\d]/g, ""), 10) !== wage) {
+        tries++;
+        shake();
+        $("sgn").hidden = false;
+        $("sgn").innerHTML = "That is not the figure. Read the number again." +
+          (tries >= 2 ? '<b class="sg-parts">' + esc(wageParts(wage)) + "</b>" : "");
+        return;
+      }
+      var w = $("sgwg");
+      w.innerHTML = "&pound;" + numComma(wage);
+      w.className = "sg-who sg-wage set";
+      stepWelcome();
+    };
+  }
+
+  /* ── 3. il benvenuto: le parole in ordine ── */
+  function stepWelcome() {
+    var line = welcomeOf(c), words = line.split(/\s+/), tries = 0, pool, put;
+    mark(2);
+    $("sgw").innerHTML = '<p class="sg-ask">Now the president says welcome. <b>Put the words in order.</b></p>' +
+      '<div class="orline" id="orline"></div><div class="orpool" id="orpool"></div>' +
+      '<p class="sg-no" id="sgn" role="alert" hidden></p>';
+    function deal() {
+      put = [];
+      pool = shuf(words.map(function (w, i) { return { w:w, i:i }; }));
+      /* mescolata per caso uguale alla frase: si scambiano le prime due */
+      if (pool.length > 1 && pool.map(function (p) { return p.w; }).join(" ") === line) {
+        var x = pool[0]; pool[0] = pool[1]; pool[1] = x;
+      }
+      paint();
     }
-    inp.disabled = true;
+    function paint() {
+      $("orline").innerHTML = put.length
+        ? put.map(function (p, i) {
+            return '<button class="orw" data-k="' + i + '" type="button">' + esc(p.w) + "</button>";
+          }).join("")
+        : '<span class="orempty">—</span>';
+      $("orpool").innerHTML = pool.map(function (p, i) {
+        return '<button class="orw pool" data-p="' + i + '" type="button">' + esc(p.w) + "</button>";
+      }).join("");
+      Array.prototype.forEach.call($("orpool").querySelectorAll(".orw"), function (b) {
+        b.onclick = function () {
+          $("sgn").hidden = true;
+          put.push(pool.splice(parseInt(b.dataset.p, 10), 1)[0]);
+          if (!pool.length) return check();
+          paint();
+        };
+      });
+      Array.prototype.forEach.call($("orline").querySelectorAll(".orw"), function (b) {
+        b.onclick = function () {
+          pool.push(put.splice(parseInt(b.dataset.k, 10), 1)[0]);
+          paint();
+        };
+      });
+    }
+    function check() {
+      if (put.map(function (p) { return p.w; }).join(" ") === line) { said = line; return finish(); }
+      tries++;
+      shake();
+      /* le parole al posto giusto restano accese, cosi' si vede da dove ripartire */
+      $("orline").innerHTML = put.map(function (p, i) {
+        return '<span class="orw done' + (p.w === words[i] ? "" : " bad") + '">' + esc(p.w) + "</span>";
+      }).join("");
+      $("orpool").innerHTML = '<button class="btn ghost" id="sgre" type="button">Try again</button>';
+      $("sgn").hidden = false;
+      $("sgn").innerHTML = "Not quite. Start from the word with the capital letter." +
+        (tries >= 2 ? '<b class="sg-parts">' + esc(line) + "</b>" : "");
+      $("sgre").onclick = function () { $("sgn").hidden = tries < 2; deal(); };
+    }
+    deal();
+  }
+
+  /* ── il timbro, i flash, e si passa oltre ── */
+  function finish() {
+    mark(3);
     $("sgw").hidden = true;
-    $("sgl").innerHTML = '<span class="sg-ink">' + esc(c.name) + "</span>" +
-      '<span class="sg-stamp" aria-hidden="true">SIGNED</span>';
+    $("sgl").insertAdjacentHTML("beforeend", '<span class="sg-stamp" aria-hidden="true">SIGNED</span>');
     var last = k + 1 >= cap;
     $("sgd").hidden = false;
-    $("sgd").innerHTML = '<p class="sg-joins">' + esc(c.name) + "<br>joins " +
-      esc(ME.club.name) + ".</p>" +
-      '<button class="btn gbig" id="sgx">' + (last ? "Seal the deal" : "Next contract") +
-      "</button>";
+    $("sgd").innerHTML = (said ? '<p class="sg-said">“' + esc(said) + "”</p>" : "") +
+      '<p class="sg-joins">' + esc(c.name) + "<br>joins " + esc(ME.club.name) + ".</p>" +
+      '<button class="btn gbig" id="sgx">' + (last ? "Seal the deal" : "Next contract") + "</button>";
     /* i flash dei fotografi: due lampi, una volta */
     var fl = document.createElement("div");
     fl.className = "sg-flash"; fl.setAttribute("aria-hidden", "true");
@@ -17583,8 +17800,30 @@ VIEWS.mkSign = function () {
       if (last) return swap("mkDone");
       MK.si = k + 1; swap("mkSign");
     };
-  };
+  }
+  stepName();
 };
+
+/* il guadagno del reparto sale da zero, dopo che la carta e' caduta */
+function unvCount(root) {
+  if (!root || !window.requestAnimationFrame) return;
+  if ((typeof fxCalm === "function") && fxCalm()) return;
+  Array.prototype.forEach.call(root.querySelectorAll(".unv-gain b"), function (el) {
+    var to = parseInt(el.getAttribute("data-c"), 10), t0 = 0, done = false;
+    if (!(to > 0)) return;
+    function end() { if (!done) { done = true; el.textContent = "+" + fmt(to); } }
+    function step(t) {
+      if (done) return;
+      if (!t0) t0 = t;
+      var p = Math.min(1, (t - t0) / 700);
+      el.textContent = "+" + fmt(Math.round(to * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) window.requestAnimationFrame(step); else end();
+    }
+    el.textContent = "+" + fmt(0);
+    setTimeout(function () { window.requestAnimationFrame(step); }, 450);
+    setTimeout(end, 1700);
+  });
+}
 
 /* ───────── 7. la firma ─────────
    I giocatori entrano in rosa qui, da soli. Se un\'altra squadra ne ha
@@ -17607,37 +17846,43 @@ VIEWS.mkDone = function () {
       var missed = chosen.filter(function (c) {
         return !got.some(function (g) { return g.card.no === c.no; });
       });
-      var how = got[0].how;
-      html('<div class="pad">' +
+      var how = got[0].how, one = got.length === 1;
+      /* ───────── la presentazione ─────────
+         Prima era un elenco: una maglia piccola, due righe, una nota. La
+         carta che si e' scelta torna grande, cade sul tavolo e prende il
+         timbro; sotto, quanto e' piu' forte il reparto, con il numero che
+         sale. Il resto sta in due righe. */
+      html('<div class="pad unv">' +
         (missed.length
           ? '<div class="lost"><b>' +
             esc(missed.map(function (c) { return c.name; }).join(" and ")) +
-            (missed.length === 1 ? " went somewhere else.</b>" : " went somewhere else.</b>") +
-            "Another team got there first" +
+            " went somewhere else.</b>Another team got there first" +
             (got.length === cap ? ", so your reserve stepped in." : ".") + "</div>"
           : "") +
-        "<h1>" + (got.length === 1
+        '<span class="kick">' + (one ? "NEW SIGNING" : got.length + " NEW SIGNINGS") + "</span>" +
+        "<h1>" + (one
           ? esc(got[0].card.name) + " signs for " + esc(ME.club.name) + "."
           : got.length + " signings for " + esc(ME.club.name) + ".") + "</h1>" +
-        got.map(function (g) {
+        '<div class="mkr pkv unv-c' + (one ? "" : " many") + '">' + got.map(function (g, i) {
           var c = g.card;
-          return '<div class="signed"><span class="sh"><svg viewBox="0 0 100 100">' +
-            '<use href="#jersey"/></svg></span><div><b>' + esc(c.name) + "</b>" +
-            "<span>" + stars(c.stars) + " &middot; " + (ROLE[c.role] || c.role) +
-            " &middot; " + esc(c.country) + (c.badge ? " &middot; " + c.badge : "") +
-            "</span><em>+" + fmt(c.cents) + " to the " +
-            (ROLE[c.role] || c.role).toLowerCase() + "</em></div></div>";
-        }).join("") +
-        '<p class="lede">' + (got.length === 1 ? "He is" : "They are") +
-        " <b>in your squad</b> from now on — no code, nothing to read out. " +
-        (how === "live" ? "Your teacher can see them already."
+          return '<div class="flip up' + (c.stars >= 3 ? " holo" : c.stars >= 2 ? " gold" : "") +
+            '" style="animation-delay:' + (i * 140) + 'ms"><span class="in"><span class="face f">' +
+            cardFace(c) + '</span></span><span class="unv-stamp" aria-hidden="true">WELCOME</span></div>';
+        }).join("") + "</div>" +
+        '<div class="unv-gain">' + got.map(function (g) {
+          var c = g.card;
+          return "<p><span>" + esc(ROLE[c.role] || c.role) + '</span><b data-c="' + c.cents + '">+' +
+            fmt(c.cents) + "</b></p>";
+        }).join("") + "</div>" +
+        '<p class="unv-note"><b>In your squad</b> from now on. ' +
+        (how === "live" ? "Your teacher can see the signing already."
          : how === "queued"
-           ? "The connection is down, so the names go up the moment it comes back."
-           : "Your teacher will see them from this phone.") + "</p>" +
-        '<div class="capnote"><b>Your market is closed.</b>It opens once a season, ' +
-        "before the first match. From here on your squad grows in the training " +
-        "ground, one step at a time.</div>" +
-        '<button class="btn" id="home2">See them in my squad</button></div>');
+           ? "The connection is down, so the name goes up the moment it comes back."
+           : "Your teacher will see it from this phone.") + "</p>" +
+        '<p class="unv-shut">Your market is closed until next season. From here your squad ' +
+        "grows at the training ground.</p>" +
+        '<button class="btn" id="home2">Open my squad</button></div>');
+      unvCount($("main"));
       $("home2").onclick = function () { reset(homeBack()); };
     });
 
