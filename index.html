@@ -4558,6 +4558,35 @@ html.trydark::before{background-image:linear-gradient(180deg,rgba(4,23,15,.9) 0%
 @media (prefers-reduced-motion: reduce){
   .pk-pack .pk-in,.pk-tap,.pk-body::after,.mk2-art .pk-in,.mk2-col,.mk2-steps li{animation:none}
 }
+/* il mercato chiuso: il cartello col lucchetto davanti allo stadio */
+@keyframes mkcSwing{0%,100%{transform:rotate(-3.5deg)}50%{transform:rotate(3.5deg)}}
+.mkc{position:relative;min-height:min(86vh,860px);overflow:hidden}
+.mkc-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4}
+.mkc-veil{position:absolute;inset:0;background:radial-gradient(120% 58% at 50% 20%,rgba(4,23,15,.3) 0%,rgba(4,23,15,.9) 60%,var(--ink) 100%)}
+.mkc-in{position:relative;max-width:460px;margin:0 auto;padding:26px 20px 30px;text-align:center}
+.mkc-sign{display:block;width:74%;max-width:290px;margin:0 auto;overflow:visible}
+.mkc-arr path{fill:none;stroke:rgba(226,251,206,.3);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.mkc-board{transform-origin:140px 10px;animation:mkcSwing 3.6s ease-in-out infinite}
+.mkc-nail{fill:var(--ink);stroke:var(--gold);stroke-width:4}
+.mkc-rope{fill:none;stroke:var(--gold);stroke-width:3.5;stroke-linecap:round}
+.mkc-plate{fill:#0B2A1F;stroke:var(--gold);stroke-width:5}
+.mkc-shk{fill:none;stroke:#FFFDEE;stroke-width:6;stroke-linecap:round}
+.mkc-lock{fill:#FFFDEE}
+.mkc-key{fill:#0B2A1F}
+.mkc h1{margin:24px 0 0;font-size:38px;line-height:1.06;color:#FFFDEE}
+.mkc h1 em{font-style:normal;color:var(--gold)}
+.mkc-in>p{margin:16px auto 0;max-width:330px;font-size:15px;font-weight:600;line-height:1.5;color:#C3D6C6}
+.mkc .btn{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:22px}
+.mkc .btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.mkc .btn.ghost{margin-top:0;border:2px solid var(--gold);color:#FFFDEE}
+.mkc-or{display:flex;align-items:center;gap:14px;margin:14px 0;font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--fog)}
+.mkc-or::before,.mkc-or::after{content:"";flex:1;height:1px;background:var(--edge)}
+.mkc-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.mkc-two div{padding:13px 12px;border-radius:16px;border:1px solid var(--edge);background:rgba(8,35,26,.78);text-align:left}
+.mkc-two span{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;line-height:1.25;color:#C3D6C6}
+.mkc-two svg{flex:none;width:18px;height:18px;fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mkc-two b{display:block;margin-top:7px;font-size:15px;font-weight:800;color:var(--cream)}
+@media (prefers-reduced-motion: reduce){.mkc-board{animation:none}}
 /* la pagina di spiegazione: una bustina, tre gesti, una scala */
 .mk2-hero{position:relative;min-height:178px;padding:18px 132px 18px 16px;border-radius:20px;border:1px solid var(--edge);overflow:hidden;
   background:radial-gradient(120% 90% at 88% 42%,rgba(227,239,38,.17) 0%,rgba(227,239,38,0) 56%),var(--band)}
@@ -5777,7 +5806,7 @@ var CONT_LIST = Object.keys(CONT);
 /* ═══════════════ attrezzi comuni e navigazione ═══════════════ */
 
 var $ = function (id) { return document.getElementById(id); };
-var APPVER = "180";
+var APPVER = "181";
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
     return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c];
@@ -17010,12 +17039,44 @@ VIEWS.market = function () {
   barFlow("The transfer market", ME.club.name + " · before matchday 1", 0);
   MK.i = 0; MK.answers = []; MK.picked = [];
   if (!marketOpen()) {
-    html('<div class="pad"><h1>Your market is closed.</h1>' +
-      '<p class="lede">The market opens <b>once a season</b>, before the first match, ' +
-      "and yours is done. Your signings are in the squad under " +
-      "<b>Signed in the market</b>, and your teacher can see them.</p>" +
-      '<button class="btn" id="bk2">' + homeBackName() + "</button></div>");
+    /* ───────── il mercato chiuso ─────────
+       Erano un titolo e tre righe. Adesso c'e' il cartello col lucchetto
+       appeso sopra le due frecce dei trasferimenti, ferme; lo stadio
+       dietro; e sotto le due cose che servono davvero: quando riapre e
+       quanti ne ho presi. Niente data e niente conto alla rovescia: il
+       mercato riapre con la stagione nuova, e quel giorno l'app non lo sa. */
+    var demo = (typeof demoOn === "function") && demoOn();
+    var ns = (ME.signings || []).length, pic = imgOf("pitch");
+    html('<div class="mkc">' +
+      (pic ? '<img class="mkc-bg" src="' + pic + '" alt="" onerror="mkNoPic(this)">' : "") +
+      '<span class="mkc-veil" aria-hidden="true"></span>' +
+      '<div class="mkc-in">' +
+      '<svg class="mkc-sign" viewBox="0 0 280 132" aria-hidden="true">' +
+        '<g class="mkc-arr"><path d="M74 84H18M36 66 18 84l18 18"/><path d="M206 84h56M244 66l18 18-18 18"/></g>' +
+        '<g class="mkc-board"><circle class="mkc-nail" cx="140" cy="10" r="6"/>' +
+        '<path class="mkc-rope" d="M136 15 100 46M144 15l36 31"/>' +
+        '<rect class="mkc-plate" x="80" y="44" width="120" height="76" rx="13"/>' +
+        '<path class="mkc-shk" d="M128 78v-7a12 12 0 0 1 24 0v7"/>' +
+        '<rect class="mkc-lock" x="121" y="76" width="38" height="31" rx="7"/>' +
+        '<path class="mkc-key" d="M140 87a3.500 3.500 0 0 1 1.800 6.500V99h-3.600v-5.500A3.500 3.500 0 0 1 140 87z"/></g>' +
+      "</svg>" +
+      "<h1>Transfer market<br>is <em>closed</em></h1>" +
+      "<p>It opens once a season, before the first match, and yours is done. Your teacher " +
+      "can see your signings.</p>" +
+      '<button class="btn gbig" id="bk2">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.500 12 4l9 7.500M5.500 10v10h13V10M10 20v-6h4v6"/></svg>' +
+      homeBackName() + "</button>" +
+      '<div class="mkc-or"><span>OR</span></div>' +
+      '<button class="btn ghost gbig" id="mk2nd">' +
+      (demo ? "See my signings" : "Go to the training ground") + "</button>" +
+      '<div class="mkc-two">' +
+      '<div><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>' +
+      "Next window opens</span><b>Next season</b></div>" +
+      '<div><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4 4 7l2 3 2-1v11h8V9l2 1 2-3-4-3a4 4 0 0 1-8 0z"/></svg>' +
+      "Signed this season</span><b>" + ns + (ns === 1 ? " player" : " players") + "</b></div>" +
+      "</div></div></div>");
     $("bk2").onclick = function () { reset(homeBack()); };
+    $("mk2nd").onclick = function () { if (demo) reset("squad"); else go("ground"); };
     return;
   }
   drawMarketIn();
